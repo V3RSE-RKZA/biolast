@@ -33,6 +33,22 @@ export function getItems<T extends ItemRow>(itemRows: T[]): { items: { row: T, i
  */
 export function getItemDisplay (item: Item, itemRow?: ItemRow): string {
 	if (itemRow) {
+		if (item.type === 'Weapon' && itemRow.durability) {
+			const durability = itemRow.durability / item.durability
+
+			if (durability >= 0.8) {
+				return `Pristine ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
+			}
+			else if (durability >= 0.6) {
+				return `Used ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
+			}
+			else if (durability >= 0.4) {
+				return `Worn ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
+			}
+
+			return `Damaged ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
+		}
+
 		return `${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`${itemRow.durability ? `, **${itemRow.durability}** uses left` : ''})`
 	}
 
