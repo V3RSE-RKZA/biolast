@@ -1,0 +1,80 @@
+import { Command } from '../types/Commands'
+import { reply } from '../utils/messageUtils'
+import { beginTransaction } from '../utils/db/mysql'
+import { getNumber } from '../utils/argParsers'
+import { getUserBackpack, unequipItem, equipItem } from '../utils/db/items'
+import { getEquips, getItems } from '../utils/itemUtils'
+
+export const command: Command = {
+	name: 'equip',
+	aliases: [],
+	examples: ['equip 12345'],
+	description: 'Equip an item from your backpack. Equipping a backpack will increase the amount your backpack can hold. Equipping a helmet or armor will protect you from damage. ' +
+		'Equipping a weapon will use that weapon whenever you use the `attack` command.',
+	category: 'info',
+	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
+	worksInDMs: false,
+	canBeUsedInRaid: true,
+	guildModsOnly: false,
+	async execute(app, message, { args, prefix }) {
+		const itemID = getNumber(args[0])
+
+		if (!itemID) {
+			await reply(message, {
+				content: `❌ You need to provide the ID of the item you want to equip. You can find the IDs of items in your \`${prefix}backpack\`.`
+			})
+			return
+		}
+
+		const transaction = await beginTransaction()
+		const backpackRows = await getUserBackpack(transaction.query, message.author.id, true)
+		const userBackpackData = getItems(backpackRows)
+		const itemToEquip = userBackpackData.items.find(itm => itm.row.id === itemID)
+
+		if (!itemToEquip) {
+			await transaction.commit()
+
+			await reply(message, {
+				content: `❌ You don't have an item with that ID in your backpack. You can find the IDs of items in your \`${prefix}backpack\`.`
+			})
+			return
+		}
+		else if (!['Weapon', 'Helmet', 'Armor', 'Backpack'].includes(itemToEquip.item.type)) {
+			await transaction.commit()
+
+			await reply(message, {
+				content: `❌ Unequippable item. You cannot equip items of type **${itemToEquip.item.type}**. Specify a weapon, helmet, armor, or backpack to equip.`
+			})
+			return
+		}
+
+		const equips = getEquips(backpackRows)
+		let unequippedItem
+
+		if (equips.backpack && itemToEquip.item.type === 'Backpack') {
+			unequippedItem = equips.backpack
+			await unequipItem(transaction.query, equips.backpack.row.id)
+		}
+		else if (equips.weapon && itemToEquip.item.type === 'Weapon') {
+			unequippedItem = equips.weapon
+			await unequipItem(transaction.query, equips.weapon.row.id)
+		}
+		else if (equips.helmet && itemToEquip.item.type === 'Helmet') {
+			unequippedItem = equips.helmet
+			await unequipItem(transaction.query, equips.helmet.row.id)
+		}
+		else if (equips.armor && itemToEquip.item.type === 'Armor') {
+			unequippedItem = equips.armor
+			await unequipItem(transaction.query, equips.armor.row.id)
+		}
+
+		await equipItem(transaction.query, itemToEquip.row.id)
+		await transaction.commit()
+
+		await reply(message, {
+			content: unequippedItem ?
+				`Successfully unequipped ${unequippedItem.item.icon}\`${unequippedItem.item.name}\` (ID: \`${unequippedItem.row.id}\`) and equipped ${itemToEquip.item.icon}\`${itemToEquip.item.name}\` (ID: \`${itemToEquip.row.id}\`)` :
+				`Successfully equipped ${itemToEquip.item.icon}\`${itemToEquip.item.name}\` (ID: \`${itemToEquip.row.id}\`)`
+		})
+	}
+}

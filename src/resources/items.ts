@@ -1,0 +1,168 @@
+interface BaseItem {
+	type: 'Weapon' | 'Helmet' | 'Armor' | 'Ammunition' | 'Medical' | 'Backpack'
+	name: string
+	aliases: string[]
+	icon: string
+	description?: string
+	sellPrice?: number
+	buyPrice?: number
+	slotsUsed: number
+}
+
+type ArmorLevel = 1 | 2 | 3 | 4
+
+export interface RangedWeapon extends BaseItem {
+	type: 'Weapon'
+
+	/**
+	 * Ranged requires ammo to be used
+	 */
+	subtype: 'Ranged'
+
+	/**
+	 * How many times this weapon can be used to attack
+	 */
+	durability: number
+}
+
+export interface MeleeWeapon extends BaseItem {
+	type: 'Weapon'
+
+	/**
+	 * Melee means weapon does not require ammo
+	 */
+	subtype: 'Melee'
+
+	/**
+	 * The amount of damage this melee weapon deals when used
+	 */
+	damage: number
+
+	/**
+	 * How many times this weapon can be used to attack
+	 */
+	durability: number
+}
+
+export type Weapon = RangedWeapon | MeleeWeapon
+
+export interface Armor extends BaseItem {
+	type: 'Armor'
+
+	/**
+	 * How many times this armor can be shot before it breaks
+	 */
+	durability: number
+
+	/**
+	 * The protection level of this armor: 1 = crap, 2 = protects against pistols, 3 = pretty good, 4 = protects against rifles
+	 */
+	level: ArmorLevel
+}
+
+export interface Helmet extends BaseItem {
+	type: 'Helmet'
+
+	/**
+	 * How many times this armor can be shot before it breaks
+	 */
+	durability: number
+
+	/**
+	 * The protection level of this armor: 1 = crap, 2 = protects against pistols, 3 = pretty good, 4 = protects against rifles
+	 */
+	level: ArmorLevel
+}
+
+export interface Ammunition extends BaseItem {
+	type: 'Ammunition'
+
+	/**
+	 * Damage expected from this round if shot at the targets CHEST, head shots will do 1.5x damage, arms and legs do 0.5x damage
+	 */
+	damage: number
+
+	/**
+	 * The armor level this ammo will penetrate and do full damage to (if the player is wearing higher level armor, the damage will be reduced)
+	 */
+	penetratesLevel: ArmorLevel
+
+	/**
+	 * Names of the weapons this ammo works for
+	 */
+	ammoFor: string[]
+}
+
+export interface Medical extends BaseItem {
+	type: 'Medical'
+
+	/**
+	 * Amount this medical item will heal player for
+	 */
+	healsFor: number
+}
+
+export interface Backpack extends BaseItem {
+	type: 'Backpack'
+
+	/**
+	 * How many slots will this backpack add to the users inventory? Higher = player can hold more items
+	 */
+	slots: number
+}
+
+export type Item = Weapon | Helmet | Armor | Ammunition | Medical | Backpack
+
+export const items: Item[] = [
+	{
+		type: 'Weapon',
+		subtype: 'Ranged',
+		name: 'ak47',
+		icon: '',
+		aliases: ['ak'],
+		sellPrice: 10000,
+		durability: 7,
+		slotsUsed: 2
+	},
+	{
+		type: 'Medical',
+		name: 'ai-2_medkit',
+		icon: '',
+		aliases: ['ai-2', 'medkit'],
+		sellPrice: 1000,
+		healsFor: 20,
+		slotsUsed: 1
+	},
+	{
+		type: 'Armor',
+		name: 'paca_armor',
+		icon: '',
+		aliases: ['paca'],
+		sellPrice: 2000,
+		durability: 3,
+		level: 2,
+		slotsUsed: 2
+	},
+	{
+		type: 'Ammunition',
+		name: '7.62x54r_lps',
+		icon: '',
+		aliases: ['762x54', 'lps_gzh'],
+		damage: 60,
+		penetratesLevel: 4,
+		ammoFor: ['ak47'],
+		sellPrice: 3000,
+		slotsUsed: 1
+	},
+	{
+		type: 'Ammunition',
+		name: '7.62x51',
+		icon: '',
+		aliases: ['762x51', '7.62'],
+		damage: 60,
+		penetratesLevel: 3,
+		ammoFor: ['ak47'],
+		sellPrice: 3000,
+		slotsUsed: 1
+	}
+]

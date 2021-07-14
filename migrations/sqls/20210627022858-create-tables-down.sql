@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS cooldowns;
+DROP TABLE IF EXISTS backpack_items;
+DROP TABLE IF EXISTS stash_items;
+DROP TABLE IF EXISTS ground_items;
+DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS active_raids;

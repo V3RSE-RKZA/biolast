@@ -1,0 +1,9 @@
+{
+	"apps": [
+		{
+			"name": "escape_from_discord",
+			"script": "./build/index.js",
+			"interpreter_args": "-r dotenv/config"
+		}
+	]
+}

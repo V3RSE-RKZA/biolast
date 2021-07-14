@@ -1,0 +1,8 @@
+# Packages
+node_modules/
+
+# Secret environment variable files
+*.env
+
+# tsc output directory
+build
