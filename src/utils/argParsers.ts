@@ -23,6 +23,7 @@ export function getItem (args: string[]): Item | undefined {
 		}
 	}
 }
+
 /**
  * Parse User IDs, username#discriminator and mentions into a guild member
  * @param guild Guild to search for members in

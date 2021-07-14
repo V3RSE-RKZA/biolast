@@ -1,12 +1,18 @@
 interface Location {
 	display: string
+
+	/**
+	 * How long the raid lasts in seconds
+	 */
+	raidLength: number
+
 	channels: RaidChannel[]
 }
 
 interface RaidChannel {
 	name: string
 	display: string
-	scavangeLoot: {
+	scavange: {
 		/**
 		 * Array of item names, one name is picked random
 		 * 50% - 55% chance of rolling this loot pool
@@ -37,11 +43,12 @@ interface RaidChannel {
 
 export const customs: Location = {
 	display: 'Customs',
+	raidLength: 20 * 60,
 	channels: [
 		{
 			name: 'red-building',
 			display: 'Red Building',
-			scavangeLoot: {
+			scavange: {
 				common: ['ak47'],
 				uncommon: ['ak47'],
 				rare: ['ak47'],

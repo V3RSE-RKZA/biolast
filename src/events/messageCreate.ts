@@ -2,8 +2,11 @@ import { GuildTextableChannel, Message, Permission } from 'eris'
 import { prefix, debug, adminUsers } from '../config'
 import { CommandPermission } from '../types/Commands'
 import { getUserRow, createAccount } from '../utils/db/players'
+import { userInRaid } from '../utils/db/raids'
+import { isRaidGuild } from '../utils/raidUtils'
 import { query } from '../utils/db/mysql'
 import App from '../app'
+import { reply } from '../utils/messageUtils'
 
 const spamCooldown = new Set()
 
@@ -42,13 +45,24 @@ export async function run(this: App, message: Message): Promise<void> {
 				return
 			}
 
-			await message.channel.createMessage(`I am missing the following permissions to run that command: ${commandPerms.permsString}...`)
+			await reply(message, {
+				content: `I am missing the following permissions to run that command: ${commandPerms.permsString}...`
+			})
 			return
 		}
 
 		// check if user has manage server permission before running GuildModCommand
 		else if (command.guildModsOnly && !(message as Message<GuildTextableChannel>).member.permissions.has('manageGuild')) {
-			await message.channel.createMessage('❌ You need the `Manage Server` permission to use this command!')
+			await reply(message, {
+				content: '❌ You need the `Manage Server` permission to use this command!'
+			})
+			return
+		}
+
+		else if (command.onlyWorksInRaidGuild && !isRaidGuild(message.guildID)) {
+			await reply(message, {
+				content: '❌ That command can **ONLY** be used in a raid.'
+			})
 			return
 		}
 
@@ -63,9 +77,18 @@ export async function run(this: App, message: Message): Promise<void> {
 		return
 	}
 
+	if (!command.canBeUsedInRaid && await userInRaid(query, message.author.id)) {
+		await reply(message, {
+			content: '❌ That command cannot be used while you are in an active raid! You need to extract to finish the raid (dying also works).'
+		})
+		return
+	}
+
 	// check if user has spam cooldown
-	if (spamCooldown.has(message.author.id)) {
-		const botMsg = await message.channel.createMessage('⏱ HEY SLOW IT DOWN `2 seconds`')
+	else if (spamCooldown.has(message.author.id)) {
+		const botMsg = await reply(message, {
+			content: '⏱ HEY SLOW IT DOWN `2 seconds`'
+		})
 		setTimeout(() => {
 			botMsg.delete()
 		}, 2000)

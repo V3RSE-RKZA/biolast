@@ -20,6 +20,7 @@ export const command: Command = {
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
 	worksInDMs: false,
 	canBeUsedInRaid: true,
+	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
 	async execute(app, message, { args, prefix }) {
 		const member = getMember(message.channel.guild, args)

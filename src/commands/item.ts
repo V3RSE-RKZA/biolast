@@ -14,6 +14,7 @@ export const command: Command = {
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
 	worksInDMs: true,
 	canBeUsedInRaid: true,
+	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
 	async execute(app, message, { args, prefix }) {
 		const item = getItem(args)
@@ -39,7 +40,7 @@ export const command: Command = {
 			itemEmbed.addField('Description', item.description)
 		}
 
-		itemEmbed.addField('Item Weight', `Uses **${item.slotsUsed}** slots`, true)
+		itemEmbed.addField('Item Weight', `Uses **${item.slotsUsed}** slot${item.slotsUsed === 1 ? '' : 's'}`, true)
 
 		if (item.buyPrice) {
 			itemEmbed.addField('Buy Price', formatNumber(item.buyPrice), true)
@@ -62,12 +63,16 @@ export const command: Command = {
 		}
 
 		if (item.type === 'Weapon' && item.subtype === 'Melee') {
+			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
+			itemEmbed.addField('Attack Rate', '30 seconds', true)
 			itemEmbed.addField('Damage', item.damage.toString(), true)
 		}
 
 		if (item.type === 'Weapon' && item.subtype === 'Ranged') {
 			const ammunition = items.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item.name))
 
+			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
+			itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
 			itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${itm.icon}\`${itm.name}\``).join('\n'), true)
 		}
 

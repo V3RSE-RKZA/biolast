@@ -8,7 +8,7 @@ interface CommandArguments {
 
 export type CommandPermission = keyof typeof Constants.Permissions
 
-type CommandCategory = 'admin' | 'info' | 'games' | 'economy' | 'utility'
+type CommandCategory = 'admin' | 'info' | 'items' | 'utility'
 
 interface BaseCommand {
 	name: string
@@ -22,6 +22,11 @@ interface BaseCommand {
 	 */
 	canBeUsedInRaid: boolean
 
+	/**
+	 * Whether this command can ONLY be used in a raid guild
+	 */
+	onlyWorksInRaidGuild: boolean
+
 	category: CommandCategory
 	permissions: CommandPermission[]
 }
@@ -32,11 +37,26 @@ interface DMCommand extends BaseCommand {
 
 	// guildModsOnly MUST be false for DM commands
 	guildModsOnly: false
+
+	// command must not be raid-only command
+	onlyWorksInRaidGuild: false
 	execute(app: App, message: Message<TextableChannel>, commandArgs: CommandArguments): Promise<void>
 }
 interface GuildCommand extends BaseCommand {
 	worksInDMs: false
+	canBeUsedInRaid: false
+	onlyWorksInRaidGuild: false
 	execute(app: App, message: Message<GuildTextableChannel>, commandArgs: CommandArguments): Promise<void>
 }
 
-export type Command = DMCommand | GuildCommand
+/**
+ * Can be used in a raid server
+ */
+interface RaidCommand extends BaseCommand {
+	worksInDMs: false
+	canBeUsedInRaid: true
+	onlyWorksInRaidGuild: boolean
+	execute(app: App, message: Message<GuildTextableChannel>, commandArgs: CommandArguments): Promise<void>
+}
+
+export type Command = DMCommand | GuildCommand | RaidCommand

@@ -10,10 +10,11 @@ export const command: Command = {
 	aliases: [],
 	examples: [],
 	description: 'Use this to claim free coins every day.',
-	category: 'economy',
+	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis'],
 	worksInDMs: false,
 	canBeUsedInRaid: true,
+	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
 	async execute(app, message, { args, prefix }) {
 		const transaction = await beginTransaction()

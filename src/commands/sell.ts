@@ -13,10 +13,11 @@ export const command: Command = {
 	aliases: [],
 	examples: ['sell 12345'],
 	description: 'Sell an item from your stash for rubles.',
-	category: 'info',
+	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis'],
 	worksInDMs: false,
 	canBeUsedInRaid: false,
+	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
 	async execute(app, message, { args, prefix }) {
 		const itemID = getNumber(args[0])

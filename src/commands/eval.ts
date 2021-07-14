@@ -12,6 +12,7 @@ export const command: Command = {
 	permissions: ['sendMessages', 'embedLinks'],
 	worksInDMs: true,
 	canBeUsedInRaid: true,
+	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
 	async execute(app, message, { args, prefix }) {
 		let commandInput = message.content.substring(5 + prefix.length)

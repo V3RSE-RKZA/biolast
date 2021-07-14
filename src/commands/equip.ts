@@ -11,10 +11,11 @@ export const command: Command = {
 	examples: ['equip 12345'],
 	description: 'Equip an item from your backpack. Equipping a backpack will increase the amount your backpack can hold. Equipping a helmet or armor will protect you from damage. ' +
 		'Equipping a weapon will use that weapon whenever you use the `attack` command.',
-	category: 'info',
+	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
 	worksInDMs: false,
 	canBeUsedInRaid: true,
+	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
 	async execute(app, message, { args, prefix }) {
 		const itemID = getNumber(args[0])

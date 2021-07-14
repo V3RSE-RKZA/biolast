@@ -22,6 +22,13 @@ export interface Cooldown {
 	length: number
 }
 
+export interface ActiveRaid {
+	userId: string
+	guildId: string
+	startedAt: Date
+	length: number
+}
+
 export interface ItemRow {
 	id: number
 	item: string

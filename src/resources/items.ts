@@ -20,6 +20,16 @@ export interface RangedWeapon extends BaseItem {
 	subtype: 'Ranged'
 
 	/**
+	 * How often can this weapon be used (cooldown in seconds)
+	 */
+	fireRate: number
+
+	/**
+	 * The percent chance for this weapon to hit target (0% - 100%)
+	 */
+	accuracy: number
+
+	/**
 	 * How many times this weapon can be used to attack
 	 */
 	durability: number
@@ -37,6 +47,11 @@ export interface MeleeWeapon extends BaseItem {
 	 * The amount of damage this melee weapon deals when used
 	 */
 	damage: number
+
+	/**
+	 * The percent chance for this weapon to hit target (0% - 100%)
+	 */
+	accuracy: number
 
 	/**
 	 * How many times this weapon can be used to attack
@@ -118,16 +133,18 @@ export const items: Item[] = [
 		type: 'Weapon',
 		subtype: 'Ranged',
 		name: 'ak47',
-		icon: '',
+		icon: '<:U_weapon:601366669272678411>',
 		aliases: ['ak'],
 		sellPrice: 10000,
 		durability: 7,
-		slotsUsed: 2
+		slotsUsed: 2,
+		fireRate: 60,
+		accuracy: 80
 	},
 	{
 		type: 'Medical',
 		name: 'ai-2_medkit',
-		icon: '',
+		icon: '<:U_usable:601366669259964418>',
 		aliases: ['ai-2', 'medkit'],
 		sellPrice: 1000,
 		healsFor: 20,
@@ -136,7 +153,7 @@ export const items: Item[] = [
 	{
 		type: 'Armor',
 		name: 'paca_armor',
-		icon: '',
+		icon: '<:U_shield:601366669474136074>',
 		aliases: ['paca'],
 		sellPrice: 2000,
 		durability: 3,
@@ -146,7 +163,7 @@ export const items: Item[] = [
 	{
 		type: 'Ammunition',
 		name: '7.62x54r_lps',
-		icon: '',
+		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['762x54', 'lps_gzh'],
 		damage: 60,
 		penetratesLevel: 4,
@@ -157,7 +174,7 @@ export const items: Item[] = [
 	{
 		type: 'Ammunition',
 		name: '7.62x51',
-		icon: '',
+		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['762x51', '7.62'],
 		damage: 60,
 		penetratesLevel: 3,
