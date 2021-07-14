@@ -7,7 +7,7 @@ import { BackpackItemRow } from '../types/mysql'
 import Embed from '../structures/Embed'
 import { Member } from 'eris'
 import { getUserBackpack } from '../utils/db/items'
-import { getBackpackLimit, getEquips, getItems } from '../utils/itemUtils'
+import { getBackpackLimit, getEquips, getItemDisplay, getItems } from '../utils/itemUtils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -18,6 +18,7 @@ export const command: Command = {
 	description: 'View the items in your backpack. Your backpack is different from your stash in that the items in your backpack are taken with you into raids.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
+	cooldown: 2,
 	worksInDMs: false,
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: false,
@@ -50,7 +51,7 @@ export const command: Command = {
 				})
 			}
 			else {
-				await app.btnCollector.paginate(message, pages)
+				await app.btnCollector.paginateEmbeds(message, pages)
 			}
 			return
 		}
@@ -64,7 +65,7 @@ export const command: Command = {
 			})
 		}
 		else {
-			await app.btnCollector.paginate(message, pages)
+			await app.btnCollector.paginateEmbeds(message, pages)
 		}
 	}
 }
@@ -82,12 +83,12 @@ function generatePages (member: Member, rows: BackpackItemRow[], prefix: string)
 
 		const embed = new Embed()
 			.setAuthor(`${member.username}#${member.discriminator}'s Backpack Inventory`, member.avatarURL)
-			.setDescription(`__**Equips**__\n**Backpack**: ${equips.backpack ? `${equips.backpack.item.icon}\`${equips.backpack.item.name}\` (ID: \`${equips.backpack.row.id}\`)` : `None, equip one with \`${prefix}equip <item id>\``}\n` +
-				`**Helmet**: ${equips.helmet ? `${equips.helmet.item.icon}\`${equips.helmet.item.name}\` (ID: \`${equips.helmet.row.id}\`, **${equips.helmet.row.durability}** uses left)` : `None, equip one with \`${prefix}equip <item id>\``}\n` +
-				`**Armor**: ${equips.armor ? `${equips.armor.item.icon}\`${equips.armor.item.name}\` (ID: \`${equips.armor.row.id}\`, **${equips.armor.row.durability}** uses left)` : `None, equip one with \`${prefix}equip <item id>\``}\n` +
-				`**Weapon**: ${equips.weapon ? `${equips.weapon.item.icon}\`${equips.weapon.item.name}\` (ID: \`${equips.weapon.row.id}\`, **${equips.weapon.row.durability}** uses left)` : `None, equip one with \`${prefix}equip <item id>\``}\n\n` +
+			.setDescription(`__**Equips**__\n**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row) : `None, equip one with \`${prefix}equip <item id>\``}\n` +
+				`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row) : `None, equip one with \`${prefix}equip <item id>\``}\n` +
+				`**Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row) : `None, equip one with \`${prefix}equip <item id>\``}\n` +
+				`**Weapon**: ${equips.weapon ? getItemDisplay(equips.weapon.item, equips.weapon.row) : `None, equip one with \`${prefix}equip <item id>\``}\n\n` +
 				`__**Items in Backpack**__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})\n` +
-				`${filteredItems.map(itm => `${itm.item.icon}\`${itm.item.name}\` (ID: \`${itm.row.id}\`${itm.row.durability ? `, **${itm.row.durability}** uses left` : ''})`).join('\n') || `No items found. Move items from your stash to your backpack with \`${prefix}stash take <item id>\`.`}`)
+				`${filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your stash to your backpack with \`${prefix}stash take <item id>\`.`}`)
 
 		pages.push(embed)
 	}

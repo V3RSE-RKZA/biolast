@@ -1,4 +1,4 @@
-import { ComponentType, ButtonStyle, ComponentActionRow } from 'slash-create'
+import { ComponentType, ButtonStyle, ComponentActionRow, ComponentButton } from 'slash-create'
 
 export const CONFIRM_BUTTONS: ComponentActionRow[] = [
 	{
@@ -19,3 +19,26 @@ export const CONFIRM_BUTTONS: ComponentActionRow[] = [
 		]
 	}
 ]
+
+export const PREVIOUS_BUTTON = (disabled: boolean): ComponentButton => ({
+	type: ComponentType.BUTTON,
+	label: 'Previous Page',
+	custom_id: 'previous',
+	style: ButtonStyle.SECONDARY,
+	disabled
+})
+
+export const NEXT_BUTTON = (disabled: boolean): ComponentButton => ({
+	type: ComponentType.BUTTON,
+	label: 'Next Page',
+	custom_id: 'next',
+	style: ButtonStyle.SECONDARY,
+	disabled
+})
+
+export const CLOSE_BUTTON: ComponentButton = {
+	type: ComponentType.BUTTON,
+	label: 'Close',
+	custom_id: 'closed',
+	style: ButtonStyle.DESTRUCTIVE
+}

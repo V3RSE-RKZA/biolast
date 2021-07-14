@@ -3,7 +3,7 @@ import { reply } from '../utils/messageUtils'
 import { beginTransaction } from '../utils/db/mysql'
 import { getNumber } from '../utils/argParsers'
 import { getUserBackpack, unequipItem, equipItem } from '../utils/db/items'
-import { getEquips, getItems } from '../utils/itemUtils'
+import { getEquips, getItemDisplay, getItems } from '../utils/itemUtils'
 
 export const command: Command = {
 	name: 'equip',
@@ -13,6 +13,7 @@ export const command: Command = {
 		'Equipping a weapon will use that weapon whenever you use the `attack` command.',
 	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
+	cooldown: 2,
 	worksInDMs: false,
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: false,
@@ -74,8 +75,8 @@ export const command: Command = {
 
 		await reply(message, {
 			content: unequippedItem ?
-				`Successfully unequipped ${unequippedItem.item.icon}\`${unequippedItem.item.name}\` (ID: \`${unequippedItem.row.id}\`) and equipped ${itemToEquip.item.icon}\`${itemToEquip.item.name}\` (ID: \`${itemToEquip.row.id}\`)` :
-				`Successfully equipped ${itemToEquip.item.icon}\`${itemToEquip.item.name}\` (ID: \`${itemToEquip.row.id}\`)`
+				`Successfully unequipped ${getItemDisplay(unequippedItem.item, unequippedItem.row)} and equipped ${getItemDisplay(itemToEquip.item, itemToEquip.row)}` :
+				`Successfully equipped ${getItemDisplay(itemToEquip.item, itemToEquip.row)}`
 		})
 	}
 }

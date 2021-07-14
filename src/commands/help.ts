@@ -2,6 +2,7 @@ import { Command } from '../types/Commands'
 import { reply } from '../utils/messageUtils'
 import Embed from '../structures/Embed'
 import { adminUsers } from '../config'
+import { formatTime } from '../utils/db/cooldowns'
 
 export const command: Command = {
 	name: 'help',
@@ -10,6 +11,7 @@ export const command: Command = {
 	description: 'Shows all available commands.',
 	category: 'info',
 	permissions: ['sendMessages', 'embedLinks'],
+	cooldown: 2,
 	worksInDMs: true,
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: false,
@@ -28,13 +30,14 @@ export const command: Command = {
 				.setDescription(cmd.description)
 
 			if (cmd.aliases.length) {
-				cmdEmbed.addField('Aliases', cmd.aliases.map(alias => `\`${alias}\``).join(', '))
+				cmdEmbed.addField('Aliases', cmd.aliases.map(alias => `\`${alias}\``).join(', '), true)
 			}
 
 			if (cmd.examples.length) {
-				cmdEmbed.addField('Usage Examples', cmd.examples.map(example => `\`${prefix}${example}\``).join(', '))
+				cmdEmbed.addField('Usage Examples', cmd.examples.map(example => `\`${prefix}${example}\``).join(', '), true)
 			}
 
+			cmdEmbed.addField('Cooldown', formatTime(cmd.cooldown * 1000), true)
 			cmdEmbed.addField('Can be used in raid?', cmd.onlyWorksInRaidGuild ? 'Only works while in raid' : cmd.canBeUsedInRaid ? 'Yes' : 'No')
 
 			await reply(message, {

@@ -10,6 +10,7 @@ export const command: Command = {
 	description: 'Eval stuff.',
 	category: 'admin',
 	permissions: ['sendMessages', 'embedLinks'],
+	cooldown: 2,
 	worksInDMs: true,
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: false,

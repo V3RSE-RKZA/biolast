@@ -74,10 +74,13 @@ export async function run(this: App, message: Message): Promise<void> {
 
 	// non-worksInDMs command cannot be used in DM channel
 	else if (!command.worksInDMs) {
+		await reply(message, {
+			content: `❌ That command cannot be used in DMs. The following commands work in DMs: ${this.commands.filter(cmd => cmd.category !== 'admin' && cmd.worksInDMs).map(cmd => `\`${cmd.name}\``).join(', ')}`
+		})
 		return
 	}
 
-	if (!command.canBeUsedInRaid && await userInRaid(query, message.author.id)) {
+	if (!command.canBeUsedInRaid && (await userInRaid(query, message.author.id) || isRaidGuild(message.guildID))) {
 		await reply(message, {
 			content: '❌ That command cannot be used while you are in an active raid! You need to extract to finish the raid (dying also works).'
 		})

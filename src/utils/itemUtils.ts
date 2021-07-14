@@ -7,7 +7,7 @@ import { baseBackpackLimit } from '../config'
  * @param itemRows Rows of items, can be rows of ground items, stash items, or backpack items
  * @returns The itemRows along with the item data
  */
-export function getItems (itemRows: ItemRow[]): { items: { row: ItemRow, item: Item }[], slotsUsed: number } {
+export function getItems<T extends ItemRow>(itemRows: T[]): { items: { row: T, item: Item }[], slotsUsed: number } {
 	const inventory = []
 	let slotsUsed = 0
 
@@ -24,6 +24,19 @@ export function getItems (itemRows: ItemRow[]): { items: { row: ItemRow, item: I
 		items: inventory,
 		slotsUsed
 	}
+}
+
+/**
+ * Get the string form of an item
+ * @param item Item to display as string
+ * @param itemRow The row of the item
+ */
+export function getItemDisplay (item: Item, itemRow?: ItemRow): string {
+	if (itemRow) {
+		return `${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`${itemRow.durability ? `, **${itemRow.durability}** uses left` : ''})`
+	}
+
+	return `${item.icon}\`${item.name}\``
 }
 
 /**
@@ -61,6 +74,18 @@ export function getEquips (backpackRows: BackpackItemRow[]): {
 		armor,
 		weapon
 	}
+}
+
+/**
+ * @param backpackRows The users backpack inventory
+ * @param slotsNeeded How many slots are needed
+ * @returns Whether or not the backpack has room for the slots
+ */
+export function backpackHasSpace (backpackRows: BackpackItemRow[], slotsNeeded: number): boolean {
+	const userBackpackData = getItems(backpackRows)
+	const equips = getEquips(backpackRows)
+
+	return userBackpackData.slotsUsed + slotsNeeded <= getBackpackLimit(equips.backpack?.item)
 }
 
 export function getBackpackLimit (backpack?: Backpack): number {

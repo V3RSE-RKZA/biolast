@@ -1,4 +1,4 @@
-import { Query, ItemRow, BackpackItemRow } from '../../types/mysql'
+import { Query, ItemRow, BackpackItemRow, GroundItemRow } from '../../types/mysql'
 import { OkPacket } from 'mysql'
 
 /**
@@ -27,8 +27,8 @@ export async function getUserStash (query: Query, userID: string, forUpdate = fa
  * @param forUpdate Whether this is used in an SQL transaction
  * @returns Items dropped on ground in channel
  */
-export async function getGroundItems (query: Query, channelID: string, forUpdate = false): Promise<ItemRow[]> {
-	return query(`SELECT items.id, items.item, items.durability FROM ground_items INNER JOIN items ON items.id = ground_items.itemId WHERE channelId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [channelID])
+export async function getGroundItems (query: Query, channelID: string, forUpdate = false): Promise<GroundItemRow[]> {
+	return query(`SELECT items.id, items.item, items.durability, ground_items.createdAt FROM ground_items INNER JOIN items ON items.id = ground_items.itemId WHERE channelId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [channelID])
 }
 
 /**
@@ -93,8 +93,8 @@ export async function removeItemFromStash (query: Query, itemID: number): Promis
  * @param userID ID of channel to drop item in
  * @param itemID ID of the item, you can get the id by using the insertId from createItem()
  */
-export async function dropItemToGround (query: Query, channeLID: string, itemID: number): Promise<void> {
-	await query('INSERT INTO ground_items (itemId, channelId) VALUES (?, ?)', [itemID, channeLID])
+export async function dropItemToGround (query: Query, channelID: string, itemID: number): Promise<void> {
+	await query('INSERT INTO ground_items (itemId, channelId) VALUES (?, ?)', [itemID, channelID])
 }
 
 /**

@@ -18,6 +18,13 @@ interface BaseCommand {
 	guildModsOnly: boolean
 
 	/**
+	 * The cooldown for this command in seconds. THIS DOES NOT PROVIDE FUNCTIONALITY, IT IS ONLY FOR DISPLAY IN THE HELP COMMAND
+	 *
+	 * Most commands will be 2 seconds which is just the default spam cooldown
+	 */
+	cooldown: number
+
+	/**
 	 * Whether or not this command can be used while the user is in an active raid
 	 */
 	canBeUsedInRaid: boolean

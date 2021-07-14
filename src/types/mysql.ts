@@ -38,3 +38,7 @@ export interface ItemRow {
 export interface BackpackItemRow extends ItemRow {
 	equipped: 0 | 1
 }
+
+export interface GroundItemRow extends ItemRow {
+	createdAt: Date
+}

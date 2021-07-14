@@ -9,9 +9,10 @@ export const command: Command = {
 	name: 'daily',
 	aliases: [],
 	examples: [],
-	description: 'Use this to claim free coins every day.',
+	description: 'Use this to claim free rubles every day.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis'],
+	cooldown: 2,
 	worksInDMs: false,
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: false,
@@ -39,7 +40,7 @@ export const command: Command = {
 		await transaction.commit()
 
 		await reply(message, {
-			content: `***${formatNumber(coinsEarned)}** rubles have been added to your pocket.*\n\nYou now have **${formatNumber(userData.money + coinsEarned)} rubles**.`
+			content: `***${formatNumber(coinsEarned)}** rubles have been added to your stash.*\n\nYour stash now has **${formatNumber(userData.money + coinsEarned)}** rubles.`
 		})
 	}
 }

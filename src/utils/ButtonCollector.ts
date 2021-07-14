@@ -1,9 +1,10 @@
 import { EventEmitter } from 'events'
 import { Message } from 'eris'
-import { ComponentContext, ComponentButton, ComponentType, ButtonStyle } from 'slash-create'
+import { ComponentContext, ComponentButton, ComponentType } from 'slash-create'
 import App from '../app'
 import Embed from '../structures/Embed'
 import { ComponentChannel } from '../types/Messages'
+import { CLOSE_BUTTON, NEXT_BUTTON, PREVIOUS_BUTTON } from './constants'
 
 interface Collector {
 	messageID: string
@@ -112,7 +113,7 @@ class ButtonCollector {
 	 * @param embeds Array of embeds that will be turned into pages
 	 * @param time How long the button collector lasts in milliseconds
 	 */
-	async paginate (message: Message, embeds: Embed[], time = 60000): Promise<void> {
+	async paginateEmbeds (message: Message, embeds: Embed[], time = 60000): Promise<void> {
 		if (embeds.length === 1) {
 			await message.channel.createMessage(embeds[0])
 			return
@@ -122,35 +123,14 @@ class ButtonCollector {
 
 		embeds[0].setFooter(`Page 1/${embeds.length}`)
 
-		const previousButton = (disabled: boolean): ComponentButton => ({
-			type: ComponentType.BUTTON,
-			label: 'Previous Page',
-			custom_id: 'previous',
-			style: ButtonStyle.SECONDARY,
-			disabled
-		})
-		const nextButton = (disabled: boolean): ComponentButton => ({
-			type: ComponentType.BUTTON,
-			label: 'Next Page',
-			custom_id: 'next',
-			style: ButtonStyle.SECONDARY,
-			disabled
-		})
-		const closeButton: ComponentButton = {
-			type: ComponentType.BUTTON,
-			label: 'Close',
-			custom_id: 'closed',
-			style: ButtonStyle.DESTRUCTIVE
-		}
-
 		const botMessage = await (message.channel as ComponentChannel).createMessage({
 			embed: embeds[0].embed,
 			components: [{
 				type: ComponentType.ACTION_ROW,
 				components: [
-					previousButton(true),
-					nextButton(false),
-					closeButton
+					PREVIOUS_BUTTON(true),
+					NEXT_BUTTON(false),
+					CLOSE_BUTTON
 				]
 			}]
 		})
@@ -165,7 +145,7 @@ class ButtonCollector {
 					page--
 					embeds[page].setFooter(`Page ${page + 1}/${embeds.length}`)
 
-					components.push(previousButton(page === 0), nextButton(false), closeButton)
+					components.push(PREVIOUS_BUTTON(page === 0), NEXT_BUTTON(false), CLOSE_BUTTON)
 
 					await ctx.editParent({
 						embeds: [embeds[page].embed],
@@ -179,7 +159,7 @@ class ButtonCollector {
 					page++
 					embeds[page].setFooter(`Page ${page + 1}/${embeds.length}`)
 
-					components.push(previousButton(false), nextButton(page === (embeds.length - 1)), closeButton)
+					components.push(PREVIOUS_BUTTON(false), NEXT_BUTTON(page === (embeds.length - 1)), CLOSE_BUTTON)
 
 					await ctx.editParent({
 						embeds: [embeds[page].embed],
@@ -207,6 +187,86 @@ class ButtonCollector {
 
 				botMessage.edit({
 					embed: embeds[page].embed,
+					components: []
+				})
+			}
+		})
+	}
+
+	/**
+	 * Used to create a paginated button message based on an array of strings
+	 * @param message Message to respond to
+	 * @param content Array of string content that will be turned into pages
+	 * @param time How long the button collector lasts in milliseconds
+	 */
+	async paginateContent (message: Message, content: string[], time = 60000): Promise<void> {
+		if (content.length === 1) {
+			await message.channel.createMessage(content[0])
+			return
+		}
+
+		let page = 0
+
+		const botMessage = await (message.channel as ComponentChannel).createMessage({
+			content: content[0],
+			components: [{
+				type: ComponentType.ACTION_ROW,
+				components: [
+					PREVIOUS_BUTTON(true),
+					NEXT_BUTTON(false),
+					CLOSE_BUTTON
+				]
+			}]
+		})
+
+		const { collector, stopCollector } = this.createCollector(botMessage.id, ctx => ctx.user.id === message.author.id, time)
+
+		collector.on('collect', async ctx => {
+			try {
+				const components: ComponentButton[] = []
+
+				if (ctx.customID === 'previous' && page !== 0) {
+					page--
+
+					components.push(PREVIOUS_BUTTON(page === 0), NEXT_BUTTON(false), CLOSE_BUTTON)
+
+					await ctx.editParent({
+						content: content[page],
+						components: [{
+							type: ComponentType.ACTION_ROW,
+							components
+						}]
+					})
+				}
+				else if (ctx.customID === 'next' && page !== (content.length - 1)) {
+					page++
+
+					components.push(PREVIOUS_BUTTON(false), NEXT_BUTTON(page === (content.length - 1)), CLOSE_BUTTON)
+
+					await ctx.editParent({
+						content: content[page],
+						components: [{
+							type: ComponentType.ACTION_ROW,
+							components
+						}]
+					})
+				}
+				else if (ctx.customID === 'closed') {
+					await ctx.acknowledge()
+
+					stopCollector()
+					await botMessage.delete()
+				}
+			}
+			catch (err) {
+				// continue
+			}
+		})
+
+		collector.on('end', msg => {
+			if (msg === 'time') {
+				botMessage.edit({
+					content: content[page],
 					components: []
 				})
 			}

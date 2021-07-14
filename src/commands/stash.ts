@@ -7,7 +7,7 @@ import { ItemRow, UserRow } from '../types/mysql'
 import Embed from '../structures/Embed'
 import { Member } from 'eris'
 import { addItemToBackpack, addItemToStash, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromStash } from '../utils/db/items'
-import { getItems } from '../utils/itemUtils'
+import { getItemDisplay, getItems } from '../utils/itemUtils'
 import formatNumber from '../utils/formatNumber'
 
 const ITEMS_PER_PAGE = 10
@@ -20,6 +20,7 @@ export const command: Command = {
 		'You can put items from your backpack into your stash using `stash put <item id>` or take items from your stash and put them into your backpack with `stash take <item id>`.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
+	cooldown: 2,
 	worksInDMs: false,
 	canBeUsedInRaid: false,
 	onlyWorksInRaidGuild: false,
@@ -56,7 +57,7 @@ export const command: Command = {
 			await transaction.commit()
 
 			await reply(message, {
-				content: `Successfully moved ${itemToDeposit.item.icon}\`${itemToDeposit.item.name}\` (ID: \`${itemToDeposit.row.id}\`) from your backpack to your stash.`
+				content: `Successfully moved ${getItemDisplay(itemToDeposit.item, itemToDeposit.row)} from your backpack to your stash.`
 			})
 			return
 		}
@@ -89,7 +90,7 @@ export const command: Command = {
 			await transaction.commit()
 
 			await reply(message, {
-				content: `Successfully moved ${itemToWithdraw.item.icon}\`${itemToWithdraw.item.name}\` (ID: \`${itemToWithdraw.row.id}\`) from your stash to your backpack.`
+				content: `Successfully moved ${getItemDisplay(itemToWithdraw.item, itemToWithdraw.row)} from your stash to your backpack.`
 			})
 			return
 		}
@@ -118,7 +119,7 @@ export const command: Command = {
 				})
 			}
 			else {
-				await app.btnCollector.paginate(message, pages)
+				await app.btnCollector.paginateEmbeds(message, pages)
 			}
 			return
 		}
@@ -133,7 +134,7 @@ export const command: Command = {
 			})
 		}
 		else {
-			await app.btnCollector.paginate(message, pages)
+			await app.btnCollector.paginateEmbeds(message, pages)
 		}
 	}
 }
@@ -153,7 +154,7 @@ function generatePages (member: Member, rows: ItemRow[], userData: UserRow, pref
 			.setDescription(`__**Stash Info**__\n**Rubles**: ${formatNumber(userData.money)}\n` +
 				`**Number of Items**: ${itemData.items.length}\n\n` +
 				`__**Items in Stash**__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})\n` +
-				`${filteredItems.map(itm => `${itm.item.icon}\`${itm.item.name}\` (ID: \`${itm.row.id}\`${itm.row.durability ? `, **${itm.row.durability}** uses left` : ''})`).join('\n') || `No items found. Move items from your backpack to your stash with \`${prefix}stash put <item id>\`.`}`)
+				`${filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your backpack to your stash with \`${prefix}stash put <item id>\`.`}`)
 
 		pages.push(embed)
 	}

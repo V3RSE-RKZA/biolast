@@ -1,4 +1,4 @@
-interface Location {
+export interface Location {
 	display: string
 
 	/**
@@ -9,7 +9,7 @@ interface Location {
 	channels: RaidChannel[]
 }
 
-interface RaidChannel {
+export interface RaidChannel {
 	name: string
 	display: string
 	scavange: {
@@ -35,9 +35,14 @@ interface RaidChannel {
 		rarest?: string[]
 
 		/**
-		 * How many time to get a random item name.
+		 * How many times to roll a random item name
 		 */
 		rolls: number
+
+		/**
+		 * How often this channel can be scavenged in seconds
+		 */
+		cooldown: number
 	}
 }
 
@@ -52,7 +57,8 @@ export const customs: Location = {
 				common: ['ak47'],
 				uncommon: ['ak47'],
 				rare: ['ak47'],
-				rolls: 1
+				rolls: 1,
+				cooldown: 5 * 60
 			}
 		}
 	]

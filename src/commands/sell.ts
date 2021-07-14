@@ -3,7 +3,7 @@ import { reply } from '../utils/messageUtils'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getNumber } from '../utils/argParsers'
 import { getUserStash, removeItemFromStash, deleteItem } from '../utils/db/items'
-import { getItems } from '../utils/itemUtils'
+import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { addMoney, getUserRow } from '../utils/db/players'
 import formatNumber from '../utils/formatNumber'
 import { CONFIRM_BUTTONS } from '../utils/constants'
@@ -15,6 +15,7 @@ export const command: Command = {
 	description: 'Sell an item from your stash for rubles.',
 	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis'],
+	cooldown: 2,
 	worksInDMs: false,
 	canBeUsedInRaid: false,
 	onlyWorksInRaidGuild: false,
@@ -41,13 +42,13 @@ export const command: Command = {
 		}
 		else if (!itemToSell.item.sellPrice) {
 			await reply(message, {
-				content: `❌ ${itemToSell.item.icon}\`${itemToSell.item.sellPrice}\` cannot be sold.`
+				content: `❌ ${getItemDisplay(itemToSell.item)} cannot be sold.`
 			})
 			return
 		}
 
 		const botMessage = await reply(message, {
-			content: `Sell ${itemToSell.item.icon}\`${itemToSell.item.name}\` (ID: \`${itemToSell.row.id}\`) for **${formatNumber(itemToSell.item.sellPrice)}**?`,
+			content: `Sell ${getItemDisplay(itemToSell.item, itemToSell.row)} for **${formatNumber(itemToSell.item.sellPrice)}**?`,
 			components: CONFIRM_BUTTONS
 		})
 
@@ -78,7 +79,7 @@ export const command: Command = {
 				await transaction.commit()
 
 				await confirmed.editParent({
-					content: `Sold ${itemToSell.item.icon}\`${itemToSell.item.name}\` (ID: \`${itemToSell.row.id}\`) for **${formatNumber(itemToSell.item.sellPrice)}**.\n\n` +
+					content: `Sold ${getItemDisplay(itemToSell.item, itemToSell.row)} for **${formatNumber(itemToSell.item.sellPrice)}**.\n\n` +
 						`You now have **${formatNumber(userDataV.money + itemToSell.item.sellPrice)}** rubles.`,
 					components: []
 				})

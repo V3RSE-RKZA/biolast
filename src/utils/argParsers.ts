@@ -101,7 +101,7 @@ export function getEmoji (guild: Guild, arg?: string): string | undefined {
  * @param arg Arg to check number for
  * @returns A parsed number
  */
-export function getNumber (arg: string): number | undefined {
+export function getNumber (arg?: string): number | undefined {
 	if (arg) {
 		arg = arg.replace(/,/g, '')
 
@@ -133,7 +133,7 @@ export function getNumber (arg: string): number | undefined {
  * @param arg Arg to check float for
  * @returns A parsed float
  */
-export function getFloat (arg: string): number | undefined {
+export function getFloat (arg?: string): number | undefined {
 	if (arg) {
 		arg = arg.replace(/,/g, '')
 

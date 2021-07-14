@@ -4,6 +4,7 @@ import { getItem } from '../utils/argParsers'
 import Embed from '../structures/Embed'
 import formatNumber from '../utils/formatNumber'
 import { items } from '../resources/items'
+import { getItemDisplay } from '../utils/itemUtils'
 
 export const command: Command = {
 	name: 'item',
@@ -12,6 +13,7 @@ export const command: Command = {
 	description: 'View information about an item.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
+	cooldown: 2,
 	worksInDMs: true,
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: false,
@@ -33,7 +35,7 @@ export const command: Command = {
 		}
 
 		const itemEmbed = new Embed()
-			.setDescription(`${item.icon}\`${item.name}\``)
+			.setDescription(getItemDisplay(item))
 			.addField('Item Type', item.type)
 
 		if (item.description) {
@@ -59,7 +61,7 @@ export const command: Command = {
 
 			itemEmbed.addField('Damage', item.damage.toString(), true)
 			itemEmbed.addField('Penetrates Armor Level', item.penetratesLevel.toString(), true)
-			itemEmbed.addField('Ammo For', weapons.map(itm => `${itm.icon}\`${itm.name}\``).join('\n'), true)
+			itemEmbed.addField('Ammo For', weapons.map(itm => getItemDisplay(itm)).join('\n'), true)
 		}
 
 		if (item.type === 'Weapon' && item.subtype === 'Melee') {
@@ -73,7 +75,7 @@ export const command: Command = {
 
 			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 			itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
-			itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${itm.icon}\`${itm.name}\``).join('\n'), true)
+			itemEmbed.addField('Compatible Ammo', ammunition.map(itm => getItemDisplay(itm)).join('\n'), true)
 		}
 
 		if (item.type === 'Armor') {

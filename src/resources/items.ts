@@ -6,6 +6,7 @@ interface BaseItem {
 	description?: string
 	sellPrice?: number
 	buyPrice?: number
+	durability?: number
 	slotsUsed: number
 }
 
