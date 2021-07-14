@@ -13,6 +13,7 @@ export const command: Command = {
 	aliases: [],
 	examples: ['sell 12345'],
 	description: 'Sell an item from your stash for rubles.',
+	shortDescription: 'Sell an item from your stash for rubles.',
 	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis'],
 	cooldown: 2,

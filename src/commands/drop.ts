@@ -10,6 +10,7 @@ export const command: Command = {
 	aliases: [],
 	examples: ['drop 12345'],
 	description: 'Drop an item from your backpack onto the ground. You can view what items are on the ground with the `ground` command.',
+	shortDescription: 'Drop an item from your backpack onto the ground.',
 	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis'],
 	cooldown: 2,

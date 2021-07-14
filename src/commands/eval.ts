@@ -8,6 +8,7 @@ export const command: Command = {
 	aliases: [],
 	examples: [],
 	description: 'Eval stuff.',
+	shortDescription: 'Eval stuff.',
 	category: 'admin',
 	permissions: ['sendMessages', 'embedLinks'],
 	cooldown: 2,

@@ -16,6 +16,7 @@ export const command: Command = {
 	aliases: ['inventory', 'inv', 'bp'],
 	examples: ['backpack @blobfysh'],
 	description: 'View the items in your backpack. Your backpack is different from your stash in that the items in your backpack are taken with you into raids.',
+	shortDescription: 'View the items in your backpack.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
 	cooldown: 2,

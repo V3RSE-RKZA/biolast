@@ -3,12 +3,14 @@ import { reply } from '../utils/messageUtils'
 import Embed from '../structures/Embed'
 import { adminUsers } from '../config'
 import { formatTime } from '../utils/db/cooldowns'
+import { isRaidGuild } from '../utils/raidUtils'
 
 export const command: Command = {
 	name: 'help',
 	aliases: [],
 	examples: ['help backpack'],
 	description: 'Shows all available commands.',
+	shortDescription: 'Shows all available commands.',
 	category: 'info',
 	permissions: ['sendMessages', 'embedLinks'],
 	cooldown: 2,
@@ -47,11 +49,12 @@ export const command: Command = {
 		}
 
 		const cmdEmbed = new Embed()
-			.setDescription(`Use \`${prefix}help <command>\` to see more about a specific command.`)
+			.setDescription(`Use \`${prefix}help <command>\` to see more about a specific command. You can also hover your mouse over the command for a short description.`)
 
-		const infoCommands = app.commands.filter(cmd => cmd.category === 'info').map(cmd => `\`${cmd.name}\``)
-		const itemCommands = app.commands.filter(cmd => cmd.category === 'items').map(cmd => `\`${cmd.name}\``)
-		const utilityCommands = app.commands.filter(cmd => cmd.category === 'utility').map(cmd => `\`${cmd.name}\``)
+		const isRaid = isRaidGuild(message.guildID)
+		const infoCommands = app.commands.filter(cmd => cmd.category === 'info').map(cmd => formatCommand(cmd, isRaid))
+		const itemCommands = app.commands.filter(cmd => cmd.category === 'items').map(cmd => formatCommand(cmd, isRaid))
+		const utilityCommands = app.commands.filter(cmd => cmd.category === 'utility').map(cmd => formatCommand(cmd, isRaid))
 
 		cmdEmbed.addField('📋 Information', infoCommands.join(', '))
 		cmdEmbed.addField('⚔️ Item Usage', itemCommands.join(', '))
@@ -61,4 +64,12 @@ export const command: Command = {
 			embed: cmdEmbed.embed
 		})
 	}
+}
+
+function formatCommand (cmd: Command, raidGuild: boolean): string {
+	if (raidGuild) {
+		return cmd.onlyWorksInRaidGuild || cmd.canBeUsedInRaid ? `[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')` : `~~[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')~~`
+	}
+
+	return !cmd.onlyWorksInRaidGuild ? `[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')` : `~~[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')~~`
 }

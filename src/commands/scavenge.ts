@@ -11,6 +11,7 @@ export const command: Command = {
 	aliases: ['loot'],
 	examples: [],
 	description: 'Use this command in a channel to search for loot.',
+	shortDescription: 'Use this command in a channel to search for loot.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis'],
 	cooldown: 60,

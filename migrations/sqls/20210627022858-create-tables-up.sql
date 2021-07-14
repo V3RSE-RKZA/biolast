@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS backpack_items (
 	equipped BOOLEAN NOT NULL DEFAULT 0,
 	KEY (userId),
 	PRIMARY KEY (itemId),
-	FOREIGN KEY (itemId) REFERENCES items (id)
+	FOREIGN KEY (itemId) REFERENCES items (id) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS stash_items (
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS stash_items (
 	userId VARCHAR(255) NOT NULL,
 	KEY (userId),
 	PRIMARY KEY (itemId),
-	FOREIGN KEY (itemId) REFERENCES items (id)
+	FOREIGN KEY (itemId) REFERENCES items (id) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS ground_items (
@@ -47,12 +47,13 @@ CREATE TABLE IF NOT EXISTS ground_items (
 	createdAt DATETIME NOT NULL DEFAULT NOW(),
 	KEY (channelId),
 	PRIMARY KEY (itemId),
-	FOREIGN KEY (itemId) REFERENCES items (id)
+	FOREIGN KEY (itemId) REFERENCES items (id) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS active_raids (
 	userId VARCHAR(255) NOT NULL,
 	guildId VARCHAR(255) NOT NULL,
+	invite VARCHAR(255) NOT NULL,
 	length INT NOT NULL,
 	startedAt DATETIME NOT NULL DEFAULT NOW(),
 	PRIMARY KEY (userId),

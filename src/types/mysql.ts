@@ -27,6 +27,7 @@ export interface ActiveRaid {
 	guildId: string
 	startedAt: Date
 	length: number
+	invite: string
 }
 
 export interface ItemRow {

@@ -4,9 +4,13 @@ import { Command } from './types/Commands'
 import MessageCollector from './utils/MessageCollector'
 import ButtonCollector from './utils/ButtonCollector'
 import CronJobs from './utils/CronJobs'
+import { getAllRaids, getUsersRaid, removeUserFromRaid } from './utils/db/raids'
 import { clientId, botToken, prefix } from './config'
 import fs from 'fs'
 import path from 'path'
+import { beginTransaction, query } from './utils/db/mysql'
+import { getUserBackpack } from './utils/db/items'
+import { formatTime } from './utils/db/cooldowns'
 
 class App {
 	bot: Eris.Client
@@ -15,6 +19,11 @@ class App {
 	btnCollector: ButtonCollector
 	msgCollector: MessageCollector
 	cronJobs: CronJobs
+	activeRaids: {
+		userID: string
+		timeout: NodeJS.Timeout
+	}[]
+	acceptingCommands: boolean
 
 	constructor(token: string, options: Eris.ClientOptions) {
 		this.bot = new Eris.Client(token, options)
@@ -26,6 +35,8 @@ class App {
 		this.btnCollector = new ButtonCollector(this)
 		this.msgCollector = new MessageCollector(this)
 		this.cronJobs = new CronJobs(this)
+		this.activeRaids = []
+		this.acceptingCommands = false
 	}
 
 	async launch(): Promise<void> {
@@ -145,6 +156,53 @@ class App {
 		}
 		catch (err) {
 			console.error(err)
+		}
+	}
+
+	async loadRaidTimers (): Promise<void> {
+		const activeRaids = await getAllRaids(query)
+
+		for (const row of activeRaids) {
+			const guild = this.bot.guilds.get(row.guildId)
+
+			if (guild) {
+				const timeLeft = (row.length * 1000) - (Date.now() - row.startedAt.getTime())
+				if (timeLeft <= 0) {
+					// raid ended while the bot was offline, dont remove items from users backpack since bot was offline
+					await removeUserFromRaid(query, row.userId)
+
+					try {
+						await guild.kickMember(row.userId, 'Raid expired while bot was offline')
+					}
+					catch (err) {
+						// user not in raid server
+					}
+				}
+				else {
+					console.log(`Starting raid timer for ${row.userId} which will expire in ${formatTime(timeLeft)}`)
+
+					this.activeRaids.push({
+						userID: row.userId,
+						timeout: setTimeout(async () => {
+							try {
+								const transaction = await beginTransaction()
+								await getUsersRaid(transaction.query, row.userId, true)
+								await getUserBackpack(transaction.query, row.userId, true)
+								await removeUserFromRaid(transaction.query, row.userId)
+
+								// remove items from backpack since user didn't extract
+								await transaction.query('DELETE items FROM items INNER JOIN backpack_items ON items.id = backpack_items.itemId WHERE userId = ?', [row.userId])
+								await transaction.commit()
+
+								await guild.kickMember(row.userId, 'Raid time ran out')
+							}
+							catch (err) {
+								// unable to kick user?
+							}
+						}, timeLeft)
+					})
+				}
+			}
 		}
 	}
 }

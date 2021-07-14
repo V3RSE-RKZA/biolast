@@ -11,6 +11,7 @@ export const command: Command = {
 	aliases: ['info'],
 	examples: ['item ai-2'],
 	description: 'View information about an item.',
+	shortDescription: 'View information about an item.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
 	cooldown: 2,

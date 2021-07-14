@@ -10,6 +10,7 @@ export const command: Command = {
 	aliases: ['pickup'],
 	examples: ['grab 12345'],
 	description: 'Grabs an item from the ground and puts it in your backpack. You can view what items are on the ground with the `ground` command.',
+	shortDescription: 'Grabs an item from the ground and puts it in your backpack.',
 	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis'],
 	cooldown: 2,

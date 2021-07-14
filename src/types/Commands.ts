@@ -15,6 +15,7 @@ interface BaseCommand {
 	aliases: string[]
 	examples: string[]
 	description: string
+	shortDescription: string
 	guildModsOnly: boolean
 
 	/**

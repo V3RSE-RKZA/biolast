@@ -11,11 +11,11 @@ import { reply } from '../utils/messageUtils'
 const spamCooldown = new Set()
 
 export async function run(this: App, message: Message): Promise<void> {
-	if (message.author.bot) {
+	if (message.author.bot || !this.acceptingCommands) {
 		return
 	}
 
-	if (!message.content.toLowerCase().startsWith(prefix)) {
+	else if (!message.content.toLowerCase().startsWith(prefix)) {
 		return
 	}
 

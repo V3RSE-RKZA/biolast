@@ -13,6 +13,7 @@ export const command: Command = {
 	aliases: [],
 	examples: [],
 	description: 'View the items on the ground in a channel. You can drop items on the ground with the `drop` command or pick up items from the ground using the `grab` command. Items on the ground expire after **20 - 25 minutes**.',
+	shortDescription: 'View the items on the ground in a channel.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis'],
 	cooldown: 2,
@@ -29,7 +30,7 @@ export const command: Command = {
 				content: `There are no items on the ground in this channel. You can drop an item from your backpack onto the ground with \`${prefix}drop <item id>\`.`
 			})
 		}
-		if (pages.length === 1) {
+		else if (pages.length === 1) {
 			await reply(message, {
 				content: pages[0]
 			})

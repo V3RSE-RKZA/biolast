@@ -111,18 +111,5 @@ export async function createItem (query: Query, name: string, durability?: numbe
 }
 
 export async function deleteItem (query: Query, itemID: number): Promise<void> {
-	try {
-		await query('DELETE FROM items WHERE id = ?', [itemID])
-	}
-	catch (err) {
-		// foreign key constraint failure?? idk why this would happen
-		console.error(`FOREIGN KEY CONSTRAINT FAILED WHEN TRYING TO DELETE ITEM ID: ${itemID}`)
-
-		// remove possible constraints then try deleting again
-		await query('DELETE FROM ground_items WHERE itemId = ?', [itemID])
-		await query('DELETE FROM stash_items WHERE itemId = ?', [itemID])
-		await query('DELETE FROM backpack_items WHERE itemId = ?', [itemID])
-
-		await query('DELETE FROM items WHERE id = ?', [itemID])
-	}
+	await query('DELETE FROM items WHERE id = ?', [itemID])
 }

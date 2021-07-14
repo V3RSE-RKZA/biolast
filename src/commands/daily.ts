@@ -10,6 +10,7 @@ export const command: Command = {
 	aliases: [],
 	examples: [],
 	description: 'Use this to claim free rubles every day.',
+	shortDescription: 'Use this to claim free rubles every day.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis'],
 	cooldown: 2,
@@ -29,7 +30,6 @@ export const command: Command = {
 			await reply(message, {
 				content: `❌ You need to wait **${dailyCD}** before claiming your daily again.`
 			})
-
 			return
 		}
 

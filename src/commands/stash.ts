@@ -18,6 +18,7 @@ export const command: Command = {
 	examples: ['stash @blobfysh', 'stash put 12345', 'stash take 12345'],
 	description: 'View the items in your stash. Your stash holds much more than your backpack but can only be altered when out of raid. ' +
 		'You can put items from your backpack into your stash using `stash put <item id>` or take items from your stash and put them into your backpack with `stash take <item id>`.',
+	shortDescription: 'View the items in your stash.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
 	cooldown: 2,

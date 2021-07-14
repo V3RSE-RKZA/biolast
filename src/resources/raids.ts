@@ -6,6 +6,8 @@ export interface Location {
 	 */
 	raidLength: number
 
+	playerLimit: number
+
 	channels: RaidChannel[]
 }
 
@@ -49,6 +51,7 @@ export interface RaidChannel {
 export const customs: Location = {
 	display: 'Customs',
 	raidLength: 20 * 60,
+	playerLimit: 20,
 	channels: [
 		{
 			name: 'red-building',
