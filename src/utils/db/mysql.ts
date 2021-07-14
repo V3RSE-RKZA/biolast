@@ -61,6 +61,8 @@ export function beginTransaction (): Promise<Transaction> {
 					})
 
 					const commit = () => new Promise<string>((resolveCommit, rejectCommit) => {
+						clearTimeout(rollbackTimeout)
+
 						connection.commit(err => {
 							if (err) {
 								// rollback
@@ -76,6 +78,14 @@ export function beginTransaction (): Promise<Transaction> {
 							}
 						})
 					})
+
+					// to prevent transaction from hanging
+					const rollbackTimeout = setTimeout(() => {
+						console.log('TRANSACTION TIMED OUT, ROLLING BACK')
+						connection.rollback(() => {
+							connection.release()
+						})
+					}, 5000)
 
 					resolve({ query: transactionQuery, commit })
 				}

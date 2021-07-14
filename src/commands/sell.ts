@@ -25,7 +25,7 @@ export const command: Command = {
 
 		if (!itemID) {
 			await reply(message, {
-				content: `❌ You need to provide the ID of the item you want to equip. You can find the IDs of items in your \`${prefix}backpack\`.`
+				content: `❌ You need to provide the ID of the item you want to sell. You can find the IDs of items in your \`${prefix}stash\`.`
 			})
 			return
 		}
