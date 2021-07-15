@@ -7,7 +7,7 @@ import { ItemRow, UserRow } from '../types/mysql'
 import Embed from '../structures/Embed'
 import { Member } from 'eris'
 import { addItemToBackpack, addItemToStash, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromStash } from '../utils/db/items'
-import { getItemDisplay, getItems } from '../utils/itemUtils'
+import { getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
 import formatNumber from '../utils/formatNumber'
 
 const ITEMS_PER_PAGE = 10
@@ -142,13 +142,14 @@ export const command: Command = {
 
 function generatePages (member: Member, rows: ItemRow[], userData: UserRow, prefix: string): Embed[] {
 	const itemData = getItems(rows)
+	const sortedItems = sortItemsByName(itemData.items, true)
 	const pages = []
 	const maxPage = Math.ceil(itemData.items.length / ITEMS_PER_PAGE) || 1
 
 	for (let i = 1; i < maxPage + 1; i++) {
 		const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
 		const indexLast = ITEMS_PER_PAGE * i
-		const filteredItems = itemData.items.slice(indexFirst, indexLast)
+		const filteredItems = sortedItems.slice(indexFirst, indexLast)
 
 		const embed = new Embed()
 			.setAuthor(`${member.username}#${member.discriminator}'s Stash Inventory`, member.avatarURL)

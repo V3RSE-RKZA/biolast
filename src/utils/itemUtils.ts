@@ -121,7 +121,7 @@ export function sortAmmoByDamage (ammos: Ammunition[]): Ammunition[] {
 
 // why is it typed like this??? so I can sort an array of just items or an array of items + item rows
 /**
- * Sorts an array of items from highest durability to loweest, or by name if durability is the same
+ * Sorts an array of items from highest durability to lowest, or by name if durability is the same
  * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
  * @param containsRows Whether or not the function is sorting items with rows
  */
@@ -171,4 +171,19 @@ export function sortItemsByDurability(arr: (Item | ItemWithRow<ItemRow>)[], cont
 		// durability is same, item name is same
 		return 0
 	})
+}
+
+/**
+ * Sorts an array of items from by name their name a-z
+ * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
+ * @param containsRows Whether or not the function is sorting items with rows
+ */
+export function sortItemsByName(arr: Item[], containsRows?: false): Item[]
+export function sortItemsByName<T extends ItemRow>(arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
+export function sortItemsByName(arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
+	if (containsRows) {
+		return (arr as ItemWithRow<ItemRow>[]).sort((a, b) => a.item.name.localeCompare(b.item.name))
+	}
+
+	return (arr as Item[]).sort((a, b) => a.name.localeCompare(b.name))
 }
