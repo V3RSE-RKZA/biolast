@@ -12,7 +12,7 @@ export const command: Command = {
 	shortDescription: 'Shows how much time you have to extract when in a raid.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis'],
-	cooldown: 60,
+	cooldown: 2,
 	worksInDMs: false,
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: true,

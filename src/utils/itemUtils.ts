@@ -2,12 +2,14 @@ import { ItemRow, BackpackItemRow } from '../types/mysql'
 import { Item, items, Backpack, Helmet, Armor, Weapon, Ammunition } from '../resources/items'
 import { baseBackpackLimit } from '../config'
 
+type ItemWithRow<T extends ItemRow> = { item: Item, row: T }
+
 /**
  * Returns the amount of slots the items are taking up and the item data given rows of items
  * @param itemRows Rows of items, can be rows of ground items, stash items, or backpack items
  * @returns The itemRows along with the item data
  */
-export function getItems<T extends ItemRow>(itemRows: T[]): { items: { row: T, item: Item }[], slotsUsed: number } {
+export function getItems<T extends ItemRow>(itemRows: T[]): { items: ItemWithRow<T>[], slotsUsed: number } {
 	const inventory = []
 	let slotsUsed = 0
 
@@ -115,4 +117,58 @@ export function getBackpackLimit (backpack?: Backpack): number {
  */
 export function sortAmmoByDamage (ammos: Ammunition[]): Ammunition[] {
 	return ammos.sort((a, b) => b.damage - a.damage)
+}
+
+// why is it typed like this??? so I can sort an array of just items or an array of items + item rows
+/**
+ * Sorts an array of items from highest durability to loweest, or by name if durability is the same
+ * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
+ * @param containsRows Whether or not the function is sorting items with rows
+ */
+export function sortItemsByDurability(arr: Item[], containsRows?: false): Item[]
+export function sortItemsByDurability<T extends ItemRow>(arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
+export function sortItemsByDurability(arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
+	if (containsRows) {
+		return (arr as ItemWithRow<ItemRow>[]).sort((a, b) => {
+			const aDurability = a.row.durability || 0
+			const bDurability = b.row.durability || 0
+
+			if (bDurability < aDurability) {
+				return -1
+			}
+			else if (bDurability > aDurability) {
+				return 1
+			}
+			else if (b.item.name > a.item.name) {
+				return -1
+			}
+			else if (b.item.name < a.item.name) {
+				return 1
+			}
+
+			// durability is same, item name is same
+			return 0
+		})
+	}
+
+	return (arr as Item[]).sort((a, b) => {
+		const aDurability = a.durability || 0
+		const bDurability = b.durability || 0
+
+		if (bDurability < aDurability) {
+			return -1
+		}
+		else if (bDurability > aDurability) {
+			return 1
+		}
+		else if (b.name > a.name) {
+			return -1
+		}
+		else if (b.name < a.name) {
+			return 1
+		}
+
+		// durability is same, item name is same
+		return 0
+	})
 }

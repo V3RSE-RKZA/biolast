@@ -3,7 +3,7 @@ import { reply } from '../utils/messageUtils'
 import { query } from '../utils/db/mysql'
 import { GroundItemRow } from '../types/mysql'
 import { getGroundItems } from '../utils/db/items'
-import { getItemDisplay, getItems } from '../utils/itemUtils'
+import { getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
 import { formatTime } from '../utils/db/cooldowns'
 
 const ITEMS_PER_PAGE = 10

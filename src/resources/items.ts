@@ -1,5 +1,5 @@
 interface BaseItem {
-	type: 'Weapon' | 'Helmet' | 'Armor' | 'Ammunition' | 'Medical' | 'Backpack'
+	type: 'Weapon' | 'Helmet' | 'Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key'
 	name: string
 	aliases: string[]
 	icon: string
@@ -127,7 +127,16 @@ export interface Backpack extends BaseItem {
 	slots: number
 }
 
-export type Item = Weapon | Helmet | Armor | Ammunition | Medical | Backpack
+export interface Key extends BaseItem {
+	type: 'Key'
+
+	/**
+	 * How many times this key can be used before it breaks
+	 */
+	durability: number
+}
+
+export type Item = Weapon | Helmet | Armor | Ammunition | Medical | Backpack | Key
 
 export const items: Item[] = [
 	{

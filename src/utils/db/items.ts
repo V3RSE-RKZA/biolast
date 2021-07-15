@@ -106,6 +106,10 @@ export async function removeItemFromGround (query: Query, itemID: number): Promi
 	await query('DELETE FROM ground_items WHERE itemId = ?', [itemID])
 }
 
+export async function lowerItemDurability (query: Query, itemID: number, amount = 1): Promise<void> {
+	await query('UPDATE items SET durability = durability - ? WHERE id = ?', [amount, itemID])
+}
+
 export async function createItem (query: Query, name: string, durability?: number): Promise<OkPacket> {
 	return query('INSERT INTO items (item, durability) VALUES (?, ?)', [name, durability])
 }

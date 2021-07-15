@@ -8,10 +8,13 @@ export interface Location {
 
 	playerLimit: number
 
-	channels: (RaidChannel | ExtractChannel)[]
+	channels: RaidChannel[]
 }
 
-export interface RaidChannel {
+export type RaidChannel = LootChannel | ExtractChannel
+
+export interface RaidChannelBase {
+	type: 'ExtractChannel' | 'LootChannel'
 	name: string
 	display: string
 	scavange: {
@@ -48,30 +51,22 @@ export interface RaidChannel {
 	}
 }
 
-export type ExtractChannel = TimedExtract | ItemExtract
+export interface LootChannel extends RaidChannelBase {
+	type: 'LootChannel'
+}
 
-export interface TimedExtract extends RaidChannel {
+export interface ExtractChannel extends RaidChannelBase {
+	type: 'ExtractChannel'
 	extract: {
-		type: 'Timed'
-
 		/**
 		 * How long in seconds it takes for user to extract
 		 */
 		time: number
-	}
-}
-
-export interface ItemExtract extends RaidChannel {
-	extract: {
-		/**
-		 * Item extracts require the user to give an item to extract, this will extract them instantly
-		 */
-		type: 'Item'
 
 		/**
-		 * The item user must give in order to extract here
+		 * The key user must have in order to extract here, extracting should remove 1 durability from the key
 		 */
-		item: string
+		requiresKey?: string
 	}
 }
 
@@ -81,10 +76,11 @@ export const customs: Location = {
 	playerLimit: 20,
 	channels: [
 		{
+			type: 'LootChannel',
 			name: 'red-building',
 			display: 'Red Building',
 			scavange: {
-				common: ['ak47'],
+				common: ['ak47', '7.62x51'],
 				uncommon: ['ak47'],
 				rare: ['ak47'],
 				rolls: 1,
@@ -92,10 +88,11 @@ export const customs: Location = {
 			}
 		},
 		{
+			type: 'LootChannel',
 			name: 'customs-office',
 			display: 'Customs Office',
 			scavange: {
-				common: ['ai-2_medkit'],
+				common: ['ai-2_medkit', '7.62x54r_lps'],
 				uncommon: ['ai-2_medkit'],
 				rare: ['ai-2_medkit'],
 				rolls: 1,
@@ -103,7 +100,8 @@ export const customs: Location = {
 			}
 		},
 		{
-			name: 'trailer-park-extract',
+			type: 'ExtractChannel',
+			name: 'trailer-park-exfil',
 			display: 'Trailer Park',
 			scavange: {
 				common: ['paca_armor'],
@@ -113,8 +111,8 @@ export const customs: Location = {
 				cooldown: 5 * 60
 			},
 			extract: {
-				type: 'Timed',
-				time: 30
+				time: 30,
+				requiresKey: 'paca_armor'
 			}
 		}
 	]
