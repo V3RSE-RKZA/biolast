@@ -48,6 +48,11 @@ export interface RaidChannelBase {
 		 * How often this channel can be scavenged in seconds
 		 */
 		cooldown: number
+
+		/**
+		 * Key/item user must have in order to scavenge this channel
+		 */
+		requiresKey?: string
 	}
 }
 
@@ -108,7 +113,8 @@ export const customs: Location = {
 				uncommon: ['paca_armor'],
 				rare: ['paca_armor'],
 				rolls: 1,
-				cooldown: 5 * 60
+				cooldown: 5 * 60,
+				requiresKey: 'paca_armor'
 			},
 			extract: {
 				time: 30,
