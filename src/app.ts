@@ -197,6 +197,7 @@ class App {
 								await guild.kickMember(row.userId, 'Raid time ran out')
 							}
 							catch (err) {
+								console.error(err)
 								// unable to kick user?
 							}
 						}, timeLeft)

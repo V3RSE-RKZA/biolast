@@ -8,7 +8,7 @@ export interface Location {
 
 	playerLimit: number
 
-	channels: RaidChannel[]
+	channels: (RaidChannel | ExtractChannel)[]
 }
 
 export interface RaidChannel {
@@ -48,6 +48,33 @@ export interface RaidChannel {
 	}
 }
 
+export type ExtractChannel = TimedExtract | ItemExtract
+
+export interface TimedExtract extends RaidChannel {
+	extract: {
+		type: 'Timed'
+
+		/**
+		 * How long in seconds it takes for user to extract
+		 */
+		time: number
+	}
+}
+
+export interface ItemExtract extends RaidChannel {
+	extract: {
+		/**
+		 * Item extracts require the user to give an item to extract, this will extract them instantly
+		 */
+		type: 'Item'
+
+		/**
+		 * The item user must give in order to extract here
+		 */
+		item: string
+	}
+}
+
 export const customs: Location = {
 	display: 'Customs',
 	raidLength: 20 * 60,
@@ -62,6 +89,32 @@ export const customs: Location = {
 				rare: ['ak47'],
 				rolls: 1,
 				cooldown: 5 * 60
+			}
+		},
+		{
+			name: 'customs-office',
+			display: 'Customs Office',
+			scavange: {
+				common: ['ai-2_medkit'],
+				uncommon: ['ai-2_medkit'],
+				rare: ['ai-2_medkit'],
+				rolls: 1,
+				cooldown: 5 * 60
+			}
+		},
+		{
+			name: 'trailer-park-extract',
+			display: 'Trailer Park',
+			scavange: {
+				common: ['paca_armor'],
+				uncommon: ['paca_armor'],
+				rare: ['paca_armor'],
+				rolls: 1,
+				cooldown: 5 * 60
+			},
+			extract: {
+				type: 'Timed',
+				time: 30
 			}
 		}
 	]

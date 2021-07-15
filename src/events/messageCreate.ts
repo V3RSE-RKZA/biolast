@@ -61,7 +61,7 @@ export async function run(this: App, message: Message): Promise<void> {
 
 		else if (command.onlyWorksInRaidGuild && !isRaidGuild(message.guildID)) {
 			await reply(message, {
-				content: '❌ That command can **ONLY** be used in a raid.'
+				content: '❌ That command can **ONLY** be used in a raid. Join a raid with the `raid` command.'
 			})
 			return
 		}
