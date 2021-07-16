@@ -45,6 +45,11 @@ export interface MeleeWeapon extends BaseItem {
 	subtype: 'Melee'
 
 	/**
+	 * How often can this weapon be used (cooldown in seconds)
+	 */
+	fireRate: number
+
+	/**
 	 * The amount of damage this melee weapon deals when used
 	 */
 	damage: number
@@ -99,9 +104,10 @@ export interface Ammunition extends BaseItem {
 	damage: number
 
 	/**
-	 * The armor level this ammo will penetrate and do full damage to (if the player is wearing higher level armor, the damage will be reduced)
+	 * The armor penetration this ammo has, can be a float between 0 - whatever. If this number is greater than the victims armor level, this ammo will deal full damage.
+	 * Otherwise, the damage of this bullet will be reduced based on the difference between this number and the victims armor level.
 	 */
-	penetratesLevel: ArmorLevel
+	penetration: number
 
 	/**
 	 * Names of the weapons this ammo works for
@@ -152,6 +158,19 @@ export const items: Item[] = [
 		accuracy: 80
 	},
 	{
+		type: 'Weapon',
+		subtype: 'Melee',
+		name: 'knife',
+		icon: '<:U_weapon:601366669272678411>',
+		aliases: [],
+		sellPrice: 2000,
+		durability: 3,
+		slotsUsed: 1,
+		fireRate: 10,
+		accuracy: 35,
+		damage: 30
+	},
+	{
 		type: 'Medical',
 		name: 'ai-2_medkit',
 		icon: '<:U_usable:601366669259964418>',
@@ -167,7 +186,7 @@ export const items: Item[] = [
 		aliases: ['paca'],
 		sellPrice: 2000,
 		durability: 3,
-		level: 2,
+		level: 4,
 		slotsUsed: 2
 	},
 	{
@@ -175,8 +194,8 @@ export const items: Item[] = [
 		name: '7.62x54r_lps',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['762x54', 'lps_gzh'],
-		damage: 60,
-		penetratesLevel: 4,
+		damage: 50,
+		penetration: 2.79,
 		ammoFor: ['ak47'],
 		sellPrice: 3000,
 		slotsUsed: 1
@@ -187,7 +206,7 @@ export const items: Item[] = [
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['762x51', '7.62'],
 		damage: 60,
-		penetratesLevel: 3,
+		penetration: 2,
 		ammoFor: ['ak47'],
 		sellPrice: 3000,
 		slotsUsed: 1

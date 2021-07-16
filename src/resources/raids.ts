@@ -114,7 +114,7 @@ export const customs: Location = {
 				rare: ['paca_armor'],
 				rolls: 1,
 				cooldown: 5 * 60,
-				requiresKey: 'paca_armor'
+				requiresKey: 'ak47'
 			},
 			extract: {
 				time: 30,

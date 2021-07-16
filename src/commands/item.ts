@@ -61,7 +61,7 @@ export const command: Command = {
 			const weapons = items.filter(itm => item.ammoFor.includes(itm.name))
 
 			itemEmbed.addField('Damage', item.damage.toString(), true)
-			itemEmbed.addField('Penetrates Armor Level', item.penetratesLevel.toString(), true)
+			itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
 			itemEmbed.addField('Ammo For', weapons.map(itm => getItemDisplay(itm)).join('\n'), true)
 		}
 
@@ -69,6 +69,7 @@ export const command: Command = {
 			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 			itemEmbed.addField('Attack Rate', '30 seconds', true)
 			itemEmbed.addField('Damage', item.damage.toString(), true)
+			itemEmbed.addField('Armor Penetration', '0.50', true)
 		}
 
 		if (item.type === 'Weapon' && item.subtype === 'Ranged') {

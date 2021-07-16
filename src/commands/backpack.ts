@@ -3,17 +3,18 @@ import { reply } from '../utils/messageUtils'
 import { getUserRow } from '../utils/db/players'
 import { query } from '../utils/db/mysql'
 import { getMember } from '../utils/argParsers'
-import { BackpackItemRow } from '../types/mysql'
+import { BackpackItemRow, UserRow } from '../types/mysql'
 import Embed from '../structures/Embed'
 import { Member } from 'eris'
 import { getUserBackpack } from '../utils/db/items'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
+import formatHealth from '../utils/formatHealth'
 
 const ITEMS_PER_PAGE = 10
 
 export const command: Command = {
 	name: 'backpack',
-	aliases: ['inventory', 'inv', 'bp'],
+	aliases: ['inventory', 'inv', 'bp', 'health', 'hp'],
 	examples: ['backpack @blobfysh'],
 	description: 'View the items in your backpack. Your backpack is different from your stash in that the items in your backpack are taken with you into raids.',
 	shortDescription: 'View the items in your backpack.',
@@ -44,7 +45,7 @@ export const command: Command = {
 			}
 
 			const userBackpack = await getUserBackpack(query, member.id)
-			const pages = generatePages(member, userBackpack, prefix)
+			const pages = generatePages(member, userBackpack, userData, prefix)
 
 			if (pages.length === 1) {
 				await reply(message, {
@@ -57,8 +58,9 @@ export const command: Command = {
 			return
 		}
 
+		const userData = (await getUserRow(query, message.author.id))!
 		const userBackpack = await getUserBackpack(query, message.author.id)
-		const pages = generatePages(message.member, userBackpack, prefix)
+		const pages = generatePages(message.member, userBackpack, userData, prefix)
 
 		if (pages.length === 1) {
 			await reply(message, {
@@ -71,7 +73,7 @@ export const command: Command = {
 	}
 }
 
-function generatePages (member: Member, rows: BackpackItemRow[], prefix: string): Embed[] {
+function generatePages (member: Member, rows: BackpackItemRow[], userData: UserRow, prefix: string): Embed[] {
 	const itemData = getItems(rows)
 	const sortedItems = sortItemsByName(itemData.items, true)
 	const equips = getEquips(rows)
@@ -85,10 +87,12 @@ function generatePages (member: Member, rows: BackpackItemRow[], prefix: string)
 
 		const embed = new Embed()
 			.setAuthor(`${member.username}#${member.discriminator}'s Backpack Inventory`, member.avatarURL)
-			.setDescription(`__**Equips**__\n**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row) : `None, equip one with \`${prefix}equip <item id>\``}\n` +
-				`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row) : `None, equip one with \`${prefix}equip <item id>\``}\n` +
-				`**Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row) : `None, equip one with \`${prefix}equip <item id>\``}\n` +
-				`**Weapon**: ${equips.weapon ? getItemDisplay(equips.weapon.item, equips.weapon.row) : `None, equip one with \`${prefix}equip <item id>\``}\n\n` +
+			.setDescription(`__**Health**__\n**${userData.health} / 100** HP\n${formatHealth(userData.health, 100)}\n\n` +
+				`__**Equips**__\nEquip an item with \`${prefix}equip <item id>\`.\n` +
+				`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row) : 'None'}\n` +
+				`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row) : 'None'}\n` +
+				`**Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row) : 'None'}\n` +
+				`**Weapon**: ${equips.weapon ? getItemDisplay(equips.weapon.item, equips.weapon.row) : 'None'}\n\n` +
 				`__**Items in Backpack**__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})\n` +
 				`${filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your stash to your backpack with \`${prefix}stash take <item id>\`.`}`)
 

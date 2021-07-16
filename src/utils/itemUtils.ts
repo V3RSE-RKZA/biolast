@@ -45,7 +45,7 @@ export function getItemDisplay (item: Item, itemRow?: ItemRow): string {
 				return `*Used* ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
 			}
 			else if (durability >= 0.4) {
-				return `*Worn* ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
+				return `*Shoddy* ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
 			}
 
 			return `*Damaged* ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
@@ -169,6 +169,81 @@ export function sortItemsByDurability(arr: (Item | ItemWithRow<ItemRow>)[], cont
 		}
 
 		// durability is same, item name is same
+		return 0
+	})
+}
+
+/**
+ * Sorts an array of items from ammo with highest armor penetration to ammo with lowest penetration, if penetration is same then it sorts from highest damage to least damage
+ * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
+ * @param containsRows Whether or not the function is sorting items with rows
+ */
+export function sortItemsByAmmo(arr: Item[], containsRows?: false): Item[]
+export function sortItemsByAmmo<T extends ItemRow>(arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
+export function sortItemsByAmmo(arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
+	if (containsRows) {
+		return (arr as ItemWithRow<ItemRow>[]).sort((a, b) => {
+			let aPenetration = 0
+			let aDamage = 0
+			let bPenetration = 0
+			let bDamage = 0
+
+			if (a.item.type === 'Ammunition') {
+				aPenetration = a.item.penetration
+				aDamage = a.item.damage
+			}
+			if (b.item.type === 'Ammunition') {
+				bPenetration = b.item.penetration
+				bDamage = b.item.damage
+			}
+
+			if (bPenetration < aPenetration) {
+				return -1
+			}
+			else if (bPenetration > aPenetration) {
+				return 1
+			}
+			else if (bDamage < aDamage) {
+				return -1
+			}
+			else if (bDamage > aDamage) {
+				return 1
+			}
+
+			// items are both not ammunition
+			return 0
+		})
+	}
+
+	return (arr as Item[]).sort((a, b) => {
+		let aPenetration = 0
+		let aDamage = 0
+		let bPenetration = 0
+		let bDamage = 0
+
+		if (a.type === 'Ammunition') {
+			aPenetration = a.penetration
+			aDamage = a.damage
+		}
+		if (b.type === 'Ammunition') {
+			bPenetration = b.penetration
+			bDamage = b.damage
+		}
+
+		if (bPenetration < aPenetration) {
+			return -1
+		}
+		else if (bPenetration > aPenetration) {
+			return 1
+		}
+		else if (bDamage < aDamage) {
+			return -1
+		}
+		else if (bDamage > aDamage) {
+			return 1
+		}
+
+		// items are both not ammunition
 		return 0
 	})
 }

@@ -53,7 +53,7 @@ class Embed {
 	setDescription(desc: string): this {
 		if (!desc) return this
 
-		this.embed.description = desc.substring(0, 2048)
+		this.embed.description = desc.substring(0, 4096)
 
 		return this
 	}

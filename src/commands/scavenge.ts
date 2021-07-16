@@ -1,7 +1,7 @@
 import { Command } from '../types/Commands'
 import { reply } from '../utils/messageUtils'
 import { beginTransaction } from '../utils/db/mysql'
-import { addItemToBackpack, createItem, dropItemToGround, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
+import { addItemToBackpack, createItem, deleteItem, dropItemToGround, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { getRaidType, getRandomItem } from '../utils/raidUtils'
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { backpackHasSpace, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
@@ -101,7 +101,7 @@ export const command: Command = {
 			// lower durability or remove key
 			if (hasRequiredKey) {
 				if (!hasRequiredKey.row.durability || hasRequiredKey.row.durability - 1 <= 0) {
-					await removeItemFromBackpack(transaction.query, hasRequiredKey.row.id)
+					await deleteItem(transaction.query, hasRequiredKey.row.id)
 				}
 				else {
 					await lowerItemDurability(transaction.query, hasRequiredKey.row.id, 1)

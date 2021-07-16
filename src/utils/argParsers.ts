@@ -67,6 +67,29 @@ export function getMember (guild: Guild, args: string[]): Member | undefined {
 }
 
 /**
+ * Parse ONLY a mention into a guild member
+ * @param guild Guild to search for members in
+ * @param arg Arg to look for a member
+ * @returns A guild member
+ */
+export function getMemberFromMention (guild: Guild, arg?: string): Member | undefined {
+	if (arg) {
+		// regex tests for <@!1234etc>, will pass when player mentions someone or types a user id
+		const userMatch = arg.match(/^<?@?!?(\d+)>?$/)
+
+		if (userMatch) {
+			const userId = userMatch[1]
+
+			const member = guild.members.find(m => m.id === userId)
+
+			if (member) {
+				return member
+			}
+		}
+	}
+}
+
+/**
  * @param guild If arg is a custom emoji, will check to make sure the custom emoji exists in this guild
  * @param arg Arg to look for emoji
  * @returns An emoji in string form that can be parsed by Discord chat
