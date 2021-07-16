@@ -4,7 +4,7 @@ import { beginTransaction } from '../utils/db/mysql'
 import { addItemToBackpack, createItem, deleteItem, dropItemToGround, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { getRaidType, getRandomItem } from '../utils/raidUtils'
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
-import { backpackHasSpace, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
+import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
 import { items } from '../resources/items'
 
 export const command: Command = {
@@ -38,10 +38,12 @@ export const command: Command = {
 		try {
 			const backpackRows = await getUserBackpack(transaction.query, message.author.id, true)
 			const backpackData = getItems(backpackRows)
+			const userEquips = getEquips(backpackRows)
 			const keyRequired = items.find(i => i.name === raidChannel.scavange.requiresKey)
 			const hasRequiredKey = sortItemsByDurability(backpackData.items, true).find(i => i.item.name === keyRequired?.name)
 			const scavengeCD = await getCooldown(transaction.query, message.author.id, 'scavenge')
 			const channelCD = await getCooldown(transaction.query, message.channel.id, 'looted')
+			const backpackLimit = getBackpackLimit(userEquips.backpack?.item)
 
 			if (channelCD) {
 				await transaction.commit()
@@ -88,7 +90,7 @@ export const command: Command = {
 					})
 
 					// check if users backpack has space for the item, otherwise throw it on ground
-					if (backpackHasSpace(backpackRows, randomItem.slotsUsed)) {
+					if (backpackData.slotsUsed + scavengedLoot.reduce((prev, curr) => prev + curr.item.slotsUsed, 0) <= backpackLimit) {
 						itemsAddedToBackpack.push({
 							item: randomItem,
 							row: itemRow
@@ -119,7 +121,7 @@ export const command: Command = {
 
 			await transaction.commit()
 
-			const finalMessage = `You ${hasRequiredKey ? `use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` : ''}scavenge **${raidChannel.display}** and find: ${scavengedLoot.map(itm => getItemDisplay(itm.item, itm.row)).join(', ') || '**nothing**!'}`
+			const finalMessage = `You ${hasRequiredKey ? `use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` : ''}scavenge **${raidChannel.display}** and find:\n\n${scavengedLoot.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || '**nothing**!'}`
 
 			if (!scavengedLoot.length || (!itemsAddedToBackpack.length && !itemsAddedToGround.length)) {
 				await reply(message, {
@@ -130,8 +132,8 @@ export const command: Command = {
 				// items were added to both backpack and ground
 				await reply(message, {
 					content: `${finalMessage}\n\n` +
-						`These items were added to your **backpack**: ${itemsAddedToBackpack.map(itm => getItemDisplay(itm.item)).join(', ')}\n\n` +
-						`Your backpack ran out of space and you were forced to put the following on the **ground**: ${itemsAddedToGround.map(itm => getItemDisplay(itm.item)).join(', ')}`
+						`These items were added to your **backpack**: ${itemsAddedToBackpack.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}\n\n` +
+						`Your backpack ran out of space and you were forced to put the following on the **ground**: ${itemsAddedToGround.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}`
 				})
 			}
 			else if (itemsAddedToBackpack.length && !itemsAddedToGround.length) {

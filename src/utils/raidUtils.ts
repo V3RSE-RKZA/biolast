@@ -30,7 +30,7 @@ export function getRandomItem (raidChannel: RaidChannel): Item | undefined {
 		const randName = raidChannel.scavange.rarest[Math.floor(Math.random() * raidChannel.scavange.rarest.length)]
 		randomItem = items.find(itm => itm.name === randName)
 	}
-	else if (rand < 0.55) {
+	else if (rand < 0.60) {
 		const randName = raidChannel.scavange.common[Math.floor(Math.random() * raidChannel.scavange.common.length)]
 		randomItem = items.find(itm => itm.name === randName)
 	}

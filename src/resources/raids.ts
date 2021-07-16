@@ -88,8 +88,8 @@ export const customs: Location = {
 				common: ['ak47', '7.62x51'],
 				uncommon: ['ak47'],
 				rare: ['ak47'],
-				rolls: 1,
-				cooldown: 5 * 60
+				rolls: 4,
+				cooldown: 1 * 10
 			}
 		},
 		{
@@ -100,8 +100,8 @@ export const customs: Location = {
 				common: ['ai-2_medkit', '7.62x54r_lps'],
 				uncommon: ['ai-2_medkit'],
 				rare: ['ai-2_medkit'],
-				rolls: 1,
-				cooldown: 5 * 60
+				rolls: 3,
+				cooldown: 1 * 10
 			}
 		},
 		{
@@ -112,8 +112,8 @@ export const customs: Location = {
 				common: ['paca_armor'],
 				uncommon: ['paca_armor'],
 				rare: ['paca_armor'],
-				rolls: 1,
-				cooldown: 5 * 60,
+				rolls: 2,
+				cooldown: 1 * 10,
 				requiresKey: 'ak47'
 			},
 			extract: {
