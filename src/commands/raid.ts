@@ -139,7 +139,8 @@ export const command: Command = {
 
 				try {
 					await messageUser(message.author, {
-						content: `Once you join this server, you will have **${formatTime(location.info.raidLength * 1000)}** to extract with whatever loot you can find.\n\nhttps://discord.gg/${invite.code}`
+						content: `Once you join this server, you will have **${formatTime(location.info.raidLength * 1000)}** to extract with whatever loot you can find.` +
+							` You can use \`${prefix}raidtime\` to view how much time you have left.\n\nhttps://discord.gg/${invite.code}`
 					}, true)
 
 					await confirmed.editParent({
@@ -149,7 +150,8 @@ export const command: Command = {
 				}
 				catch (err) {
 					await confirmed.editParent({
-						content: `✅ Raid started! Once you join this server, you will have **${formatTime(location.info.raidLength * 1000)}** to extract with whatever loot you can find.\n\nhttps://discord.gg/${invite.code}`,
+						content: `✅ Raid started! Once you join this server, you will have **${formatTime(location.info.raidLength * 1000)}** to extract with whatever loot you can find.` +
+							` You can use \`${prefix}raidtime\` to view how much time you have left.\n\nhttps://discord.gg/${invite.code}`,
 						components: []
 					})
 				}
