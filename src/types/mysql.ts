@@ -12,6 +12,7 @@ export interface UserRow {
 	createdAt: Date
 	money: number
 	health: number
+	maxHealth: number
 	stashSlots: number
 }
 

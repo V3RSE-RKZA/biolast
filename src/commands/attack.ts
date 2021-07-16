@@ -177,7 +177,7 @@ export const command: Command = {
 		else {
 			await lowerHealth(transaction.query, member.id, finalDamage.total)
 
-			messages.push(`**${member.username}#${member.discriminator}** is left with ${formatHealth(victimData.health - finalDamage.total, 100)} **${victimData.health - finalDamage.total}** health.`)
+			messages.push(`**${member.username}#${member.discriminator}** is left with ${formatHealth(victimData.health - finalDamage.total, victimData.maxHealth)} **${victimData.health - finalDamage.total}** health.`)
 		}
 
 		// commit changes

@@ -36,7 +36,7 @@ export const command: Command = {
 			}
 
 			if (cmd.examples.length) {
-				cmdEmbed.addField('Usage Examples', cmd.examples.map(example => `\`${prefix}${example}\``).join(', '), true)
+				cmdEmbed.addField('Usage Examples', cmd.examples.map(example => `\`${prefix}${example}\``).join('\n'), true)
 			}
 
 			cmdEmbed.addField('Cooldown', formatTime(cmd.cooldown * 1000), true)

@@ -87,7 +87,7 @@ function generatePages (member: Member, rows: BackpackItemRow[], userData: UserR
 
 		const embed = new Embed()
 			.setAuthor(`${member.username}#${member.discriminator}'s Backpack Inventory`, member.avatarURL)
-			.setDescription(`__**Health**__\n**${userData.health} / 100** HP\n${formatHealth(userData.health, 100)}\n\n` +
+			.setDescription(`__**Health**__\n**${userData.health} / 100** HP\n${formatHealth(userData.health, userData.maxHealth)}\n\n` +
 				`__**Equips**__\nEquip an item with \`${prefix}equip <item id>\`.\n` +
 				`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row) : 'None'}\n` +
 				`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row) : 'None'}\n` +
