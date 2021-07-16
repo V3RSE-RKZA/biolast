@@ -30,7 +30,7 @@ export const command: Command = {
 
 		const transaction = await beginTransaction()
 		const backpackRows = await getUserBackpack(transaction.query, message.author.id, true)
-		const groundRows = await getGroundItems(transaction.query, message.channel.id, true)
+		await getGroundItems(transaction.query, message.channel.id, true)
 		const userBackpackData = getItems(backpackRows)
 		const itemToDrop = userBackpackData.items.find(itm => itm.row.id === itemID)
 

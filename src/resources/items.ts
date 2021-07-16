@@ -122,6 +122,11 @@ export interface Medical extends BaseItem {
 	 * Amount this medical item will heal player for
 	 */
 	healsFor: number
+
+	/**
+	 * How long will this prevent user from healing again (cooldown in seconds)
+	 */
+	healRate: number
 }
 
 export interface Backpack extends BaseItem {
@@ -177,7 +182,8 @@ export const items: Item[] = [
 		aliases: ['ai-2', 'medkit'],
 		sellPrice: 1000,
 		healsFor: 20,
-		slotsUsed: 1
+		slotsUsed: 1,
+		healRate: 30
 	},
 	{
 		type: 'Armor',

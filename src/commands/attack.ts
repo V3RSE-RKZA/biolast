@@ -38,8 +38,6 @@ export const command: Command = {
 		}
 
 		const transaction = await beginTransaction()
-
-		const start = Date.now()
 		const victimData = await getUserRow(transaction.query, member.id, true)
 		const victimRaidRow = await getUsersRaid(transaction.query, member.id, true)
 
@@ -139,24 +137,28 @@ export const command: Command = {
 		}
 
 		if (bodyPartHit.result === 'head' && victimEquips.helmet) {
+			messages.push(`**${member.username}#${member.discriminator}**'s helmet (${getItemDisplay(victimEquips.helmet.item)}) reduced the damage by **${finalDamage.reduced}**.`)
+
 			if (victimEquips.helmet.row.durability - 1 <= 0) {
+				messages.push(`**${member.username}#${member.discriminator}**'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
+
 				await deleteItem(transaction.query, victimEquips.helmet.row.id)
 			}
 			else {
 				await lowerItemDurability(transaction.query, victimEquips.helmet.row.id, 1)
 			}
-
-			messages.push(`**${member.username}#${member.discriminator}**'s ${getItemDisplay(victimEquips.helmet.item)} reduced the damage by **${finalDamage.reduced}**.`)
 		}
 		else if (bodyPartHit.result === 'chest' && victimEquips.armor) {
+			messages.push(`**${member.username}#${member.discriminator}**'s armor (${getItemDisplay(victimEquips.armor.item)}) reduced the damage by **${finalDamage.reduced}**.`)
+
 			if (victimEquips.armor.row.durability - 1 <= 0) {
+				messages.push(`**${member.username}#${member.discriminator}**'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
+
 				await deleteItem(transaction.query, victimEquips.armor.row.id)
 			}
 			else {
 				await lowerItemDurability(transaction.query, victimEquips.armor.row.id, 1)
 			}
-
-			messages.push(`**${member.username}#${member.discriminator}**'s ${getItemDisplay(victimEquips.armor.item)} reduced the damage by **${finalDamage.reduced}**.`)
 		}
 		else if (bodyPartHit.result === 'arm' || bodyPartHit.result === 'leg') {
 			messages.push(`Hitting **${member.username}#${member.discriminator}**'s ${bodyPartHit.result} caused the damage to be reduced by **${finalDamage.reduced}**.`)
@@ -182,7 +184,6 @@ export const command: Command = {
 
 		// commit changes
 		await transaction.commit()
-		console.log(`TOOK ${Date.now() - start} MILLISECONDS`)
 
 		// send message to victim if they were killed
 		if (victimData.health - finalDamage.total <= 0) {

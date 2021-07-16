@@ -14,7 +14,7 @@ export const command: Command = {
 	examples: ['raid customs'],
 	description: 'Used to join a raid. Raids are where you go to scavenge for loot and fight other players.' +
 		' You will take everything in your backpack with you, and if you die you will lose all the items you took (your stash remains unaffected).' +
-		' **This command will try to DM you a server invite link, if you have DMs disabled the bot will try sending the link to the channel. It is highly suggested you open your DMs though.**',
+		' **This command will try to DM you a server invite link. If you have DMs disabled the bot will try sending the link to the channel, although it is highly suggested you open your DMs.**',
 	shortDescription: 'Used to join a raid.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],

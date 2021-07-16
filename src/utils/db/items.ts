@@ -35,7 +35,7 @@ export async function getGroundItems (query: Query, channelID: string, forUpdate
  * Adds item to users backpack
  * @param query Query to use
  * @param userID ID of user to add item to
- * @param itemID ID of the item, you can get the id by using the insertId from createItem()
+ * @param itemID ID of the item, you can get the id by using createItem()
  */
 export async function addItemToBackpack (query: Query, userID: string, itemID: number): Promise<void> {
 	await query('INSERT INTO backpack_items (itemId, userId) VALUES (?, ?)', [itemID, userID])
@@ -54,7 +54,7 @@ export async function removeItemFromBackpack (query: Query, itemID: number): Pro
  * Adds item to users stash
  * @param query Query to use
  * @param userID ID of user to add item to
- * @param itemID ID of the item, you can get the id by using the insertId from createItem()
+ * @param itemID ID of the item, you can get the id by using createItem()
  */
 export async function addItemToStash (query: Query, userID: string, itemID: number): Promise<void> {
 	await query('INSERT INTO stash_items (itemId, userId) VALUES (?, ?)', [itemID, userID])
@@ -91,7 +91,7 @@ export async function removeItemFromStash (query: Query, itemID: number): Promis
  * Drops item on ground, items on the ground will be deleted after 15 minutes
  * @param query Query to use
  * @param userID ID of channel to drop item in
- * @param itemID ID of the item, you can get the id by using the insertId from createItem()
+ * @param itemID ID of the item, you can get the id by using createItem()
  */
 export async function dropItemToGround (query: Query, channelID: string, itemID: number): Promise<void> {
 	await query('INSERT INTO ground_items (itemId, channelId) VALUES (?, ?)', [itemID, channelID])
@@ -110,8 +110,14 @@ export async function lowerItemDurability (query: Query, itemID: number, amount 
 	await query('UPDATE items SET durability = durability - ? WHERE id = ?', [amount, itemID])
 }
 
-export async function createItem (query: Query, name: string, durability?: number): Promise<OkPacket> {
-	return query('INSERT INTO items (item, durability) VALUES (?, ?)', [name, durability])
+export async function createItem (query: Query, name: string, durability?: number): Promise<ItemRow> {
+	const packet: OkPacket = await query('INSERT INTO items (item, durability) VALUES (?, ?)', [name, durability])
+
+	return {
+		id: packet.insertId,
+		item: name,
+		durability
+	}
 }
 
 export async function deleteItem (query: Query, itemID: number): Promise<void> {

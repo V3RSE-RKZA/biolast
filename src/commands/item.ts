@@ -90,6 +90,7 @@ export const command: Command = {
 
 		if (item.type === 'Medical') {
 			itemEmbed.addField('Heals For', `${item.healsFor} health`, true)
+			itemEmbed.addField('Healing Rate', `${item.healRate} seconds`, true)
 		}
 
 		await reply(message, {
