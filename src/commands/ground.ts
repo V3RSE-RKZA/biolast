@@ -36,7 +36,7 @@ export const command: Command = {
 			})
 		}
 		else {
-			await app.btnCollector.paginateContent(message, pages)
+			await app.componentCollector.paginateContent(message, pages)
 		}
 	}
 }

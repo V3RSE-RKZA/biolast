@@ -120,7 +120,7 @@ export const command: Command = {
 				})
 			}
 			else {
-				await app.btnCollector.paginateEmbeds(message, pages)
+				await app.componentCollector.paginateEmbeds(message, pages)
 			}
 			return
 		}
@@ -135,7 +135,7 @@ export const command: Command = {
 			})
 		}
 		else {
-			await app.btnCollector.paginateEmbeds(message, pages)
+			await app.componentCollector.paginateEmbeds(message, pages)
 		}
 	}
 }

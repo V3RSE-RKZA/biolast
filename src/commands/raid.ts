@@ -57,7 +57,7 @@ export const command: Command = {
 		})
 
 		try {
-			const confirmed = (await app.btnCollector.awaitClicks(botMessage.id, i => i.user.id === message.author.id))[0]
+			const confirmed = (await app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === message.author.id))[0]
 
 			if (confirmed.customID === 'confirmed') {
 				// using transaction because users data will be updated

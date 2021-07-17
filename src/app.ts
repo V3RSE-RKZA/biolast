@@ -2,7 +2,7 @@ import Eris, { User, Member, Guild } from 'eris'
 import { SlashCreator, GatewayServer, AnyRequestData } from 'slash-create'
 import { Command } from './types/Commands'
 import MessageCollector from './utils/MessageCollector'
-import ButtonCollector from './utils/ButtonCollector'
+import ComponentCollector from './utils/ComponentCollector'
 import CronJobs from './utils/CronJobs'
 import { getAllRaids, getUsersRaid, removeUserFromRaid } from './utils/db/raids'
 import { clientId, botToken, prefix } from './config'
@@ -16,7 +16,7 @@ class App {
 	bot: Eris.Client
 	commands: Command[]
 	slashCreator: SlashCreator
-	btnCollector: ButtonCollector
+	componentCollector: ComponentCollector
 	msgCollector: MessageCollector
 	cronJobs: CronJobs
 	activeRaids: {
@@ -32,7 +32,7 @@ class App {
 			applicationID: clientId,
 			token: botToken
 		})
-		this.btnCollector = new ButtonCollector(this)
+		this.componentCollector = new ComponentCollector(this)
 		this.msgCollector = new MessageCollector(this)
 		this.cronJobs = new CronJobs(this)
 		this.activeRaids = []
