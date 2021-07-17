@@ -3,7 +3,7 @@ import { reply } from '../utils/messageUtils'
 import Embed from '../structures/Embed'
 import { adminUsers } from '../config'
 import { formatTime } from '../utils/db/cooldowns'
-import { isRaidGuild } from '../utils/raidUtils'
+import { ComponentType } from 'slash-create'
 
 export const command: Command = {
 	name: 'help',
@@ -48,28 +48,75 @@ export const command: Command = {
 			return
 		}
 
+		const baseMessage = `Use \`${prefix}help <command>\` to see more about a specific command. You can also hover your mouse over the command for a short description.`
 		const cmdEmbed = new Embed()
-			.setDescription(`Use \`${prefix}help <command>\` to see more about a specific command. You can also hover your mouse over the command for a short description.`)
 
-		const isRaid = isRaidGuild(message.guildID)
-		const infoCommands = app.commands.filter(cmd => cmd.category === 'info').map(cmd => formatCommand(cmd, isRaid))
-		const itemCommands = app.commands.filter(cmd => cmd.category === 'items').map(cmd => formatCommand(cmd, isRaid))
-		const utilityCommands = app.commands.filter(cmd => cmd.category === 'utility').map(cmd => formatCommand(cmd, isRaid))
+		const botMessage = await reply(message, {
+			content: 'What kind of commands are you looking for?',
+			components: [
+				{
+					type: ComponentType.ACTION_ROW,
+					components: [
+						{
+							type: ComponentType.SELECT,
+							custom_id: 'help-command',
+							options: [
+								{
+									label: 'Raid Commands',
+									value: 'raid',
+									description: 'Commands that can be used while in a raid'
+								},
+								{
+									label: 'Item Commands',
+									value: 'items',
+									description: 'Use your items with these commands'
+								},
+								{
+									label: 'Information Commands',
+									value: 'info',
+									description: 'View item information, backpacks, health, etc.'
+								}
+							]
+						}
+					]
+				}
+			]
+		})
 
-		cmdEmbed.addField('📋 Information', infoCommands.join(', '))
-		cmdEmbed.addField('⚔️ Item Usage', itemCommands.join(', '))
-		cmdEmbed.addField('⚙️ Utility', utilityCommands.join(', '))
+		const { collector } = app.componentCollector.createCollector(botMessage.id, ctx => ctx.user.id === message.author.id, 60000)
 
-		await reply(message, {
-			embed: cmdEmbed.embed
+		collector.on('collect', async ctx => {
+			try {
+				if (ctx.values.includes('raid')) {
+					cmdEmbed.setTitle('Raid Commands')
+					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category !== 'admin' && cmd.canBeUsedInRaid).map(cmd => `[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')`).join(', ')}`)
+				}
+				else if (ctx.values.includes('items')) {
+					cmdEmbed.setTitle('Item Usage')
+					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category === 'items' && !cmd.onlyWorksInRaidGuild).map(cmd => `[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')`).join(', ')}`)
+				}
+				else if (ctx.values.includes('info')) {
+					cmdEmbed.setTitle('Information Commands')
+					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category === 'info' && !cmd.onlyWorksInRaidGuild).map(cmd => `[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')`).join(', ')}`)
+				}
+
+				await ctx.editParent({
+					content: '',
+					embeds: [cmdEmbed.embed]
+				})
+			}
+			catch (err) {
+				// continue
+			}
+		})
+
+		collector.on('end', msg => {
+			if (msg === 'time') {
+				botMessage.edit({
+					content: 'Help menu expired.',
+					components: []
+				})
+			}
 		})
 	}
-}
-
-function formatCommand (cmd: Command, raidGuild: boolean): string {
-	if (raidGuild) {
-		return cmd.onlyWorksInRaidGuild || cmd.canBeUsedInRaid ? `[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')` : `~~[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')~~`
-	}
-
-	return !cmd.onlyWorksInRaidGuild ? `[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')` : `~~[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')~~`
 }
