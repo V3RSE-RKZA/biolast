@@ -2,16 +2,16 @@ import { Command } from '../types/Commands'
 import { messageUser, reply } from '../utils/messageUtils'
 import { beginTransaction } from '../utils/db/mysql'
 import { addUserToRaid, getAllUsers, getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
-import { customs, Location } from '../resources/raids'
-import { customsGuilds } from '../config'
+import { Location, allLocations } from '../resources/raids'
 import { CONFIRM_BUTTONS } from '../utils/constants'
 import { formatTime } from '../utils/db/cooldowns'
 import { getUserBackpack } from '../utils/db/items'
+import Embed from '../structures/Embed'
 
 export const command: Command = {
 	name: 'raid',
-	aliases: [],
-	examples: ['raid customs'],
+	aliases: ['explore'],
+	examples: ['raid suburbs'],
 	description: 'Used to join a raid. Raids are where you go to scavenge for loot and fight other players.' +
 		' You will take everything in your backpack with you, and if you die you will lose all the items you took (your stash remains unaffected).' +
 		' **This command will try to DM you a server invite link. If you have DMs disabled the bot will try sending the link to the channel, although it is highly suggested you open your DMs.**',
@@ -24,35 +24,18 @@ export const command: Command = {
 	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
 	async execute(app, message, { args, prefix }) {
-		const choice = args[0]
+		const choice = getRaidChoice(args)
 
 		if (!choice) {
 			await reply(message, {
-				content: '❌ You need to specify a location you want to raid. The following locations are available:\n\n' +
-					'**Customs** - Medium-size raid, max 20 players per raid, raid lasts 20 minutes.\n\n' +
-					'The bot is in early access, expect more locations to be added.'
+				content: '❌ You need to specify a location you want to raid. The following locations are available:',
+				embed: getLocationsEmbed().embed
 			})
 			return
-		}
-		else if (!['customs'].includes(choice.toLowerCase())) {
-			await reply(message, {
-				content: '❌ That\'s not a valid raid location. The following locations are available:\n\n' +
-				'**Customs** - Medium-size raid, max 20 players per raid, raid lasts 20 minutes.\n\n' +
-				'The bot is in early access, expect more locations to be added.'
-			})
-			return
-		}
-
-		let location: {
-			guilds: string[]
-			info: Location
-		}
-		switch (choice.toLowerCase()) {
-			default: location = { guilds: customsGuilds, info: customs }; break
 		}
 
 		const botMessage = await reply(message, {
-			content: `Join a raid in **${location.info.display}**? The raid will last **${formatTime(location.info.raidLength * 1000)}**.`,
+			content: `Join a raid in **${choice.display}**? The raid will last **${formatTime(choice.raidLength * 1000)}**.`,
 			components: CONFIRM_BUTTONS
 		})
 
@@ -76,10 +59,10 @@ export const command: Command = {
 				}
 
 				// find a raid with room for players
-				for (const id of location.guilds) {
+				for (const id of choice.guilds) {
 					const players = await getAllUsers(transaction.query, id)
 
-					if (players.length <= location.info.playerLimit) {
+					if (players.length <= choice.playerLimit) {
 						raidGuildID = id
 					}
 				}
@@ -89,7 +72,7 @@ export const command: Command = {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `❌ All of the **${location.info.display}** raids are full! Try again in 5 - 10 minutes after some players have extracted.`,
+						content: `❌ All of the **${choice.display}** raids are full! Try again in 5 - 10 minutes after some players have extracted.`,
 						components: []
 					})
 					return
@@ -111,9 +94,9 @@ export const command: Command = {
 					throw new Error(`Could not find welcome channel in guild: ${raidGuild.id}`)
 				}
 
-				const invite = await app.bot.createChannelInvite(inviteChannel.id, { maxAge: location.info.raidLength }, 'User started raid')
+				const invite = await app.bot.createChannelInvite(inviteChannel.id, { maxAge: choice.raidLength }, 'User started raid')
 
-				await addUserToRaid(transaction.query, message.author.id, raidGuild.id, invite.code, location.info.raidLength)
+				await addUserToRaid(transaction.query, message.author.id, raidGuild.id, invite.code, choice.raidLength)
 				await transaction.commit()
 
 				app.activeRaids.push({
@@ -134,12 +117,12 @@ export const command: Command = {
 						catch (err) {
 							// unable to kick user?
 						}
-					}, location.info.raidLength * 1000)
+					}, choice.raidLength * 1000)
 				})
 
 				try {
 					await messageUser(message.author, {
-						content: `Once you join this server, you will have **${formatTime(location.info.raidLength * 1000)}** to extract with whatever loot you can find.` +
+						content: `Once you join this server, you will have **${formatTime(choice.raidLength * 1000)}** to extract with whatever loot you can find.` +
 							` You can use \`${prefix}raidtime\` to view how much time you have left.\n\nhttps://discord.gg/${invite.code}`
 					}, true)
 
@@ -150,7 +133,7 @@ export const command: Command = {
 				}
 				catch (err) {
 					await confirmed.editParent({
-						content: `✅ Raid started! Once you join this server, you will have **${formatTime(location.info.raidLength * 1000)}** to extract with whatever loot you can find.` +
+						content: `✅ Raid started! Once you join this server, you will have **${formatTime(choice.raidLength * 1000)}** to extract with whatever loot you can find.` +
 							` You can use \`${prefix}raidtime\` to view how much time you have left.\n\nhttps://discord.gg/${invite.code}`,
 						components: []
 					})
@@ -165,6 +148,26 @@ export const command: Command = {
 				content: '❌ Command timed out.',
 				components: []
 			})
+		}
+	}
+}
+
+function getLocationsEmbed (): Embed {
+	const locationsEmb = new Embed()
+		.setTitle('Available Locations')
+		.setDescription('The bot is in early access, expect more locations to be added.')
+
+	for (const loc of allLocations) {
+		locationsEmb.addField(loc.display, `Level Required: **${loc.requirements.level}**\nMax Players: **${loc.playerLimit}**\nRaid Time: **${formatTime(loc.raidLength * 1000)}**`)
+	}
+
+	return locationsEmb
+}
+
+function getRaidChoice (args: string[]): Location | undefined {
+	for (const loc of allLocations) {
+		if (args.join(' ').toLowerCase() === loc.display.toLowerCase()) {
+			return loc
 		}
 	}
 }

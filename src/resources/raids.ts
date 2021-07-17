@@ -1,3 +1,5 @@
+import { suburbsGuilds } from '../config'
+
 export interface Location {
 	display: string
 
@@ -7,6 +9,16 @@ export interface Location {
 	raidLength: number
 
 	playerLimit: number
+
+	requirements: {
+		level: number
+		item?: string
+	}
+
+	/**
+	 * IDs of guilds for this location
+	 */
+	guilds: string[]
 
 	channels: RaidChannel[]
 }
@@ -75,8 +87,12 @@ export interface ExtractChannel extends RaidChannelBase {
 	}
 }
 
-export const customs: Location = {
-	display: 'Customs',
+export const suburbs: Location = {
+	display: 'The Suburbs',
+	guilds: suburbsGuilds,
+	requirements: {
+		level: 1
+	},
 	raidLength: 20 * 60,
 	playerLimit: 20,
 	channels: [
@@ -123,3 +139,5 @@ export const customs: Location = {
 		}
 	]
 }
+
+export const allLocations = [suburbs]

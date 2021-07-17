@@ -1,6 +1,5 @@
-import { customsGuilds } from '../config'
 import { Item, items } from '../resources/items'
-import { customs, Location, RaidChannel } from '../resources/raids'
+import { Location, RaidChannel, allLocations } from '../resources/raids'
 
 /**
  * Check if guild ID is a raid server
@@ -12,8 +11,10 @@ export function isRaidGuild (guildID?: string): boolean {
 }
 
 export function getRaidType (guildID: string): Location | undefined {
-	if (customsGuilds.includes(guildID)) {
-		return customs
+	for (const location of allLocations) {
+		if (location.guilds.includes(guildID)) {
+			return location
+		}
 	}
 }
 

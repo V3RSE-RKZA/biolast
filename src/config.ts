@@ -27,4 +27,4 @@ export const baseBackpackLimit = 15
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
 export const adminUsers = ['168958344361541633']
 
-export const customsGuilds = process.env.CUSTOMS_GUILDS.split(',')
+export const suburbsGuilds = process.env.SUBURBS_GUILDS.split(',')
