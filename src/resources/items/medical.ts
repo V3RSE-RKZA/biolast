@@ -1,6 +1,6 @@
 import { Medical } from '../../types/Items'
 
-const medicalObject = <T>(et: { [K in keyof T]: Medical }) => et
+const medicalObject = <T>(et: { [K in keyof T]: Medical & { name: K } }) => et
 
 export const items = medicalObject({
 	'ai-2_medkit': {

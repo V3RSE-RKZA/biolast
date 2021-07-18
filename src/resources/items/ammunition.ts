@@ -1,6 +1,6 @@
 import { Ammunition } from '../../types/Items'
 
-const ammoObject = <T>(et: { [K in keyof T]: Ammunition }) => et
+const ammoObject = <T>(et: { [K in keyof T]: Ammunition & { name: K } }) => et
 
 export const items = ammoObject({
 	'7.62x54r_lps': {
