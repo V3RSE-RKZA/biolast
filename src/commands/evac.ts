@@ -12,11 +12,11 @@ import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 const EXTRACTIONS = new Set()
 
 export const command: Command = {
-	name: 'extract',
-	aliases: ['exfil'],
+	name: 'evac',
+	aliases: ['evacuate', 'escape'],
 	examples: [],
-	description: 'Use this command in an exfil channel to extract from a raid with the loot in your backpack.',
-	shortDescription: 'Use this command to extract from a raid.',
+	description: 'Use this command in an evac channel to escape from a raid with the loot in your backpack.',
+	shortDescription: 'Use this command to evac from a raid.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis'],
 	cooldown: 2,
@@ -37,27 +37,27 @@ export const command: Command = {
 			throw new Error('Could not find raid channel')
 		}
 
-		if (raidChannel.type !== 'ExtractChannel') {
+		if (raidChannel.type !== 'EvacChannel') {
 			await reply(message, {
-				content: '❌ You can\'t extract from this channel. Look for an exfil channel to extract from.'
+				content: '❌ You can\'t evac from this channel. Look for an evac channel to escape this raid.'
 			})
 			return
 		}
 
 		const userBackpack = await getUserBackpack(query, message.author.id)
 		const userBackpackData = getItems(userBackpack)
-		const extractNeeded = items.find(i => i.name === raidChannel.extract.requiresKey)
-		const extractItem = sortItemsByDurability(userBackpackData.items, true).find(i => i.item.name === extractNeeded?.name)
+		const evacNeeded = items.find(i => i.name === raidChannel.evac.requiresKey)
+		const evacItem = sortItemsByDurability(userBackpackData.items, true).find(i => i.item.name === evacNeeded?.name)
 
-		if (extractNeeded && !extractItem) {
+		if (evacNeeded && !evacItem) {
 			await reply(message, {
-				content: `❌ Extracting here requires you to have a ${getItemDisplay(extractNeeded)} in your backpack.`
+				content: `❌ Using this evac requires you to have a ${getItemDisplay(evacNeeded)} in your backpack.`
 			})
 			return
 		}
 
 		const botMessage = await reply(message, {
-			content: `Are you sure you want to extract here${extractItem ? ` using your ${getItemDisplay(extractItem.item, extractItem.row)}` : ''}? The extraction will take **${formatTime(raidChannel.extract.time * 1000)}**.`,
+			content: `Are you sure you want to evac here${evacItem ? ` using your ${getItemDisplay(evacItem.item, evacItem.row)}` : ''}? The escape will take **${formatTime(raidChannel.evac.time * 1000)}**.`,
 			components: CONFIRM_BUTTONS
 		})
 
@@ -67,7 +67,7 @@ export const command: Command = {
 			if (confirmed.customID === 'confirmed') {
 				if (EXTRACTIONS.has(message.author.id)) {
 					await confirmed.editParent({
-						content: '❌ You are currently extracting.',
+						content: '❌ You are currently evacuating this raid.',
 						components: []
 					})
 					return
@@ -75,30 +75,30 @@ export const command: Command = {
 
 				EXTRACTIONS.add(message.author.id)
 
-				if (extractItem) {
+				if (evacItem) {
 					const transaction = await beginTransaction()
 					const userBackpackVerified = await getUserBackpack(transaction.query, message.author.id, true)
 					const userBackpackDataVerified = getItems(userBackpackVerified)
 
 					// get the item with the highest durability and use it
-					const extractItemVerified = sortItemsByDurability(userBackpackDataVerified.items, true).find(i => i.item.name === extractItem.item.name)
+					const evacItemVerified = sortItemsByDurability(userBackpackDataVerified.items, true).find(i => i.item.name === evacItem.item.name)
 
-					if (!extractItemVerified) {
+					if (!evacItemVerified) {
 						await transaction.commit()
 
 						await confirmed.editParent({
-							content: `❌ Extracting here requires you to have a ${getItemDisplay(extractItem.item)} in your backpack.`,
+							content: `❌ Using this evac requires you to have a ${getItemDisplay(evacItem.item)} in your backpack.`,
 							components: []
 						})
 						return
 					}
 
 					// lower durability or remove item if durability ran out
-					if (!extractItemVerified.row.durability || extractItemVerified.row.durability - 1 <= 0) {
-						await removeItemFromBackpack(transaction.query, extractItemVerified.row.id)
+					if (!evacItemVerified.row.durability || evacItemVerified.row.durability - 1 <= 0) {
+						await removeItemFromBackpack(transaction.query, evacItemVerified.row.id)
 					}
 					else {
-						await lowerItemDurability(transaction.query, extractItemVerified.row.id, 1)
+						await lowerItemDurability(transaction.query, evacItemVerified.row.id, 1)
 					}
 
 					await transaction.commit()
@@ -110,14 +110,14 @@ export const command: Command = {
 
 						if (member) {
 							await message.channel.createMessage({
-								content: `<@${member.id}>, **${formatTime((raidChannel.extract.time - (raidChannel.extract.time / 3)) * 1000)}** until extraction!`
+								content: `<@${member.id}>, **${formatTime((raidChannel.evac.time - (raidChannel.evac.time / 3)) * 1000)}** until extraction!`
 							})
 						}
 					}
 					catch (err) {
 						console.error(err)
 					}
-				}, (raidChannel.extract.time / 3) * 1000)
+				}, (raidChannel.evac.time / 3) * 1000)
 
 				setTimeout(async () => {
 					try {
@@ -125,14 +125,14 @@ export const command: Command = {
 
 						if (member) {
 							await message.channel.createMessage({
-								content: `<@${member.id}>, **${formatTime((raidChannel.extract.time - ((raidChannel.extract.time / 3) * 2)) * 1000)}** until extraction!`
+								content: `<@${member.id}>, **${formatTime((raidChannel.evac.time - ((raidChannel.evac.time / 3) * 2)) * 1000)}** until extraction!`
 							})
 						}
 					}
 					catch (err) {
 						console.error(err)
 					}
-				}, ((raidChannel.extract.time / 3) * 2) * 1000)
+				}, ((raidChannel.evac.time / 3) * 2) * 1000)
 
 				setTimeout(async () => {
 					try {
@@ -148,11 +148,11 @@ export const command: Command = {
 							await removeUserFromRaid(query, message.author.id)
 
 							try {
-								await member.kick('User extracted')
+								await member.kick('User evacuated')
 
 								await messageUser(member.user, {
 									content: `✅ **${raidType.display}** raid successful!\n\n` +
-										`You spent a total of **${formatTime(Date.now() - userRaid.startedAt.getTime())}** in raid and managed to extract with **${userBackpackDataV.items.length}** items in your backpack.`
+										`You spent a total of **${formatTime(Date.now() - userRaid.startedAt.getTime())}** in raid and managed to evac with **${userBackpackDataV.items.length}** items in your backpack.`
 								})
 							}
 							catch (err) {
@@ -163,10 +163,10 @@ export const command: Command = {
 					catch (err) {
 						console.error(err)
 					}
-				}, raidChannel.extract.time * 1000)
+				}, raidChannel.evac.time * 1000)
 
 				await confirmed.editParent({
-					content: `✅ Extracting in **${formatTime(raidChannel.extract.time * 1000)}**. Try not to die in that time.`,
+					content: `✅ Escaping this raid in **${formatTime(raidChannel.evac.time * 1000)}**. Try not to die in that time.`,
 					components: []
 				})
 			}

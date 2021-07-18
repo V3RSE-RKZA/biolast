@@ -190,7 +190,7 @@ class App {
 								await getUserBackpack(transaction.query, row.userId, true)
 								await removeUserFromRaid(transaction.query, row.userId)
 
-								// remove items from backpack since user didn't extract
+								// remove items from backpack since user didn't evac
 								await transaction.query('DELETE items FROM items INNER JOIN backpack_items ON items.id = backpack_items.itemId WHERE userId = ?', [row.userId])
 								await transaction.commit()
 

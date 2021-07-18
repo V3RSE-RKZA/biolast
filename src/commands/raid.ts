@@ -72,7 +72,7 @@ export const command: Command = {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `❌ All of the **${choice.display}** raids are full! Try again in 5 - 10 minutes after some players have extracted.`,
+						content: `❌ All of the **${choice.display}** raids are full! Try again in 5 - 10 minutes after some players have left the raid.`,
 						components: []
 					})
 					return
@@ -108,7 +108,7 @@ export const command: Command = {
 							await getUserBackpack(expiredTransaction.query, message.author.id, true)
 							await removeUserFromRaid(expiredTransaction.query, message.author.id)
 
-							// remove items from backpack since user didn't extract
+							// remove items from backpack since user didn't evac
 							await expiredTransaction.query('DELETE items FROM items INNER JOIN backpack_items ON items.id = backpack_items.itemId WHERE userId = ?', [message.author.id])
 							await expiredTransaction.commit()
 
@@ -122,7 +122,7 @@ export const command: Command = {
 
 				try {
 					await messageUser(message.author, {
-						content: `Once you join this server, you will have **${formatTime(choice.raidLength * 1000)}** to extract with whatever loot you can find.` +
+						content: `Once you join this server, you will have **${formatTime(choice.raidLength * 1000)}** to evac with whatever loot you can find.` +
 							` You can use \`${prefix}raidtime\` to view how much time you have left.\n\nhttps://discord.gg/${invite.code}`
 					}, true)
 
@@ -133,7 +133,7 @@ export const command: Command = {
 				}
 				catch (err) {
 					await confirmed.editParent({
-						content: `✅ Raid started! Once you join this server, you will have **${formatTime(choice.raidLength * 1000)}** to extract with whatever loot you can find.` +
+						content: `✅ Raid started! Once you join this server, you will have **${formatTime(choice.raidLength * 1000)}** to evac with whatever loot you can find.` +
 							` You can use \`${prefix}raidtime\` to view how much time you have left.\n\nhttps://discord.gg/${invite.code}`,
 						components: []
 					})

@@ -23,21 +23,21 @@ export interface Location {
 	channels: RaidChannel[]
 }
 
-export type RaidChannel = LootChannel | ExtractChannel
+export type RaidChannel = LootChannel | EvacChannel
 
 export interface RaidChannelBase {
-	type: 'ExtractChannel' | 'LootChannel'
+	type: 'EvacChannel' | 'LootChannel'
 	name: string
 	display: string
 	scavange: {
 		/**
 		 * Array of item names, one name is picked random
-		 * 50% - 55% chance of rolling this loot pool
+		 * 55% - 60% chance of rolling this loot pool
 		 */
 		common: string[]
 
 		/**
-		 * 30% chance of rolling this loot pool
+		 * 25% chance of rolling this loot pool
 		 */
 		uncommon: string[]
 
@@ -72,16 +72,16 @@ export interface LootChannel extends RaidChannelBase {
 	type: 'LootChannel'
 }
 
-export interface ExtractChannel extends RaidChannelBase {
-	type: 'ExtractChannel'
-	extract: {
+export interface EvacChannel extends RaidChannelBase {
+	type: 'EvacChannel'
+	evac: {
 		/**
-		 * How long in seconds it takes for user to extract
+		 * How long in seconds it takes for user to evac
 		 */
 		time: number
 
 		/**
-		 * The key user must have in order to extract here, extracting should remove 1 durability from the key
+		 * The key user must have in order to evac here, escaping here should remove 1 durability from the key
 		 */
 		requiresKey?: string
 	}
@@ -121,8 +121,8 @@ export const suburbs: Location = {
 			}
 		},
 		{
-			type: 'ExtractChannel',
-			name: 'trailer-park-exfil',
+			type: 'EvacChannel',
+			name: 'trailer-park-evac',
 			display: 'Trailer Park',
 			scavange: {
 				common: ['paca_armor'],
@@ -132,7 +132,7 @@ export const suburbs: Location = {
 				cooldown: 1 * 10,
 				requiresKey: 'ak47'
 			},
-			extract: {
+			evac: {
 				time: 30,
 				requiresKey: 'paca_armor'
 			}

@@ -82,7 +82,7 @@ export async function run(this: App, message: Message): Promise<void> {
 
 	if (!command.canBeUsedInRaid && (await userInRaid(query, message.author.id) || isRaidGuild(message.guildID))) {
 		await reply(message, {
-			content: '❌ That command cannot be used while you are in an active raid! You need to extract to finish the raid (dying also works).'
+			content: '❌ That command cannot be used while you are in an active raid! You need to evac to finish the raid (dying also works).'
 		})
 		return
 	}
