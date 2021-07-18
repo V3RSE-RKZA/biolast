@@ -4,11 +4,12 @@ import { beginTransaction } from '../utils/db/mysql'
 import { deleteItem, dropItemToGround, getGroundItems, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { getEquips, getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
-import { Ammunition, Armor, Helmet, items } from '../resources/items'
+import { allItems } from '../resources/items'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import { getMemberFromMention } from '../utils/argParsers'
 import { getUserRow, lowerHealth } from '../utils/db/players'
 import formatHealth from '../utils/formatHealth'
+import { Ammunition, Armor, Helmet } from '../types/Items'
 
 type BodyPart = 'arm' | 'leg' | 'chest' | 'head'
 
@@ -94,7 +95,7 @@ export const command: Command = {
 
 				await reply(message, {
 					content: `❌ You don't have any ammo for your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)}.` +
-						` You need one of the following ammunitions in your backpack:\n\n${items.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponName)).map(i => getItemDisplay(i)).join(', ')}.`
+						` You need one of the following ammunitions in your backpack:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponName)).map(i => getItemDisplay(i)).join(', ')}.`
 				})
 				return
 			}

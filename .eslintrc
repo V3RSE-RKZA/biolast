@@ -66,7 +66,7 @@
 		"no-compare-neg-zero": "error",
 		"func-style": ["error", "declaration", { "allowArrowFunctions": true }],
 		"no-template-curly-in-string": "error",
-		"no-unused-vars": ["error", { "args": "none" }],
+		"no-unused-vars": ["off"],
 		"prefer-const": "error",
 		"no-var": "error",
 		"no-prototype-builtins": "off",
@@ -132,6 +132,7 @@
 				"requireLast": false
 			}
 		}],
-		"@typescript-eslint/no-non-null-assertion": "off"
+		"@typescript-eslint/no-non-null-assertion": "off",
+		"@typescript-eslint/no-unused-vars": ["error", { "args": "none" }]
 	}
 }

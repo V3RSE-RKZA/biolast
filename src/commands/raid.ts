@@ -11,7 +11,7 @@ import Embed from '../structures/Embed'
 export const command: Command = {
 	name: 'raid',
 	aliases: ['explore'],
-	examples: ['raid suburbs'],
+	examples: ['raid the suburbs'],
 	description: 'Used to join a raid. Raids are where you go to scavenge for loot and fight other players.' +
 		' You will take everything in your backpack with you, and if you die you will lose all the items you took (your stash remains unaffected).' +
 		' **This command will try to DM you a server invite link. If you have DMs disabled the bot will try sending the link to the channel, although it is highly suggested you open your DMs.**',

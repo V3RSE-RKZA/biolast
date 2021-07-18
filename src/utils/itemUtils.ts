@@ -1,6 +1,7 @@
 import { ItemRow, BackpackItemRow } from '../types/mysql'
-import { Item, items, Backpack, Helmet, Armor, Weapon, Ammunition } from '../resources/items'
+import { allItems } from '../resources/items'
 import { baseBackpackLimit } from '../config'
+import { Ammunition, Armor, Backpack, Helmet, Item, Weapon } from '../types/Items'
 
 type ItemWithRow<T extends ItemRow> = { item: Item, row: T }
 
@@ -14,7 +15,7 @@ export function getItems<T extends ItemRow>(itemRows: T[]): { items: ItemWithRow
 	let slotsUsed = 0
 
 	for (const row of itemRows) {
-		const item = items.find(i => i.name === row.item)
+		const item = allItems.find(i => i.name === row.item)
 
 		if (item) {
 			slotsUsed += item.slotsUsed
@@ -74,7 +75,7 @@ export function getEquips (backpackRows: BackpackItemRow[]): {
 	let weapon
 
 	for (const row of backpackRows) {
-		const item = items.find(i => i.name === row.item)
+		const item = allItems.find(i => i.name === row.item)
 
 		if (item && row.equipped) {
 			switch (item.type) {

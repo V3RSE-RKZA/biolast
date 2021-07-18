@@ -5,7 +5,6 @@ import { addItemToBackpack, createItem, deleteItem, dropItemToGround, getUserBac
 import { getRaidType, getRandomItem } from '../utils/raidUtils'
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
-import { items } from '../resources/items'
 
 export const command: Command = {
 	name: 'scavenge',
@@ -39,7 +38,7 @@ export const command: Command = {
 			const backpackRows = await getUserBackpack(transaction.query, message.author.id, true)
 			const backpackData = getItems(backpackRows)
 			const userEquips = getEquips(backpackRows)
-			const keyRequired = items.find(i => i.name === raidChannel.scavange.requiresKey)
+			const keyRequired = raidChannel.scavange.requiresKey
 			const hasRequiredKey = sortItemsByDurability(backpackData.items, true).find(i => i.item.name === keyRequired?.name)
 			const scavengeCD = await getCooldown(transaction.query, message.author.id, 'scavenge')
 			const channelCD = await getCooldown(transaction.query, message.channel.id, 'looted')

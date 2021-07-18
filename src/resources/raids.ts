@@ -1,4 +1,6 @@
 import { suburbsGuilds } from '../config'
+import { Item } from '../types/Items'
+import { items } from './items'
 
 export interface Location {
 	display: string
@@ -12,7 +14,7 @@ export interface Location {
 
 	requirements: {
 		level: number
-		item?: string
+		item?: Item
 	}
 
 	/**
@@ -25,7 +27,7 @@ export interface Location {
 
 export type RaidChannel = LootChannel | EvacChannel
 
-export interface RaidChannelBase {
+interface RaidChannelBase {
 	type: 'EvacChannel' | 'LootChannel'
 	name: string
 	display: string
@@ -34,22 +36,22 @@ export interface RaidChannelBase {
 		 * Array of item names, one name is picked random
 		 * 55% - 60% chance of rolling this loot pool
 		 */
-		common: string[]
+		common: Item[]
 
 		/**
 		 * 25% chance of rolling this loot pool
 		 */
-		uncommon: string[]
+		uncommon: Item[]
 
 		/**
 		 * 15% chance of rolling this loot pool
 		 */
-		rare: string[]
+		rare: Item[]
 
 		/**
 		 * 5% chance of rolling this loot pool
 		 */
-		rarest?: string[]
+		rarest?: Item[]
 
 		/**
 		 * How many times to roll a random item name
@@ -64,15 +66,15 @@ export interface RaidChannelBase {
 		/**
 		 * Key/item user must have in order to scavenge this channel
 		 */
-		requiresKey?: string
+		requiresKey?: Item
 	}
 }
 
-export interface LootChannel extends RaidChannelBase {
+interface LootChannel extends RaidChannelBase {
 	type: 'LootChannel'
 }
 
-export interface EvacChannel extends RaidChannelBase {
+interface EvacChannel extends RaidChannelBase {
 	type: 'EvacChannel'
 	evac: {
 		/**
@@ -83,61 +85,67 @@ export interface EvacChannel extends RaidChannelBase {
 		/**
 		 * The key user must have in order to evac here, escaping here should remove 1 durability from the key
 		 */
-		requiresKey?: string
+		requiresKey?: Item
 	}
 }
 
-export const suburbs: Location = {
-	display: 'The Suburbs',
-	guilds: suburbsGuilds,
-	requirements: {
-		level: 1
-	},
-	raidLength: 20 * 60,
-	playerLimit: 20,
-	channels: [
-		{
-			type: 'LootChannel',
-			name: 'red-building',
-			display: 'Red Building',
-			scavange: {
-				common: ['ak47', '7.62x51'],
-				uncommon: ['ak47'],
-				rare: ['ak47'],
-				rolls: 4,
-				cooldown: 1 * 10
-			}
-		},
-		{
-			type: 'LootChannel',
-			name: 'customs-office',
-			display: 'Customs Office',
-			scavange: {
-				common: ['ai-2_medkit', '7.62x54r_lps'],
-				uncommon: ['ai-2_medkit'],
-				rare: ['ai-2_medkit'],
-				rolls: 3,
-				cooldown: 1 * 10
-			}
-		},
-		{
-			type: 'EvacChannel',
-			name: 'trailer-park-evac',
-			display: 'Trailer Park',
-			scavange: {
-				common: ['paca_armor'],
-				uncommon: ['paca_armor'],
-				rare: ['paca_armor'],
-				rolls: 2,
-				cooldown: 1 * 10,
-				requiresKey: 'ak47'
-			},
-			evac: {
-				time: 30,
-				requiresKey: 'paca_armor'
-			}
-		}
-	]
-}
+const locationsObject = <T>(et: { [K in keyof T]: Location }) => et
 
-export const allLocations = [suburbs]
+export const locations = locationsObject({
+	suburbs: {
+		display: 'The Suburbs',
+		guilds: suburbsGuilds,
+		requirements: {
+			level: 1
+		},
+		raidLength: 20 * 60,
+		playerLimit: 20,
+		channels: [
+			{
+				type: 'LootChannel',
+				name: 'red-building',
+				display: 'Red Building',
+				scavange: {
+					common: [items.ak47, items['7.62x51']],
+					uncommon: [items.ak47],
+					rare: [items.ak47],
+					rolls: 4,
+					cooldown: 1 * 10
+				}
+			},
+			{
+				type: 'LootChannel',
+				name: 'customs-office',
+				display: 'Customs Office',
+				scavange: {
+					common: [items['ai-2_medkit'], items['7.62x54r_lps']],
+					uncommon: [items['ai-2_medkit']],
+					rare: [items['ai-2_medkit']],
+					rolls: 3,
+					cooldown: 1 * 10
+				}
+			},
+			{
+				type: 'EvacChannel',
+				name: 'trailer-park-evac',
+				display: 'Trailer Park',
+				scavange: {
+					common: [items.paca_armor],
+					uncommon: [items.paca_armor],
+					rare: [items.paca_armor],
+					rolls: 2,
+					cooldown: 1 * 10,
+					requiresKey: items.ak47
+				},
+				evac: {
+					time: 30,
+					requiresKey: items.paca_armor
+				}
+			}
+		]
+	}
+})
+
+export const allLocations: Location[] = [
+	...Object.values(locations.suburbs)
+]

@@ -3,7 +3,7 @@ import { reply } from '../utils/messageUtils'
 import { getItem } from '../utils/argParsers'
 import Embed from '../structures/Embed'
 import formatNumber from '../utils/formatNumber'
-import { items } from '../resources/items'
+import { allItems } from '../resources/items'
 import { getItemDisplay } from '../utils/itemUtils'
 
 export const command: Command = {
@@ -58,7 +58,7 @@ export const command: Command = {
 		}
 
 		if (item.type === 'Ammunition') {
-			const weapons = items.filter(itm => item.ammoFor.includes(itm.name))
+			const weapons = allItems.filter(itm => item.ammoFor.includes(itm.name))
 
 			itemEmbed.addField('Damage', item.damage.toString(), true)
 			itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
@@ -73,7 +73,7 @@ export const command: Command = {
 		}
 
 		if (item.type === 'Weapon' && item.subtype === 'Ranged') {
-			const ammunition = items.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item.name))
+			const ammunition = allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item.name))
 
 			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 			itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)

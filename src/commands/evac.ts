@@ -5,7 +5,6 @@ import { getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '..
 import { getRaidType } from '../utils/raidUtils'
 import { formatTime } from '../utils/db/cooldowns'
 import { getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
-import { items } from '../resources/items'
 import { CONFIRM_BUTTONS } from '../utils/constants'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 
@@ -46,7 +45,7 @@ export const command: Command = {
 
 		const userBackpack = await getUserBackpack(query, message.author.id)
 		const userBackpackData = getItems(userBackpack)
-		const evacNeeded = items.find(i => i.name === raidChannel.evac.requiresKey)
+		const evacNeeded = raidChannel.evac.requiresKey
 		const evacItem = sortItemsByDurability(userBackpackData.items, true).find(i => i.item.name === evacNeeded?.name)
 
 		if (evacNeeded && !evacItem) {

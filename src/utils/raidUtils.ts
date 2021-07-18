@@ -1,5 +1,5 @@
-import { Item, items } from '../resources/items'
 import { Location, RaidChannel, allLocations } from '../resources/raids'
+import { Item } from '../types/Items'
 
 /**
  * Check if guild ID is a raid server
@@ -28,20 +28,16 @@ export function getRandomItem (raidChannel: RaidChannel): Item | undefined {
 	let randomItem
 
 	if (raidChannel.scavange.rarest && rand < 0.05) {
-		const randName = raidChannel.scavange.rarest[Math.floor(Math.random() * raidChannel.scavange.rarest.length)]
-		randomItem = items.find(itm => itm.name === randName)
+		randomItem = raidChannel.scavange.rarest[Math.floor(Math.random() * raidChannel.scavange.rarest.length)]
 	}
 	else if (rand < 0.60) {
-		const randName = raidChannel.scavange.common[Math.floor(Math.random() * raidChannel.scavange.common.length)]
-		randomItem = items.find(itm => itm.name === randName)
+		randomItem = raidChannel.scavange.common[Math.floor(Math.random() * raidChannel.scavange.common.length)]
 	}
 	else if (rand < 0.85) {
-		const randName = raidChannel.scavange.uncommon[Math.floor(Math.random() * raidChannel.scavange.uncommon.length)]
-		randomItem = items.find(itm => itm.name === randName)
+		randomItem = raidChannel.scavange.uncommon[Math.floor(Math.random() * raidChannel.scavange.uncommon.length)]
 	}
 	else {
-		const randName = raidChannel.scavange.rare[Math.floor(Math.random() * raidChannel.scavange.rare.length)]
-		randomItem = items.find(itm => itm.name === randName)
+		randomItem = raidChannel.scavange.rare[Math.floor(Math.random() * raidChannel.scavange.rare.length)]
 	}
 
 	return randomItem

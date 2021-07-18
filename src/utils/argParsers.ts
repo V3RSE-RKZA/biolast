@@ -1,8 +1,9 @@
 import { Guild, Member } from 'eris'
 import Corrector from '../structures/Corrector'
-import { Item, items } from '../resources/items'
+import { allItems } from '../resources/items'
+import { Item } from '../types/Items'
 
-const itemCorrector = new Corrector([...items.map(itm => itm.name), ...items.map(itm => itm.aliases).flat(1)])
+const itemCorrector = new Corrector([...allItems.map(itm => itm.name), ...allItems.map(itm => itm.aliases).flat(1)])
 
 /**
  * Uses spell correction to find an item from given arguments
@@ -16,7 +17,7 @@ export function getItem (args: string[]): Item | undefined {
 
 		const correctedItem = itemCorrector.getWord(afterArgs.join('_'))
 
-		const item = items.find(itm => itm.name === correctedItem || (correctedItem && itm.aliases.includes(correctedItem)))
+		const item = allItems.find(itm => itm.name === correctedItem || (correctedItem && itm.aliases.includes(correctedItem)))
 
 		if (item) {
 			return item
