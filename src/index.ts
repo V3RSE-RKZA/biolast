@@ -37,4 +37,5 @@ process.on('SIGINT', async () => {
 
 process.on('unhandledRejection', (reason, promise) => {
 	console.warn(`Unhandled rejection: ${reason}`)
+	console.error(reason)
 })

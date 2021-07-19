@@ -103,8 +103,8 @@ export const locations = locationsObject({
 		channels: [
 			{
 				type: 'LootChannel',
-				name: 'red-building',
-				display: 'Red Building',
+				name: 'red-house',
+				display: 'Red House',
 				scavange: {
 					common: [items.ak47, items['7.62x51']],
 					uncommon: [items.ak47],
@@ -115,8 +115,8 @@ export const locations = locationsObject({
 			},
 			{
 				type: 'LootChannel',
-				name: 'customs-office',
-				display: 'Customs Office',
+				name: 'apartments',
+				display: 'Apartments',
 				scavange: {
 					common: [items['ai-2_medkit'], items['7.62x54r_lps']],
 					uncommon: [items['ai-2_medkit']],
@@ -127,8 +127,8 @@ export const locations = locationsObject({
 			},
 			{
 				type: 'EvacChannel',
-				name: 'trailer-park-evac',
-				display: 'Trailer Park',
+				name: 'backwoods-evac',
+				display: 'Backwoods',
 				scavange: {
 					common: [items.paca_armor],
 					uncommon: [items.paca_armor],
@@ -146,6 +146,4 @@ export const locations = locationsObject({
 	}
 })
 
-export const allLocations: Location[] = [
-	...Object.values(locations.suburbs)
-]
+export const allLocations = Object.values(locations)

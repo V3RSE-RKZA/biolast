@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "nodemon",
-    "start": "db-migrate up && node -r dotenv/config build/index.js",
+    "start": "node -r dotenv/config build/index.js",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "migrate:up": "db-migrate up",
