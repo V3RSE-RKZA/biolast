@@ -1,6 +1,6 @@
 import { Command } from '../types/Commands'
-import { messageUser, reply } from '../utils/messageUtils'
-import { beginTransaction } from '../utils/db/mysql'
+import { reply } from '../utils/messageUtils'
+import { beginTransaction, query } from '../utils/db/mysql'
 import { addUserToRaid, getAllUsers, getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import { Location, allLocations } from '../resources/raids'
 import { CONFIRM_BUTTONS } from '../utils/constants'
@@ -20,10 +20,46 @@ export const command: Command = {
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
 	cooldown: 2,
 	worksInDMs: false,
-	canBeUsedInRaid: false,
+	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
 	async execute(app, message, { args, prefix }) {
+		const isInRaid = await getUsersRaid(query, message.author.id)
+
+		if (isInRaid) {
+			const botMessage = await reply(message, {
+				content: '⚠️ You are already in a raid. Are you looking for the invite link?',
+				components: CONFIRM_BUTTONS
+			})
+
+			try {
+				const confirmed = (await app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === message.author.id))[0]
+
+				if (confirmed.customID === 'confirmed') {
+					await confirmed.send({
+						content: `https://discord.gg/${isInRaid.invite}`,
+						ephemeral: true
+					})
+
+					await confirmed.editParent({
+						content: '✅ Sent invite link!',
+						components: []
+					})
+				}
+				else {
+					await botMessage.delete()
+				}
+			}
+			catch (err) {
+				await botMessage.edit({
+					content: '❌ Command timed out.',
+					components: []
+				})
+			}
+
+			return
+		}
+
 		const choice = getRaidChoice(args)
 
 		if (!choice) {
@@ -52,7 +88,7 @@ export const command: Command = {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `❌ You are already in an active raid! You can join it here: https://discord.gg/${userRaid.invite}`,
+						content: '❌ You are already in an active raid!',
 						components: []
 					})
 					return
@@ -120,24 +156,16 @@ export const command: Command = {
 					}, choice.raidLength * 1000)
 				})
 
-				try {
-					await messageUser(message.author, {
-						content: `Once you join this server, you will have **${formatTime(choice.raidLength * 1000)}** to evac with whatever loot you can find.` +
-							` You can use \`${prefix}raidtime\` to view how much time you have left.\n\nhttps://discord.gg/${invite.code}`
-					}, true)
+				await confirmed.send({
+					content: `You have **${formatTime(choice.raidLength * 1000)}** to join this raid and evac with whatever loot you can find.` +
+						` You can use \`${prefix}raidtime\` to view how much time you have left.\n\nhttps://discord.gg/${invite.code}`,
+					ephemeral: true
+				})
 
-					await confirmed.editParent({
-						content: '✅ Raid started! Check your DMs for the invite.',
-						components: []
-					})
-				}
-				catch (err) {
-					await confirmed.editParent({
-						content: `✅ Raid started! Once you join this server, you will have **${formatTime(choice.raidLength * 1000)}** to evac with whatever loot you can find.` +
-							` You can use \`${prefix}raidtime\` to view how much time you have left.\n\nhttps://discord.gg/${invite.code}`,
-						components: []
-					})
-				}
+				await confirmed.editParent({
+					content: `✅ **${choice.display}** raid started!`,
+					components: []
+				})
 			}
 			else {
 				await botMessage.delete()

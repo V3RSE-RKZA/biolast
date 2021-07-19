@@ -10,6 +10,7 @@ interface NPCBase {
 	health: number
 	damage: number
 	icon: string
+	quotes: string[]
 	drops: {
 		/**
 		 * Common item drops from this NPC
@@ -60,9 +61,9 @@ export type NPC = Raider | Walker
 const npcsObject = <T>(et: { [K in keyof T]: NPC & { id: K } }) => et
 
 export const npcs = npcsObject({
-	walker: {
+	walker_weak: {
 		type: 'walker',
-		id: 'walker',
+		id: 'walker_weak',
 		display: 'Walker',
 		icon: '',
 		health: 30,
@@ -72,7 +73,11 @@ export const npcs = npcsObject({
 			uncommon: [items.paca_armor],
 			rare: [items['7.62x51']],
 			rolls: 1
-		}
+		},
+		quotes: [
+			'~*You hear footsteps nearby*~',
+			'~*You hear a deep growl close by*~'
+		]
 	},
 	raider: {
 		type: 'raider',
@@ -88,7 +93,10 @@ export const npcs = npcsObject({
 			rolls: 1
 		},
 		weapon: items.ak47,
-		ammo: items['7.62x51']
+		ammo: items['7.62x51'],
+		quotes: [
+			'~*You hear footsteps nearby*~'
+		]
 	}
 })
 
