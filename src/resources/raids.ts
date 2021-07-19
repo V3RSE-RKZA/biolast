@@ -71,9 +71,24 @@ interface RaidChannelBase {
 	}
 
 	/**
-	 * NPCs that spawn in this channel
+	 * Whether or not NPCs spawn in this channel
 	 */
-	npcs?: NPC[]
+	npcSpawns?: {
+		/**
+		 * The minimum cooldown in seconds for an NPC to spawn after a previous NPC dies
+		 */
+		cooldownMin: number
+
+		/**
+		 * The maximum cooldown in seconds for an NPC to spawn after a previous NPC dies
+		 */
+		cooldownMax: number
+
+		/**
+		 * NPCs that can spawn in this channel
+		 */
+		npcs: NPC[]
+	}
 }
 
 interface LootChannel extends RaidChannelBase {
@@ -118,7 +133,11 @@ export const locations = locationsObject({
 					rolls: 4,
 					cooldown: 1 * 10
 				},
-				npcs: [npcs.walker]
+				npcSpawns: {
+					npcs: [npcs.walker],
+					cooldownMin: 60,
+					cooldownMax: 120
+				}
 			},
 			{
 				type: 'LootChannel',

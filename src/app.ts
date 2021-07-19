@@ -3,6 +3,7 @@ import { SlashCreator, GatewayServer, AnyRequestData } from 'slash-create'
 import { Command } from './types/Commands'
 import MessageCollector from './utils/MessageCollector'
 import ComponentCollector from './utils/ComponentCollector'
+import NPCHandler from './utils/NPCHandler'
 import CronJobs from './utils/CronJobs'
 import { getAllRaids, getUsersRaid, removeUserFromRaid } from './utils/db/raids'
 import { clientId, botToken, prefix } from './config'
@@ -24,6 +25,7 @@ class App {
 		timeout: NodeJS.Timeout
 	}[]
 	acceptingCommands: boolean
+	npcHandler: NPCHandler
 
 	constructor(token: string, options: Eris.ClientOptions) {
 		this.bot = new Eris.Client(token, options)
@@ -37,6 +39,7 @@ class App {
 		this.cronJobs = new CronJobs(this)
 		this.activeRaids = []
 		this.acceptingCommands = false
+		this.npcHandler = new NPCHandler(this)
 	}
 
 	async launch(): Promise<void> {
