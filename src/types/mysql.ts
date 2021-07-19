@@ -44,3 +44,10 @@ export interface BackpackItemRow extends ItemRow {
 export interface GroundItemRow extends ItemRow {
 	createdAt: Date
 }
+
+export interface NPCRow {
+	channelId: string
+	createdAt: Date
+	id: string
+	health: number
+}

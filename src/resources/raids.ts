@@ -1,6 +1,7 @@
 import { suburbsGuilds } from '../config'
 import { Item } from '../types/Items'
 import { items } from './items'
+import { NPC, npcs } from './npcs'
 
 export interface Location {
 	display: string
@@ -68,6 +69,11 @@ interface RaidChannelBase {
 		 */
 		requiresKey?: Item
 	}
+
+	/**
+	 * NPCs that spawn in this channel
+	 */
+	npcs?: NPC[]
 }
 
 interface LootChannel extends RaidChannelBase {
@@ -111,7 +117,8 @@ export const locations = locationsObject({
 					rare: [items.ak47],
 					rolls: 4,
 					cooldown: 1 * 10
-				}
+				},
+				npcs: [npcs.walker]
 			},
 			{
 				type: 'LootChannel',
