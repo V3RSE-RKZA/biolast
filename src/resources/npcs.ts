@@ -1,4 +1,4 @@
-import { Ammunition, Armor, Helmet, Item, Weapon } from '../types/Items'
+import { Ammunition, Armor, Helmet, Item, MeleeWeapon, RangedWeapon } from '../types/Items'
 import { items } from './items'
 
 type NPCType = 'walker' | 'raider'
@@ -26,35 +26,47 @@ interface NPCBase {
 		 */
 		rolls: number
 	}
+
+	/**
+	 * Helmet npc is wearing
+	 */
+	helmet?: Helmet
+
+	/**
+	 * Armor npc is wearing
+	 */
+	armor?: Armor
 }
 
 interface Walker extends NPCBase {
 	type: 'walker'
 }
 
-interface Raider extends NPCBase {
+interface RangedRaider extends NPCBase {
 	type: 'raider'
+	subtype: 'ranged'
 
 	/**
 	 * The weapon item this raider uses
 	 */
-	weapon: Weapon
+	weapon: RangedWeapon
 
 	/**
 	 * The ammo if weapon is ranged
 	 */
-	ammo?: Ammunition
-
-	/**
-	 * Helmet raider is wearing
-	 */
-	helmet?: Helmet
-
-	/**
-	 * Armor raider is wearing
-	 */
-	armor?: Armor
+	ammo: Ammunition
 }
+interface MeleeRaider extends NPCBase {
+	type: 'raider'
+	subtype: 'melee'
+
+	/**
+	 * The weapon item this raider uses
+	 */
+	weapon: MeleeWeapon
+}
+
+type Raider = RangedRaider | MeleeRaider
 
 export type NPC = Raider | Walker
 
@@ -81,6 +93,7 @@ export const npcs = npcsObject({
 	},
 	raider: {
 		type: 'raider',
+		subtype: 'ranged',
 		id: 'raider',
 		display: 'Raider',
 		icon: '',
@@ -96,7 +109,9 @@ export const npcs = npcsObject({
 		ammo: items['7.62x51'],
 		quotes: [
 			'~*You hear footsteps nearby*~'
-		]
+		],
+		armor: items.paca_armor,
+		helmet: items.paca_helmet
 	}
 })
 

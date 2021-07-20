@@ -88,7 +88,7 @@ export async function removeItemFromStash (query: Query, itemID: number): Promis
 }
 
 /**
- * Drops item on ground, items on the ground will be deleted after 15 minutes
+ * Drops item on ground, items on the ground will be deleted after 20 minutes
  * @param query Query to use
  * @param userID ID of channel to drop item in
  * @param itemID ID of the item, you can get the id by using createItem()

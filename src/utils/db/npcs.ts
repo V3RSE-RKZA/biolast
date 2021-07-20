@@ -24,7 +24,7 @@ export async function getNPC (query: Query, channelID: string, forUpdate = false
 /**
  * Lowers npc health
  * @param query Query to use
- * @param channelID Channel iD NPC is in
+ * @param channelID Channel ID NPC is in
  * @param amount Amount of health to remove
  */
 export async function lowerHealth (query: Query, channelID: string, amount: number): Promise<void> {

@@ -1,7 +1,7 @@
 import { Command } from '../types/Commands'
 import { messageUser, reply } from '../utils/messageUtils'
 import { beginTransaction } from '../utils/db/mysql'
-import { deleteItem, dropItemToGround, getGroundItems, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
+import { createItem, deleteItem, dropItemToGround, getGroundItems, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { getEquips, getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
 import { allItems } from '../resources/items'
@@ -9,9 +9,11 @@ import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import { getMemberFromMention } from '../utils/argParsers'
 import { getUserRow, lowerHealth } from '../utils/db/players'
 import formatHealth from '../utils/formatHealth'
-import { Ammunition, Armor, Helmet } from '../types/Items'
-
-type BodyPart = 'arm' | 'leg' | 'chest' | 'head'
+import { Ammunition } from '../types/Items'
+import { allNPCs } from '../resources/npcs'
+import { deleteNPC, getNPC, lowerHealth as lowerNPCHealth } from '../utils/db/npcs'
+import { getBodyPartHit, BodyPart, getAttackDamage } from '../utils/raidUtils'
+import Embed from '../structures/Embed'
 
 export const command: Command = {
 	name: 'attack',
@@ -22,7 +24,7 @@ export const command: Command = {
 		' Body parts you can specify: `head` (harder to hit), `chest`, `arms`, `legs`',
 	shortDescription: 'Attack another player using your equipped weapon.',
 	category: 'items',
-	permissions: ['sendMessages', 'externalEmojis'],
+	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
 	cooldown: 2,
 	worksInDMs: false,
 	canBeUsedInRaid: true,
@@ -30,8 +32,234 @@ export const command: Command = {
 	guildModsOnly: false,
 	async execute(app, message, { args, prefix }) {
 		const member = getMemberFromMention(message.channel.guild, args[0])
+		const npcTarget = getNPCTarget(args[0])
+		const partChoice = parseChoice(args[1])
 
-		if (!member) {
+		if (npcTarget) {
+			// attacking npc
+			const transaction = await beginTransaction()
+			const npcRow = await getNPC(transaction.query, message.channel.id, true)
+			const userData = (await getUserRow(transaction.query, message.author.id, true))!
+			const attackCD = await getCooldown(transaction.query, message.author.id, 'attack')
+
+			if (!npcRow) {
+				await transaction.commit()
+
+				await reply(message, {
+					content: `❌ There are no \`${npcTarget}\`'s here!`
+				})
+				return
+			}
+
+			const npc = allNPCs.find(n => n.id === npcRow.id)
+
+			if (!npc || npcTarget !== npc.type) {
+				await transaction.commit()
+
+				await reply(message, {
+					content: `❌ There are no \`${npcTarget}\`'s here!`
+				})
+				return
+			}
+			else if (attackCD) {
+				await transaction.commit()
+
+				await reply(message, {
+					content: `❌ Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
+				})
+				return
+			}
+
+			const userBackpack = await getUserBackpack(transaction.query, message.author.id, true)
+
+			// in case npc dies and need to update ground items
+			await getGroundItems(transaction.query, message.channel.id, true)
+
+			const userBackpackData = getItems(userBackpack)
+			const userEquips = getEquips(userBackpack)
+
+			if (!userEquips.weapon) {
+				await transaction.commit()
+
+				await reply(message, {
+					content: `❌ You don't have a weapon equipped. Equip a weapon from your backpack with \`${prefix}equip <item id>\`.`
+				})
+				return
+			}
+
+			const weaponName = userEquips.weapon.item.name
+			const userAmmoUsed = sortItemsByAmmo(userBackpackData.items, true).find(i => i.item.type === 'Ammunition' && i.item.ammoFor.includes(weaponName))
+			const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy, partChoice)
+			const messages = []
+			const removedItems = []
+			let finalDamage
+
+			if (userEquips.weapon.item.type === 'Ranged Weapon') {
+				if (!userAmmoUsed) {
+					await transaction.commit()
+
+					await reply(message, {
+						content: `❌ You don't have any ammo for your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)}.` +
+							` You need one of the following ammunitions in your backpack:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponName)).map(i => getItemDisplay(i)).join(', ')}.`
+					})
+					return
+				}
+
+				const ammoItem = userAmmoUsed.item as Ammunition
+				finalDamage = getAttackDamage(ammoItem.damage, ammoItem.penetration, bodyPartHit.result, npc.armor, npc.helmet)
+
+				messages.push(`You shot the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
+			}
+			else {
+				finalDamage = getAttackDamage(userEquips.weapon.item.damage, 0.5, bodyPartHit.result, npc.armor, npc.helmet)
+
+				messages.push(`You hit the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
+			}
+
+			// add attack cooldown based on weapon attack rate
+			await createCooldown(transaction.query, message.author.id, 'attack', userEquips.weapon.item.fireRate)
+
+			// add message if users weapon accuracy allowed them to hit their targeted body part
+			if (bodyPartHit.accurate) {
+				messages.push(`You hit the targeted limb (**${bodyPartHit.result}**) successfully!`)
+			}
+			else if (partChoice && partChoice !== bodyPartHit.result) {
+				// user specified a body part but their weapon accuracy caused them to miss
+				messages.push(`You missed the targeted limb (**${partChoice}**).`)
+			}
+
+			// remove weapon annd ammo
+			if (userEquips.weapon.row.durability - 1 <= 0) {
+				messages.push(`Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)} broke from this attack.`)
+
+				await deleteItem(transaction.query, userEquips.weapon.row.id)
+				removedItems.push(userEquips.weapon.row.id)
+			}
+			else {
+				await lowerItemDurability(transaction.query, userEquips.weapon.row.id, 1)
+			}
+
+			if (userAmmoUsed) {
+				await deleteItem(transaction.query, userAmmoUsed.row.id)
+				removedItems.push(userAmmoUsed.row.id)
+			}
+
+			if (bodyPartHit.result === 'head' && npc.helmet) {
+				messages.push(`The \`${npc.type}\`'s helmet (${getItemDisplay(npc.helmet)}) reduced the damage by **${finalDamage.reduced}**.`)
+			}
+			else if (bodyPartHit.result === 'chest' && npc.armor) {
+				messages.push(`The \`${npc.type}\`'s armor (${getItemDisplay(npc.armor)}) reduced the damage by **${finalDamage.reduced}**.`)
+			}
+
+			messages.push(`Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
+
+			if (npcRow.health - finalDamage.total <= 0) {
+				const droppedItems = []
+				if (npc.armor) {
+					const armorDura = Math.floor(Math.random() * (npc.armor.durability - (npc.armor.durability / 4) + 1)) + (npc.armor.durability / 4)
+					const armorRow = await createItem(transaction.query, npc.armor.name, armorDura)
+					await dropItemToGround(transaction.query, message.channel.id, armorRow.id)
+
+					droppedItems.push({
+						item: npc.armor,
+						row: armorRow
+					})
+				}
+				if (npc.helmet) {
+					const helmDura = Math.floor(Math.random() * (npc.helmet.durability - (npc.helmet.durability / 4) + 1)) + (npc.helmet.durability / 4)
+					const helmRow = await createItem(transaction.query, npc.helmet.name, helmDura)
+					await dropItemToGround(transaction.query, message.channel.id, helmRow.id)
+
+					droppedItems.push({
+						item: npc.helmet,
+						row: helmRow
+					})
+				}
+				if (npc.type === 'raider') {
+					// drop weapon and ammo on ground
+
+					if (npc.subtype === 'ranged') {
+						// drop random amount of bullets
+						const ammoToDrop = Math.floor(Math.random() * (3 - 1 + 1)) + 1
+
+						for (let i = 0; i < ammoToDrop; i++) {
+							const ammoRow = await createItem(transaction.query, npc.ammo.name, npc.ammo.durability)
+							await dropItemToGround(transaction.query, message.channel.id, ammoRow.id)
+
+							droppedItems.push({
+								item: npc.ammo,
+								row: ammoRow
+							})
+						}
+					}
+
+					// weapon durability is random
+					const durability = Math.floor(Math.random() * (npc.weapon.durability - (npc.weapon.durability / 4) + 1)) + (npc.weapon.durability / 4)
+					const weapRow = await createItem(transaction.query, npc.weapon.name, durability)
+					await dropItemToGround(transaction.query, message.channel.id, weapRow.id)
+
+					droppedItems.push({
+						item: npc.weapon,
+						row: weapRow
+					})
+				}
+
+				await deleteNPC(transaction.query, message.channel.id)
+				// start timer to spawn a new NPC
+				await app.npcHandler.spawnNPC(message.channel)
+
+				await transaction.commit()
+
+				messages.push(`☠️ **The \`${npc.type}\` DIED!**`)
+
+				const lootEmbed = new Embed()
+					.setTitle('Items Dropped')
+					.setDescription(droppedItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n'))
+					.setFooter(`These items are on the ground: ${prefix}ground`)
+
+				await reply(message, {
+					content: messages.join('\n'),
+					embed: lootEmbed.embed
+				})
+			}
+			else {
+				await lowerNPCHealth(transaction.query, message.channel.id, finalDamage.total)
+				messages.push(`The \`${npc.type}\` is left with ${formatHealth(npcRow.health - finalDamage.total, npc.health)} **${npcRow.health - finalDamage.total}** health.`)
+
+				const attackResult = await app.npcHandler.attackPlayer(transaction.query, message.member, userData, userBackpack, npc, message.channel.id, removedItems)
+
+				await transaction.commit()
+
+				// user attack npc message
+				const userAttackMessage = await reply(message, {
+					content: messages.join('\n')
+				})
+
+				// npc attacks user message, make it look like its replying to the users attack
+				await reply(userAttackMessage, {
+					content: attackResult.messages.join('\n')
+				})
+
+				if (userData.health - attackResult.damage <= 0) {
+					// player died
+					try {
+						await message.member.kick(`User was killed by NPC: ${npc.type} (${npc.display})`)
+					}
+					catch (err) {
+						console.error(err)
+					}
+
+					await messageUser(message.author, {
+						content: '❌ Raid failed!\n\n' +
+							`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time make sure you're well equipped to attack enemies.\n` +
+							`You lost **${userBackpackData.items.length - attackResult.removedItems}** items from your backpack.`
+					})
+				}
+			}
+
+			return
+		}
+		else if (!member) {
 			await reply(message, {
 				content: `❌ You need to mention someone to attack! \`${prefix}attack <@user>\``
 			})
@@ -84,12 +312,11 @@ export const command: Command = {
 
 		const weaponName = userEquips.weapon.item.name
 		const userAmmoUsed = sortItemsByAmmo(userBackpackData.items, true).find(i => i.item.type === 'Ammunition' && i.item.ammoFor.includes(weaponName))
-		const partChoice = parseChoice(args[1])
 		const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy, partChoice)
 		const messages = []
 		let finalDamage
 
-		if (userEquips.weapon.item.subtype === 'Ranged') {
+		if (userEquips.weapon.item.type === 'Ranged Weapon') {
 			if (!userAmmoUsed) {
 				await transaction.commit()
 
@@ -101,12 +328,12 @@ export const command: Command = {
 			}
 
 			const ammoItem = userAmmoUsed.item as Ammunition
-			finalDamage = getDamage(ammoItem.damage, ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item)
+			finalDamage = getAttackDamage(ammoItem.damage, ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item)
 
 			messages.push(`You shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
 		}
 		else {
-			finalDamage = getDamage(userEquips.weapon.item.damage, 0.5, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item)
+			finalDamage = getAttackDamage(userEquips.weapon.item.damage, 0.5, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item)
 
 			messages.push(`You hit <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
 		}
@@ -161,9 +388,6 @@ export const command: Command = {
 				await lowerItemDurability(transaction.query, victimEquips.armor.row.id, 1)
 			}
 		}
-		else if (bodyPartHit.result === 'arm' || bodyPartHit.result === 'leg') {
-			messages.push(`Hitting **${member.username}#${member.discriminator}**'s ${bodyPartHit.result} caused the damage to be reduced by **${finalDamage.reduced}**.`)
-		}
 
 		messages.push(`Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
 
@@ -209,61 +433,6 @@ export const command: Command = {
 }
 
 /**
- * Gets a random body part:
- *
- * head - 10%
- *
- * arms/legs - 15%
- *
- * chest - 60%
- *
- * @param weaponAccuracy The weapons accuracy
- * @param choice The body part user is trying to taget
- * @returns a random body part and whether or not the weapons accuracy influenced the result
- */
-function getBodyPartHit (weaponAccuracy: number, choice?: BodyPart): { result: BodyPart, accurate: boolean } {
-	const random = Math.random()
-
-	// if head was targeted, the chance of successful hit is divided by half
-	if (choice === 'head' && random <= (weaponAccuracy / 100) / 2) {
-		return {
-			result: 'head',
-			accurate: true
-		}
-	}
-	else if (choice && random <= (weaponAccuracy / 100)) {
-		return {
-			result: choice,
-			accurate: true
-		}
-	}
-
-	if (random <= 0.1) {
-		return {
-			result: 'head',
-			accurate: false
-		}
-	}
-	else if (random <= 0.25) {
-		return {
-			result: 'arm',
-			accurate: false
-		}
-	}
-	else if (random <= 0.4) {
-		return {
-			result: 'leg',
-			accurate: false
-		}
-	}
-
-	return {
-		result: 'chest',
-		accurate: false
-	}
-}
-
-/**
  * Used to parse user input for body part into a body part
  * @param choice The users body part choice
  * @returns A body part
@@ -283,48 +452,10 @@ function parseChoice (choice?: string): BodyPart | undefined {
 	}
 }
 
-function getDamage (damage: number, penetration: number, bodyPartHit: BodyPart, victimArmor?: Armor, victimHelmet?: Helmet): { total: number, reduced: number } {
-	if (bodyPartHit === 'chest') {
-		// user penetrated armor, deal full damage
-		if (!victimArmor || penetration >= victimArmor.level) {
-			return {
-				total: damage,
-				reduced: 0
-			}
-		}
+function getNPCTarget (arg: string): string | undefined {
+	const npc = allNPCs.find(n => n.type === arg)
 
-		// minimum 1 damage
-		// armor level has the armor penetration difference added to it so theres a drastic damage adjustment the higher armor level victim is wearing
-		const adjusted = Math.max(1, Math.round((penetration / (victimArmor.level + (victimArmor.level - penetration))) * damage))
-
-		return {
-			total: adjusted,
-			reduced: damage - adjusted
-		}
-	}
-	else if (bodyPartHit === 'head') {
-		// head shots deal 1.5x damage
-		damage *= 1.5
-
-		if (!victimHelmet || penetration >= victimHelmet.level) {
-			return {
-				total: damage,
-				reduced: 0
-			}
-		}
-
-		const adjusted = Math.max(1, Math.round((penetration / (victimHelmet.level + (victimHelmet.level - penetration))) * damage))
-
-		return {
-			total: adjusted,
-			reduced: damage - adjusted
-		}
-	}
-
-	// arm or leg hits deal 0.5x damage
-	const adjusted = Math.max(1, Math.round(damage * 0.5))
-	return {
-		total: adjusted,
-		reduced: damage - adjusted
+	if (npc) {
+		return npc.type
 	}
 }

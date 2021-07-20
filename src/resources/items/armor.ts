@@ -1,6 +1,6 @@
-import { Armor, Helmet } from '../../types/Items'
+import { Armor } from '../../types/Items'
 
-const armorObject = <T>(et: { [K in keyof T]: (Armor | Helmet) & { name: K } }) => et
+const armorObject = <T>(et: { [K in keyof T]: (Armor) & { name: K } }) => et
 
 export const items = armorObject({
 	paca_armor: {

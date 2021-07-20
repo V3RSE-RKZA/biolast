@@ -36,7 +36,7 @@ export function getItems<T extends ItemRow>(itemRows: T[]): { items: ItemWithRow
  */
 export function getItemDisplay (item: Item, itemRow?: ItemRow): string {
 	if (itemRow) {
-		if (item.type === 'Weapon' && itemRow.durability) {
+		if ((item.type === 'Melee Weapon' || item.type === 'Ranged Weapon') && itemRow.durability) {
 			const durability = itemRow.durability / item.durability
 
 			if (durability >= 0.8) {
@@ -82,7 +82,8 @@ export function getEquips (backpackRows: BackpackItemRow[]): {
 				case 'Backpack': backpack = { item, row }; break
 				case 'Helmet': helmet = { item, row: row as BackpackItemRow & { durability: number } }; break
 				case 'Armor': armor = { item, row: row as BackpackItemRow & { durability: number } }; break
-				case 'Weapon': weapon = { item, row: row as BackpackItemRow & { durability: number } }; break
+				case 'Melee Weapon': weapon = { item, row: row as BackpackItemRow & { durability: number } }; break
+				case 'Ranged Weapon': weapon = { item, row: row as BackpackItemRow & { durability: number } }; break
 			}
 		}
 	}

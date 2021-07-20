@@ -1,10 +1,17 @@
-import { AnyGuildChannel } from 'eris'
+import { AnyGuildChannel, Member } from 'eris'
 import App from '../app'
 import { allNPCs, NPC } from '../resources/npcs'
 import { allLocations } from '../resources/raids'
 import { Item } from '../types/Items'
+import { BackpackItemRow, Query, UserRow } from '../types/mysql'
+import { deleteItem, dropItemToGround, lowerItemDurability, removeItemFromBackpack } from './db/items'
 import { query } from './db/mysql'
 import { createNPC, deleteNPC, getAllNPCs } from './db/npcs'
+import { lowerHealth } from './db/players'
+import { removeUserFromRaid } from './db/raids'
+import formatHealth from './formatHealth'
+import { getEquips, getItemDisplay, getItems } from './itemUtils'
+import { getAttackDamage, getBodyPartHit } from './raidUtils'
 
 class NPCHandler {
 	private app: App
@@ -119,6 +126,11 @@ class NPCHandler {
 		}
 	}
 
+	/**
+	 * Used to get a random item from an NPCs item drop pool
+	 * @param npc The NPC to get item drop from
+	 * @returns A random item from possible item drops of NPC
+	 */
 	getDrop (npc: NPC): Item | undefined {
 		const rand = Math.random()
 		let randomItem
@@ -134,6 +146,107 @@ class NPCHandler {
 		}
 
 		return randomItem
+	}
+
+	/**
+	 * Simulates an NPCs attack on a player
+	 * @param transactionQuery The transaction query, used to keep all queries inside a transaction. THIS FUNCTION DOES NOT COMMIT THE TRANSACTION, DO THAT AFTER YOU CALL THIS FUNCTION
+	 * @param member The member object of the player getting attacked
+	 * @param userRow The user row of player getting attacked
+	 * @param userBackpack The backpack of player getting attacked
+	 * @param npc The NPC attacking
+	 * @param channelID ID of the channel to drop items to in case player dies from this attack
+	 * @param removedItems Array of item IDs that were removed from the user already (if the user shot a weapon for example, their ammo would've been removed)
+	 * @returns Object containing the attack messages, how much damage the NPC dealt, and how many items were removed from the user during the attack (such as their armor or helmet)
+	 */
+	async attackPlayer (
+		transactionQuery: Query,
+		member: Member,
+		userRow: UserRow,
+		userBackpack: BackpackItemRow[],
+		npc: NPC,
+		channelID: string,
+		removedItems: number[]
+	): Promise<{ messages: string[], damage: number, removedItems: number }> {
+		const messages = []
+		const userBackpackData = getItems(userBackpack)
+		const userEquips = getEquips(userBackpack)
+		let bodyPartHit
+		let npcDamage
+
+		if (npc.type === 'raider') {
+			bodyPartHit = getBodyPartHit(npc.weapon.accuracy)
+
+			if (npc.subtype === 'ranged') {
+				// raider is using ranged weapon
+				npcDamage = getAttackDamage(npc.damage, npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
+
+				messages.push(`The \`${npc.type}\` shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
+			}
+			else {
+				npcDamage = getAttackDamage(npc.damage, 0.5, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
+
+				messages.push(`The \`${npc.type}\` lunged at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
+			}
+		}
+		else {
+			// walker doesn't use a weapon, instead just swipes at user
+			bodyPartHit = getBodyPartHit(50)
+			npcDamage = getAttackDamage(npc.damage, 0.75, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
+
+			messages.push(`The \`${npc.type}\` took a swipe at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${npcDamage.total}** damage dealt.\n`)
+		}
+
+		if (bodyPartHit.result === 'head' && userEquips.helmet) {
+			messages.push(`**${member.username}#${member.discriminator}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${npcDamage.reduced}**.`)
+
+			if (userEquips.helmet.row.durability - 1 <= 0) {
+				messages.push(`**${member.username}#${member.discriminator}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
+
+				await deleteItem(transactionQuery, userEquips.helmet.row.id)
+				removedItems.push(userEquips.helmet.row.id)
+			}
+			else {
+				await lowerItemDurability(transactionQuery, userEquips.helmet.row.id, 1)
+			}
+		}
+		else if (bodyPartHit.result === 'chest' && userEquips.armor) {
+			messages.push(`**${member.username}#${member.discriminator}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${npcDamage.reduced}**.`)
+
+			if (userEquips.armor.row.durability - 1 <= 0) {
+				messages.push(`**${member.username}#${member.discriminator}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
+
+				await deleteItem(transactionQuery, userEquips.armor.row.id)
+				removedItems.push(userEquips.armor.row.id)
+			}
+			else {
+				await lowerItemDurability(transactionQuery, userEquips.armor.row.id, 1)
+			}
+		}
+
+		if (userRow.health - npcDamage.total <= 0) {
+			for (const victimItem of userBackpackData.items) {
+				if (!removedItems.includes(victimItem.row.id)) {
+					await removeItemFromBackpack(transactionQuery, victimItem.row.id)
+					await dropItemToGround(transactionQuery, channelID, victimItem.row.id)
+				}
+			}
+
+			await removeUserFromRaid(transactionQuery, member.id)
+
+			messages.push(`☠️ **${member.username}#${member.discriminator}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
+		}
+		else {
+			await lowerHealth(transactionQuery, member.id, npcDamage.total)
+
+			messages.push(`**${member.username}#${member.discriminator}** is left with ${formatHealth(userRow.health - npcDamage.total, userRow.maxHealth)} **${userRow.health - npcDamage.total}** health.`)
+		}
+
+		return {
+			messages,
+			damage: npcDamage.total,
+			removedItems: removedItems.length
+		}
 	}
 }
 

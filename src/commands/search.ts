@@ -44,11 +44,11 @@ export const command: Command = {
 		}
 
 		const npcDescription = [
-			`**Health**: ${formatHealth(npc.health, npc.health)} **${npc.health} / ${npc.health}**`
+			`**Health**: ${formatHealth(npcRow.health, npc.health)} **${npcRow.health} / ${npc.health}**`
 		]
 
 		if (npc.type === 'raider') {
-			if (npc.ammo) {
+			if (npc.subtype === 'ranged') {
 				npcDescription.push(`**Weapon**: ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)})`)
 			}
 			else {
@@ -65,7 +65,7 @@ export const command: Command = {
 		}
 
 		await reply(message, {
-			content: `__**${npc.display}**__\n${npcDescription.join('\n')}\n\n` +
+			content: `Enemy spotted: __**${npc.display}**__\n\n${npcDescription.join('\n')}\n\n` +
 				`Attack this ${npc.type} with \`${prefix}attack ${npc.type}\`.`
 		})
 	}

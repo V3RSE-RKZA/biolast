@@ -65,14 +65,14 @@ export const command: Command = {
 			itemEmbed.addField('Ammo For', weapons.map(itm => getItemDisplay(itm)).join('\n'), true)
 		}
 
-		if (item.type === 'Weapon' && item.subtype === 'Melee') {
+		if (item.type === 'Melee Weapon') {
 			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 			itemEmbed.addField('Attack Rate', '30 seconds', true)
 			itemEmbed.addField('Damage', item.damage.toString(), true)
 			itemEmbed.addField('Armor Penetration', '0.50', true)
 		}
 
-		if (item.type === 'Weapon' && item.subtype === 'Ranged') {
+		if (item.type === 'Ranged Weapon') {
 			const ammunition = allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item.name))
 
 			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)

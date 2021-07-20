@@ -1,5 +1,5 @@
 interface BaseItem {
-	type: 'Weapon' | 'Helmet' | 'Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key'
+	type: 'Ranged Weapon' | 'Melee Weapon' | 'Helmet' | 'Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key'
 	name: string
 	aliases: string[]
 	icon: string
@@ -13,12 +13,7 @@ interface BaseItem {
 type ArmorLevel = 1 | 2 | 3 | 4
 
 export interface RangedWeapon extends BaseItem {
-	type: 'Weapon'
-
-	/**
-	 * Ranged requires ammo to be used
-	 */
-	subtype: 'Ranged'
+	type: 'Ranged Weapon'
 
 	/**
 	 * How often can this weapon be used (cooldown in seconds)
@@ -37,12 +32,7 @@ export interface RangedWeapon extends BaseItem {
 }
 
 export interface MeleeWeapon extends BaseItem {
-	type: 'Weapon'
-
-	/**
-	 * Melee means weapon does not require ammo
-	 */
-	subtype: 'Melee'
+	type: 'Melee Weapon'
 
 	/**
 	 * How often can this weapon be used (cooldown in seconds)
