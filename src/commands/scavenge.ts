@@ -1,16 +1,19 @@
 import { Command } from '../types/Commands'
-import { reply } from '../utils/messageUtils'
+import { messageUser, reply } from '../utils/messageUtils'
 import { beginTransaction } from '../utils/db/mysql'
 import { addItemToBackpack, createItem, deleteItem, dropItemToGround, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { getRaidType, getRandomItem } from '../utils/raidUtils'
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
+import { getNPC } from '../utils/db/npcs'
+import { allNPCs } from '../resources/npcs'
+import { getUserRow } from '../utils/db/players'
 
 export const command: Command = {
 	name: 'scavenge',
 	aliases: ['loot'],
 	examples: [],
-	description: 'Use this command in a channel to search for loot.',
+	description: 'Use this command in a channel to search for loot. Make sure the area is clear of threats, otherwise they might attack you!',
 	shortDescription: 'Use this command in a channel to search for loot.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis'],
@@ -36,6 +39,7 @@ export const command: Command = {
 
 		try {
 			const backpackRows = await getUserBackpack(transaction.query, message.author.id, true)
+			const userData = (await getUserRow(transaction.query, message.author.id, true))!
 			const backpackData = getItems(backpackRows)
 			const userEquips = getEquips(backpackRows)
 			const keyRequired = raidChannel.scavange.requiresKey
@@ -43,6 +47,8 @@ export const command: Command = {
 			const scavengeCD = await getCooldown(transaction.query, message.author.id, 'scavenge')
 			const channelCD = await getCooldown(transaction.query, message.channel.id, 'looted')
 			const backpackLimit = getBackpackLimit(userEquips.backpack?.item)
+			const npcRow = await getNPC(transaction.query, message.channel.id, true)
+			const npc = allNPCs.find(n => n.id === npcRow?.id)
 
 			if (channelCD) {
 				await transaction.commit()
@@ -69,8 +75,48 @@ export const command: Command = {
 				return
 			}
 
-			// validations passed, add cooldowns
+			// validations passed, add scavenge cooldown
 			await createCooldown(transaction.query, message.author.id, 'scavenge', 60)
+
+			if (npc) {
+				const attackResult = await app.npcHandler.attackPlayer(transaction.query, message.member, userData, backpackRows, npc, message.channel.id, [])
+				await transaction.commit()
+
+				const seenMessage = await reply(message, {
+					content: `You try to scavenge **${raidChannel.display}** but there was a threat roaming the area!`
+				})
+
+				setTimeout(async () => {
+					try {
+						await reply(seenMessage, {
+							content: attackResult.messages.join('\n')
+						})
+					}
+					catch (err) {
+						console.error(err)
+					}
+				}, 2000)
+
+				if (userData.health - attackResult.damage <= 0) {
+					// player died
+					try {
+						await message.member.kick(`User was killed by NPC while trying to scavenge: ${npc.type} (${npc.display})`)
+					}
+					catch (err) {
+						console.error(err)
+					}
+
+					await messageUser(message.author, {
+						content: '❌ Raid failed!\n\n' +
+							`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time search the area before you scavenge for loot.\n` +
+							`You lost **${backpackData.items.length - attackResult.removedItems}** items from your backpack.`
+					})
+				}
+
+				return
+			}
+
+			// no npc in channel, continue to loot channel
 			await createCooldown(transaction.query, message.channel.id, 'looted', raidChannel.scavange.cooldown)
 
 			const scavengedLoot = []

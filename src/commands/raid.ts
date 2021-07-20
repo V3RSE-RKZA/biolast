@@ -130,7 +130,7 @@ export const command: Command = {
 					throw new Error(`Could not find welcome channel in guild: ${raidGuild.id}`)
 				}
 
-				const invite = await app.bot.createChannelInvite(inviteChannel.id, { maxAge: choice.raidLength }, 'User started raid')
+				const invite = await app.bot.createChannelInvite(inviteChannel.id, { maxAge: choice.raidLength }, `${message.author.username}#${message.author.discriminator} (${message.author.id}) started raid`)
 
 				await addUserToRaid(transaction.query, message.author.id, raidGuild.id, invite.code, choice.raidLength)
 				await transaction.commit()
