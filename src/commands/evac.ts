@@ -7,6 +7,9 @@ import { formatTime } from '../utils/db/cooldowns'
 import { getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
 import { CONFIRM_BUTTONS } from '../utils/constants'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
+import { getNPC } from '../utils/db/npcs'
+import { allNPCs } from '../resources/npcs'
+import { getUserRow } from '../utils/db/players'
 
 const EXTRACTIONS = new Set()
 
@@ -43,17 +46,62 @@ export const command: Command = {
 			return
 		}
 
-		const userBackpack = await getUserBackpack(query, message.author.id)
+		const preTransaction = await beginTransaction()
+		const userBackpack = await getUserBackpack(preTransaction.query, message.author.id, true)
 		const userBackpackData = getItems(userBackpack)
 		const evacNeeded = raidChannel.evac.requiresKey
 		const evacItem = sortItemsByDurability(userBackpackData.items, true).find(i => i.item.name === evacNeeded?.name)
+		const npcRow = await getNPC(preTransaction.query, message.channel.id, true)
+		const npc = allNPCs.find(n => n.id === npcRow?.id)
 
 		if (evacNeeded && !evacItem) {
+			await preTransaction.commit()
+
 			await reply(message, {
 				content: `❌ Using this evac requires you to have a ${getItemDisplay(evacNeeded)} in your inventory.`
 			})
 			return
 		}
+		else if (npc) {
+			const userData = (await getUserRow(preTransaction.query, message.author.id, true))!
+			const attackResult = await app.npcHandler.attackPlayer(preTransaction.query, message.member, userData, userBackpack, npc, message.channel.id, [])
+			await preTransaction.commit()
+
+			const seenMessage = await reply(message, {
+				content: 'You try to evac but there was a threat roaming the area!'
+			})
+
+			setTimeout(async () => {
+				try {
+					await reply(seenMessage, {
+						content: attackResult.messages.join('\n')
+					})
+				}
+				catch (err) {
+					console.error(err)
+				}
+			}, 1000)
+
+			if (userData.health - attackResult.damage <= 0) {
+				// player died
+				try {
+					await message.member.kick(`User was killed by NPC while trying to scavenge: ${npc.type} (${npc.display})`)
+				}
+				catch (err) {
+					console.error(err)
+				}
+
+				await messageUser(message.author, {
+					content: '❌ Raid failed!\n\n' +
+						`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time search the area before you evac.\n` +
+						`You lost all the items in your inventory (**${userBackpackData.items.length - attackResult.removedItems}** items).`
+				})
+			}
+
+			return
+		}
+
+		await preTransaction.commit()
 
 		const botMessage = await reply(message, {
 			content: `Are you sure you want to evac here${evacItem ? ` using your ${getItemDisplay(evacItem.item, evacItem.row)}` : ''}? The escape will take **${formatTime(raidChannel.evac.time * 1000)}**.`,

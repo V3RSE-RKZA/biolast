@@ -75,8 +75,8 @@ export function getMember (guild: Guild, args: string[]): Member | undefined {
  */
 export function getMemberFromMention (guild: Guild, arg?: string): Member | undefined {
 	if (arg) {
-		// regex tests for <@!1234etc>, will pass when player mentions someone or types a user id
-		const userMatch = arg.match(/^<?@?!?(\d+)>?$/)
+		// regex tests for <@!1234etc>, will pass when player mentions someone, DOES NOT PASS FOR USER IDs
+		const userMatch = arg.match(/^<@!?(\d+)>$/)
 
 		if (userMatch) {
 			const userId = userMatch[1]

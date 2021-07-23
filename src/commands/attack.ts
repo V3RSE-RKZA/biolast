@@ -283,6 +283,12 @@ export const command: Command = {
 			})
 			return
 		}
+		else if (member.id === message.author.id) {
+			await reply(message, {
+				content: '❌ What are you doing? You can\'t attack yourself...'
+			})
+			return
+		}
 
 		const transaction = await beginTransaction()
 		const victimData = await getUserRow(transaction.query, member.id, true)
