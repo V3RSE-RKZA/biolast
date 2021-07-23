@@ -155,6 +155,7 @@ export const command: Command = {
 
 			if (npcRow.health - finalDamage.total <= 0) {
 				const droppedItems = []
+
 				if (npc.armor) {
 					const armorDura = Math.floor(Math.random() * (npc.armor.durability - (npc.armor.durability / 4) + 1)) + (npc.armor.durability / 4)
 					const armorRow = await createItem(transaction.query, npc.armor.name, armorDura)
@@ -165,6 +166,7 @@ export const command: Command = {
 						row: armorRow
 					})
 				}
+
 				if (npc.helmet) {
 					const helmDura = Math.floor(Math.random() * (npc.helmet.durability - (npc.helmet.durability / 4) + 1)) + (npc.helmet.durability / 4)
 					const helmRow = await createItem(transaction.query, npc.helmet.name, helmDura)
@@ -175,6 +177,7 @@ export const command: Command = {
 						row: helmRow
 					})
 				}
+
 				if (npc.type === 'raider') {
 					// drop weapon and ammo on ground
 
@@ -202,6 +205,21 @@ export const command: Command = {
 						item: npc.weapon,
 						row: weapRow
 					})
+				}
+
+				// roll random loot drops
+				for (let i = 0; i < npc.drops.rolls; i++) {
+					const lootDrop = app.npcHandler.getDrop(npc)
+
+					if (lootDrop) {
+						const lootDropRow = await createItem(transaction.query, lootDrop.name, lootDrop.durability)
+						await dropItemToGround(transaction.query, message.channel.id, lootDropRow.id)
+
+						droppedItems.push({
+							item: lootDrop,
+							row: lootDropRow
+						})
+					}
 				}
 
 				await deleteNPC(transaction.query, message.channel.id)
