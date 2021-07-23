@@ -6,6 +6,7 @@ import { getItemDisplay } from '../utils/itemUtils'
 import { getNPC } from '../utils/db/npcs'
 import { allNPCs } from '../resources/npcs'
 import formatHealth from '../utils/formatHealth'
+import formatNumber from '../utils/formatNumber'
 
 export const command: Command = {
 	name: 'search',
@@ -44,7 +45,8 @@ export const command: Command = {
 		}
 
 		const npcDescription = [
-			`**Health**: ${formatHealth(npcRow.health, npc.health)} **${npcRow.health} / ${npc.health}**`
+			`**Health**: ${formatHealth(npcRow.health, npc.health)} **${npcRow.health} / ${npc.health}**`,
+			`**Kill XP**: 🌟 ${formatNumber(npc.xp, true)}`
 		]
 
 		if (npc.type === 'raider') {

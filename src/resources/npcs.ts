@@ -36,6 +36,11 @@ interface NPCBase {
 	 * Armor npc is wearing
 	 */
 	armor?: Armor
+
+	/**
+	 * The XP earned for killing this NPC
+	 */
+	xp: number
 }
 
 interface Walker extends NPCBase {
@@ -89,7 +94,8 @@ export const npcs = npcsObject({
 		quotes: [
 			'~*You hear footsteps nearby*~',
 			'~*You hear a deep growl close by*~'
-		]
+		],
+		xp: 20
 	},
 	raider: {
 		type: 'raider',
@@ -111,7 +117,8 @@ export const npcs = npcsObject({
 			'~*You hear footsteps nearby*~'
 		],
 		armor: items.paca_armor,
-		helmet: items.paca_helmet
+		helmet: items.paca_helmet,
+		xp: 40
 	}
 })
 

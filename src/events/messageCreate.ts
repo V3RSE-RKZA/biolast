@@ -1,12 +1,13 @@
 import { GuildTextableChannel, Message, Permission } from 'eris'
 import { prefix, debug, adminUsers } from '../config'
 import { CommandPermission } from '../types/Commands'
-import { getUserRow, createAccount } from '../utils/db/players'
+import { getUserRow, createAccount, increaseLevel } from '../utils/db/players'
 import { userInRaid } from '../utils/db/raids'
 import { isRaidGuild } from '../utils/raidUtils'
 import { query } from '../utils/db/mysql'
 import App from '../app'
 import { reply } from '../utils/messageUtils'
+import { getPlayerXp } from '../utils/playerUtils'
 
 const spamCooldown = new Set()
 
@@ -70,6 +71,28 @@ export async function run(this: App, message: Message): Promise<void> {
 		else if (!userData) {
 			await createAccount(query, message.author.id)
 		}
+
+		else {
+			// check if user has enough xp to level up
+			let playerXp = getPlayerXp(userData.xp, userData.level)
+			let newLevel = userData.level
+
+			// check if user levels up multiple times (prevents sending multiple level-up messages)
+			while (playerXp.xpUntilLevelUp <= 0) {
+				newLevel += 1
+				playerXp = getPlayerXp(userData.xp, newLevel)
+
+				console.log(`Player leveled up to ${newLevel}`)
+			}
+
+			if (userData.level !== newLevel) {
+				await increaseLevel(query, message.author.id, newLevel - userData.level)
+
+				await reply(message, {
+					content: `<@${message.author.id}>, you leveled up!\n\nLevel **${userData.level}** → **${newLevel}**`
+				})
+			}
+		}
 	}
 
 	// non-worksInDMs command cannot be used in DM channel
@@ -80,7 +103,7 @@ export async function run(this: App, message: Message): Promise<void> {
 		return
 	}
 
-	if (!command.canBeUsedInRaid && (await userInRaid(query, message.author.id) || isRaidGuild(message.guildID))) {
+	if (!command.canBeUsedInRaid && (isRaidGuild(message.guildID) || await userInRaid(query, message.author.id))) {
 		await reply(message, {
 			content: '❌ That command cannot be used while you are in an active raid! You need to evac to finish the raid (dying also works).'
 		})

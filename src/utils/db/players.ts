@@ -52,6 +52,27 @@ export async function lowerHealth (query: Query, userID: string, amount: number)
 }
 
 /**
+ * Increases a users level
+ * @param query Query to use
+ * @param userID ID of user to increase level of
+ * @param amount Amount to increase level by
+ */
+export async function increaseLevel (query: Query, userID: string, amount: number): Promise<void> {
+	await query('UPDATE users SET level = level + ? WHERE userId = ?', [amount, userID])
+}
+
+/**
+ * Add to users xp
+ * @param query Query to use
+ * @param userID ID of user to increase xp of
+ * @param amount Amount to increase xp by
+ */
+export async function addXp (query: Query, userID: string, amount: number): Promise<void> {
+	await query('UPDATE users SET xp = xp + ? WHERE userId = ?', [amount, userID])
+}
+
+
+/**
  * Creates an account for user
  * @param query Query to use
  * @param userID ID of user to create account for

@@ -14,6 +14,8 @@ export interface UserRow {
 	health: number
 	maxHealth: number
 	stashSlots: number
+	level: number
+	xp: number
 }
 
 export interface Cooldown {

@@ -7,6 +7,8 @@ import { CONFIRM_BUTTONS } from '../utils/constants'
 import { formatTime } from '../utils/db/cooldowns'
 import { getUserBackpack } from '../utils/db/items'
 import Embed from '../structures/Embed'
+import { getUserRow } from '../utils/db/players'
+import { isRaidGuild } from '../utils/raidUtils'
 
 export const command: Command = {
 	name: 'raid',
@@ -25,8 +27,15 @@ export const command: Command = {
 	guildModsOnly: false,
 	async execute(app, message, { args, prefix }) {
 		const isInRaid = await getUsersRaid(query, message.author.id)
+		const userData = (await getUserRow(query, message.author.id))!
 
-		if (isInRaid) {
+		if (isRaidGuild(message.channel.guild.id)) {
+			await reply(message, {
+				content: '❌ You are in a raid right now!! 🤔'
+			})
+			return
+		}
+		else if (isInRaid) {
 			const botMessage = await reply(message, {
 				content: '⚠️ You are already in a raid. Are you looking for the invite link?',
 				components: CONFIRM_BUTTONS
@@ -66,6 +75,12 @@ export const command: Command = {
 			await reply(message, {
 				content: '❌ You need to specify a location you want to raid. The following locations are available:',
 				embed: getLocationsEmbed().embed
+			})
+			return
+		}
+		else if (choice.requirements.level > userData.level) {
+			await reply(message, {
+				content: `❌ You are not a high enough level to explore that location. Level required: **${choice.requirements.level}**`
 			})
 			return
 		}

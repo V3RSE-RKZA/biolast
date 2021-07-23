@@ -7,7 +7,7 @@ import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
 import { getNPC } from '../utils/db/npcs'
 import { allNPCs } from '../resources/npcs'
-import { getUserRow } from '../utils/db/players'
+import { getUserRow, addXp } from '../utils/db/players'
 
 export const command: Command = {
 	name: 'scavenge',
@@ -122,22 +122,25 @@ export const command: Command = {
 			const scavengedLoot = []
 			const itemsAddedToBackpack = []
 			const itemsAddedToGround = []
+			let xpEarned = 0
 
 			for (let i = 0; i < raidChannel.scavange.rolls; i++) {
-				const randomItem = getRandomItem(raidChannel)
+				const randomLoot = getRandomItem(raidChannel)
 
-				if (randomItem) {
-					const itemRow = await createItem(transaction.query, randomItem.name, randomItem.durability)
+				if (randomLoot) {
+					const itemRow = await createItem(transaction.query, randomLoot.item.name, randomLoot.item.durability)
+
+					xpEarned += randomLoot.xp
 
 					scavengedLoot.push({
-						item: randomItem,
+						item: randomLoot.item,
 						row: itemRow
 					})
 
 					// check if users backpack has space for the item, otherwise throw it on ground
 					if (backpackData.slotsUsed + scavengedLoot.reduce((prev, curr) => prev + curr.item.slotsUsed, 0) <= backpackLimit) {
 						itemsAddedToBackpack.push({
-							item: randomItem,
+							item: randomLoot.item,
 							row: itemRow
 						})
 
@@ -145,7 +148,7 @@ export const command: Command = {
 					}
 					else {
 						itemsAddedToGround.push({
-							item: randomItem,
+							item: randomLoot.item,
 							row: itemRow
 						})
 
@@ -153,6 +156,8 @@ export const command: Command = {
 					}
 				}
 			}
+
+			await addXp(transaction.query, message.author.id, xpEarned)
 
 			// lower durability or remove key
 			if (hasRequiredKey) {
@@ -166,7 +171,9 @@ export const command: Command = {
 
 			await transaction.commit()
 
-			const finalMessage = `You ${hasRequiredKey ? `use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` : ''}scavenge **${raidChannel.display}** and find:\n\n${scavengedLoot.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || '**nothing**!'}`
+			const finalMessage = `You ${hasRequiredKey ?
+				`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
+				''}scavenge **${raidChannel.display}** and find:\n\n${scavengedLoot.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || '**nothing**!'}\n🌟 ***+${xpEarned}** xp!*`
 
 			if (!scavengedLoot.length || (!itemsAddedToBackpack.length && !itemsAddedToGround.length)) {
 				await reply(message, {
@@ -178,7 +185,7 @@ export const command: Command = {
 				await reply(message, {
 					content: `${finalMessage}\n\n` +
 						`These items were added to your **inventory**: ${itemsAddedToBackpack.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}\n\n` +
-						`Your inventory ran out of space and you were forced to put the following on the **ground**: ${itemsAddedToGround.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}`
+						`Your inventory ran out of space and you were forced to leave the following on the **ground**: ${itemsAddedToGround.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}`
 				})
 			}
 			else if (itemsAddedToBackpack.length && !itemsAddedToGround.length) {

@@ -12,12 +12,15 @@ import { removeUserFromRaid } from './db/raids'
 import formatHealth from './formatHealth'
 import { getEquips, getItemDisplay, getItems } from './itemUtils'
 import { getAttackDamage, getBodyPartHit } from './raidUtils'
+import getRandomInt from './randomInt'
 
 class NPCHandler {
 	private app: App
+	private intervals: Map<string, NodeJS.Timeout>
 
 	constructor(app: App) {
 		this.app = app
+		this.intervals = new Map()
 	}
 
 	async start (): Promise<void> {
@@ -49,9 +52,9 @@ class NPCHandler {
 									// send messages showing that mob is present in channel
 									const maxInterval = location.raidLength / 3
 									const minInterval = location.raidLength / 5
-									const timer = Math.floor(Math.random() * (maxInterval - minInterval + 1)) + minInterval
+									const timer = getRandomInt(minInterval, maxInterval)
 
-									setInterval(async () => {
+									const interval = setInterval(async () => {
 										try {
 											await this.app.bot.createMessage(channel.id, {
 												content: mob.quotes[Math.floor(Math.random() * mob.quotes.length)]
@@ -61,6 +64,8 @@ class NPCHandler {
 											console.warn(`Failed to send message: ${err}`)
 										}
 									}, timer * 1000)
+
+									this.intervals.set(channel.id, interval)
 								}
 							}
 							else if (raidChannel.npcSpawns) {
@@ -87,7 +92,7 @@ class NPCHandler {
 		const raidChannel = location?.channels.find(ch => ch.name === channel.name)
 
 		if (location && raidChannel && raidChannel.npcSpawns) {
-			const timer = Math.floor(Math.random() * (raidChannel.npcSpawns.cooldownMax - raidChannel.npcSpawns.cooldownMin + 1)) + raidChannel.npcSpawns.cooldownMin
+			const timer = getRandomInt(raidChannel.npcSpawns.cooldownMin, raidChannel.npcSpawns.cooldownMax)
 			const possibleSpawns = raidChannel.npcSpawns.npcs
 
 			console.log(`Spawning NPC at channel: ${channel.name} in ${timer} seconds`)
@@ -97,7 +102,7 @@ class NPCHandler {
 					const npc = possibleSpawns[Math.floor(Math.random() * possibleSpawns.length)]
 					const maxInterval = location.raidLength / 3
 					const minInterval = location.raidLength / 5
-					const intervalTimer = Math.floor(Math.random() * (maxInterval - minInterval + 1)) + minInterval
+					const intervalTimer = getRandomInt(minInterval, maxInterval)
 
 					await createNPC(query, channel.id, npc)
 
@@ -105,7 +110,7 @@ class NPCHandler {
 						content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
 					})
 
-					setInterval(async () => {
+					const interval = setInterval(async () => {
 						try {
 							await this.app.bot.createMessage(channel.id, {
 								content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
@@ -115,6 +120,8 @@ class NPCHandler {
 							console.warn(`Failed to send message: ${err}`)
 						}
 					}, intervalTimer * 1000)
+
+					this.intervals.set(channel.id, interval)
 				}
 				catch (err) {
 					console.error(err)
@@ -146,6 +153,19 @@ class NPCHandler {
 		}
 
 		return randomItem
+	}
+
+	/**
+	 * Stops the message send interval for an NPC in a channel
+	 * @param channelID ID of channel to stop sending NPC messages to
+	 */
+	clearNPCInterval (channelID: string): void {
+		const interval = this.intervals.get(channelID)
+
+		if (interval) {
+			clearInterval(interval)
+			this.intervals.delete(channelID)
+		}
 	}
 
 	/**

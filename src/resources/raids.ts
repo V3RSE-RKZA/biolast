@@ -37,22 +37,50 @@ interface RaidChannelBase {
 		 * Array of item names, one name is picked random
 		 * 55% - 60% chance of rolling this loot pool
 		 */
-		common: Item[]
+		common: {
+			items: Item[]
+
+			/**
+			 * The amount of xp for rolling this loot drop
+			 */
+			xp: number
+		}
 
 		/**
 		 * 25% chance of rolling this loot pool
 		 */
-		uncommon: Item[]
+		uncommon: {
+			items: Item[]
+
+			/**
+			 * The amount of xp for rolling this loot drop
+			 */
+			xp: number
+		}
 
 		/**
 		 * 15% chance of rolling this loot pool
 		 */
-		rare: Item[]
+		rare: {
+			items: Item[]
+
+			/**
+			 * The amount of xp for rolling this loot drop
+			 */
+			xp: number
+		}
 
 		/**
 		 * 5% chance of rolling this loot pool
 		 */
-		rarest?: Item[]
+		rarest?: {
+			items: Item[]
+
+			/**
+			 * The amount of xp for rolling this loot drop
+			 */
+			xp: number
+		}
 
 		/**
 		 * How many times to roll a random item name
@@ -127,9 +155,18 @@ export const locations = locationsObject({
 				name: 'red-house',
 				display: 'Red House',
 				scavange: {
-					common: [items.ak47, items['7.62x51']],
-					uncommon: [items.ak47],
-					rare: [items.ak47],
+					common: {
+						items: [items.ak47, items['7.62x51']],
+						xp: 10
+					},
+					uncommon: {
+						items: [items.ak47],
+						xp: 15
+					},
+					rare: {
+						items: [items.ak47],
+						xp: 20
+					},
 					rolls: 4,
 					cooldown: 1 * 10
 				},
@@ -144,9 +181,18 @@ export const locations = locationsObject({
 				name: 'apartments',
 				display: 'Apartments',
 				scavange: {
-					common: [items['ai-2_medkit'], items['7.62x54r_lps']],
-					uncommon: [items['ai-2_medkit']],
-					rare: [items['ai-2_medkit']],
+					common: {
+						items: [items['ai-2_medkit'], items['7.62x54r_lps']],
+						xp: 10
+					},
+					uncommon: {
+						items: [items['ai-2_medkit'], items['7.62x54r_lps']],
+						xp: 15
+					},
+					rare: {
+						items: [items['ai-2_medkit'], items['7.62x54r_lps']],
+						xp: 20
+					},
 					rolls: 3,
 					cooldown: 1 * 10
 				}
@@ -156,9 +202,18 @@ export const locations = locationsObject({
 				name: 'backwoods-evac',
 				display: 'Backwoods',
 				scavange: {
-					common: [items.paca_armor],
-					uncommon: [items.paca_armor],
-					rare: [items.paca_armor],
+					common: {
+						items: [items.paca_armor],
+						xp: 10
+					},
+					uncommon: {
+						items: [items.paca_armor],
+						xp: 15
+					},
+					rare: {
+						items: [items.paca_armor],
+						xp: 20
+					},
 					rolls: 2,
 					cooldown: 1 * 10,
 					requiresKey: items.ak47

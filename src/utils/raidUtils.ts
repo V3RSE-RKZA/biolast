@@ -25,24 +25,32 @@ export function getRaidType (guildID: string): Location | undefined {
  * @param raidChannel The channel to get scavenge loot for
  * @returns An item
  */
-export function getRandomItem (raidChannel: RaidChannel): Item | undefined {
+export function getRandomItem (raidChannel: RaidChannel): { item: Item, xp: number } {
 	const rand = Math.random()
 	let randomItem
+	let xpEarned
 
 	if (raidChannel.scavange.rarest && rand < 0.05) {
-		randomItem = raidChannel.scavange.rarest[Math.floor(Math.random() * raidChannel.scavange.rarest.length)]
+		xpEarned = raidChannel.scavange.rarest.xp
+		randomItem = raidChannel.scavange.rarest.items[Math.floor(Math.random() * raidChannel.scavange.rarest.items.length)]
 	}
 	else if (rand < 0.60) {
-		randomItem = raidChannel.scavange.common[Math.floor(Math.random() * raidChannel.scavange.common.length)]
+		xpEarned = raidChannel.scavange.common.xp
+		randomItem = raidChannel.scavange.common.items[Math.floor(Math.random() * raidChannel.scavange.common.items.length)]
 	}
 	else if (rand < 0.85) {
-		randomItem = raidChannel.scavange.uncommon[Math.floor(Math.random() * raidChannel.scavange.uncommon.length)]
+		xpEarned = raidChannel.scavange.uncommon.xp
+		randomItem = raidChannel.scavange.uncommon.items[Math.floor(Math.random() * raidChannel.scavange.uncommon.items.length)]
 	}
 	else {
-		randomItem = raidChannel.scavange.rare[Math.floor(Math.random() * raidChannel.scavange.rare.length)]
+		xpEarned = raidChannel.scavange.rare.xp
+		randomItem = raidChannel.scavange.rare.items[Math.floor(Math.random() * raidChannel.scavange.rare.items.length)]
 	}
 
-	return randomItem
+	return {
+		item: randomItem,
+		xp: xpEarned
+	}
 }
 
 /**

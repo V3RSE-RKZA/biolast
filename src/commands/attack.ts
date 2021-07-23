@@ -7,13 +7,14 @@ import { getEquips, getItemDisplay, getItems, sortItemsByAmmo } from '../utils/i
 import { allItems } from '../resources/items'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import { getMemberFromMention } from '../utils/argParsers'
-import { getUserRow, lowerHealth } from '../utils/db/players'
+import { addXp, getUserRow, lowerHealth } from '../utils/db/players'
 import formatHealth from '../utils/formatHealth'
 import { Ammunition } from '../types/Items'
 import { allNPCs } from '../resources/npcs'
 import { deleteNPC, getNPC, lowerHealth as lowerNPCHealth } from '../utils/db/npcs'
 import { getBodyPartHit, BodyPart, getAttackDamage } from '../utils/raidUtils'
 import Embed from '../structures/Embed'
+import getRandomInt from '../utils/randomInt'
 
 export const command: Command = {
 	name: 'attack',
@@ -157,7 +158,7 @@ export const command: Command = {
 				const droppedItems = []
 
 				if (npc.armor) {
-					const armorDura = Math.floor(Math.random() * (npc.armor.durability - (npc.armor.durability / 4) + 1)) + (npc.armor.durability / 4)
+					const armorDura = getRandomInt(Math.max(1, npc.armor.durability / 4), npc.armor.durability)
 					const armorRow = await createItem(transaction.query, npc.armor.name, armorDura)
 					await dropItemToGround(transaction.query, message.channel.id, armorRow.id)
 
@@ -168,7 +169,7 @@ export const command: Command = {
 				}
 
 				if (npc.helmet) {
-					const helmDura = Math.floor(Math.random() * (npc.helmet.durability - (npc.helmet.durability / 4) + 1)) + (npc.helmet.durability / 4)
+					const helmDura = getRandomInt(Math.max(1, npc.helmet.durability / 4), npc.helmet.durability)
 					const helmRow = await createItem(transaction.query, npc.helmet.name, helmDura)
 					await dropItemToGround(transaction.query, message.channel.id, helmRow.id)
 
@@ -183,7 +184,7 @@ export const command: Command = {
 
 					if (npc.subtype === 'ranged') {
 						// drop random amount of bullets
-						const ammoToDrop = Math.floor(Math.random() * (3 - 1 + 1)) + 1
+						const ammoToDrop = getRandomInt(1, 3)
 
 						for (let i = 0; i < ammoToDrop; i++) {
 							const ammoRow = await createItem(transaction.query, npc.ammo.name, npc.ammo.durability)
@@ -197,8 +198,8 @@ export const command: Command = {
 					}
 
 					// weapon durability is random
-					const durability = Math.floor(Math.random() * (npc.weapon.durability - (npc.weapon.durability / 4) + 1)) + (npc.weapon.durability / 4)
-					const weapRow = await createItem(transaction.query, npc.weapon.name, durability)
+					const weapDurability = getRandomInt(Math.max(1, npc.weapon.durability / 4), npc.weapon.durability)
+					const weapRow = await createItem(transaction.query, npc.weapon.name, weapDurability)
 					await dropItemToGround(transaction.query, message.channel.id, weapRow.id)
 
 					droppedItems.push({
@@ -212,7 +213,14 @@ export const command: Command = {
 					const lootDrop = app.npcHandler.getDrop(npc)
 
 					if (lootDrop) {
-						const lootDropRow = await createItem(transaction.query, lootDrop.name, lootDrop.durability)
+						let itemDurability
+
+						// item durability is random when dropped by npc
+						if (lootDrop.durability) {
+							itemDurability = getRandomInt(Math.max(1, lootDrop.durability / 4), lootDrop.durability)
+						}
+
+						const lootDropRow = await createItem(transaction.query, lootDrop.name, itemDurability)
 						await dropItemToGround(transaction.query, message.channel.id, lootDropRow.id)
 
 						droppedItems.push({
@@ -222,18 +230,21 @@ export const command: Command = {
 					}
 				}
 
+				await addXp(transaction.query, message.author.id, npc.xp)
 				await deleteNPC(transaction.query, message.channel.id)
+				// stop sending npcs saying that an NPC is in the channel
+				app.npcHandler.clearNPCInterval(message.channel.id)
 				// start timer to spawn a new NPC
 				await app.npcHandler.spawnNPC(message.channel)
 
 				await transaction.commit()
 
-				messages.push(`☠️ **The \`${npc.type}\` DIED!**`)
+				messages.push(`☠️ **The \`${npc.type}\` DIED!** You earned 🌟 ***+${npc.xp}*** xp for this kill.`)
 
 				const lootEmbed = new Embed()
 					.setTitle('Items Dropped')
 					.setDescription(droppedItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n'))
-					.setFooter(`These items are on the ground: ${prefix}ground`)
+					.setFooter('These items were dropped onto the ground.')
 
 				await reply(message, {
 					content: messages.join('\n'),
@@ -416,14 +427,20 @@ export const command: Command = {
 		messages.push(`Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
 
 		if (victimData.health - finalDamage.total <= 0) {
+			let xpEarned = 15
+
 			for (const victimItem of victimBackpackData.items) {
+				// 10 xp per item user had
+				xpEarned += 10
+
 				await removeItemFromBackpack(transaction.query, victimItem.row.id)
 				await dropItemToGround(transaction.query, message.channel.id, victimItem.row.id)
 			}
 
+			await addXp(transaction.query, message.author.id, xpEarned)
 			await removeUserFromRaid(transaction.query, member.id)
 
-			messages.push(`☠️ **${member.username}#${member.discriminator}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`${prefix}ground\`.`)
+			messages.push(`☠️ **${member.username}#${member.discriminator}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`${prefix}ground\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill.`)
 		}
 		else {
 			await lowerHealth(transaction.query, member.id, finalDamage.total)

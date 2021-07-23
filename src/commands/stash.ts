@@ -153,11 +153,10 @@ function generatePages (member: Member, rows: ItemRow[], userData: UserRow, pref
 
 		const embed = new Embed()
 			.setAuthor(`${member.username}#${member.discriminator}'s Stash`, member.avatarURL)
-			.setDescription(`__**Stash Info**__\n**Rubles**: ${formatNumber(userData.money)}\n` +
-				`**Number of Items**: ${itemData.items.length}\n\n` +
-				`__**Items in Stash**__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})\n` +
-				`${filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your inventory to your stash with \`${prefix}stash put <item id>\`.`}`)
-
+			.addField('__Stash Info__', `**Rubles**: ${formatNumber(userData.money)}\n` +
+			`**Number of Items**: ${itemData.items.length}`)
+			.addField(`__Items in Stash__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})`,
+				filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your inventory to your stash with \`${prefix}stash put <item id>\`.`)
 		pages.push(embed)
 	}
 
