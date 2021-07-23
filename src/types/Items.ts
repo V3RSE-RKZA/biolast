@@ -1,5 +1,5 @@
 interface BaseItem {
-	type: 'Ranged Weapon' | 'Melee Weapon' | 'Helmet' | 'Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key'
+	type: 'Ranged Weapon' | 'Melee Weapon' | 'Helmet' | 'Body Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key'
 	name: string
 	aliases: string[]
 	icon: string
@@ -58,7 +58,7 @@ export interface MeleeWeapon extends BaseItem {
 export type Weapon = RangedWeapon | MeleeWeapon
 
 export interface Armor extends BaseItem {
-	type: 'Armor'
+	type: 'Body Armor'
 
 	/**
 	 * How many times this armor can be shot before it breaks

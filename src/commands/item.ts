@@ -80,7 +80,7 @@ export const command: Command = {
 			itemEmbed.addField('Compatible Ammo', ammunition.map(itm => getItemDisplay(itm)).join('\n'), true)
 		}
 
-		if (item.type === 'Armor') {
+		if (item.type === 'Body Armor') {
 			itemEmbed.addField('Armor Level', item.level.toString(), true)
 		}
 

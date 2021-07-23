@@ -4,7 +4,7 @@ const armorObject = <T>(et: { [K in keyof T]: (Armor) & { name: K } }) => et
 
 export const items = armorObject({
 	paca_armor: {
-		type: 'Armor',
+		type: 'Body Armor',
 		name: 'paca_armor',
 		icon: '<:U_shield:601366669474136074>',
 		aliases: ['paca'],

@@ -42,7 +42,7 @@ export const command: Command = {
 			})
 			return
 		}
-		else if (!['Ranged Weapon', 'Melee Weapon', 'Helmet', 'Armor', 'Backpack'].includes(itemToEquip.item.type)) {
+		else if (!['Ranged Weapon', 'Melee Weapon', 'Helmet', 'Body Armor', 'Backpack'].includes(itemToEquip.item.type)) {
 			await transaction.commit()
 
 			await reply(message, {
@@ -66,7 +66,7 @@ export const command: Command = {
 			unequippedItem = equips.helmet
 			await unequipItem(transaction.query, equips.helmet.row.id)
 		}
-		else if (equips.armor && itemToEquip.item.type === 'Armor') {
+		else if (equips.armor && itemToEquip.item.type === 'Body Armor') {
 			unequippedItem = equips.armor
 			await unequipItem(transaction.query, equips.armor.row.id)
 		}

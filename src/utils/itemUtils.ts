@@ -81,7 +81,7 @@ export function getEquips (backpackRows: BackpackItemRow[]): {
 			switch (item.type) {
 				case 'Backpack': backpack = { item, row }; break
 				case 'Helmet': helmet = { item, row: row as BackpackItemRow & { durability: number } }; break
-				case 'Armor': armor = { item, row: row as BackpackItemRow & { durability: number } }; break
+				case 'Body Armor': armor = { item, row: row as BackpackItemRow & { durability: number } }; break
 				case 'Melee Weapon': weapon = { item, row: row as BackpackItemRow & { durability: number } }; break
 				case 'Ranged Weapon': weapon = { item, row: row as BackpackItemRow & { durability: number } }; break
 			}

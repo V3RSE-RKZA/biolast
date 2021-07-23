@@ -91,7 +91,7 @@ function generatePages (member: Member, rows: BackpackItemRow[], userData: UserR
 				`__**Equips**__\nEquip an item with \`${prefix}equip <item id>\`.\n` +
 				`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row) : 'None'}\n` +
 				`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row) : 'None'}\n` +
-				`**Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row) : 'None'}\n` +
+				`**Body Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row) : 'None'}\n` +
 				`**Weapon**: ${equips.weapon ? getItemDisplay(equips.weapon.item, equips.weapon.row) : 'None'}\n\n` +
 				`__**Items in Inventory**__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})\n` +
 				`${filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your stash to your inventory with \`${prefix}stash take <item id>\`.`}`)
