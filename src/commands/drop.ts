@@ -9,8 +9,8 @@ export const command: Command = {
 	name: 'drop',
 	aliases: [],
 	examples: ['drop 12345'],
-	description: 'Drop an item from your backpack onto the ground. You can view what items are on the ground with the `ground` command.',
-	shortDescription: 'Drop an item from your backpack onto the ground.',
+	description: 'Drop an item from your inventory onto the ground. You can view what items are on the ground with the `ground` command.',
+	shortDescription: 'Drop an item from your inventory onto the ground.',
 	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis'],
 	cooldown: 2,
@@ -23,7 +23,7 @@ export const command: Command = {
 
 		if (!itemID) {
 			await reply(message, {
-				content: `❌ You need to provide the ID of the item you want to drop. You can find the IDs of items in your \`${prefix}backpack\`.`
+				content: `❌ You need to provide the ID of the item you want to drop. You can find the IDs of items in your \`${prefix}inventory\`.`
 			})
 			return
 		}
@@ -38,7 +38,7 @@ export const command: Command = {
 			await transaction.commit()
 
 			await reply(message, {
-				content: `❌ You don't have an item with that ID in your backpack. You can find the IDs of items in your \`${prefix}backpack\`.`
+				content: `❌ You don't have an item with that ID in your inventory. You can find the IDs of items in your \`${prefix}inventory\`.`
 			})
 			return
 		}

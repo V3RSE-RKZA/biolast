@@ -13,7 +13,7 @@ export const command: Command = {
 	aliases: ['explore'],
 	examples: ['raid the suburbs'],
 	description: 'Used to join a raid. Raids are where you go to scavenge for loot and fight other players.' +
-		' You will take everything in your backpack with you, and if you die you will lose all the items you took (your stash remains unaffected).' +
+		' You will take everything in your inventory with you, and if you die you will lose all the items you took (your stash remains unaffected).' +
 		' **This command will try to DM you a server invite link. If you have DMs disabled the bot will try sending the link to the channel, although it is highly suggested you open your DMs.**',
 	shortDescription: 'Used to join a raid.',
 	category: 'info',

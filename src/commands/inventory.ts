@@ -13,11 +13,11 @@ import formatHealth from '../utils/formatHealth'
 const ITEMS_PER_PAGE = 10
 
 export const command: Command = {
-	name: 'backpack',
-	aliases: ['inventory', 'inv', 'bp'],
-	examples: ['backpack @blobfysh'],
-	description: 'View the items in your backpack. Your backpack is different from your stash in that the items in your backpack are taken with you into raids.',
-	shortDescription: 'View the items in your backpack.',
+	name: 'inventory',
+	aliases: ['backpack', 'inv', 'bp'],
+	examples: ['inventory @blobfysh'],
+	description: 'View a players inventory. Your inventory is different from your stash in that the items in your inventory are taken with you into raids. If you die in a raid, you will lose the items in your inventory.',
+	shortDescription: 'View your player inventory.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
 	cooldown: 2,
@@ -86,15 +86,15 @@ function generatePages (member: Member, rows: BackpackItemRow[], userData: UserR
 		const filteredItems = sortedItems.slice(indexFirst, indexLast)
 
 		const embed = new Embed()
-			.setAuthor(`${member.username}#${member.discriminator}'s Backpack Inventory`, member.avatarURL)
+			.setAuthor(`${member.username}#${member.discriminator}'s Inventory`, member.avatarURL)
 			.setDescription(`__**Health**__\n**${userData.health} / 100** HP\n${formatHealth(userData.health, userData.maxHealth)}\n\n` +
 				`__**Equips**__\nEquip an item with \`${prefix}equip <item id>\`.\n` +
 				`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row) : 'None'}\n` +
 				`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row) : 'None'}\n` +
 				`**Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row) : 'None'}\n` +
 				`**Weapon**: ${equips.weapon ? getItemDisplay(equips.weapon.item, equips.weapon.row) : 'None'}\n\n` +
-				`__**Items in Backpack**__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})\n` +
-				`${filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your stash to your backpack with \`${prefix}stash take <item id>\`.`}`)
+				`__**Items in Inventory**__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})\n` +
+				`${filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your stash to your inventory with \`${prefix}stash take <item id>\`.`}`)
 
 		pages.push(embed)
 	}

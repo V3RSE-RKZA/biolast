@@ -109,7 +109,7 @@ export const command: Command = {
 					await messageUser(message.author, {
 						content: '❌ Raid failed!\n\n' +
 							`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time search the area before you scavenge for loot.\n` +
-							`You lost **${backpackData.items.length - attackResult.removedItems}** items from your backpack.`
+							`You lost all the items in your inventory (**${backpackData.items.length - attackResult.removedItems}** items).`
 					})
 				}
 
@@ -177,22 +177,22 @@ export const command: Command = {
 				// items were added to both backpack and ground
 				await reply(message, {
 					content: `${finalMessage}\n\n` +
-						`These items were added to your **backpack**: ${itemsAddedToBackpack.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}\n\n` +
-						`Your backpack ran out of space and you were forced to put the following on the **ground**: ${itemsAddedToGround.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}`
+						`These items were added to your **inventory**: ${itemsAddedToBackpack.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}\n\n` +
+						`Your inventory ran out of space and you were forced to put the following on the **ground**: ${itemsAddedToGround.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}`
 				})
 			}
 			else if (itemsAddedToBackpack.length && !itemsAddedToGround.length) {
 				// all items were added to backpack
 				await reply(message, {
 					content: `${finalMessage}\n\n` +
-						'These items were added to your backpack.'
+						'These items were added to your inventory.'
 				})
 			}
 			else if (itemsAddedToGround.length && !itemsAddedToBackpack.length) {
 				// all items were put on ground
 				await reply(message, {
 					content: `${finalMessage}\n\n` +
-						'Your backpack ran out of space and you were forced to leave these items on the **ground**.'
+						'Your inventory ran out of space and you were forced to leave these items on the **ground**.'
 				})
 			}
 		}

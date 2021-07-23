@@ -9,9 +9,9 @@ export const command: Command = {
 	name: 'equip',
 	aliases: [],
 	examples: ['equip 12345'],
-	description: 'Equip an item from your backpack. Equipping a backpack will increase the amount your backpack can hold. Equipping a helmet or armor will protect you from damage. ' +
+	description: 'Equip an item from your inventory. Equipping a backpack will increase the amount your inventory can hold. Equipping a helmet or armor will protect you from damage. ' +
 		'Equipping a weapon will use that weapon whenever you use the `attack` command.',
-	shortDescription: 'Equip an item from your backpack.',
+	shortDescription: 'Equip an item from your inventory.',
 	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
 	cooldown: 2,
@@ -24,7 +24,7 @@ export const command: Command = {
 
 		if (!itemID) {
 			await reply(message, {
-				content: `❌ You need to provide the ID of the item you want to equip. You can find the IDs of items in your \`${prefix}backpack\`.`
+				content: `❌ You need to provide the ID of the item you want to equip. You can find the IDs of items in your \`${prefix}inventory\`.`
 			})
 			return
 		}
@@ -38,7 +38,7 @@ export const command: Command = {
 			await transaction.commit()
 
 			await reply(message, {
-				content: `❌ You don't have an item with that ID in your backpack. You can find the IDs of items in your \`${prefix}backpack\`.`
+				content: `❌ You don't have an item with that ID in your inventory. You can find the IDs of items in your \`${prefix}inventory\`.`
 			})
 			return
 		}

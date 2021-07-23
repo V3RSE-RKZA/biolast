@@ -12,8 +12,8 @@ export const command: Command = {
 	name: 'heal',
 	aliases: [],
 	examples: ['heal 12345'],
-	description: 'Heal yourself using an item from your backpack.',
-	shortDescription: 'Heal yourself using an item from your backpack.',
+	description: 'Heal yourself using an item from your inventory.',
+	shortDescription: 'Heal yourself using an item from your inventory.',
 	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis'],
 	cooldown: 2,
@@ -26,7 +26,7 @@ export const command: Command = {
 
 		if (!itemID) {
 			await reply(message, {
-				content: `❌ You need to provide the ID of the item to heal with. You can find the IDs of items in your \`${prefix}backpack\`.`
+				content: `❌ You need to provide the ID of the item to heal with. You can find the IDs of items in your \`${prefix}inventory\`.`
 			})
 			return
 		}
@@ -50,7 +50,7 @@ export const command: Command = {
 			await transaction.commit()
 
 			await reply(message, {
-				content: `❌ You don't have an item with that ID in your backpack. You can find the IDs of items in your \`${prefix}backpack\`.`
+				content: `❌ You don't have an item with that ID in your inventory. You can find the IDs of items in your \`${prefix}inventory\`.`
 			})
 			return
 		}

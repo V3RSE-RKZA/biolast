@@ -8,7 +8,7 @@ import { ComponentType } from 'slash-create'
 export const command: Command = {
 	name: 'help',
 	aliases: [],
-	examples: ['help backpack'],
+	examples: ['help inventory'],
 	description: 'Shows all available commands.',
 	shortDescription: 'Shows all available commands.',
 	category: 'info',
@@ -74,7 +74,7 @@ export const command: Command = {
 								{
 									label: 'Information Commands',
 									value: 'info',
-									description: 'View item information, backpacks, health, etc.'
+									description: 'View item information, inventory, health, etc.'
 								}
 							]
 						}

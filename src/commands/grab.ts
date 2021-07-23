@@ -9,8 +9,8 @@ export const command: Command = {
 	name: 'grab',
 	aliases: ['pickup'],
 	examples: ['grab 12345'],
-	description: 'Grabs an item from the ground and puts it in your backpack. You can view what items are on the ground with the `ground` command.',
-	shortDescription: 'Grabs an item from the ground and puts it in your backpack.',
+	description: 'Grabs an item from the ground and puts it in your inventory. You can view what items are on the ground with the `ground` command.',
+	shortDescription: 'Grabs an item from the ground and puts it in your inventory.',
 	category: 'items',
 	permissions: ['sendMessages', 'externalEmojis'],
 	cooldown: 2,
@@ -46,7 +46,7 @@ export const command: Command = {
 			await transaction.commit()
 
 			await reply(message, {
-				content: `❌ You don't have enough space in your backpack. You need **${itemToGrab.item.slotsUsed}** open slots in your backpack. Drop items onto the ground to clear up some space.`
+				content: `❌ You don't have enough space in your inventory. You need **${itemToGrab.item.slotsUsed}** open slots in your inventory. Drop items onto the ground to clear up some space.`
 			})
 			return
 		}
@@ -56,7 +56,7 @@ export const command: Command = {
 		await transaction.commit()
 
 		await reply(message, {
-			content: `Picked up ${getItemDisplay(itemToGrab.item, itemToGrab.row)} from the ground. You can find this item in your \`${prefix}backpack\``
+			content: `Picked up ${getItemDisplay(itemToGrab.item, itemToGrab.row)} from the ground. You can find this item in your \`${prefix}inventory\``
 		})
 	}
 }

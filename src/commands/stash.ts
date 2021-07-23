@@ -16,8 +16,8 @@ export const command: Command = {
 	name: 'stash',
 	aliases: [],
 	examples: ['stash @blobfysh', 'stash put 12345', 'stash take 12345'],
-	description: 'View the items in your stash. Your stash holds much more than your backpack but can only be altered when out of raid. ' +
-		'You can put items from your backpack into your stash using `stash put <item id>` or take items from your stash and put them into your backpack with `stash take <item id>`.',
+	description: 'View the items in your stash. Your stash holds much more than your inventory but can only be altered when out of raid. ' +
+		'You can put items from your inventory into your stash using `stash put <item id>` or take items from your stash and put them into your inventory with `stash take <item id>`.',
 	shortDescription: 'View the items in your stash.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
@@ -34,7 +34,7 @@ export const command: Command = {
 
 			if (!itemID) {
 				await reply(message, {
-					content: `❌ You need to provide the ID of the item you want to put in your stash. You can find the IDs of items in your \`${prefix}backpack\`.`
+					content: `❌ You need to provide the ID of the item you want to put in your stash. You can find the IDs of items in your \`${prefix}inventory\`.`
 				})
 				return
 			}
@@ -48,7 +48,7 @@ export const command: Command = {
 				await transaction.commit()
 
 				await reply(message, {
-					content: `❌ You don't have an item with that ID in your backpack. You can find the IDs of items in your \`${prefix}backpack\`.`
+					content: `❌ You don't have an item with that ID in your inventory. You can find the IDs of items in your \`${prefix}inventory\`.`
 				})
 				return
 			}
@@ -58,7 +58,7 @@ export const command: Command = {
 			await transaction.commit()
 
 			await reply(message, {
-				content: `Successfully moved ${getItemDisplay(itemToDeposit.item, itemToDeposit.row)} from your backpack to your stash.`
+				content: `Successfully moved ${getItemDisplay(itemToDeposit.item, itemToDeposit.row)} from your inventory to your stash.`
 			})
 			return
 		}
@@ -91,7 +91,7 @@ export const command: Command = {
 			await transaction.commit()
 
 			await reply(message, {
-				content: `Successfully moved ${getItemDisplay(itemToWithdraw.item, itemToWithdraw.row)} from your stash to your backpack.`
+				content: `Successfully moved ${getItemDisplay(itemToWithdraw.item, itemToWithdraw.row)} from your stash to your inventory.`
 			})
 			return
 		}
@@ -152,11 +152,11 @@ function generatePages (member: Member, rows: ItemRow[], userData: UserRow, pref
 		const filteredItems = sortedItems.slice(indexFirst, indexLast)
 
 		const embed = new Embed()
-			.setAuthor(`${member.username}#${member.discriminator}'s Stash Inventory`, member.avatarURL)
+			.setAuthor(`${member.username}#${member.discriminator}'s Stash`, member.avatarURL)
 			.setDescription(`__**Stash Info**__\n**Rubles**: ${formatNumber(userData.money)}\n` +
 				`**Number of Items**: ${itemData.items.length}\n\n` +
 				`__**Items in Stash**__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})\n` +
-				`${filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your backpack to your stash with \`${prefix}stash put <item id>\`.`}`)
+				`${filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your inventory to your stash with \`${prefix}stash put <item id>\`.`}`)
 
 		pages.push(embed)
 	}

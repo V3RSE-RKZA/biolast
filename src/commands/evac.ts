@@ -14,7 +14,7 @@ export const command: Command = {
 	name: 'evac',
 	aliases: ['evacuate', 'escape'],
 	examples: [],
-	description: 'Use this command in an evac channel to escape from a raid with the loot in your backpack.',
+	description: 'Use this command in an evac channel to escape from a raid with the loot in your inventory.',
 	shortDescription: 'Use this command to evac from a raid.',
 	category: 'info',
 	permissions: ['sendMessages', 'externalEmojis'],
@@ -50,7 +50,7 @@ export const command: Command = {
 
 		if (evacNeeded && !evacItem) {
 			await reply(message, {
-				content: `❌ Using this evac requires you to have a ${getItemDisplay(evacNeeded)} in your backpack.`
+				content: `❌ Using this evac requires you to have a ${getItemDisplay(evacNeeded)} in your inventory.`
 			})
 			return
 		}
@@ -86,7 +86,7 @@ export const command: Command = {
 						await transaction.commit()
 
 						await confirmed.editParent({
-							content: `❌ Using this evac requires you to have a ${getItemDisplay(evacItem.item)} in your backpack.`,
+							content: `❌ Using this evac requires you to have a ${getItemDisplay(evacItem.item)} in your inventory.`,
 							components: []
 						})
 						return
@@ -151,7 +151,7 @@ export const command: Command = {
 
 								await messageUser(member.user, {
 									content: `✅ **${raidType.display}** raid successful!\n\n` +
-										`You spent a total of **${formatTime(Date.now() - userRaid.startedAt.getTime())}** in raid and managed to evac with **${userBackpackDataV.items.length}** items in your backpack.`
+										`You spent a total of **${formatTime(Date.now() - userRaid.startedAt.getTime())}** in raid and managed to evac with **${userBackpackDataV.items.length}** items in your inventory.`
 								})
 							}
 							catch (err) {

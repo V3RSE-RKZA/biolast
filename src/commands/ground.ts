@@ -27,7 +27,7 @@ export const command: Command = {
 
 		if (!pages.length) {
 			await reply(message, {
-				content: `There are no items on the ground in this channel. You can drop an item from your backpack onto the ground with \`${prefix}drop <item id>\`.`
+				content: `There are no items on the ground in this channel. You can drop an item from your inventory onto the ground with \`${prefix}drop <item id>\`.`
 			})
 		}
 		else if (pages.length === 1) {
@@ -54,7 +54,7 @@ function generatePages (rows: GroundItemRow[], prefix: string): string[] {
 		const content = `The following items are on the ground${maxPage > 1 ? ` (page ${i}/${maxPage})` : ''}:\n\n` +
 			`${filteredItems.map(itm => `Dropped **${formatTime(Date.now() - itm.row.createdAt.getTime())}** ago - ${getItemDisplay(itm.item, itm.row)}`).join('\n')}\n\n` +
 			'⚠️ Items on the ground will expire after **20 - 25 minutes**.\n' +
-			`❔ Pick up an item with \`${prefix}grab <item id>\` or drop an item from your backpack onto the ground with \`${prefix}drop <item id>\`.`
+			`❔ Pick up an item with \`${prefix}grab <item id>\` or drop an item from your inventory onto the ground with \`${prefix}drop <item id>\`.`
 
 		pages.push(content)
 	}

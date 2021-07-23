@@ -82,7 +82,7 @@ export const command: Command = {
 				await transaction.commit()
 
 				await reply(message, {
-					content: `❌ You don't have a weapon equipped. Equip a weapon from your backpack with \`${prefix}equip <item id>\`.`
+					content: `❌ You don't have a weapon equipped. Equip a weapon from your inventory with \`${prefix}equip <item id>\`.`
 				})
 				return
 			}
@@ -100,7 +100,7 @@ export const command: Command = {
 
 					await reply(message, {
 						content: `❌ You don't have any ammo for your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)}.` +
-							` You need one of the following ammunitions in your backpack:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponName)).map(i => getItemDisplay(i)).join(', ')}.`
+							` You need one of the following ammunitions in your inventory:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponName)).map(i => getItemDisplay(i)).join(', ')}.`
 					})
 					return
 				}
@@ -252,7 +252,7 @@ export const command: Command = {
 					await messageUser(message.author, {
 						content: '❌ Raid failed!\n\n' +
 							`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time make sure you're well equipped to attack enemies.\n` +
-							`You lost **${userBackpackData.items.length - attackResult.removedItems}** items from your backpack.`
+							`You lost all the items in your inventory (**${userBackpackData.items.length - attackResult.removedItems}** items).`
 					})
 				}
 			}
@@ -305,7 +305,7 @@ export const command: Command = {
 			await transaction.commit()
 
 			await reply(message, {
-				content: `❌ You don't have a weapon equipped. Equip a weapon from your backpack with \`${prefix}equip <item id>\`.`
+				content: `❌ You don't have a weapon equipped. Equip a weapon from your inventory with \`${prefix}equip <item id>\`.`
 			})
 			return
 		}
@@ -322,7 +322,7 @@ export const command: Command = {
 
 				await reply(message, {
 					content: `❌ You don't have any ammo for your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)}.` +
-						` You need one of the following ammunitions in your backpack:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponName)).map(i => getItemDisplay(i)).join(', ')}.`
+						` You need one of the following ammunitions in your inventory:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponName)).map(i => getItemDisplay(i)).join(', ')}.`
 				})
 				return
 			}
@@ -422,7 +422,7 @@ export const command: Command = {
 			await messageUser(member.user, {
 				content: '❌ Raid failed!\n\n' +
 					`You were killed by **${message.author.username}#${message.author.discriminator}** who hit you for **${finalDamage.total}** damage using their ${getItemDisplay(userEquips.weapon.item)}${userAmmoUsed ? ` (ammo: ${getItemDisplay(userAmmoUsed.item)})` : ''}.\n` +
-					`You lost **${victimBackpackData.items.length}** items from your backpack.`
+					`You lost all the items in your inventory (**${victimBackpackData.items.length}** items).`
 			})
 		}
 
