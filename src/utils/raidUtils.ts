@@ -9,7 +9,7 @@ export type BodyPart = 'arm' | 'leg' | 'chest' | 'head'
  * @returns Whether or not guild is a raid server
  */
 export function isRaidGuild (guildID?: string): boolean {
-	return !!getRaidType(guildID || 'false')
+	return guildID ? !!getRaidType(guildID) : false
 }
 
 export function getRaidType (guildID: string): Location | undefined {

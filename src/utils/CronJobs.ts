@@ -30,7 +30,7 @@ class CronJobs {
 		console.log('[CRONJOBS] Running often tasks (5 minutes)')
 
 		// remove ground items that have been on the ground for 20+ minutes
-		await query('DELETE FROM ground_items WHERE NOW() > createdAt + INTERVAL 20 MINUTE')
+		await query('DELETE items FROM items INNER JOIN ground_items ON items.id = ground_items.itemId WHERE NOW() > ground_items.createdAt + INTERVAL 20 MINUTE')
 	}
 }
 
