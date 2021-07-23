@@ -14,7 +14,7 @@ const ITEMS_PER_PAGE = 10
 
 export const command: Command = {
 	name: 'backpack',
-	aliases: ['inventory', 'inv', 'bp', 'health', 'hp'],
+	aliases: ['inventory', 'inv', 'bp'],
 	examples: ['backpack @blobfysh'],
 	description: 'View the items in your backpack. Your backpack is different from your stash in that the items in your backpack are taken with you into raids.',
 	shortDescription: 'View the items in your backpack.',

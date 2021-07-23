@@ -65,7 +65,7 @@ export const command: Command = {
 		}
 
 		await reply(message, {
-			content: `Enemy spotted: __**${npc.display}**__\n\n${npcDescription.join('\n')}\n\n` +
+			content: `Enemy spotted: ${npc.icon}__**${npc.display}**__\n\n${npcDescription.join('\n')}\n\n` +
 				`Attack this ${npc.type} with \`${prefix}attack ${npc.type}\`.`
 		})
 	}

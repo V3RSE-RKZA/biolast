@@ -77,7 +77,7 @@ export const npcs = npcsObject({
 		type: 'walker',
 		id: 'walker_weak',
 		display: 'Walker',
-		icon: '',
+		icon: '🧟‍♂️',
 		health: 30,
 		damage: 25,
 		drops: {

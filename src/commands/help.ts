@@ -89,15 +89,15 @@ export const command: Command = {
 			try {
 				if (ctx.values.includes('raid')) {
 					cmdEmbed.setTitle('Raid Commands')
-					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category !== 'admin' && cmd.canBeUsedInRaid).map(cmd => `[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')`).join(', ')}`)
+					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category !== 'admin' && cmd.canBeUsedInRaid).map(cmd => `[\`${cmd.name}\`](https://youtu.be/25UsfHO5JwI '${cmd.shortDescription}')`).join(', ')}`)
 				}
 				else if (ctx.values.includes('items')) {
 					cmdEmbed.setTitle('Item Usage')
-					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category === 'items' && !cmd.onlyWorksInRaidGuild).map(cmd => `[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')`).join(', ')}`)
+					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category === 'items' && !cmd.onlyWorksInRaidGuild).map(cmd => `[\`${cmd.name}\`](https://youtu.be/25UsfHO5JwI '${cmd.shortDescription}')`).join(', ')}`)
 				}
 				else if (ctx.values.includes('info')) {
 					cmdEmbed.setTitle('Information Commands')
-					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category === 'info' && !cmd.onlyWorksInRaidGuild).map(cmd => `[\`${cmd.name}\`](https://youtu.be/0lvPMdMtsGU '${cmd.shortDescription}')`).join(', ')}`)
+					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category === 'info' && !cmd.onlyWorksInRaidGuild).map(cmd => `[\`${cmd.name}\`](https://youtu.be/25UsfHO5JwI '${cmd.shortDescription}')`).join(', ')}`)
 				}
 
 				await ctx.editParent({
