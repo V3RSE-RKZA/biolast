@@ -48,11 +48,36 @@ export const command: Command = {
 			return
 		}
 
-		const baseMessage = `Use \`${prefix}help <command>\` to see more about a specific command. You can also hover your mouse over the command for a short description.`
-		const cmdEmbed = new Embed()
+		const raidCommandsEmb = new Embed()
+			.setTitle('Raid Commands')
+			.setDescription(`Use \`${prefix}help <command>\` to see more about a specific command. You can also hover your mouse over the command for a short description.\n\n` +
+				`${app.commands.filter(cmd => cmd.category !== 'admin' && cmd.canBeUsedInRaid).map(cmd => `[\`${cmd.name}\`](https://youtu.be/25UsfHO5JwI '${cmd.shortDescription}')`).join(', ')}`)
+
+		const commands = new Embed()
+			.setTitle('Commands')
+			.setDescription(`Use \`${prefix}help <command>\` to see more about a specific command. You can also hover your mouse over the command for a short description.\n\n` +
+				`${app.commands.filter(cmd => cmd.category !== 'admin' && !cmd.onlyWorksInRaidGuild).map(cmd => `[\`${cmd.name}\`](https://youtu.be/25UsfHO5JwI '${cmd.shortDescription}')`).join(', ')}`)
+
+		const itemsEmbed = new Embed()
+			.setTitle('How to get items?')
+			.setDescription('The primary way to get more loot is by entering a **raid**. Raids are locations you *and other players* can explore for loot.' +
+				'\n\nYou can enter a raid using the `raid` command, make sure you\'re well equipped and have all the items you want to take with you in your **inventory** as the items in your stash ' +
+				' won\'t be accessible while in a raid.\n\nIn raid, you\'ll be able to use the `scavenge` command in a channel to look for items. You can also `search` for threats in a channel such as walkers or raiders.' +
+				' When you find a threat, you can use your equipped weapon to fight them using the `attack` command. If you kill a walker or raider, they will drop their weapon, armor, and some items onto the ground.' +
+				'\n\n**Be careful in raids, other players might see you as a threat and attack you for your items.** If you die in a raid, you\'ll lose all the items in your **inventory**, the items in your stash will be fine though.')
+
+		const damageEmbed = new Embed()
+			.setTitle('How is damage calculated?')
+			.setDescription(`Weapons are classified as either melee or ranged. If your weapon is melee, you can view how much damage it does by checking the item stats: \`${prefix}item <item name>\`` +
+				'\n\nIf however you are trying to check how much damage a ranged weapon will deal, you\'ll need to instead check how much damage the **ammo** your using deals. This is because **damage with ranged weapons' +
+				' is entirely dependent on the ammo used**.\n\nArmor may also affect how much damage you deal, **if the ammo your using has a lower penetration level than the armor level the target is wearing, your damage will' +
+				' be reduced**. If your ammo has a higher penetration level than the armor level your target is wearing, you will deal full damage.\n\nHitting certain body parts will also determine your damage. A hit to the target\'s head' +
+				' will deal double the damage (assuming they aren\'t wearing a helmet) but is obviously harder to hit. A hit to the chest will deal normal damage and is the easiest body part to hit.' +
+				' A hit to the arms or legs deals half damage but you also avoid hitting any armor the target is wearing. **Your ability to successfully hit a targeted limb when using the `attack` command is dependent on your' +
+				' weapon\'s accuracy.**')
 
 		const botMessage = await reply(message, {
-			content: 'What kind of commands are you looking for?',
+			content: 'What do you need help with?',
 			components: [
 				{
 					type: ComponentType.ACTION_ROW,
@@ -62,19 +87,24 @@ export const command: Command = {
 							custom_id: 'help-command',
 							options: [
 								{
+									label: 'Commands',
+									value: 'commands',
+									description: 'Commands that only work when out of raid'
+								},
+								{
 									label: 'Raid Commands',
-									value: 'raid',
-									description: 'Commands that can be used while in a raid'
+									value: 'raid-commands',
+									description: 'Commands that can be used while in raid'
 								},
 								{
-									label: 'Item Commands',
-									value: 'items',
-									description: 'Use your items with these commands'
+									label: 'What is a raid?',
+									value: 'how-to-raid',
+									description: ''
 								},
 								{
-									label: 'Information Commands',
-									value: 'info',
-									description: 'View item information, inventory, health, etc.'
+									label: 'How is damage calculated?',
+									value: 'damage',
+									description: ''
 								}
 							]
 						}
@@ -87,23 +117,30 @@ export const command: Command = {
 
 		collector.on('collect', async ctx => {
 			try {
-				if (ctx.values.includes('raid')) {
-					cmdEmbed.setTitle('Raid Commands')
-					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category !== 'admin' && cmd.canBeUsedInRaid).map(cmd => `[\`${cmd.name}\`](https://youtu.be/25UsfHO5JwI '${cmd.shortDescription}')`).join(', ')}`)
+				if (ctx.values.includes('raid-commands')) {
+					await ctx.editParent({
+						content: '',
+						embeds: [raidCommandsEmb.embed]
+					})
 				}
-				else if (ctx.values.includes('items')) {
-					cmdEmbed.setTitle('Item Usage')
-					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category === 'items' && !cmd.onlyWorksInRaidGuild).map(cmd => `[\`${cmd.name}\`](https://youtu.be/25UsfHO5JwI '${cmd.shortDescription}')`).join(', ')}`)
+				else if (ctx.values.includes('commands')) {
+					await ctx.editParent({
+						content: '',
+						embeds: [commands.embed]
+					})
 				}
-				else if (ctx.values.includes('info')) {
-					cmdEmbed.setTitle('Information Commands')
-					cmdEmbed.setDescription(`${baseMessage}\n\n${app.commands.filter(cmd => cmd.category === 'info' && !cmd.onlyWorksInRaidGuild).map(cmd => `[\`${cmd.name}\`](https://youtu.be/25UsfHO5JwI '${cmd.shortDescription}')`).join(', ')}`)
+				else if (ctx.values.includes('how-to-raid')) {
+					await ctx.editParent({
+						content: '',
+						embeds: [itemsEmbed.embed]
+					})
 				}
-
-				await ctx.editParent({
-					content: '',
-					embeds: [cmdEmbed.embed]
-				})
+				else if (ctx.values.includes('damage')) {
+					await ctx.editParent({
+						content: '',
+						embeds: [damageEmbed.embed]
+					})
+				}
 			}
 			catch (err) {
 				// continue
