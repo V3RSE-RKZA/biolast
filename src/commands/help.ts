@@ -89,7 +89,7 @@ export const command: Command = {
 								{
 									label: 'Commands',
 									value: 'commands',
-									description: 'Commands that only work when out of raid'
+									description: 'Commands that work when out of raid'
 								},
 								{
 									label: 'Raid Commands',

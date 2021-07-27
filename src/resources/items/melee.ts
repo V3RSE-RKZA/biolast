@@ -13,6 +13,7 @@ export const items = meleeObject({
 		slotsUsed: 1,
 		fireRate: 10,
 		accuracy: 35,
-		damage: 30
+		damage: 30,
+		penetration: 0.5
 	}
 })

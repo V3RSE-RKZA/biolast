@@ -53,6 +53,12 @@ export interface MeleeWeapon extends BaseItem {
 	 * How many times this weapon can be used to attack
 	 */
 	durability: number
+
+	/**
+	 * The armor penetration this weapon has, can be a float between 0 - whatever. If this number is greater than the victims armor level, this weapon will deal full damage.
+	 * Otherwise, the damage will be reduced based on the difference between this number and the victims armor level.
+	 */
+	penetration: number
 }
 
 export type Weapon = RangedWeapon | MeleeWeapon

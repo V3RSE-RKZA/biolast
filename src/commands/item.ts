@@ -69,7 +69,7 @@ export const command: Command = {
 			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 			itemEmbed.addField('Attack Rate', '30 seconds', true)
 			itemEmbed.addField('Damage', item.damage.toString(), true)
-			itemEmbed.addField('Armor Penetration', '0.50', true)
+			itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
 		}
 
 		if (item.type === 'Ranged Weapon') {
