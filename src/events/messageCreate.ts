@@ -6,8 +6,11 @@ import { userInRaid } from '../utils/db/raids'
 import { isRaidGuild } from '../utils/raidUtils'
 import { query } from '../utils/db/mysql'
 import App from '../app'
-import { reply } from '../utils/messageUtils'
+import { messageUser, reply } from '../utils/messageUtils'
 import { getPlayerXp } from '../utils/playerUtils'
+import { addItemToBackpack, createItem } from '../utils/db/items'
+import { items } from '../resources/items'
+import { getItemDisplay } from '../utils/itemUtils'
 
 const spamCooldown = new Set()
 
@@ -70,6 +73,25 @@ export async function run(this: App, message: Message): Promise<void> {
 		// create account if user does not have one
 		else if (!userData) {
 			await createAccount(query, message.author.id)
+
+			const batRow = await createItem(query, items.wooden_bat.name, items.wooden_bat.durability)
+			const bandageRow = await createItem(query, items.bandage.name)
+
+			await addItemToBackpack(query, message.author.id, batRow.id)
+			await addItemToBackpack(query, message.author.id, bandageRow.id)
+
+			await messageUser(message.author, {
+				content: '**Welcome to `project z???`**\n\n' +
+				'You are a scavenger just trying to survive in the middle of an apocalypse. You need to explore areas and collect as much loot as you can all while ' +
+				'making sure you aren\'t killed. It\'s survival of the fittest, other scavengers will try to kill you for your loot. You need to find weapons and armor ' +
+				'to protect yourself with. Scavengers aren\'t the only thing trying to get you though, watch out for walkers and heavily armed raiders.\n\n' +
+				'You have a `stash` and an `inventory` for your items. Whenever you enter a **raid**, you will take all the items in your `inventory` with you. ' +
+				'I would highly recommend taking a weapon with you to protect yourself with. **If you die while in raid, you will lose all the items in your inventory.** ' +
+				'This could also work in your favor, if you kill another player you can steal everything they had in their inventory for yourself. ' +
+				'Once you are finished looting in a raid, you need to find a channel to **evac** from. Channels that have an evac will typically have it in the name: ex. `backwoods-evac`.\n\n' +
+				`I've put some items in your \`inventory\` to help you get started: **1x** ${getItemDisplay(items.wooden_bat)}, **1x** ${getItemDisplay(items.bandage)}\n\n` +
+				'Once you\'re ready to enter a raid, use the `raid` command. **Good luck!** - 💙 blobfysh'
+			})
 		}
 
 		else {
