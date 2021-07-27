@@ -58,11 +58,9 @@ export const command: Command = {
 		}
 
 		if (item.type === 'Ammunition') {
-			const weapons = allItems.filter(itm => item.ammoFor.includes(itm.name))
-
 			itemEmbed.addField('Damage', item.damage.toString(), true)
 			itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
-			itemEmbed.addField('Ammo For', weapons.map(itm => getItemDisplay(itm)).join('\n'), true)
+			itemEmbed.addField('Ammo For', item.ammoFor.map(itm => getItemDisplay(itm)).join('\n'), true)
 		}
 
 		if (item.type === 'Melee Weapon') {
@@ -73,7 +71,7 @@ export const command: Command = {
 		}
 
 		if (item.type === 'Ranged Weapon') {
-			const ammunition = allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item.name))
+			const ammunition = allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item))
 
 			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 			itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)

@@ -88,26 +88,29 @@ export const command: Command = {
 				return
 			}
 
-			const weaponName = userEquips.weapon.item.name
-			const userAmmoUsed = sortItemsByAmmo(userBackpackData.items, true).find(i => i.item.type === 'Ammunition' && i.item.ammoFor.includes(weaponName))
 			const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy, partChoice)
 			const messages = []
 			const removedItems = []
 			let finalDamage
 
 			if (userEquips.weapon.item.type === 'Ranged Weapon') {
+				const weaponUsed = userEquips.weapon.item
+				const userAmmoUsed = sortItemsByAmmo(userBackpackData.items, true).find(i => i.item.type === 'Ammunition' && i.item.ammoFor.includes(weaponUsed))
+
 				if (!userAmmoUsed) {
 					await transaction.commit()
 
 					await reply(message, {
 						content: `❌ You don't have any ammo for your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)}.` +
-							` You need one of the following ammunitions in your inventory:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponName)).map(i => getItemDisplay(i)).join(', ')}.`
+							` You need one of the following ammunitions in your inventory:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponUsed)).map(i => getItemDisplay(i)).join(', ')}.`
 					})
 					return
 				}
 
 				const ammoItem = userAmmoUsed.item as Ammunition
 				finalDamage = getAttackDamage(ammoItem.damage, ammoItem.penetration, bodyPartHit.result, npc.armor, npc.helmet)
+				await deleteItem(transaction.query, userAmmoUsed.row.id)
+				removedItems.push(userAmmoUsed.row.id)
 
 				messages.push(`You shot the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
 			}
@@ -138,11 +141,6 @@ export const command: Command = {
 			}
 			else {
 				await lowerItemDurability(transaction.query, userEquips.weapon.row.id, 1)
-			}
-
-			if (userAmmoUsed) {
-				await deleteItem(transaction.query, userAmmoUsed.row.id)
-				removedItems.push(userAmmoUsed.row.id)
 			}
 
 			if (bodyPartHit.result === 'head' && npc.helmet) {
@@ -345,25 +343,29 @@ export const command: Command = {
 			return
 		}
 
-		const weaponName = userEquips.weapon.item.name
-		const userAmmoUsed = sortItemsByAmmo(userBackpackData.items, true).find(i => i.item.type === 'Ammunition' && i.item.ammoFor.includes(weaponName))
 		const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy, partChoice)
 		const messages = []
 		let finalDamage
+		let ammoUsed
 
 		if (userEquips.weapon.item.type === 'Ranged Weapon') {
+			const weaponUsed = userEquips.weapon.item
+			const userAmmoUsed = sortItemsByAmmo(userBackpackData.items, true).find(i => i.item.type === 'Ammunition' && i.item.ammoFor.includes(weaponUsed))
+
 			if (!userAmmoUsed) {
 				await transaction.commit()
 
 				await reply(message, {
 					content: `❌ You don't have any ammo for your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)}.` +
-						` You need one of the following ammunitions in your inventory:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponName)).map(i => getItemDisplay(i)).join(', ')}.`
+						` You need one of the following ammunitions in your inventory:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponUsed)).map(i => getItemDisplay(i)).join(', ')}.`
 				})
 				return
 			}
 
+			ammoUsed = userAmmoUsed
 			const ammoItem = userAmmoUsed.item as Ammunition
 			finalDamage = getAttackDamage(ammoItem.damage, ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item)
+			await deleteItem(transaction.query, userAmmoUsed.row.id)
 
 			messages.push(`You shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
 		}
@@ -393,10 +395,6 @@ export const command: Command = {
 		}
 		else {
 			await lowerItemDurability(transaction.query, userEquips.weapon.row.id, 1)
-		}
-
-		if (userAmmoUsed) {
-			await deleteItem(transaction.query, userAmmoUsed.row.id)
 		}
 
 		if (bodyPartHit.result === 'head' && victimEquips.helmet) {
@@ -462,7 +460,7 @@ export const command: Command = {
 
 			await messageUser(member.user, {
 				content: '❌ Raid failed!\n\n' +
-					`You were killed by **${message.author.username}#${message.author.discriminator}** who hit you for **${finalDamage.total}** damage using their ${getItemDisplay(userEquips.weapon.item)}${userAmmoUsed ? ` (ammo: ${getItemDisplay(userAmmoUsed.item)})` : ''}.\n` +
+					`You were killed by **${message.author.username}#${message.author.discriminator}** who hit you for **${finalDamage.total}** damage using their ${getItemDisplay(userEquips.weapon.item)}${ammoUsed ? ` (ammo: ${getItemDisplay(ammoUsed.item)})` : ''}.\n` +
 					`You lost all the items in your inventory (**${victimBackpackData.items.length}** items).`
 			})
 		}

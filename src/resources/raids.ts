@@ -156,15 +156,15 @@ export const locations = locationsObject({
 				display: 'Red House',
 				scavange: {
 					common: {
-						items: [items.ak47, items['7.62x51']],
+						items: [items.makeshift_pistol, items.makeshift_pistol_ammo],
 						xp: 10
 					},
 					uncommon: {
-						items: [items.ak47],
+						items: [items.makeshift_rifle, items.makeshift_rifle_ammo],
 						xp: 15
 					},
 					rare: {
-						items: [items.ak47],
+						items: [items['glock-17'], items['9mm_fmj']],
 						xp: 20
 					},
 					rolls: 4,
@@ -182,15 +182,15 @@ export const locations = locationsObject({
 				display: 'Apartments',
 				scavange: {
 					common: {
-						items: [items['ai-2_medkit'], items['7.62x54r_lps']],
+						items: [items.bandage, items.wooden_bat],
 						xp: 10
 					},
 					uncommon: {
-						items: [items['ai-2_medkit'], items['7.62x54r_lps']],
+						items: [items.ifak_medkit, items.metal_bat],
 						xp: 15
 					},
 					rare: {
-						items: [items['ai-2_medkit'], items['7.62x54r_lps']],
+						items: [items['glock-17'], items['9mm_fmj']],
 						xp: 20
 					},
 					rolls: 3,
@@ -203,24 +203,24 @@ export const locations = locationsObject({
 				display: 'Backwoods',
 				scavange: {
 					common: {
-						items: [items.paca_armor],
+						items: [items.cloth_armor, items.cloth_helmet],
 						xp: 10
 					},
 					uncommon: {
-						items: [items.paca_armor],
+						items: [items.wooden_armor, items.wooden_helmet],
 						xp: 15
 					},
 					rare: {
-						items: [items.paca_armor],
+						items: [items.paca_armor, items.paca_helmet],
 						xp: 20
 					},
 					rolls: 2,
 					cooldown: 1 * 10,
-					requiresKey: items.ak47
+					requiresKey: items.bandage
 				},
 				evac: {
 					time: 30,
-					requiresKey: items.paca_armor
+					requiresKey: items.bandage
 				}
 			}
 		]

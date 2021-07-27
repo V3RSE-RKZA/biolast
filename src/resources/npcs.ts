@@ -86,9 +86,9 @@ export const npcs = npcsObject({
 		health: 30,
 		damage: 25,
 		drops: {
-			common: [items.ak47],
-			uncommon: [items.paca_armor],
-			rare: [items['7.62x51']],
+			common: [items.bandage],
+			uncommon: [items.makeshift_pistol_ammo],
+			rare: [items['9mm_fmj']],
 			rolls: 1
 		},
 		quotes: [
@@ -106,18 +106,18 @@ export const npcs = npcsObject({
 		health: 30,
 		damage: 25,
 		drops: {
-			common: [items.ak47],
-			uncommon: [items.paca_armor],
-			rare: [items['7.62x51']],
+			common: [items.bandage],
+			uncommon: [items.ifak_medkit],
+			rare: [items['5.45x39_fmj']],
 			rolls: 1
 		},
-		weapon: items.ak47,
-		ammo: items['7.62x51'],
+		weapon: items['glock-17'],
+		ammo: items['9mm_fmj'],
 		quotes: [
 			'~*You hear footsteps nearby*~'
 		],
-		armor: items.paca_armor,
-		helmet: items.paca_helmet,
+		armor: items.cloth_armor,
+		helmet: items.cloth_helmet,
 		xp: 40
 	}
 })

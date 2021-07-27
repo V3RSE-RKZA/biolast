@@ -12,5 +12,25 @@ export const items = armorObject({
 		durability: 3,
 		level: 4,
 		slotsUsed: 2
+	},
+	cloth_armor: {
+		type: 'Body Armor',
+		name: 'cloth_armor',
+		icon: '<:U_shield:601366669474136074>',
+		aliases: ['cloth', 'armor'],
+		sellPrice: 1000,
+		durability: 3,
+		level: 1,
+		slotsUsed: 2
+	},
+	wooden_armor: {
+		type: 'Body Armor',
+		name: 'wooden_armor',
+		icon: '<:U_shield:601366669474136074>',
+		aliases: ['wood_armor'],
+		sellPrice: 1000,
+		durability: 3,
+		level: 1,
+		slotsUsed: 2
 	}
 })

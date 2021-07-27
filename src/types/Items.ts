@@ -106,9 +106,9 @@ export interface Ammunition extends BaseItem {
 	penetration: number
 
 	/**
-	 * Names of the weapons this ammo works for
+	 * Weapons this ammo works for
 	 */
-	ammoFor: string[]
+	ammoFor: RangedWeapon[]
 }
 
 export interface Medical extends BaseItem {
