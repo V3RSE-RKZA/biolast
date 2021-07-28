@@ -77,10 +77,10 @@ export const command: Command = {
 function generatePages (member: Member, rows: BackpackItemRow[], userData: UserRow, prefix: string): Embed[] {
 	const itemData = getItems(rows)
 	const playerXp = getPlayerXp(userData.xp, userData.level)
-	const sortedItems = sortItemsByName(itemData.items, true)
 	const equips = getEquips(rows)
+	const sortedItems = sortItemsByName(itemData.items, true)
 	const pages = []
-	const maxPage = Math.ceil(itemData.items.length / ITEMS_PER_PAGE) || 1
+	const maxPage = Math.ceil(sortedItems.length / ITEMS_PER_PAGE) || 1
 
 	for (let i = 1; i < maxPage + 1; i++) {
 		const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
@@ -92,10 +92,10 @@ function generatePages (member: Member, rows: BackpackItemRow[], userData: UserR
 			.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP\n${formatHealth(userData.health, userData.maxHealth)}`, true)
 			.addField('__Experience__', `**Level**: ${userData.level}\n**XP**: ${playerXp.relativeLevelXp} / ${playerXp.levelTotalXpNeeded} xp`, true)
 			.addField('__Equips__', `Equip an item with \`${prefix}equip <item id>\`.\n` +
-				`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row) : 'None'}\n` +
-				`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row) : 'None'}\n` +
-				`**Body Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row) : 'None'}\n` +
-				`**Weapon**: ${equips.weapon ? getItemDisplay(equips.weapon.item, equips.weapon.row) : 'None'}`)
+				`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}\n` +
+				`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}\n` +
+				`**Body Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row, { showEquipped: false, showID: false }) : 'None'}\n` +
+				`**Weapon**: ${equips.weapon ? getItemDisplay(equips.weapon.item, equips.weapon.row, { showEquipped: false, showID: false }) : 'None'}`)
 			.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})`, filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found. Move items from your stash to your inventory with \`${prefix}stash take <item id>\`.`)
 		pages.push(embed)
 	}

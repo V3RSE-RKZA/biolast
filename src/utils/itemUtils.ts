@@ -5,6 +5,10 @@ import { Ammunition, Armor, Backpack, Helmet, Item, Weapon } from '../types/Item
 
 type ItemWithRow<T extends ItemRow> = { item: Item, row: T }
 
+function instanceOfBackpackRow(itemRow: ItemRow | BackpackItemRow): itemRow is BackpackItemRow {
+	return 'equipped' in itemRow
+}
+
 /**
  * Returns the amount of slots the items are taking up and the item data given rows of items
  * @param itemRows Rows of items, can be rows of ground items, stash items, or backpack items
@@ -33,26 +37,51 @@ export function getItems<T extends ItemRow>(itemRows: T[]): { items: ItemWithRow
  * Get the string form of an item
  * @param item Item to display as string
  * @param itemRow The row of the item
+ * @param options Options for the display
+ * @param options.showEquipped Show whether or not this item is equipped, defaults true
+ * @param options.showID Show the ID of this item, defaults true
+ * @param options.showDurability Show the durability of this item, defaults true
  */
-export function getItemDisplay (item: Item, itemRow?: ItemRow): string {
+export function getItemDisplay(item: Item, itemRow?: ItemRow, options: Partial<{ showEquipped: boolean, showID: boolean, showDurability: boolean }> = {}): string {
+	const { showEquipped = true, showID = true, showDurability = true } = options
+
 	if (itemRow) {
-		if ((item.type === 'Melee Weapon' || item.type === 'Ranged Weapon') && itemRow.durability) {
-			const durability = itemRow.durability / item.durability
+		const attributes = []
+		let display
 
-			if (durability >= 0.8) {
-				return `*Pristine* ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
-			}
-			else if (durability >= 0.6) {
-				return `*Used* ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
-			}
-			else if (durability >= 0.4) {
-				return `*Shoddy* ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
-			}
+		if (showDurability && (item.type === 'Melee Weapon' || item.type === 'Ranged Weapon') && itemRow.durability) {
+			const currentDura = itemRow.durability / item.durability
 
-			return `*Damaged* ${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`)`
+			if (currentDura >= 0.8) {
+				display = `*Pristine* ${item.icon}\`${item.name}\``
+			}
+			else if (currentDura >= 0.6) {
+				display = `*Used* ${item.icon}\`${item.name}\``
+			}
+			else if (currentDura >= 0.4) {
+				display = `*Shoddy* ${item.icon}\`${item.name}\``
+			}
+			else {
+				display = `*Damaged* ${item.icon}\`${item.name}\``
+			}
+		}
+		else {
+			display = `${item.icon}\`${item.name}\``
+
+			if (showDurability && itemRow.durability) {
+				attributes.push(`**${itemRow.durability}** uses left`)
+			}
 		}
 
-		return `${item.icon}\`${item.name}\` (ID: \`${itemRow.id}\`${itemRow.durability ? `, **${itemRow.durability}** uses left` : ''})`
+		if (showEquipped && instanceOfBackpackRow(itemRow) && itemRow.equipped) {
+			attributes.push('🧤 equipped')
+		}
+
+		if (showID) {
+			return `[\`${itemRow.id}\`] ${display} ${attributes.length ? `(${attributes.join(', ')})` : ''}`
+		}
+
+		return `${display} ${attributes.length ? `(${attributes.join(', ')})` : ''}`
 	}
 
 	return `${item.icon}\`${item.name}\``
