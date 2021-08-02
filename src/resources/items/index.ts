@@ -4,7 +4,8 @@ import { items as armor } from './armor'
 import { items as helmets } from './helmets'
 import { items as ammunition } from './ammunition'
 import { items as medical } from './medical'
-import { Item } from '../../types/Items'
+import { items as keys } from './keys'
+import { items as backpacks } from './backpacks'
 
 export const items = {
 	...ranged,
@@ -12,14 +13,9 @@ export const items = {
 	...armor,
 	...helmets,
 	...ammunition,
-	...medical
+	...medical,
+	...keys,
+	...backpacks
 }
 
-export const allItems: Item[] = [
-	...Object.values(ranged),
-	...Object.values(melee),
-	...Object.values(armor),
-	...Object.values(helmets),
-	...Object.values(ammunition),
-	...Object.values(medical)
-]
+export const allItems = Object.values(items)

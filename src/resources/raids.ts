@@ -182,7 +182,7 @@ export const locations = locationsObject({
 				display: 'Apartments',
 				scavange: {
 					common: {
-						items: [items.bandage, items.wooden_bat],
+						items: [items.shed_key, items.wooden_bat],
 						xp: 10
 					},
 					uncommon: {
@@ -216,11 +216,11 @@ export const locations = locationsObject({
 					},
 					rolls: 2,
 					cooldown: 1 * 10,
-					requiresKey: items.bandage
+					requiresKey: items.shed_key
 				},
 				evac: {
 					time: 30,
-					requiresKey: items.bandage
+					requiresKey: items.shed_key
 				}
 			}
 		]
