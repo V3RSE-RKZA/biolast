@@ -1,5 +1,5 @@
 import Eris, { User, Member, Guild } from 'eris'
-import { SlashCreator, GatewayServer, AnyRequestData } from 'slash-create'
+import { SlashCreator, GatewayServer, AnyRequestData, CommandContext, InteractionRequestData } from 'slash-create'
 import { Command } from './types/Commands'
 import MessageCollector from './utils/MessageCollector'
 import ComponentCollector from './utils/ComponentCollector'
@@ -12,6 +12,7 @@ import path from 'path'
 import { beginTransaction, query } from './utils/db/mysql'
 import { getUserBackpack } from './utils/db/items'
 import { formatTime } from './utils/db/cooldowns'
+import CustomSlashCommand from './structures/CustomSlashCommand'
 
 class App {
 	bot: Eris.Client
@@ -27,12 +28,18 @@ class App {
 	acceptingCommands: boolean
 	npcHandler: NPCHandler
 
-	constructor(token: string, options: Eris.ClientOptions) {
+	constructor (token: string, options: Eris.ClientOptions) {
 		this.bot = new Eris.Client(token, options)
 		this.commands = []
 		this.slashCreator = new SlashCreator({
 			applicationID: clientId,
-			token: botToken
+			token: botToken,
+			handleCommandsManually: true,
+			allowedMentions: {
+				roles: false,
+				users: true,
+				everyone: false
+			}
 		})
 		this.componentCollector = new ComponentCollector(this)
 		this.msgCollector = new MessageCollector(this)
@@ -42,8 +49,8 @@ class App {
 		this.npcHandler = new NPCHandler(this)
 	}
 
-	async launch(): Promise<void> {
-		const eventFiles = fs.readdirSync(path.join(__dirname, '/events'))
+	async launch (): Promise<void> {
+		const botEventFiles = fs.readdirSync(path.join(__dirname, '/events'))
 
 		// load all commands to array
 		this.commands = await this.loadCommands()
@@ -51,19 +58,46 @@ class App {
 		// start cron jobs
 		this.cronJobs.start()
 
-		// start slash creator, used for listening to button clicks on messages
-		this.slashCreator.withServer(
-			new GatewayServer(
-				handler => this.bot.on('rawWS', packet => {
-					if (packet.t === 'INTERACTION_CREATE') {
-						handler(packet.d as AnyRequestData)
-					}
-				})
+		// start slash creator, used for handling interactions
+		this.slashCreator
+			.withServer(
+				new GatewayServer(
+					handler => this.bot.on('rawWS', packet => {
+						if (packet.t === 'INTERACTION_CREATE') {
+							handler(packet.d as AnyRequestData)
+						}
+					})
+				)
 			)
-		)
+			.registerCommandsIn(path.join(__dirname, 'slash-commands'))
+			.syncCommands()
 
-		// load events
-		for (const event of eventFiles) {
+		this.slashCreator.on('commandInteraction', (i, res, webserverMode) => {
+			if (!this.acceptingCommands) {
+				return res({
+					status: 400
+				})
+			}
+
+			const command = this._getCommandFromInteraction(i)
+
+			if (!command) {
+				return res({
+					status: 400
+				})
+			}
+
+			const ctx = new CommandContext(this.slashCreator, i, res, webserverMode, command.deferEphemeral)
+
+			ctx.send('Hey!')
+		})
+
+		this.slashCreator.on('debug', msg => {
+			console.log(msg)
+		})
+
+		// load bot gateway events
+		for (const event of botEventFiles) {
 			const { run } = await import(`./events/${event}`)
 			const eventName = event.replace(/.js|.ts/, '')
 
@@ -86,7 +120,7 @@ class App {
 		await this.bot.connect()
 	}
 
-	async loadCommands(): Promise<Command[]> {
+	async loadCommands (): Promise<Command[]> {
 		const commandFiles = fs.readdirSync(path.join(__dirname, '/commands')).filter(file => file.endsWith('.js') || file.endsWith('.ts'))
 		const commandsArr: Command[] = []
 
@@ -208,6 +242,21 @@ class App {
 				}
 			}
 		}
+	}
+
+	private _getCommandFromInteraction (interaction: InteractionRequestData): CustomSlashCommand | undefined {
+		// blatantly taken from the slash-create library since the function is marked as private
+		return 'guild_id' in interaction ?
+			this.slashCreator.commands.find(command =>
+				!!(command.guildIDs &&
+				command.guildIDs.includes(interaction.guild_id) &&
+				command.commandName === interaction.data.name)) as CustomSlashCommand | undefined ||
+				this.slashCreator.commands.get(`global:${interaction.data.name}`) as CustomSlashCommand | undefined :
+			this.slashCreator.commands.get(`global:${interaction.data.name}`) as CustomSlashCommand | undefined
+	}
+
+	private _handleSlashCommand (command: CustomSlashCommand, ctx: CommandContext) {
+		console.log('hey')
 	}
 }
 

@@ -26,7 +26,7 @@ export const command: Command = {
 	canBeUsedInRaid: false,
 	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
-	async execute(app, message, { args, prefix }) {
+	async execute (app, message, { args, prefix }) {
 		const member = getMember(message.channel.guild, args)
 
 		if (args[0] === 'put') {

@@ -16,7 +16,7 @@ export const command: Command = {
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
-	async execute(app, message, { args, prefix }) {
+	async execute (app, message, { args, prefix }) {
 		let commandInput = message.content.substring(5 + prefix.length)
 
 		if (commandInput.startsWith('```')) {

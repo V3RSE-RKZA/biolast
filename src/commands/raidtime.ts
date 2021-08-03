@@ -17,7 +17,7 @@ export const command: Command = {
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: true,
 	guildModsOnly: false,
-	async execute(app, message, { args, prefix }) {
+	async execute (app, message, { args, prefix }) {
 		const userRaid = await getUsersRaid(query, message.author.id)
 
 		if (!userRaid) {

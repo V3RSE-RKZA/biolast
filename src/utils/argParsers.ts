@@ -180,7 +180,7 @@ export function getFloat (arg?: string): number | undefined {
 	}
 }
 
-function isNumber(input: string, allowFloats = false): boolean {
+function isNumber (input: string, allowFloats = false): boolean {
 	if (!isNaN(Number(input)) && (allowFloats || !input.includes('.'))) {
 		return true
 	}

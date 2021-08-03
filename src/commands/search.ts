@@ -21,7 +21,7 @@ export const command: Command = {
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: true,
 	guildModsOnly: false,
-	async execute(app, message, { args, prefix }) {
+	async execute (app, message, { args, prefix }) {
 		const raidType = getRaidType(message.channel.guild.id)
 		if (!raidType) {
 			// raid type not found?? this shouldn't happen so throw error

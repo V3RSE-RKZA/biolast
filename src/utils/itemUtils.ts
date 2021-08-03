@@ -5,7 +5,7 @@ import { Ammunition, Armor, Backpack, Helmet, Item, Weapon } from '../types/Item
 
 type ItemWithRow<T extends ItemRow> = { item: Item, row: T }
 
-function instanceOfBackpackRow(itemRow: ItemRow | BackpackItemRow): itemRow is BackpackItemRow {
+function instanceOfBackpackRow (itemRow: ItemRow | BackpackItemRow): itemRow is BackpackItemRow {
 	return 'equipped' in itemRow
 }
 
@@ -14,7 +14,7 @@ function instanceOfBackpackRow(itemRow: ItemRow | BackpackItemRow): itemRow is B
  * @param itemRows Rows of items, can be rows of ground items, stash items, or backpack items
  * @returns The itemRows along with the item data
  */
-export function getItems<T extends ItemRow>(itemRows: T[]): { items: ItemWithRow<T>[], slotsUsed: number } {
+export function getItems<T extends ItemRow> (itemRows: T[]): { items: ItemWithRow<T>[], slotsUsed: number } {
 	const inventory = []
 	let slotsUsed = 0
 
@@ -42,7 +42,7 @@ export function getItems<T extends ItemRow>(itemRows: T[]): { items: ItemWithRow
  * @param options.showID Show the ID of this item, defaults true
  * @param options.showDurability Show the durability of this item, defaults true
  */
-export function getItemDisplay(item: Item, itemRow?: ItemRow, options: Partial<{ showEquipped: boolean, showID: boolean, showDurability: boolean }> = {}): string {
+export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<{ showEquipped: boolean, showID: boolean, showDurability: boolean }> = {}): string {
 	const { showEquipped = true, showID = true, showDurability = true } = options
 
 	if (itemRow) {
@@ -156,9 +156,9 @@ export function sortAmmoByDamage (ammos: Ammunition[]): Ammunition[] {
  * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
  * @param containsRows Whether or not the function is sorting items with rows
  */
-export function sortItemsByDurability(arr: Item[], containsRows?: false): Item[]
-export function sortItemsByDurability<T extends ItemRow>(arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
-export function sortItemsByDurability(arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
+export function sortItemsByDurability (arr: Item[], containsRows?: false): Item[]
+export function sortItemsByDurability<T extends ItemRow> (arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
+export function sortItemsByDurability (arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
 	if (containsRows) {
 		return (arr as ItemWithRow<ItemRow>[]).sort((a, b) => {
 			const aDurability = a.row.durability || 0
@@ -209,9 +209,9 @@ export function sortItemsByDurability(arr: (Item | ItemWithRow<ItemRow>)[], cont
  * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
  * @param containsRows Whether or not the function is sorting items with rows
  */
-export function sortItemsByAmmo(arr: Item[], containsRows?: false): Item[]
-export function sortItemsByAmmo<T extends ItemRow>(arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
-export function sortItemsByAmmo(arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
+export function sortItemsByAmmo (arr: Item[], containsRows?: false): Item[]
+export function sortItemsByAmmo<T extends ItemRow> (arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
+export function sortItemsByAmmo (arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
 	if (containsRows) {
 		return (arr as ItemWithRow<ItemRow>[]).sort((a, b) => {
 			let aPenetration = 0
@@ -284,9 +284,9 @@ export function sortItemsByAmmo(arr: (Item | ItemWithRow<ItemRow>)[], containsRo
  * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
  * @param containsRows Whether or not the function is sorting items with rows
  */
-export function sortItemsByName(arr: Item[], containsRows?: false): Item[]
-export function sortItemsByName<T extends ItemRow>(arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
-export function sortItemsByName(arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
+export function sortItemsByName (arr: Item[], containsRows?: false): Item[]
+export function sortItemsByName<T extends ItemRow> (arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
+export function sortItemsByName (arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
 	if (containsRows) {
 		return (arr as ItemWithRow<ItemRow>[]).sort((a, b) => a.item.name.localeCompare(b.item.name))
 	}

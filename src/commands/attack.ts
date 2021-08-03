@@ -31,7 +31,7 @@ export const command: Command = {
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: true,
 	guildModsOnly: false,
-	async execute(app, message, { args, prefix }) {
+	async execute (app, message, { args, prefix }) {
 		const member = getMemberFromMention(message.channel.guild, args[0])
 		const npcTarget = getNPCTarget(args[0])
 		const partChoice = parseChoice(args[1])

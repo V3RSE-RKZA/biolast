@@ -21,7 +21,7 @@ export const command: Command = {
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: true,
 	guildModsOnly: false,
-	async execute(app, message, { args, prefix }) {
+	async execute (app, message, { args, prefix }) {
 		const groundItems = await getGroundItems(query, message.channel.id)
 		const pages = generatePages(groundItems, prefix)
 

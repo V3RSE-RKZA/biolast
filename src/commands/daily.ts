@@ -18,7 +18,7 @@ export const command: Command = {
 	canBeUsedInRaid: true,
 	onlyWorksInRaidGuild: false,
 	guildModsOnly: false,
-	async execute(app, message, { args, prefix }) {
+	async execute (app, message, { args, prefix }) {
 		const transaction = await beginTransaction()
 		// using transaction because users data will be updated
 		const userData = (await getUserRow(transaction.query, message.author.id, true))!

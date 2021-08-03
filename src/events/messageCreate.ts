@@ -14,7 +14,7 @@ import { getItemDisplay } from '../utils/itemUtils'
 
 const spamCooldown = new Set()
 
-export async function run(this: App, message: Message): Promise<void> {
+export async function run (this: App, message: Message): Promise<void> {
 	if (message.author.bot || !this.acceptingCommands) {
 		return
 	}

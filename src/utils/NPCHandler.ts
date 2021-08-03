@@ -18,7 +18,7 @@ class NPCHandler {
 	private app: App
 	private intervals: Map<string, NodeJS.Timeout>
 
-	constructor(app: App) {
+	constructor (app: App) {
 		this.app = app
 		this.intervals = new Map()
 	}
