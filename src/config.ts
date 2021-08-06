@@ -28,6 +28,6 @@ export const baseBackpackLimit = 15
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
 export const adminUsers = ['168958344361541633']
 
-// IDs of guilds where the suburbs raid can take place. Refer to ./resources/raids.ts for what channels a raid
+// IDs of guilds where the suburbs raid can take place. Refer to ./resources/raids.ts for what
 // channels a raid will need in order to work properly.
 export const suburbsGuilds = process.env.SUBURBS_GUILDS ? process.env.SUBURBS_GUILDS.split(',') : []
