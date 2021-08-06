@@ -177,8 +177,6 @@ class ButtonCollector {
 		})
 
 		collector.on('end', msg => {
-			console.log(msg)
-
 			if (msg === 'time') {
 				embeds[page].setFooter(`Page ${page + 1} | Page buttons timed out`)
 

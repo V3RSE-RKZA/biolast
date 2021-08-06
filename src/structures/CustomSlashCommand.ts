@@ -69,14 +69,14 @@ class CustomSlashCommand extends SlashCommand {
 			}
 		}
 		else if (debug && testingGuildId) {
-			// register to testing guild while bot is in debug mode
-			console.log(`Registering ${slashOptions.name} to testing guild: ${testingGuildId}`)
+			// register to testing guild and raids while bot is in debug mode
+			console.log(`Registering ${slashOptions.name} to testing guild instead of globally: ${testingGuildId}`)
 
 			if (slashOptions.guildIDs) {
-				slashOptions.guildIDs = [...slashOptions.guildIDs, testingGuildId]
+				slashOptions.guildIDs = [...slashOptions.guildIDs, testingGuildId, ...allLocations.map(loc => loc.guilds).flat(1)]
 			}
 			else {
-				slashOptions.guildIDs = [testingGuildId]
+				slashOptions.guildIDs = [testingGuildId, ...allLocations.map(loc => loc.guilds).flat(1)]
 			}
 		}
 
