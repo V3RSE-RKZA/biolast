@@ -183,6 +183,8 @@ export const command: Command = {
 
 				setTimeout(async () => {
 					try {
+						EXTRACTIONS.delete(message.author.id)
+
 						const member = message.channel.guild.members.get(message.author.id)
 						const activeRaid = app.activeRaids.find(raid => raid.userID === message.author.id)
 						const userRaid = await getUsersRaid(query, message.author.id)
