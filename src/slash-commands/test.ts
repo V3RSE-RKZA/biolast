@@ -24,6 +24,10 @@ module.exports = class HelloCommand extends CustomSlashCommand {
 	}
 
 	async run (ctx: CommandContext) {
-		return ctx.options.food ? `You like ${ctx.options.food}? Nice!` : `Hello, ${ctx.user.username}!`
+		setTimeout(async () => {
+			await ctx.send({
+				content: ctx.options.food ? `You like ${ctx.options.food}? Nice!` : `Hello, ${ctx.user.username}!`
+			})
+		}, 2000)
 	}
 }

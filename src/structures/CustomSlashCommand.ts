@@ -54,7 +54,9 @@ class CustomSlashCommand extends SlashCommand {
 	constructor (
 		creator: SlashCreator,
 		app: App,
-		slashOptions: SlashCommandOptions & CommandOptions
+		// omitting throttling and permissions because I run the commands
+		// through my own custom command handler and they won't be supported
+		slashOptions: Omit<SlashCommandOptions, 'throttling' | 'permissions'> & CommandOptions
 	) {
 		// raid-only commands should only be registered to raid guilds
 		if (slashOptions.onlyWorksInRaidGuild) {
