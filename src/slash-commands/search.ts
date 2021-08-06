@@ -13,7 +13,7 @@ class SearchCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'search',
-			description: 'Search the area for any threats such as walkers, raiders, or something worse...',
+			description: 'Search the area for any NPCs such as walkers, raiders, or something worse...',
 			options: [],
 			category: 'info',
 			guildModsOnly: false,

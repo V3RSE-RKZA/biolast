@@ -1,4 +1,3 @@
-import { AnyGuildChannel } from 'eris'
 import { User } from 'slash-create'
 import App from '../app'
 import { allNPCs, NPC } from '../resources/npcs'
@@ -71,7 +70,7 @@ class NPCHandler {
 							}
 							else if (raidChannel.npcSpawns) {
 								// mob not spawned, spawn here
-								await this.spawnNPC(channel)
+								await this.spawnNPC(channel.id, channel.name)
 							}
 						}
 						else {
@@ -86,17 +85,18 @@ class NPCHandler {
 
 	/**
 	 * Spawns an NPC in a raid channel after some time
-	 * @param channel Channel to spawn npc in
+	 * @param channelID ID of channel to spawn npc in
+	 * @param channelName Name of channel to spawn npc in
 	 */
-	async spawnNPC (channel: AnyGuildChannel): Promise<void> {
-		const location = allLocations.find(loc => loc.channels.some(ch => ch.name === channel.name))
-		const raidChannel = location?.channels.find(ch => ch.name === channel.name)
+	async spawnNPC (channelID: string, channelName: string): Promise<void> {
+		const location = allLocations.find(loc => loc.channels.some(ch => ch.name === channelName))
+		const raidChannel = location?.channels.find(ch => ch.name === channelName)
 
 		if (location && raidChannel && raidChannel.npcSpawns) {
 			const timer = getRandomInt(raidChannel.npcSpawns.cooldownMin, raidChannel.npcSpawns.cooldownMax)
 			const possibleSpawns = raidChannel.npcSpawns.npcs
 
-			console.log(`Spawning NPC at channel: ${channel.name} in ${timer} seconds`)
+			console.log(`Spawning NPC at channel: ${channelName} in ${timer} seconds`)
 
 			setTimeout(async () => {
 				try {
@@ -105,15 +105,15 @@ class NPCHandler {
 					const minInterval = location.raidLength / 5
 					const intervalTimer = getRandomInt(minInterval, maxInterval)
 
-					await createNPC(query, channel.id, npc)
+					await createNPC(query, channelID, npc)
 
-					await this.app.bot.createMessage(channel.id, {
+					await this.app.bot.createMessage(channelID, {
 						content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
 					})
 
 					const interval = setInterval(async () => {
 						try {
-							await this.app.bot.createMessage(channel.id, {
+							await this.app.bot.createMessage(channelID, {
 								content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
 							})
 						}
@@ -122,7 +122,7 @@ class NPCHandler {
 						}
 					}, intervalTimer * 1000)
 
-					this.intervals.set(channel.id, interval)
+					this.intervals.set(channelID, interval)
 				}
 				catch (err) {
 					console.error(err)
@@ -130,7 +130,7 @@ class NPCHandler {
 			}, timer * 1000)
 		}
 		else {
-			console.error(`Channel: ${channel.name} (${channel.id}) is not a raid channel that spawns NPCs`)
+			console.error(`Channel: ${channelName} (${channelID}) is not a raid channel that spawns NPCs`)
 		}
 	}
 

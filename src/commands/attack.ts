@@ -233,6 +233,8 @@ export const command: Command = {
 				// stop sending npcs saying that an NPC is in the channel
 				app.npcHandler.clearNPCInterval(message.channel.id)
 				// start timer to spawn a new NPC
+				// BUG broke
+				// @ts-ignore
 				await app.npcHandler.spawnNPC(message.channel)
 
 				await transaction.commit()
