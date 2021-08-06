@@ -9,5 +9,6 @@ declare namespace NodeJS {
 		BOT_TOKEN?: string
 		BOT_CLIENT_ID?: string
 		SUBURBS_GUILDS?: string
+		TESTING_GUILD_ID?: string
 	}
 }

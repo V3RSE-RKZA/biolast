@@ -12,7 +12,7 @@ import { getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
 
 const ITEMS_PER_PAGE = 10
 
-class InventoryCommand extends CustomSlashCommand {
+class StashCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'stash',
@@ -85,7 +85,7 @@ class InventoryCommand extends CustomSlashCommand {
 			worksInDMs: true,
 			onlyWorksInRaidGuild: false,
 			canBeUsedInRaid: false,
-			guildIDs: ['497302646521069568', '864641806074118204']
+			guildIDs: []
 		})
 
 		this.filePath = __filename
@@ -249,4 +249,4 @@ class InventoryCommand extends CustomSlashCommand {
 	}
 }
 
-export default InventoryCommand
+export default StashCommand

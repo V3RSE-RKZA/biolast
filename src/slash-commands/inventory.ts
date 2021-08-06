@@ -29,7 +29,7 @@ class InventoryCommand extends CustomSlashCommand {
 			worksInDMs: true,
 			onlyWorksInRaidGuild: false,
 			canBeUsedInRaid: true,
-			guildIDs: ['497302646521069568']
+			guildIDs: []
 		})
 
 		this.filePath = __filename

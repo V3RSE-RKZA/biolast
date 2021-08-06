@@ -31,3 +31,6 @@ export const adminUsers = ['168958344361541633']
 // IDs of guilds where the suburbs raid can take place. Refer to ./resources/raids.ts for what
 // channels a raid will need in order to work properly.
 export const suburbsGuilds = process.env.SUBURBS_GUILDS ? process.env.SUBURBS_GUILDS.split(',') : []
+
+// Slash commands will be registered here while debug is true. Registering commands to a guild is faster than registering globally
+export const testingGuildId = process.env.TESTING_GUILD_ID
