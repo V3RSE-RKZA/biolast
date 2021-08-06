@@ -421,7 +421,7 @@ class App {
 				})
 			}
 
-			else if (!command.customOptions.canBeUsedInRaid && (isRaidGuild(ctx.guildID) || await userInRaid(query, ctx.user.id))) {
+			if (!command.customOptions.canBeUsedInRaid && (isRaidGuild(ctx.guildID) || await userInRaid(query, ctx.user.id))) {
 				return ctx.send({
 					content: '❌ That command cannot be used while you are in an active raid! You need to evac to finish the raid (dying also works).',
 					flags: InteractionResponseFlags.EPHEMERAL
