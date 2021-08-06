@@ -203,7 +203,7 @@ class App {
 				const directory = fs.readdirSync(path.join(__dirname, `/slash-commands/${file}`)).filter(f => f.endsWith('.js'))
 
 				for (const subFile of directory) {
-					const command = await import(`./slash-commands/${subFile}`)
+					const command = await import(`./slash-commands/${file}/${subFile}`)
 
 					commands.push(new command.default(this.slashCreator, this))
 				}
