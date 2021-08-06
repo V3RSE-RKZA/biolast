@@ -253,6 +253,8 @@ export const command: Command = {
 				await lowerNPCHealth(transaction.query, message.channel.id, finalDamage.total)
 				messages.push(`The \`${npc.type}\` is left with ${formatHealth(npcRow.health - finalDamage.total, npc.health)} **${npcRow.health - finalDamage.total}** health.`)
 
+				// BUG this is broken
+				// @ts-ignore
 				const attackResult = await app.npcHandler.attackPlayer(transaction.query, message.member, userData, userBackpack, npc, message.channel.id, removedItems)
 
 				await transaction.commit()

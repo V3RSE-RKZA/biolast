@@ -64,6 +64,8 @@ export const command: Command = {
 		}
 		else if (npc) {
 			const userData = (await getUserRow(preTransaction.query, message.author.id, true))!
+			// BUG this is broken
+			// @ts-ignore
 			const attackResult = await app.npcHandler.attackPlayer(preTransaction.query, message.member, userData, userBackpack, npc, message.channel.id, [])
 			await preTransaction.commit()
 

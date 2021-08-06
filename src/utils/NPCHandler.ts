@@ -1,4 +1,5 @@
-import { AnyGuildChannel, Member } from 'eris'
+import { AnyGuildChannel } from 'eris'
+import { User } from 'slash-create'
 import App from '../app'
 import { allNPCs, NPC } from '../resources/npcs'
 import { allLocations } from '../resources/raids'
@@ -171,7 +172,7 @@ class NPCHandler {
 	/**
 	 * Simulates an NPCs attack on a player
 	 * @param transactionQuery The transaction query, used to keep all queries inside a transaction. THIS FUNCTION DOES NOT COMMIT THE TRANSACTION, DO THAT AFTER YOU CALL THIS FUNCTION
-	 * @param member The member object of the player getting attacked
+	 * @param user The slash-create user object of the player getting attacked
 	 * @param userRow The user row of player getting attacked
 	 * @param userBackpack The backpack of player getting attacked
 	 * @param npc The NPC attacking
@@ -181,7 +182,7 @@ class NPCHandler {
 	 */
 	async attackPlayer (
 		transactionQuery: Query,
-		member: Member,
+		user: User,
 		userRow: UserRow,
 		userBackpack: BackpackItemRow[],
 		npc: NPC,
@@ -201,12 +202,12 @@ class NPCHandler {
 				// raider is using ranged weapon
 				npcDamage = getAttackDamage(npc.damage, npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
 
-				messages.push(`The \`${npc.type}\` shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
+				messages.push(`The \`${npc.type}\` shot <@${user.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
 			}
 			else {
 				npcDamage = getAttackDamage(npc.damage, npc.weapon.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
 
-				messages.push(`The \`${npc.type}\` lunged at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
+				messages.push(`The \`${npc.type}\` lunged at <@${user.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
 			}
 		}
 		else {
@@ -214,14 +215,14 @@ class NPCHandler {
 			bodyPartHit = getBodyPartHit(50)
 			npcDamage = getAttackDamage(npc.damage, 0.75, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
 
-			messages.push(`The \`${npc.type}\` took a swipe at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${npcDamage.total}** damage dealt.\n`)
+			messages.push(`The \`${npc.type}\` took a swipe at <@${user.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${npcDamage.total}** damage dealt.\n`)
 		}
 
 		if (bodyPartHit.result === 'head' && userEquips.helmet) {
-			messages.push(`**${member.username}#${member.discriminator}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${npcDamage.reduced}**.`)
+			messages.push(`**${user.username}#${user.discriminator}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${npcDamage.reduced}**.`)
 
 			if (userEquips.helmet.row.durability - 1 <= 0) {
-				messages.push(`**${member.username}#${member.discriminator}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
+				messages.push(`**${user.username}#${user.discriminator}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
 
 				await deleteItem(transactionQuery, userEquips.helmet.row.id)
 				removedItems.push(userEquips.helmet.row.id)
@@ -231,10 +232,10 @@ class NPCHandler {
 			}
 		}
 		else if (bodyPartHit.result === 'chest' && userEquips.armor) {
-			messages.push(`**${member.username}#${member.discriminator}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${npcDamage.reduced}**.`)
+			messages.push(`**${user.username}#${user.discriminator}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${npcDamage.reduced}**.`)
 
 			if (userEquips.armor.row.durability - 1 <= 0) {
-				messages.push(`**${member.username}#${member.discriminator}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
+				messages.push(`**${user.username}#${user.discriminator}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
 
 				await deleteItem(transactionQuery, userEquips.armor.row.id)
 				removedItems.push(userEquips.armor.row.id)
@@ -252,14 +253,14 @@ class NPCHandler {
 				}
 			}
 
-			await removeUserFromRaid(transactionQuery, member.id)
+			await removeUserFromRaid(transactionQuery, user.id)
 
-			messages.push(`☠️ **${member.username}#${member.discriminator}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
+			messages.push(`☠️ **${user.username}#${user.discriminator}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
 		}
 		else {
-			await lowerHealth(transactionQuery, member.id, npcDamage.total)
+			await lowerHealth(transactionQuery, user.id, npcDamage.total)
 
-			messages.push(`**${member.username}#${member.discriminator}** is left with ${formatHealth(userRow.health - npcDamage.total, userRow.maxHealth)} **${userRow.health - npcDamage.total}** health.`)
+			messages.push(`**${user.username}#${user.discriminator}** is left with ${formatHealth(userRow.health - npcDamage.total, userRow.maxHealth)} **${userRow.health - npcDamage.total}** health.`)
 		}
 
 		return {

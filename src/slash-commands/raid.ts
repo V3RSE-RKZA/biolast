@@ -23,7 +23,7 @@ class RaidCommand extends CustomSlashCommand {
 					description: 'Location to raid.',
 					required: false,
 					choices: allLocations.map(loc => ({
-						name: loc.display,
+						name: `${loc.display} - Level Required: ${loc.requirements.level}`,
 						value: loc.id
 					}))
 				}
