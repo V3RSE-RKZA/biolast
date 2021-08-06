@@ -63,7 +63,8 @@ class RaidCommand extends CustomSlashCommand {
 
 				if (confirmed.customID === 'confirmed') {
 					await confirmed.editParent({
-						content: `✅ Click here to join the raid: https://discord.gg/${isInRaid.invite}`,
+						content: `✅ Click here to join the raid: https://discord.gg/${isInRaid.invite}\n\n` +
+							'⚠️ This is not an advertisement, this server is temporary and is designed strictly for the game.',
 						components: []
 					})
 				}
@@ -191,7 +192,8 @@ class RaidCommand extends CustomSlashCommand {
 
 				await confirmed.editParent({
 					content: `✅ **${choice.display} raid started!** You have **${formatTime(choice.raidLength * 1000)}** to join this raid and evac with whatever loot you can find.` +
-						` **You can use \`/raidtime\` in the raid to view how much time you have left.**\n\nClick here to join the raid: https://discord.gg/${invite.code}`,
+						` **You can use \`/raidtime\` in the raid to view how much time you have left.**\n\nClick here to join the raid: https://discord.gg/${invite.code}\n\n` +
+						'⚠️ This is not an advertisement, this server is temporary and is designed strictly for the game.',
 					components: []
 				})
 			}
