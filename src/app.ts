@@ -69,18 +69,17 @@ class App {
 		this.cronJobs.start()
 
 		// start slash creator, used for handling interactions
-		this.slashCreator
-			.withServer(
-				new GatewayServer(
-					handler => this.bot.on('rawWS', packet => {
-						if (packet.t === 'INTERACTION_CREATE') {
-							handler(packet.d as AnyRequestData)
-						}
-					})
-				)
+		this.slashCreator.withServer(
+			new GatewayServer(
+				handler => this.bot.on('rawWS', packet => {
+					if (packet.t === 'INTERACTION_CREATE') {
+						handler(packet.d as AnyRequestData)
+					}
+				})
 			)
-			.registerCommandsIn(path.join(__dirname, 'slash-commands'))
-			.syncCommands()
+		)
+
+		await this.loadSlashCommmands()
 
 		// handling slash commands manually so I can filter them through my custom command handler
 		this.slashCreator.on('commandInteraction', (i, res, webserverMode) => {
@@ -188,6 +187,32 @@ class App {
 		}
 
 		return commandsArr
+	}
+
+	async loadSlashCommmands (): Promise<void> {
+		const botCommandFiles = fs.readdirSync(path.join(__dirname, '/slash-commands'))
+		const commands = []
+
+		for (const file of botCommandFiles) {
+			if (file.endsWith('.js')) {
+				const command = await import(`./slash-commands/${file}`)
+
+				commands.push(new command.default(this.slashCreator, this))
+			}
+			else {
+				const directory = fs.readdirSync(path.join(__dirname, `/slash-commands/${file}`)).filter(f => f.endsWith('.js'))
+
+				for (const subFile of directory) {
+					const command = await import(`./slash-commands/${subFile}`)
+
+					commands.push(new command.default(this.slashCreator, this))
+				}
+			}
+		}
+
+		this.slashCreator
+			.registerCommands(commands)
+			.syncCommands()
 	}
 
 	/**
@@ -345,7 +370,7 @@ class App {
 					// send welcome DM
 					const erisUser = await this.fetchUser(ctx.user.id)
 					if (erisUser) {
-						await messageUser(erisUser, {
+						messageUser(erisUser, {
 							content: '**Welcome to `project z???`**\n\n' +
 								'You are a scavenger just trying to survive in the middle of an apocalypse. You need to explore areas and collect as much loot as you can all while ' +
 								'making sure you aren\'t killed. It\'s survival of the fittest, other scavengers will try to kill you for your loot. You need to find weapons and armor ' +
@@ -380,7 +405,7 @@ class App {
 						// as "Original message was deleted" for other users...
 						const erisUser = await this.fetchUser(ctx.user.id)
 						if (erisUser) {
-							await messageUser(erisUser, {
+							messageUser(erisUser, {
 								content: `You leveled up!\n\nLevel **${userData.level}** → **${newLevel}**`
 							})
 						}

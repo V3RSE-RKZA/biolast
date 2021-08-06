@@ -2,7 +2,7 @@ import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 
-module.exports = class HelloCommand extends CustomSlashCommand {
+class TestCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'hello',
@@ -23,7 +23,7 @@ module.exports = class HelloCommand extends CustomSlashCommand {
 		this.filePath = __filename
 	}
 
-	async run (ctx: CommandContext) {
+	async run (ctx: CommandContext): Promise<void> {
 		setTimeout(async () => {
 			await ctx.send({
 				content: ctx.options.food ? `You like ${ctx.options.food}? Nice!` : `Hello, ${ctx.user.username}!`
@@ -31,3 +31,5 @@ module.exports = class HelloCommand extends CustomSlashCommand {
 		}, 2000)
 	}
 }
+
+export default TestCommand

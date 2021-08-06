@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
-import { Message } from 'eris'
-import { ComponentContext, ComponentButton, ComponentType } from 'slash-create'
+import { Message as ErisMessage } from 'eris'
+import { ComponentContext, ComponentButton, ComponentType, CommandContext, Message } from 'slash-create'
 import App from '../app'
 import Embed from '../structures/Embed'
 import { ComponentChannel } from '../types/Messages'
@@ -109,11 +109,170 @@ class ButtonCollector {
 
 	/**
 	 * Used to create a paginated button message based on an array of embeds
+	 * @param ctx Command context to use when responding
+	 * @param embeds Array of embeds that will be turned into pages
+	 * @param time How long the button collector lasts in milliseconds
+	 */
+	async paginateEmbedsSlash (ctx: CommandContext, embeds: Embed[], time = 60000): Promise<void> {
+		if (embeds.length === 1) {
+			await ctx.send({
+				embeds: [embeds[0].embed]
+			})
+			return
+		}
+
+		let page = 0
+
+		embeds[0].setFooter(`Page 1/${embeds.length}`)
+
+		const botMessage = await ctx.send({
+			embeds: [embeds[0].embed],
+			components: [{
+				type: ComponentType.ACTION_ROW,
+				components: [
+					PREVIOUS_BUTTON(true),
+					NEXT_BUTTON(false)
+				]
+			}]
+		}) as Message
+
+		const { collector } = this.createCollector(botMessage.id, c => c.user.id === ctx.user.id, time)
+
+		collector.on('collect', async c => {
+			try {
+				const components: ComponentButton[] = []
+
+				if (c.customID === 'previous' && page !== 0) {
+					page--
+					embeds[page].setFooter(`Page ${page + 1}/${embeds.length}`)
+
+					components.push(PREVIOUS_BUTTON(page === 0), NEXT_BUTTON(false))
+
+					await c.editParent({
+						embeds: [embeds[page].embed],
+						components: [{
+							type: ComponentType.ACTION_ROW,
+							components
+						}]
+					})
+				}
+				else if (c.customID === 'next' && page !== (embeds.length - 1)) {
+					page++
+					embeds[page].setFooter(`Page ${page + 1}/${embeds.length}`)
+
+					components.push(PREVIOUS_BUTTON(false), NEXT_BUTTON(page === (embeds.length - 1)))
+
+					await c.editParent({
+						embeds: [embeds[page].embed],
+						components: [{
+							type: ComponentType.ACTION_ROW,
+							components
+						}]
+					})
+				}
+			}
+			catch (err) {
+				// continue
+			}
+		})
+
+		collector.on('end', msg => {
+			console.log(msg)
+
+			if (msg === 'time') {
+				embeds[page].setFooter(`Page ${page + 1} | Page buttons timed out`)
+
+				botMessage.edit({
+					embeds: [embeds[page].embed],
+					components: []
+				})
+			}
+		})
+	}
+
+	/**
+	 * Used to create a paginated button message based on an array of strings
+	 * @param ctx Command context to respond to
+	 * @param content Array of string content that will be turned into pages
+	 * @param time How long the button collector lasts in milliseconds
+	 */
+	async paginateContentSlash (ctx: CommandContext, content: string[], time = 60000): Promise<void> {
+		if (content.length === 1) {
+			await ctx.send({
+				content: content[0]
+			})
+			return
+		}
+
+		let page = 0
+
+		const botMessage = await ctx.send({
+			content: content[0],
+			components: [{
+				type: ComponentType.ACTION_ROW,
+				components: [
+					PREVIOUS_BUTTON(true),
+					NEXT_BUTTON(false)
+				]
+			}]
+		}) as Message
+
+		const { collector } = this.createCollector(botMessage.id, c => c.user.id === ctx.user.id, time)
+
+		collector.on('collect', async c => {
+			try {
+				const components: ComponentButton[] = []
+
+				if (c.customID === 'previous' && page !== 0) {
+					page--
+
+					components.push(PREVIOUS_BUTTON(page === 0), NEXT_BUTTON(false))
+
+					await c.editParent({
+						content: content[page],
+						components: [{
+							type: ComponentType.ACTION_ROW,
+							components
+						}]
+					})
+				}
+				else if (c.customID === 'next' && page !== (content.length - 1)) {
+					page++
+
+					components.push(PREVIOUS_BUTTON(false), NEXT_BUTTON(page === (content.length - 1)))
+
+					await c.editParent({
+						content: content[page],
+						components: [{
+							type: ComponentType.ACTION_ROW,
+							components
+						}]
+					})
+				}
+			}
+			catch (err) {
+				// continue
+			}
+		})
+
+		collector.on('end', msg => {
+			if (msg === 'time') {
+				botMessage.edit({
+					content: content[page],
+					components: []
+				})
+			}
+		})
+	}
+
+	// TODO remove this once slash commands are fully implemented
+	/**
+	 * Used to create a paginated button message based on an array of embeds
 	 * @param message Message to respond to
 	 * @param embeds Array of embeds that will be turned into pages
 	 * @param time How long the button collector lasts in milliseconds
 	 */
-	async paginateEmbeds (message: Message, embeds: Embed[], time = 60000): Promise<void> {
+	async paginateEmbeds (message: ErisMessage, embeds: Embed[], time = 60000): Promise<void> {
 		if (embeds.length === 1) {
 			await message.channel.createMessage(embeds[0])
 			return
@@ -193,13 +352,14 @@ class ButtonCollector {
 		})
 	}
 
+	// TODO remove this once slash commands are fully implemented
 	/**
 	 * Used to create a paginated button message based on an array of strings
 	 * @param message Message to respond to
 	 * @param content Array of string content that will be turned into pages
 	 * @param time How long the button collector lasts in milliseconds
 	 */
-	async paginateContent (message: Message, content: string[], time = 60000): Promise<void> {
+	async paginateContent (message: ErisMessage, content: string[], time = 60000): Promise<void> {
 		if (content.length === 1) {
 			await message.channel.createMessage(content[0])
 			return
