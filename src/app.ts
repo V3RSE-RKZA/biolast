@@ -35,6 +35,10 @@ class App {
 	npcHandler: NPCHandler
 
 	constructor (token: string, options: Eris.ClientOptions) {
+		if (!clientId) {
+			throw new Error('BOT_CLIENT_ID not defined in .env file')
+		}
+
 		this.bot = new Eris.Client(token, options)
 		this.commands = []
 		this.slashCreator = new SlashCreator({

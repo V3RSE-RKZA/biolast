@@ -4,7 +4,8 @@ export const botToken = process.env.BOT_TOKEN
 
 export const clientId = process.env.BOT_CLIENT_ID
 
-export const prefix = process.env.PREFIX
+// TODO this will be deprecated by slash commands
+export const prefix = process.env.PREFIX || '='
 
 export const icons = {
 	money: '₽',
@@ -27,4 +28,6 @@ export const baseBackpackLimit = 15
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
 export const adminUsers = ['168958344361541633']
 
-export const suburbsGuilds = process.env.SUBURBS_GUILDS.split(',')
+// IDs of guilds where the suburbs raid can take place. Refer to ./resources/raids.ts for what channels a raid
+// channels a raid will need in order to work properly.
+export const suburbsGuilds = process.env.SUBURBS_GUILDS ? process.env.SUBURBS_GUILDS.split(',') : []
