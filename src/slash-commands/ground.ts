@@ -204,7 +204,7 @@ class GroundCommand extends CustomSlashCommand {
 			})
 		}
 		else {
-			await this.app.componentCollector.paginateContentSlash(ctx, pages)
+			await this.app.componentCollector.paginateContent(ctx, pages)
 		}
 	}
 

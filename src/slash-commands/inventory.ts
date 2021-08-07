@@ -61,7 +61,7 @@ class InventoryCommand extends CustomSlashCommand {
 				})
 			}
 			else {
-				await this.app.componentCollector.paginateEmbedsSlash(ctx, pages)
+				await this.app.componentCollector.paginateEmbeds(ctx, pages)
 			}
 			return
 		}
@@ -76,7 +76,7 @@ class InventoryCommand extends CustomSlashCommand {
 			})
 		}
 		else {
-			await this.app.componentCollector.paginateEmbedsSlash(ctx, pages)
+			await this.app.componentCollector.paginateEmbeds(ctx, pages)
 		}
 	}
 

@@ -207,7 +207,7 @@ class StashCommand extends CustomSlashCommand {
 				})
 			}
 			else {
-				await this.app.componentCollector.paginateEmbedsSlash(ctx, pages)
+				await this.app.componentCollector.paginateEmbeds(ctx, pages)
 			}
 			return
 		}
@@ -222,7 +222,7 @@ class StashCommand extends CustomSlashCommand {
 			})
 		}
 		else {
-			await this.app.componentCollector.paginateEmbedsSlash(ctx, pages)
+			await this.app.componentCollector.paginateEmbeds(ctx, pages)
 		}
 	}
 
