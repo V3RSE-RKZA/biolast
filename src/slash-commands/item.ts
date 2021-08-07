@@ -1,35 +1,41 @@
-import { Command } from '../types/Commands'
-import { reply } from '../utils/messageUtils'
-import { getItem } from '../utils/argParsers'
-import Embed from '../structures/Embed'
-import formatNumber from '../utils/formatNumber'
+import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
+import App from '../app'
 import { allItems } from '../resources/items'
+import CustomSlashCommand from '../structures/CustomSlashCommand'
+import Embed from '../structures/Embed'
+import { getItem } from '../utils/argParsers'
+import formatNumber from '../utils/formatNumber'
 import { getItemDisplay } from '../utils/itemUtils'
 
-export const command: Command = {
-	name: 'item',
-	aliases: ['info'],
-	examples: ['item ai-2'],
-	description: 'View information about an item.',
-	shortDescription: 'View information about an item.',
-	category: 'info',
-	permissions: ['sendMessages', 'externalEmojis', 'embedLinks'],
-	cooldown: 2,
-	worksInDMs: true,
-	canBeUsedInRaid: true,
-	onlyWorksInRaidGuild: false,
-	guildModsOnly: false,
-	async execute(app, message, { args, prefix }) {
-		const item = getItem(args)
+class ItemCommand extends CustomSlashCommand {
+	constructor (creator: SlashCreator, app: App) {
+		super(creator, app, {
+			name: 'item',
+			description: 'View information about an item.',
+			longDescription: 'View information about an item.',
+			options: [{
+				type: CommandOptionType.STRING,
+				name: 'item',
+				description: 'Name of the item.',
+				required: true
+			}],
+			category: 'info',
+			guildModsOnly: false,
+			worksInDMs: true,
+			onlyWorksInRaidGuild: false,
+			canBeUsedInRaid: true,
+			guildIDs: []
+		})
 
-		if (!args.length) {
-			await reply(message, {
-				content: `❌ You need to specify an item to search. \`${prefix}item <item name>\``
-			})
-			return
-		}
-		else if (!item) {
-			await reply(message, {
+		this.filePath = __filename
+	}
+
+	async run (ctx: CommandContext): Promise<void> {
+		const item = getItem([ctx.options.item])
+
+		if (!item) {
+			// TODO show results for items that were related to users input (if any)
+			await ctx.send({
 				content: '❌ Could not find an item matching that name.'
 			})
 			return
@@ -91,8 +97,10 @@ export const command: Command = {
 			itemEmbed.addField('Healing Rate', `${item.healRate} seconds`, true)
 		}
 
-		await reply(message, {
-			embed: itemEmbed.embed
+		await ctx.send({
+			embeds: [itemEmbed.embed]
 		})
 	}
 }
+
+export default ItemCommand

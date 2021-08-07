@@ -1,10 +1,8 @@
 import { EventEmitter } from 'events'
-import { Message } from 'eris'
-import { ComponentContext, ComponentButton, ComponentType } from 'slash-create'
+import { ComponentContext, ComponentButton, ComponentType, CommandContext, Message } from 'slash-create'
 import App from '../app'
 import Embed from '../structures/Embed'
-import { ComponentChannel } from '../types/Messages'
-import { CLOSE_BUTTON, NEXT_BUTTON, PREVIOUS_BUTTON } from './constants'
+import { NEXT_BUTTON, PREVIOUS_BUTTON } from './constants'
 
 interface Collector {
 	messageID: string
@@ -109,13 +107,15 @@ class ButtonCollector {
 
 	/**
 	 * Used to create a paginated button message based on an array of embeds
-	 * @param message Message to respond to
+	 * @param ctx Command context to use when responding
 	 * @param embeds Array of embeds that will be turned into pages
 	 * @param time How long the button collector lasts in milliseconds
 	 */
-	async paginateEmbeds (message: Message, embeds: Embed[], time = 60000): Promise<void> {
+	async paginateEmbeds (ctx: CommandContext, embeds: Embed[], time = 60000): Promise<void> {
 		if (embeds.length === 1) {
-			await message.channel.createMessage(embeds[0])
+			await ctx.send({
+				embeds: [embeds[0].embed]
+			})
 			return
 		}
 
@@ -123,31 +123,30 @@ class ButtonCollector {
 
 		embeds[0].setFooter(`Page 1/${embeds.length}`)
 
-		const botMessage = await (message.channel as ComponentChannel).createMessage({
-			embed: embeds[0].embed,
+		const botMessage = await ctx.send({
+			embeds: [embeds[0].embed],
 			components: [{
 				type: ComponentType.ACTION_ROW,
 				components: [
 					PREVIOUS_BUTTON(true),
-					NEXT_BUTTON(false),
-					CLOSE_BUTTON
+					NEXT_BUTTON(false)
 				]
 			}]
-		})
+		}) as Message
 
-		const { collector, stopCollector } = this.createCollector(botMessage.id, ctx => ctx.user.id === message.author.id, time)
+		const { collector } = this.createCollector(botMessage.id, c => c.user.id === ctx.user.id, time)
 
-		collector.on('collect', async ctx => {
+		collector.on('collect', async c => {
 			try {
 				const components: ComponentButton[] = []
 
-				if (ctx.customID === 'previous' && page !== 0) {
+				if (c.customID === 'previous' && page !== 0) {
 					page--
 					embeds[page].setFooter(`Page ${page + 1}/${embeds.length}`)
 
-					components.push(PREVIOUS_BUTTON(page === 0), NEXT_BUTTON(false), CLOSE_BUTTON)
+					components.push(PREVIOUS_BUTTON(page === 0), NEXT_BUTTON(false))
 
-					await ctx.editParent({
+					await c.editParent({
 						embeds: [embeds[page].embed],
 						components: [{
 							type: ComponentType.ACTION_ROW,
@@ -155,25 +154,19 @@ class ButtonCollector {
 						}]
 					})
 				}
-				else if (ctx.customID === 'next' && page !== (embeds.length - 1)) {
+				else if (c.customID === 'next' && page !== (embeds.length - 1)) {
 					page++
 					embeds[page].setFooter(`Page ${page + 1}/${embeds.length}`)
 
-					components.push(PREVIOUS_BUTTON(false), NEXT_BUTTON(page === (embeds.length - 1)), CLOSE_BUTTON)
+					components.push(PREVIOUS_BUTTON(false), NEXT_BUTTON(page === (embeds.length - 1)))
 
-					await ctx.editParent({
+					await c.editParent({
 						embeds: [embeds[page].embed],
 						components: [{
 							type: ComponentType.ACTION_ROW,
 							components
 						}]
 					})
-				}
-				else if (ctx.customID === 'closed') {
-					await ctx.acknowledge()
-
-					stopCollector()
-					await botMessage.delete()
 				}
 			}
 			catch (err) {
@@ -186,7 +179,7 @@ class ButtonCollector {
 				embeds[page].setFooter(`Page ${page + 1} | Page buttons timed out`)
 
 				botMessage.edit({
-					embed: embeds[page].embed,
+					embeds: [embeds[page].embed],
 					components: []
 				})
 			}
@@ -195,42 +188,43 @@ class ButtonCollector {
 
 	/**
 	 * Used to create a paginated button message based on an array of strings
-	 * @param message Message to respond to
+	 * @param ctx Command context to respond to
 	 * @param content Array of string content that will be turned into pages
 	 * @param time How long the button collector lasts in milliseconds
 	 */
-	async paginateContent (message: Message, content: string[], time = 60000): Promise<void> {
+	async paginateContent (ctx: CommandContext, content: string[], time = 60000): Promise<void> {
 		if (content.length === 1) {
-			await message.channel.createMessage(content[0])
+			await ctx.send({
+				content: content[0]
+			})
 			return
 		}
 
 		let page = 0
 
-		const botMessage = await (message.channel as ComponentChannel).createMessage({
+		const botMessage = await ctx.send({
 			content: content[0],
 			components: [{
 				type: ComponentType.ACTION_ROW,
 				components: [
 					PREVIOUS_BUTTON(true),
-					NEXT_BUTTON(false),
-					CLOSE_BUTTON
+					NEXT_BUTTON(false)
 				]
 			}]
-		})
+		}) as Message
 
-		const { collector, stopCollector } = this.createCollector(botMessage.id, ctx => ctx.user.id === message.author.id, time)
+		const { collector } = this.createCollector(botMessage.id, c => c.user.id === ctx.user.id, time)
 
-		collector.on('collect', async ctx => {
+		collector.on('collect', async c => {
 			try {
 				const components: ComponentButton[] = []
 
-				if (ctx.customID === 'previous' && page !== 0) {
+				if (c.customID === 'previous' && page !== 0) {
 					page--
 
-					components.push(PREVIOUS_BUTTON(page === 0), NEXT_BUTTON(false), CLOSE_BUTTON)
+					components.push(PREVIOUS_BUTTON(page === 0), NEXT_BUTTON(false))
 
-					await ctx.editParent({
+					await c.editParent({
 						content: content[page],
 						components: [{
 							type: ComponentType.ACTION_ROW,
@@ -238,24 +232,18 @@ class ButtonCollector {
 						}]
 					})
 				}
-				else if (ctx.customID === 'next' && page !== (content.length - 1)) {
+				else if (c.customID === 'next' && page !== (content.length - 1)) {
 					page++
 
-					components.push(PREVIOUS_BUTTON(false), NEXT_BUTTON(page === (content.length - 1)), CLOSE_BUTTON)
+					components.push(PREVIOUS_BUTTON(false), NEXT_BUTTON(page === (content.length - 1)))
 
-					await ctx.editParent({
+					await c.editParent({
 						content: content[page],
 						components: [{
 							type: ComponentType.ACTION_ROW,
 							components
 						}]
 					})
-				}
-				else if (ctx.customID === 'closed') {
-					await ctx.acknowledge()
-
-					stopCollector()
-					await botMessage.delete()
 				}
 			}
 			catch (err) {

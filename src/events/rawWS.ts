@@ -1,7 +1,7 @@
 import { RawPacket } from 'eris'
 import App from '../app'
 
-export async function run(this: App, packet: RawPacket, id: number): Promise<void> {
+export async function run (this: App, packet: RawPacket, id: number): Promise<void> {
 	// SLASH COMMANDS AND COMPONENTS ARE NOW BEING HANDLED BY THE slash-create LIBRARY FOR BETTER TYPES
 
 	/* interactions stuff

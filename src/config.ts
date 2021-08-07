@@ -4,7 +4,8 @@ export const botToken = process.env.BOT_TOKEN
 
 export const clientId = process.env.BOT_CLIENT_ID
 
-export const prefix = process.env.PREFIX
+// This is only used for text commands (commands that rely on message.content)
+export const prefix = process.env.PREFIX || '='
 
 export const icons = {
 	money: '₽',
@@ -27,4 +28,10 @@ export const baseBackpackLimit = 15
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
 export const adminUsers = ['168958344361541633']
 
-export const suburbsGuilds = process.env.SUBURBS_GUILDS.split(',')
+// IDs of guilds where the suburbs raid can take place. Refer to ./resources/raids.ts for what
+// channels a raid will need in order to work properly.
+export const suburbsGuilds = process.env.SUBURBS_GUILDS ? process.env.SUBURBS_GUILDS.split(',') : []
+
+// Slash commands will be registered here while debug is true. Registering commands to a guild is faster than registering globally.
+// If you leave this unset, commands will be registered globally regardless if debug is true.
+export const testingGuildId = process.env.TESTING_GUILD_ID

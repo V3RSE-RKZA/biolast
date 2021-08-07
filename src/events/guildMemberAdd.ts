@@ -3,7 +3,7 @@ import { query } from '../utils/db/mysql'
 import { getUsersRaid } from '../utils/db/raids'
 import { isRaidGuild } from '../utils/raidUtils'
 
-export async function run(guild: Guild, member: Member): Promise<void> {
+export async function run (guild: Guild, member: Member): Promise<void> {
 	if (isRaidGuild(guild.id)) {
 		const userRaid = await getUsersRaid(query, member.id)
 

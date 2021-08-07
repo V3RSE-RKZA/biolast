@@ -1,4 +1,4 @@
-import { AnyGuildChannel, Member } from 'eris'
+import { User } from 'slash-create'
 import App from '../app'
 import { allNPCs, NPC } from '../resources/npcs'
 import { allLocations } from '../resources/raids'
@@ -18,7 +18,7 @@ class NPCHandler {
 	private app: App
 	private intervals: Map<string, NodeJS.Timeout>
 
-	constructor(app: App) {
+	constructor (app: App) {
 		this.app = app
 		this.intervals = new Map()
 	}
@@ -70,7 +70,7 @@ class NPCHandler {
 							}
 							else if (raidChannel.npcSpawns) {
 								// mob not spawned, spawn here
-								await this.spawnNPC(channel)
+								await this.spawnNPC(channel.id, channel.name)
 							}
 						}
 						else {
@@ -85,17 +85,18 @@ class NPCHandler {
 
 	/**
 	 * Spawns an NPC in a raid channel after some time
-	 * @param channel Channel to spawn npc in
+	 * @param channelID ID of channel to spawn npc in
+	 * @param channelName Name of channel to spawn npc in
 	 */
-	async spawnNPC (channel: AnyGuildChannel): Promise<void> {
-		const location = allLocations.find(loc => loc.channels.some(ch => ch.name === channel.name))
-		const raidChannel = location?.channels.find(ch => ch.name === channel.name)
+	async spawnNPC (channelID: string, channelName: string): Promise<void> {
+		const location = allLocations.find(loc => loc.channels.some(ch => ch.name === channelName))
+		const raidChannel = location?.channels.find(ch => ch.name === channelName)
 
 		if (location && raidChannel && raidChannel.npcSpawns) {
 			const timer = getRandomInt(raidChannel.npcSpawns.cooldownMin, raidChannel.npcSpawns.cooldownMax)
 			const possibleSpawns = raidChannel.npcSpawns.npcs
 
-			console.log(`Spawning NPC at channel: ${channel.name} in ${timer} seconds`)
+			console.log(`Spawning NPC at channel: ${channelName} in ${timer} seconds`)
 
 			setTimeout(async () => {
 				try {
@@ -104,15 +105,15 @@ class NPCHandler {
 					const minInterval = location.raidLength / 5
 					const intervalTimer = getRandomInt(minInterval, maxInterval)
 
-					await createNPC(query, channel.id, npc)
+					await createNPC(query, channelID, npc)
 
-					await this.app.bot.createMessage(channel.id, {
+					await this.app.bot.createMessage(channelID, {
 						content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
 					})
 
 					const interval = setInterval(async () => {
 						try {
-							await this.app.bot.createMessage(channel.id, {
+							await this.app.bot.createMessage(channelID, {
 								content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
 							})
 						}
@@ -121,7 +122,7 @@ class NPCHandler {
 						}
 					}, intervalTimer * 1000)
 
-					this.intervals.set(channel.id, interval)
+					this.intervals.set(channelID, interval)
 				}
 				catch (err) {
 					console.error(err)
@@ -129,7 +130,7 @@ class NPCHandler {
 			}, timer * 1000)
 		}
 		else {
-			console.error(`Channel: ${channel.name} (${channel.id}) is not a raid channel that spawns NPCs`)
+			console.error(`Channel: ${channelName} (${channelID}) is not a raid channel that spawns NPCs`)
 		}
 	}
 
@@ -171,7 +172,7 @@ class NPCHandler {
 	/**
 	 * Simulates an NPCs attack on a player
 	 * @param transactionQuery The transaction query, used to keep all queries inside a transaction. THIS FUNCTION DOES NOT COMMIT THE TRANSACTION, DO THAT AFTER YOU CALL THIS FUNCTION
-	 * @param member The member object of the player getting attacked
+	 * @param user The slash-create user object of the player getting attacked
 	 * @param userRow The user row of player getting attacked
 	 * @param userBackpack The backpack of player getting attacked
 	 * @param npc The NPC attacking
@@ -181,7 +182,7 @@ class NPCHandler {
 	 */
 	async attackPlayer (
 		transactionQuery: Query,
-		member: Member,
+		user: User,
 		userRow: UserRow,
 		userBackpack: BackpackItemRow[],
 		npc: NPC,
@@ -201,12 +202,12 @@ class NPCHandler {
 				// raider is using ranged weapon
 				npcDamage = getAttackDamage(npc.damage, npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
 
-				messages.push(`The \`${npc.type}\` shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
+				messages.push(`The \`${npc.type}\` shot <@${user.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
 			}
 			else {
 				npcDamage = getAttackDamage(npc.damage, npc.weapon.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
 
-				messages.push(`The \`${npc.type}\` lunged at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
+				messages.push(`The \`${npc.type}\` lunged at <@${user.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
 			}
 		}
 		else {
@@ -214,14 +215,14 @@ class NPCHandler {
 			bodyPartHit = getBodyPartHit(50)
 			npcDamage = getAttackDamage(npc.damage, 0.75, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
 
-			messages.push(`The \`${npc.type}\` took a swipe at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${npcDamage.total}** damage dealt.\n`)
+			messages.push(`The \`${npc.type}\` took a swipe at <@${user.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${npcDamage.total}** damage dealt.\n`)
 		}
 
 		if (bodyPartHit.result === 'head' && userEquips.helmet) {
-			messages.push(`**${member.username}#${member.discriminator}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${npcDamage.reduced}**.`)
+			messages.push(`**${user.username}#${user.discriminator}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${npcDamage.reduced}**.`)
 
 			if (userEquips.helmet.row.durability - 1 <= 0) {
-				messages.push(`**${member.username}#${member.discriminator}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
+				messages.push(`**${user.username}#${user.discriminator}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
 
 				await deleteItem(transactionQuery, userEquips.helmet.row.id)
 				removedItems.push(userEquips.helmet.row.id)
@@ -231,10 +232,10 @@ class NPCHandler {
 			}
 		}
 		else if (bodyPartHit.result === 'chest' && userEquips.armor) {
-			messages.push(`**${member.username}#${member.discriminator}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${npcDamage.reduced}**.`)
+			messages.push(`**${user.username}#${user.discriminator}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${npcDamage.reduced}**.`)
 
 			if (userEquips.armor.row.durability - 1 <= 0) {
-				messages.push(`**${member.username}#${member.discriminator}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
+				messages.push(`**${user.username}#${user.discriminator}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
 
 				await deleteItem(transactionQuery, userEquips.armor.row.id)
 				removedItems.push(userEquips.armor.row.id)
@@ -252,14 +253,14 @@ class NPCHandler {
 				}
 			}
 
-			await removeUserFromRaid(transactionQuery, member.id)
+			await removeUserFromRaid(transactionQuery, user.id)
 
-			messages.push(`☠️ **${member.username}#${member.discriminator}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
+			messages.push(`☠️ **${user.username}#${user.discriminator}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
 		}
 		else {
-			await lowerHealth(transactionQuery, member.id, npcDamage.total)
+			await lowerHealth(transactionQuery, user.id, npcDamage.total)
 
-			messages.push(`**${member.username}#${member.discriminator}** is left with ${formatHealth(userRow.health - npcDamage.total, userRow.maxHealth)} **${userRow.health - npcDamage.total}** health.`)
+			messages.push(`**${user.username}#${user.discriminator}** is left with ${formatHealth(userRow.health - npcDamage.total, userRow.maxHealth)} **${userRow.health - npcDamage.total}** health.`)
 		}
 
 		return {

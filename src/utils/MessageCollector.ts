@@ -28,14 +28,14 @@ class MessageCollector {
 	private app: App
 	private channelCollectors: ChannelCollector[]
 
-	constructor(app: App) {
+	constructor (app: App) {
 		this.app = app
 		this.channelCollectors = []
 
 		this.app.bot.on('messageCreate', this.verify.bind(this))
 	}
 
-	private verify(msg: Message<GuildTextableChannel>): void {
+	private verify (msg: Message<GuildTextableChannel>): void {
 		if (msg.author.bot) return
 
 		const collectors = this.channelCollectors.filter(c => c.channelID === msg.channel.id)
@@ -60,7 +60,7 @@ class MessageCollector {
 	 * @param limit How many messages to collect max
 	 * @returns An object with an event emitting object: collector, and and function used to stop the collector early: stopCollector
 	 */
-	createChannelCollector(channelID: string, filter: (m: Message<GuildTextableChannel>) => boolean, time = 15000, limit?: number): { collector: CollectorEventEmitter, stopCollector: () => void } {
+	createChannelCollector (channelID: string, filter: (m: Message<GuildTextableChannel>) => boolean, time = 15000, limit?: number): { collector: CollectorEventEmitter, stopCollector: () => void } {
 		const event = new EventEmitter()
 
 		const collectorObj: ChannelCollector = {
@@ -82,7 +82,7 @@ class MessageCollector {
 		}
 	}
 
-	private stopCollector(collector: ChannelCollector, message: string | Message[] = 'forced'): void {
+	private stopCollector (collector: ChannelCollector, message: string | Message[] = 'forced'): void {
 		if (this.channelCollectors.includes(collector)) {
 			collector.e.emit('end', message)
 			clearTimeout(collector.timeout)

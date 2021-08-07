@@ -4,6 +4,7 @@ import { items } from './items'
 import { NPC, npcs } from './npcs'
 
 export interface Location {
+	id: string
 	display: string
 
 	/**
@@ -138,10 +139,11 @@ interface EvacChannel extends RaidChannelBase {
 	}
 }
 
-const locationsObject = <T>(et: { [K in keyof T]: Location }) => et
+const locationsObject = <T>(et: { [K in keyof T]: Location & { id: K }}) => et
 
 export const locations = locationsObject({
 	suburbs: {
+		id: 'suburbs',
 		display: 'The Suburbs',
 		guilds: suburbsGuilds,
 		requirements: {

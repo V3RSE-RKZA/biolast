@@ -7,7 +7,7 @@ import { Query, Cooldown } from '../../types/mysql'
  * @param type The cooldown type
  * @returns The time left for the cooldown or undefined if there is no cooldown
  */
-export async function getCooldown(query: Query, key: string, type: string): Promise<string | undefined> {
+export async function getCooldown (query: Query, key: string, type: string): Promise<string | undefined> {
 	const cooldown: Cooldown = (await query('SELECT * FROM cooldowns WHERE id = ? AND type = ?', [key, type]))[0]
 
 
@@ -33,7 +33,7 @@ export async function getCooldown(query: Query, key: string, type: string): Prom
  * @param type The cooldown type
  * @param length The length of the cooldown in seconds
  */
-export async function createCooldown(query: Query, key: string, type: string, length: number): Promise<void> {
+export async function createCooldown (query: Query, key: string, type: string, length: number): Promise<void> {
 	try {
 		await query('INSERT INTO cooldowns (id, type, length) VALUES (?, ?, ?)', [key, type, length])
 	}
@@ -54,7 +54,7 @@ export async function createCooldown(query: Query, key: string, type: string, le
  * @param type The cooldown type
  * @returns A string stating whether a cooldown was successfully cleared
  */
-export async function clearCooldown(query: Query, key: string, type: string): Promise<string> {
+export async function clearCooldown (query: Query, key: string, type: string): Promise<string> {
 	const result = await query('DELETE FROM cooldowns WHERE id = ? AND type = ?', [key, type])
 
 	return result.affectedRows > 0 ?
@@ -62,7 +62,7 @@ export async function clearCooldown(query: Query, key: string, type: string): Pr
 		'No cooldown to remove'
 }
 
-export function formatTime(ms: number): string {
+export function formatTime (ms: number): string {
 	let remaining = ms
 	const finalStr = []
 

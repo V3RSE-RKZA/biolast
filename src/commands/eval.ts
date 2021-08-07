@@ -1,22 +1,19 @@
-import { Command } from '../types/Commands'
+import { TextCommand } from '../types/Commands'
 import { reply } from '../utils/messageUtils'
 import Embed from '../structures/Embed'
 import { inspect } from 'util'
+import { allLocations } from '../resources/raids'
+import { query } from '../utils/db/mysql'
 
-export const command: Command = {
+export const command: TextCommand = {
 	name: 'eval',
 	aliases: [],
-	examples: [],
-	description: 'Eval stuff.',
-	shortDescription: 'Eval stuff.',
-	category: 'admin',
-	permissions: ['sendMessages', 'embedLinks'],
-	cooldown: 2,
-	worksInDMs: true,
-	canBeUsedInRaid: true,
-	onlyWorksInRaidGuild: false,
-	guildModsOnly: false,
-	async execute(app, message, { args, prefix }) {
+	async execute (app, message, { args, prefix }) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const test = {
+			allLocations,
+			query
+		}
 		let commandInput = message.content.substring(5 + prefix.length)
 
 		if (commandInput.startsWith('```')) {

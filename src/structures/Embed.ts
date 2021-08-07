@@ -3,14 +3,14 @@ import { EmbedOptions } from 'eris'
 class Embed {
 	embed: EmbedOptions
 
-	constructor() {
+	constructor () {
 		this.embed = {
 			// default embed color here
 			color: 7099568
 		}
 	}
 
-	addField(name: string, value: string, inline = false): this {
+	addField (name: string, value: string, inline = false): this {
 		if (!name) {
 			return this
 		}
@@ -34,7 +34,7 @@ class Embed {
 		return this
 	}
 
-	setTitle(title: string): this {
+	setTitle (title: string): this {
 		if (!title) return this
 
 		this.embed.title = title.substring(0, 256)
@@ -42,7 +42,7 @@ class Embed {
 		return this
 	}
 
-	setURL(url: string): this {
+	setURL (url: string): this {
 		if (!url) return this
 
 		this.embed.url = url
@@ -50,7 +50,7 @@ class Embed {
 		return this
 	}
 
-	setDescription(desc: string): this {
+	setDescription (desc: string): this {
 		if (!desc) return this
 
 		this.embed.description = desc.substring(0, 4096)
@@ -58,7 +58,7 @@ class Embed {
 		return this
 	}
 
-	setImage(url: string): this {
+	setImage (url: string): this {
 		if (!url) return this
 
 		this.embed.image = {
@@ -68,7 +68,7 @@ class Embed {
 		return this
 	}
 
-	setThumbnail(url: string): this {
+	setThumbnail (url: string): this {
 		if (!url) return this
 
 		this.embed.thumbnail = {
@@ -78,7 +78,7 @@ class Embed {
 		return this
 	}
 
-	setFooter(text: string, icon?: string): this {
+	setFooter (text: string, icon?: string): this {
 		if (!text) return this
 
 		this.embed.footer = {
@@ -89,13 +89,13 @@ class Embed {
 		return this
 	}
 
-	setTimestamp(timestamp = new Date()): this {
+	setTimestamp (timestamp = new Date()): this {
 		this.embed.timestamp = timestamp
 
 		return this
 	}
 
-	setAuthor(name: string, icon?: string, url?: string): this {
+	setAuthor (name: string, icon?: string, url?: string): this {
 		if (!name) return this
 
 		this.embed.author = {
@@ -107,7 +107,7 @@ class Embed {
 		return this
 	}
 
-	setColor(color: string | number): this {
+	setColor (color: string | number): this {
 		if (!color) return this
 
 		if (typeof color === 'string') {
@@ -119,7 +119,7 @@ class Embed {
 		return this
 	}
 
-	addBlankField(inline = false): this {
+	addBlankField (inline = false): this {
 		return this.addField('\u200B', '\u200B', inline)
 	}
 }

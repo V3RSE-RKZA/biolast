@@ -5,7 +5,7 @@ import { query } from './db/mysql'
 class CronJobs {
 	private app: App
 
-	constructor(app: App) {
+	constructor (app: App) {
 		this.app = app
 	}
 
