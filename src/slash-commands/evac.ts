@@ -23,6 +23,7 @@ class EvacCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'evac',
 			description: 'Use this command in an evac channel to escape from a raid with the loot in your inventory.',
+			longDescription: 'Use this command in an evac channel to escape from a raid with the loot in your inventory.',
 			options: [],
 			category: 'info',
 			guildModsOnly: false,

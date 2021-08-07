@@ -13,6 +13,7 @@ class HealCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'heal',
 			description: 'Heal yourself using an item from your inventory.',
+			longDescription: 'Heal yourself using an item from your inventory.',
 			options: [
 				{
 					type: CommandOptionType.INTEGER,

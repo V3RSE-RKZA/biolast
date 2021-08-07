@@ -10,6 +10,8 @@ class EquipCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'equip',
 			description: 'Equip an item from your inventory such as a backpack, weapon, or armor.',
+			longDescription: 'Equip an item from your inventory. Equipping a backpack will increase the amount your inventory can hold. Equipping a helmet or armor will protect you from damage. ' +
+				'Equipping a weapon will use that weapon whenever you use the `attack` command.',
 			options: [
 				{
 					type: CommandOptionType.INTEGER,

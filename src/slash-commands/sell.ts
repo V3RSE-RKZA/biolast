@@ -13,6 +13,7 @@ class SellCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'sell',
 			description: 'Sell an item from your stash for rubles.',
+			longDescription: 'Sell an item from your stash for rubles.',
 			options: [
 				{
 					type: CommandOptionType.INTEGER,

@@ -10,6 +10,7 @@ class RaidTimeCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'raidtime',
 			description: 'Shows how much time you have to evac when in a raid.',
+			longDescription: 'Shows how much time you have to evac when in a raid. If you are still in a raid when the time runs out, the raid will end and you will lose everything in your inventory.',
 			options: [],
 			category: 'info',
 			guildModsOnly: false,

@@ -9,6 +9,7 @@ class HelpCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'help',
 			description: 'Your guide to surviving the apocalypse.',
+			longDescription: 'helpception',
 			options: [{
 				type: CommandOptionType.STRING,
 				name: 'command',
@@ -41,7 +42,7 @@ class HelpCommand extends CustomSlashCommand {
 
 			const cmdEmbed = new Embed()
 				.setTitle(`🔎 ${cmd.commandName}`)
-				.setDescription(cmd.description)
+				.setDescription(cmd.customOptions.longDescription)
 
 			/* Maybe ill add these back at some point
 			if (cmd.examples.length) {
@@ -60,9 +61,9 @@ class HelpCommand extends CustomSlashCommand {
 		}
 
 		const raidCommandsEmb = new Embed()
-			.setTitle('Raid Commands')
+			.setTitle('What commands can be used while in a raid?')
 			.setDescription('Use `/help <command>` to see more about a specific command. You can also hover your mouse over the command for a short description.\n\n' +
-				'**This commands can be used when in a raid**.\n\n' +
+				'**Commands that can be used when in a raid:**\n' +
 				`${
 					this.app.slashCreator.commands
 						.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && (cmd as CustomSlashCommand).customOptions.canBeUsedInRaid)
@@ -71,7 +72,7 @@ class HelpCommand extends CustomSlashCommand {
 				`)
 
 		const itemsEmbed = new Embed()
-			.setTitle('How to get items?')
+			.setTitle('What is a raid?')
 			.setDescription('The primary way to get more loot is by entering a **raid**. Raids are locations you *and other players* can explore for loot.' +
 				'\n\nYou can enter a raid using the `raid` command, make sure you\'re well equipped and have all the items you want to take with you in your **inventory** as the items in your stash ' +
 				' won\'t be accessible while in a raid.\n\nIn raid, you\'ll be able to use the `scavenge` command in a channel to look for items. You can also `search` for threats in a channel such as walkers or raiders.' +
@@ -99,9 +100,9 @@ class HelpCommand extends CustomSlashCommand {
 							custom_id: 'help-command',
 							options: [
 								{
-									label: 'Raid Commands',
+									label: 'What commands can be used while in a raid?',
 									value: 'raid-commands',
-									description: 'Commands that can be used while in raid'
+									description: ''
 								},
 								{
 									label: 'What is a raid?',

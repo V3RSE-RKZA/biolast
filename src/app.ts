@@ -6,7 +6,7 @@ import ComponentCollector from './utils/ComponentCollector'
 import NPCHandler from './utils/NPCHandler'
 import CronJobs from './utils/CronJobs'
 import { getAllRaids, getUsersRaid, removeUserFromRaid, userInRaid } from './utils/db/raids'
-import { clientId, botToken, prefix, adminUsers } from './config'
+import { clientId, botToken, adminUsers } from './config'
 import fs from 'fs'
 import path from 'path'
 import { beginTransaction, query } from './utils/db/mysql'
@@ -160,7 +160,7 @@ class App {
 		}
 
 		this.bot.editStatus('online', {
-			name: `${prefix}help`,
+			name: '/help',
 			type: 0
 		})
 

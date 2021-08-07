@@ -22,6 +22,8 @@ class AttackCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'attack',
 			description: 'Attack another player using your equipped weapon.',
+			longDescription: 'Attack another player using your equipped weapon. Make sure you have ammunition for the weapon you want to shoot.' +
+				' If you specify a body part to target, your weapon accuracy will determine your chance to hit that target.',
 			options: [
 				{
 					type: CommandOptionType.SUB_COMMAND,

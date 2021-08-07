@@ -10,6 +10,7 @@ class HealthCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'health',
 			description: 'View your current health.',
+			longDescription: 'View your current health.',
 			options: [{
 				type: CommandOptionType.USER,
 				name: 'user',

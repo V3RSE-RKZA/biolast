@@ -18,6 +18,11 @@ interface BaseCommandOptions {
 	 */
 	onlyWorksInRaidGuild: boolean
 
+	/**
+	 * Description to display in help command
+	 */
+	longDescription: string
+
 	category: CommandCategory
 }
 

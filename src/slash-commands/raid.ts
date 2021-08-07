@@ -16,6 +16,9 @@ class RaidCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'raid',
 			description: 'Used to join a raid. Raids are where you go to scavenge for loot and fight other players.',
+			longDescription: 'Used to join a raid. Raids are where you go to scavenge for loot and fight other players.' +
+				' You will take everything in your inventory with you, and if you die you will lose all the items you took (your stash remains unaffected).' +
+				' **This command will send you a server invite link. The server IS the raid.** Raids take place in a separate server so you can be matched against other random players.',
 			options: [
 				{
 					type: CommandOptionType.STRING,

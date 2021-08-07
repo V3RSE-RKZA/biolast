@@ -14,6 +14,8 @@ class GroundCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'ground',
 			description: 'View the items on the ground in a channel.',
+			longDescription: 'View the items on the ground in a channel. You can drop items on the ground with the `drop` subcommand or pick up items from the ground using the `grab` subcommand.' +
+				' Items on the ground expire after **20 - 25 minutes**.',
 			options: [
 				{
 					type: CommandOptionType.SUB_COMMAND,

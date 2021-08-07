@@ -12,6 +12,7 @@ class ItemCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'item',
 			description: 'View information about an item.',
+			longDescription: 'View information about an item.',
 			options: [{
 				type: CommandOptionType.STRING,
 				name: 'item',

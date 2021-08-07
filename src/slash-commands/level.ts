@@ -10,6 +10,7 @@ class LevelCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'level',
 			description: 'View your current xp and level.',
+			longDescription: 'View your current xp and level.',
 			options: [{
 				type: CommandOptionType.USER,
 				name: 'user',

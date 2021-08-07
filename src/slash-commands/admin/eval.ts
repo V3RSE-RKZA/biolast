@@ -11,6 +11,7 @@ class EvalCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'eval',
 			description: 'Eval stuff...',
+			longDescription: 'Eval stuff...',
 			options: [{
 				// TODO update this once discord releases full text input
 				type: CommandOptionType.STRING,

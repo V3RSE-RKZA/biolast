@@ -14,6 +14,7 @@ class SearchCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'search',
 			description: 'Search the area for any NPCs such as walkers, raiders, or something worse...',
+			longDescription: 'Search the area for any threats such as walkers, raiders, or something worse... You can choose to engage with mobs and try to steal their items.',
 			options: [],
 			category: 'info',
 			guildModsOnly: false,

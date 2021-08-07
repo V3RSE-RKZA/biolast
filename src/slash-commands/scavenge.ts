@@ -16,6 +16,7 @@ class ScavengeCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'scavenge',
 			description: 'Use this command in a channel to search for loot.',
+			longDescription: 'Use this command in a channel to search for loot. Make sure the area is clear of threats, otherwise they might attack you!',
 			options: [],
 			category: 'info',
 			guildModsOnly: false,
