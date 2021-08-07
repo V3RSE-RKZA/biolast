@@ -4,7 +4,7 @@ export const botToken = process.env.BOT_TOKEN
 
 export const clientId = process.env.BOT_CLIENT_ID
 
-// TODO this will be deprecated by slash commands
+// This is only used for text commands (commands that rely on message.content)
 export const prefix = process.env.PREFIX || '='
 
 export const icons = {

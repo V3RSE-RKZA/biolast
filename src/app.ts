@@ -1,6 +1,6 @@
 import Eris, { User, Member, Guild, Constants } from 'eris'
 import { SlashCreator, GatewayServer, AnyRequestData, CommandContext, InteractionRequestData, InteractionResponseFlags, InteractionResponseType, InteractionType } from 'slash-create'
-import { Command } from './types/Commands'
+import { TextCommand } from './types/Commands'
 import MessageCollector from './utils/MessageCollector'
 import ComponentCollector from './utils/ComponentCollector'
 import NPCHandler from './utils/NPCHandler'
@@ -22,7 +22,7 @@ import { messageUser } from './utils/messageUtils'
 
 class App {
 	bot: Eris.Client
-	commands: Command[]
+	commands: TextCommand[]
 	slashCreator: SlashCreator
 	componentCollector: ComponentCollector
 	msgCollector: MessageCollector
@@ -168,9 +168,9 @@ class App {
 		await this.bot.connect()
 	}
 
-	async loadCommands (): Promise<Command[]> {
+	async loadCommands (): Promise<TextCommand[]> {
 		const commandFiles = fs.readdirSync(path.join(__dirname, '/commands')).filter(file => file.endsWith('.js') || file.endsWith('.ts'))
-		const commandsArr: Command[] = []
+		const commandsArr: TextCommand[] = []
 
 		for (const file of commandFiles) {
 			try {
@@ -181,7 +181,7 @@ class App {
 				console.warn(err)
 			}
 
-			const { command }: { command: Command } = await import(`./commands/${file}`)
+			const { command }: { command: TextCommand } = await import(`./commands/${file}`)
 
 			commandsArr.push(command)
 		}
