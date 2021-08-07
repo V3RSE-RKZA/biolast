@@ -65,7 +65,7 @@ class AttackCommand extends CustomSlashCommand {
 				{
 					type: CommandOptionType.SUB_COMMAND,
 					name: 'npc',
-					description: 'Attack an NPC using your equipped weapon.',
+					description: 'Attack an NPC in this channel using your equipped weapon.',
 					options: [
 						{
 							type: CommandOptionType.STRING,

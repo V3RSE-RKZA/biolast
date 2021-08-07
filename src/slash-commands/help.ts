@@ -63,10 +63,17 @@ class HelpCommand extends CustomSlashCommand {
 		const raidCommandsEmb = new Embed()
 			.setTitle('What commands can be used while in a raid?')
 			.setDescription('Use `/help <command>` to see more about a specific command. You can also hover your mouse over the command for a short description.\n\n' +
-				'**Commands that can be used when in a raid:**\n' +
+				'**Commands that can be used when in a raid**:\n' +
 				`${
 					this.app.slashCreator.commands
 						.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && (cmd as CustomSlashCommand).customOptions.canBeUsedInRaid)
+						.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/25UsfHO5JwI '${cmd.description}')`)
+						.join(', ')}
+				` +
+				'\n**The following CAN\'T be used in raid**:\n' +
+				`${
+					this.app.slashCreator.commands
+						.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && !(cmd as CustomSlashCommand).customOptions.canBeUsedInRaid)
 						.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/25UsfHO5JwI '${cmd.description}')`)
 						.join(', ')}
 				`)
