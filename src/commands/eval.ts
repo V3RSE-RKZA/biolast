@@ -4,6 +4,7 @@ import Embed from '../structures/Embed'
 import { inspect } from 'util'
 import { allLocations } from '../resources/raids'
 import { query } from '../utils/db/mysql'
+import { allItems } from '../resources/items'
 
 export const command: TextCommand = {
 	name: 'eval',
@@ -12,6 +13,7 @@ export const command: TextCommand = {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const test = {
 			allLocations,
+			allItems,
 			query
 		}
 		let commandInput = message.content.substring(5 + prefix.length)

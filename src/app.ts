@@ -429,7 +429,10 @@ class App {
 			}
 
 			// defer response before running command since command may take time to execute
-			await ctx.defer(command.deferEphemeral)
+			if (!command.customOptions.noDefer) {
+				await ctx.defer(command.deferEphemeral)
+			}
+
 			await command.run(ctx)
 		}
 		catch (err) {

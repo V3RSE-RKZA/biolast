@@ -99,7 +99,11 @@ class AttackCommand extends CustomSlashCommand {
 			worksInDMs: false,
 			onlyWorksInRaidGuild: true,
 			canBeUsedInRaid: true,
-			guildIDs: []
+			guildIDs: [],
+
+			// can't defer this command because it pings users and editing the original
+			// message will cause users not to get pinged
+			noDefer: true
 		})
 
 		this.filePath = __filename

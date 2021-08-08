@@ -23,6 +23,13 @@ interface BaseCommandOptions {
 	 */
 	longDescription: string
 
+	/**
+	 * Whether to not defer for this command, this should only be set to true if the
+	 * command is pinging users/roles. When an interaction is deferred, the next response edits the
+	 * original message, which prevents any pings from actually pinging.
+	 */
+	noDefer?: boolean
+
 	category: CommandCategory
 }
 

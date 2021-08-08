@@ -1,6 +1,7 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import { inspect } from 'util'
 import App from '../../app'
+import { allItems } from '../../resources/items'
 import { allLocations } from '../../resources/raids'
 import CustomSlashCommand from '../../structures/CustomSlashCommand'
 import Embed from '../../structures/Embed'
@@ -35,6 +36,7 @@ class EvalCommand extends CustomSlashCommand {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const test = {
 			allLocations,
+			allItems,
 			query
 		}
 		let commandInput = ctx.options.input
