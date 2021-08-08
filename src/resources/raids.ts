@@ -239,7 +239,7 @@ export const locations = locationsObject({
 						xp: 15
 					},
 					rare: {
-						items: [items.knife, items.ifak_medkit],
+						items: [items.knife, items.ifak_medkit, items.cloth_backpack],
 						xp: 20
 					},
 					rolls: 2,
