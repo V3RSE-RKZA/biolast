@@ -12,7 +12,7 @@ export const items = rangedObject({
 		durability: 12,
 		slotsUsed: 2,
 		fireRate: 60,
-		accuracy: 35
+		accuracy: 40
 	},
 	'glock-17': {
 		type: 'Ranged Weapon',
