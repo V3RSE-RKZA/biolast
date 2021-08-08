@@ -62,21 +62,28 @@ class HelpCommand extends CustomSlashCommand {
 
 		const raidCommandsEmb = new Embed()
 			.setTitle('What commands can be used while in a raid?')
-			.setDescription('Use `/help <command>` to see more about a specific command. You can also hover your mouse over the command for a short description.\n\n' +
-				'**Commands that can be used when in a raid**:\n' +
-				`${
-					this.app.slashCreator.commands
-						.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && (cmd as CustomSlashCommand).customOptions.canBeUsedInRaid)
-						.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/25UsfHO5JwI '${cmd.description}')`)
-						.join(', ')}
-				` +
-				'\n**The following CAN\'T be used in raid**:\n' +
-				`${
-					this.app.slashCreator.commands
-						.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && !(cmd as CustomSlashCommand).customOptions.canBeUsedInRaid)
-						.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/25UsfHO5JwI '${cmd.description}')`)
-						.join(', ')}
-				`)
+			.setDescription('Use `/help <command>` to see more about a specific command. You can also hover your mouse over the command for a short description.')
+			.addField(
+				'Commands that ONLY work in a raid:',
+				this.app.slashCreator.commands
+					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && (cmd as CustomSlashCommand).customOptions.onlyWorksInRaidGuild)
+					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/25UsfHO5JwI '${cmd.description}')`)
+					.join(', ')
+			)
+			.addField(
+				'Commands that can be used in AND out of a raid:',
+				this.app.slashCreator.commands
+					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && (cmd as CustomSlashCommand).customOptions.canBeUsedInRaid && !(cmd as CustomSlashCommand).customOptions.onlyWorksInRaidGuild)
+					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/25UsfHO5JwI '${cmd.description}')`)
+					.join(', ')
+			)
+			.addField(
+				'The following CAN\'T be used in raid:',
+				this.app.slashCreator.commands
+					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && !(cmd as CustomSlashCommand).customOptions.canBeUsedInRaid)
+					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/25UsfHO5JwI '${cmd.description}')`)
+					.join(', ')
+			)
 
 		const itemsEmbed = new Embed()
 			.setTitle('What is a raid?')
