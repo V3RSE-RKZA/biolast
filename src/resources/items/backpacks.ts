@@ -11,9 +11,7 @@ export const items = backpackObject
 		sellPrice: 2000,
 		slots: 4,
 		slotsUsed: 1
-	}
-})
-export 
+	},
 	cloth_backpack: {
 		type: 'Backpack',
 		name: 'cloth_backpack',
@@ -22,4 +20,5 @@ export
 		sellPrice: 4500
 		slots: 7,
 		slotsUsed: 1
-        }
+	}
+})
