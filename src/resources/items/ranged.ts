@@ -50,15 +50,15 @@ export const items = rangedObject({
 		accuracy: 14
 	},
 	'makeshift_shotgun': {
-        type: 'Ranged Weapon',
-        name: 'makeshift_shotgun',
-        icon: '<:U_weapon:601366669272678411>',
-        aliases: ['shotgun', 'shotty'],
-        description: 'A handmade shotgun that looks like it could break apart at any moment.',
-        sellPrice: 800,
-        durability: 6,
-        slotsUsed: 2,
-        fireRate: 80,
-        accuracy: 13
-    }
+		type: 'Ranged Weapon',
+		name: 'makeshift_shotgun',
+		icon: '<:U_weapon:601366669272678411>',
+		aliases: ['shotgun', 'shotty'],
+		description: 'A handmade shotgun that looks like it could break apart at any moment.',
+		sellPrice: 800,
+		durability: 6,
+		slotsUsed: 2,
+		fireRate: 80,
+		accuracy: 13
+	}
 })
