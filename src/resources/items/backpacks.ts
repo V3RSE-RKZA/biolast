@@ -16,7 +16,7 @@ export const items = backpackObject({
 		type: 'Backpack',
 		name: 'cloth_backpack',
 		icon: '<:U_backpack:601366669595508736>',
-		aliases: ['cloth backpack'],
+		aliases: ['cloth', 'backpack'],
 		sellPrice: 4500,
 		slots: 7,
 		slotsUsed: 1
