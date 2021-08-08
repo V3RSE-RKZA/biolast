@@ -226,7 +226,7 @@ export const locations = locationsObject({
 				}
 			},
 			{
-				type: 'LootChannel'
+				type: 'LootChannel',
 				name: 'backstreets',
 				display: 'Streets',
 				scavange: {
