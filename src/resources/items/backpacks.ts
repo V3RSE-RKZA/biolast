@@ -2,7 +2,7 @@ import { Backpack } from '../../types/Items'
 
 const backpackObject = <T>(et: { [K in keyof T]: Backpack & { name: K } }) => et
 
-export const items = backpackObject({
+export const items = backpackObject
 	small_pouch: {
 		type: 'Backpack',
 		name: 'small_pouch',
@@ -13,7 +13,7 @@ export const items = backpackObject({
 		slotsUsed: 1
 	}
 })
-export const items = backpackObject({
+export 
 	cloth_backpack: {
 		type: 'Backpack',
 		name: 'cloth_backpack',
