@@ -224,6 +224,28 @@ export const locations = locationsObject({
 					time: 30,
 					requiresKey: items.shed_key
 				}
+			},
+			{
+				type: 'LootChannel',
+				name: 'backstreets',
+				display: 'Streets',
+				scavange: {
+					common: {
+						items: [items.cloth_armor, items.cloth_helmet],
+						xp: 10
+					},
+					uncommon: {
+						items: [items.wooden_armor, items.wooden_helmet],
+						xp: 15
+					},
+					rare: {
+						items: [items.knife, items.ifak_medkit],
+						xp: 20
+					},
+					rolls: 2,
+					cooldown: 1 * 10,
+					requiresKey: items.shed_key
+				}
 			}
 		]
 	}
