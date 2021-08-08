@@ -1,5 +1,7 @@
 # Currently in development
 
+[![GitHub Super-Linter](https://github.com/blobfysh/project-z/workflows/Lint%20Code/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 ### Plans:
 
 - [x] Trying to scavenge or evac in a channel where there's an NPC should make the NPC attack you (gives more incentive to kill the NPCs and search the area before scavenging for loot).
