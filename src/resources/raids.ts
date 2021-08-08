@@ -224,8 +224,9 @@ export const locations = locationsObject({
 					time: 30,
 					requiresKey: items.shed_key
 				}
-
-type: 'LootChannel'
+			},
+			{
+				type: 'LootChannel'
 				name: 'backstreets',
 				display: 'Streets',
 				scavange: {
@@ -238,23 +239,16 @@ type: 'LootChannel'
 						xp: 15
 					},
 					rare: {
-						items: [items.knife, items.ifak_medkit]
+						items: [items.knife, items.ifak_medkit],
 						xp: 20
 					},
 					rolls: 2,
 					cooldown: 1 * 10,
-					requiresKey: items shed_key
-				},
-				
-					
-	
+					requiresKey: items.shed_key
 				}
-
-
-
 			}
 		]
 	}
 })
 
-export const allLocations = Object.values of(locations)
+export const allLocations = Object.values(locations)
