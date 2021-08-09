@@ -51,5 +51,17 @@ export const items = ammoObject({
 		ammoFor: [ranged.makeshift_rifle],
 		sellPrice: 450,
 		slotsUsed: 1
+	},
+	'makeshift_shell': {
+		type: 'Ammunition',
+		name: 'makeshift_shell',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['shell', 'makeshift'],
+		description: 'A handmade shotgun shell filled with cheap gunpowder and pellets.',
+		damage: 13,
+		penetration: 1.1,
+		ammoFor: [ranged.makeshift_shotgun],
+		sellPrice: 500,
+		slotsUsed: 1
 	}
 })
