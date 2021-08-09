@@ -42,7 +42,7 @@ export const items = meleeObject({
 		damage: 30,
 		penetration: 0.8
 	},
-        metal_shank: {
+	metal_shank: {
 		type: 'Melee Weapon',
 		name: 'metal_shank',
 		icon: '<:U_melee:601366669251575857>',
@@ -54,5 +54,5 @@ export const items = meleeObject({
 		accuracy: 25,
 		damage: 35,
 		penetration: 0.9
-        },
+	}
 })
