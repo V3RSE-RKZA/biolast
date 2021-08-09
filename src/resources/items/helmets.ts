@@ -33,7 +33,6 @@ export const items = helmetObject({
 		level: 2,
 		slotsUsed: 2
 	},
-
 	metal_facemask: {
 		type: 'Helmet',
 		name: 'metal_facemask',
