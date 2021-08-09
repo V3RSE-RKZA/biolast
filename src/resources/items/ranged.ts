@@ -73,5 +73,6 @@ export const items = rangedObject({
 		fireRate: 100,
 		accuracy: 19
 
-             )
+           },
+             
 })
