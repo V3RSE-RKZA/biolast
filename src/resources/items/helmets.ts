@@ -34,15 +34,15 @@ export const items = helmetObject({
 		slotsUsed: 2
 	},
 
-        metal_facemask: {
+	metal_facemask: {
 		type: 'Helmet',
 		name: 'metal_facemask',
 		icon: '<:U_shield:601366669474136074>',
 		aliases: [],
 		sellPrice: 3000,
 		durability: 3,
-                level: 2,
-                slotsUsed: 2
-	},
+		level: 2,
+		slotsUsed: 2
+	}
 
 })
