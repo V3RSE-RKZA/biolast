@@ -52,7 +52,7 @@ class App {
 			}
 		})
 		this.componentCollector = new ComponentCollector(this)
-		this.msgCollector = new  MessageCollector(this)
+		this.msgCollector = new MessageCollector(this)
 		this.cronJobs = new CronJobs(this)
 		this.activeRaids = []
 		this.acceptingCommands = false
