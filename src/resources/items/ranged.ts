@@ -60,5 +60,17 @@ export const items = rangedObject({
 		slotsUsed: 2,
 		fireRate: 80,
 		accuracy: 13
-	}
+	},
+        'lee_enfield': {
+		type: 'Ranged Weapon',
+		name: 'lee_enfield',
+		icon: '<:U_rifle:869647344344387624> ',
+		aliases: ['lee', 'enfield'],
+		description: 'A high power military sniper.',
+		sellPrice: 6000,
+		durability: 11,
+		slotsUsed: 3,
+		fireRate: 180,
+		accuracy: 50
+        },
 })
