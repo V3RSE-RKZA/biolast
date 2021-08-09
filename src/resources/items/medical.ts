@@ -22,5 +22,15 @@ export const items = medicalObject({
 		healsFor: 35,
 		slotsUsed: 1,
 		healRate: 30
+	},
+	paracetamol: {
+		type: 'Medical',
+		name: 'paracetamol',
+		icon: '<:U_usable:601366669259964418>',
+		aliases: ['paracet'],
+		sellPrice: 1300,
+		healsFor: 25,
+		slotsUsed: 1,
+		healRate: 25
 	}
 })
