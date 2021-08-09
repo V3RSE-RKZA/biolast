@@ -11,4 +11,13 @@ export const items = keysObject({
 		icon: '<:U_key:870786870852874260>',
 		slotsUsed: 1
 	}
+
+wooden_gate_key: {
+		type: 'Key',
+		name: 'wooden_gate_key',
+		durability: 2,
+		aliases: [],
+		icon: '<:U_key:870786870852874260>',
+		slotsUsed: 1
+
 })
