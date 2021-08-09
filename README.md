@@ -1,6 +1,7 @@
 # Currently in development
 
-[![GitHub Super-Linter](https://github.com/blobfysh/project-z/workflows/Lint%20Code/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![Github Mega-Linter](https://github.com/blobfysh/project-z/workflows/Lint%20Code/badge.svg)](https://github.com/nvuillam/mega-linter)
+![Build](https://github.com/blobfysh/project-z/workflows/Build/badge.svg)
 
 ### Plans:
 
