@@ -61,7 +61,7 @@ export const items = rangedObject({
 		fireRate: 80,
 		accuracy: 13
 	},
-        'lever_action_shotgun': {
+	'lever_action_shotgun': {
 		type: 'Ranged Weapon',
 		name: 'lever_action_shotgun',
 		icon: '<:U_weapon:601366669272678411>',
@@ -73,6 +73,6 @@ export const items = rangedObject({
 		fireRate: 100,
 		accuracy: 19
 
-           },
-             
+	}
+
 })
