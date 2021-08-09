@@ -43,5 +43,4 @@ export const items = helmetObject({
 		level: 2,
 		slotsUsed: 2
 	}
-
 })
