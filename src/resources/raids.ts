@@ -246,6 +246,32 @@ export const locations = locationsObject({
 					cooldown: 1 * 10,
 					requiresKey: items.shed_key
 				}
+			},
+			{
+				type: 'EvacChannel',
+				name: 'sewers-evac',
+				display: 'Sewers',
+				scavange: {
+					common: {
+						items: [items.cloth_armor, items.cloth_helmet, items.wooden_bat],
+						xp: 10
+					},
+					uncommon: {
+						items: [items.wooden_armor, items.metal_bat],
+						xp: 15
+					},
+					rare: {
+						items: [items.paca_armor, items.paca_helmet, items.shed_key],
+						xp: 20
+					},
+					rolls: 2,
+					cooldown: 1 * 10,
+					requiresKey: items.shed_key
+				},
+				evac: {
+					time: 30,
+					requiresKey: items.shed_key
+				}
 			}
 		]
 	}
