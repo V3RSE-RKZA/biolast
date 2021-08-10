@@ -434,8 +434,6 @@ class App {
 				await ctx.defer(command.deferEphemeral)
 			}
 
-			throw new Error('lol')
-
 			await command.run(ctx)
 		}
 		catch (err) {
