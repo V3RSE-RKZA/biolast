@@ -1,7 +1,8 @@
 import App from '../app'
+import { logger } from '../utils/logger'
 
 export async function run (this: App): Promise<void> {
-	console.log('Bot ready!')
+	logger.info('Bot ready!')
 
 	await this.loadRaidTimers()
 	await this.npcHandler.start()

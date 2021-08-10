@@ -10,6 +10,7 @@ import { getNPC } from '../utils/db/npcs'
 import { getUserRow } from '../utils/db/players'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import { getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
+import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
 import { getRaidType } from '../utils/raidUtils'
 
@@ -94,7 +95,7 @@ class EvacCommand extends CustomSlashCommand {
 					})
 				}
 				catch (err) {
-					console.error(err)
+					logger.error(err)
 				}
 			}, 1000)
 
@@ -108,7 +109,7 @@ class EvacCommand extends CustomSlashCommand {
 					}
 				}
 				catch (err) {
-					console.error(err)
+					logger.error(err)
 				}
 
 				const erisUser = await this.app.fetchUser(ctx.user.id)
@@ -185,7 +186,7 @@ class EvacCommand extends CustomSlashCommand {
 						}
 					}
 					catch (err) {
-						console.error(err)
+						logger.error(err)
 					}
 				}, (raidChannel.evac.time / 3) * 1000)
 
@@ -200,7 +201,7 @@ class EvacCommand extends CustomSlashCommand {
 						}
 					}
 					catch (err) {
-						console.error(err)
+						logger.error(err)
 					}
 				}, ((raidChannel.evac.time / 3) * 2) * 1000)
 
@@ -228,12 +229,12 @@ class EvacCommand extends CustomSlashCommand {
 								})
 							}
 							catch (err) {
-								console.error(err)
+								logger.error(err)
 							}
 						}
 					}
 					catch (err) {
-						console.error(err)
+						logger.error(err)
 					}
 				}, raidChannel.evac.time * 1000)
 

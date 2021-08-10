@@ -1,3 +1,3 @@
 export async function run (message: string): Promise<void> {
-	// if (debug) console.error(message)
+	// if (debug) logger.error(message)
 }

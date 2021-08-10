@@ -1,4 +1,5 @@
 import { Query, Cooldown } from '../../types/mysql'
+import { logger } from '../logger'
 
 /**
  *
@@ -38,7 +39,7 @@ export async function createCooldown (query: Query, key: string, type: string, l
 		await query('INSERT INTO cooldowns (id, type, length) VALUES (?, ?, ?)', [key, type, length])
 	}
 	catch (err) {
-		console.warn('ERROR TRYING TO CREATE COOLDOWN, removing the expired cooldown...')
+		logger.warn('ERROR TRYING TO CREATE COOLDOWN, removing the expired cooldown...')
 		// this really shouldn't error since expired cooldowns are removed by getCooldown but just in case...
 		// remove expired cooldown from database
 		await query('DELETE FROM cooldowns WHERE id = ? AND type = ?', [key, type])

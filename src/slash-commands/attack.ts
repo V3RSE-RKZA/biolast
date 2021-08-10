@@ -13,6 +13,7 @@ import { addXp, getUserRow, lowerHealth } from '../utils/db/players'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import formatHealth from '../utils/formatHealth'
 import { getEquips, getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
+import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
 import { BodyPart, getAttackDamage, getBodyPartHit } from '../utils/raidUtils'
 import getRandomInt from '../utils/randomInt'
@@ -361,7 +362,7 @@ class AttackCommand extends CustomSlashCommand {
 						}
 					}
 					catch (err) {
-						console.error(err)
+						logger.error(err)
 					}
 
 					const erisUser = await this.app.fetchUser(ctx.user.id)
@@ -559,7 +560,7 @@ class AttackCommand extends CustomSlashCommand {
 					}
 				}
 				catch (err) {
-					console.error(err)
+					logger.error(err)
 				}
 			}
 

@@ -2,6 +2,7 @@ import { SlashCommand, SlashCommandOptions, SlashCreator } from 'slash-create'
 import App from '../app'
 import { debug, testingGuildId } from '../config'
 import { allLocations } from '../resources/raids'
+import { logger } from '../utils/logger'
 
 type CommandCategory = 'admin' | 'info' | 'items' | 'utility'
 
@@ -82,7 +83,7 @@ class CustomSlashCommand extends SlashCommand {
 		}
 		else if (debug && testingGuildId) {
 			// register to testing guild and raids while bot is in debug mode
-			console.log(`Registering ${slashOptions.name} to testing guild instead of globally: ${testingGuildId}`)
+			logger.debug(`Registering ${slashOptions.name} to testing guild instead of globally: ${testingGuildId}`)
 
 			if (slashOptions.guildIDs) {
 				slashOptions.guildIDs = [...slashOptions.guildIDs, testingGuildId, ...allLocations.map(loc => loc.guilds).flat(1)]

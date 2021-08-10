@@ -1,6 +1,7 @@
 import { GuildTextableChannel, Message } from 'eris'
 import { prefix, adminUsers } from '../config'
 import App from '../app'
+import { logger } from '../utils/logger'
 
 export async function run (this: App, message: Message): Promise<void> {
 	if (message.author.bot || !this.acceptingCommands) {
@@ -31,7 +32,7 @@ export async function run (this: App, message: Message): Promise<void> {
 		await command.execute(this, <Message<GuildTextableChannel>>message, { args, prefix })
 	}
 	catch (err) {
-		console.error(err)
+		logger.error(err)
 		message.channel.createMessage('Command failed to execute!')
 	}
 }

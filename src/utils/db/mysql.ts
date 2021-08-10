@@ -1,5 +1,6 @@
 import mysql, { QueryOptions } from 'mysql'
 import { Transaction } from '../../types/mysql'
+import { logger } from '../logger'
 
 const pool = mysql.createPool({
 	connectionLimit: 10,
@@ -13,7 +14,7 @@ const pool = mysql.createPool({
 })
 
 pool.on('connection', connection => {
-	console.log(`[MYSQL][${connection.threadId}] Created a new connection in the pool`)
+	logger.debug(`[MYSQL][${connection.threadId}] Created a new connection in the pool`)
 })
 
 export function query (sql: string | QueryOptions, args?: any[]): Promise<any> {
@@ -81,7 +82,7 @@ export function beginTransaction (): Promise<Transaction> {
 
 					// to prevent transaction from hanging
 					const rollbackTimeout = setTimeout(() => {
-						console.log('TRANSACTION TIMED OUT, ROLLING BACK')
+						logger.info('TRANSACTION TIMED OUT, ROLLING BACK')
 						connection.rollback(() => {
 							connection.release()
 						})

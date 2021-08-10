@@ -1,5 +1,6 @@
 import { botToken } from './config'
 import App from './app'
+import { logger } from './utils/logger'
 
 const app = new App(`Bot ${botToken}`, {
 	disableEvents: {
@@ -30,11 +31,11 @@ const app = new App(`Bot ${botToken}`, {
 app.launch()
 
 process.on('SIGINT', async () => {
-	console.log('Stopping')
+	logger.info('Stopping')
 
 	process.exit(0)
 })
 
 process.on('unhandledRejection', (reason, promise) => {
-	console.error('Unhandled rejection', reason)
+	logger.error('Unhandled rejection', reason)
 })

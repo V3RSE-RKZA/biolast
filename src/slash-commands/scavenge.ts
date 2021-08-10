@@ -8,6 +8,7 @@ import { beginTransaction } from '../utils/db/mysql'
 import { getNPC } from '../utils/db/npcs'
 import { addXp, getUserRow } from '../utils/db/players'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
+import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
 import { getRaidType, getRandomItem } from '../utils/raidUtils'
 
@@ -105,7 +106,7 @@ class ScavengeCommand extends CustomSlashCommand {
 						})
 					}
 					catch (err) {
-						console.error(err)
+						logger.error(err)
 					}
 				}, 2000)
 
@@ -119,7 +120,7 @@ class ScavengeCommand extends CustomSlashCommand {
 						}
 					}
 					catch (err) {
-						console.error(err)
+						logger.error(err)
 					}
 
 					const erisUser = await this.app.fetchUser(ctx.user.id)
@@ -223,7 +224,7 @@ class ScavengeCommand extends CustomSlashCommand {
 			}
 		}
 		catch (err) {
-			console.error(err)
+			logger.error(err)
 
 			await transaction.commit()
 		}

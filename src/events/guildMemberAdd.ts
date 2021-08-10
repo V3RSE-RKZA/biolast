@@ -1,6 +1,7 @@
 import { Guild, Member } from 'eris'
 import { query } from '../utils/db/mysql'
 import { getUsersRaid } from '../utils/db/raids'
+import { logger } from '../utils/logger'
 import { isRaidGuild } from '../utils/raidUtils'
 
 export async function run (guild: Guild, member: Member): Promise<void> {
@@ -11,7 +12,7 @@ export async function run (guild: Guild, member: Member): Promise<void> {
 			const role = guild.roles.find(r => r.name === 'Scavenger')
 
 			if (!role) {
-				console.error(`Could not find Scavenger role in guild: ${guild.name} (${guild.id})`)
+				logger.error(`Could not find Scavenger role in guild: ${guild.name} (${guild.id})`)
 				return
 			}
 
@@ -19,7 +20,7 @@ export async function run (guild: Guild, member: Member): Promise<void> {
 				await member.addRole(role.id, 'User started raid and joined')
 			}
 			catch (err) {
-				console.error(`Error adding Scavenger role in guild: ${guild.name} (${guild.id})`)
+				logger.error(`Error adding Scavenger role in guild: ${guild.name} (${guild.id})`)
 			}
 		}
 	}

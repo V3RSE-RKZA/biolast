@@ -1,6 +1,7 @@
 import App from '../app'
 import cron from 'node-cron'
 import { query } from './db/mysql'
+import { logger } from './logger'
 
 class CronJobs {
 	private app: App
@@ -16,18 +17,18 @@ class CronJobs {
 	}
 
 	private async dailyTasks (): Promise<void> {
-		console.log('[CRONJOBS] Running daily tasks')
+		logger.info('[CRONJOBS] Running daily tasks')
 
 		// clean up cooldowns table, prevents the table from having inactive records
 		await query('DELETE FROM cooldowns WHERE NOW() > ADDDATE(createdAt, INTERVAL length SECOND)')
 	}
 
 	private async hourlyTasks (): Promise<void> {
-		console.log('[CRONJOBS] Running hourly tasks')
+		logger.info('[CRONJOBS] Running hourly tasks')
 	}
 
 	private async oftenTasks (): Promise<void> {
-		console.log('[CRONJOBS] Running often tasks (5 minutes)')
+		logger.info('[CRONJOBS] Running often tasks (5 minutes)')
 
 		// remove ground items that have been on the ground for 20+ minutes
 		await query('DELETE items FROM items INNER JOIN ground_items ON items.id = ground_items.itemId WHERE NOW() > ground_items.createdAt + INTERVAL 20 MINUTE')

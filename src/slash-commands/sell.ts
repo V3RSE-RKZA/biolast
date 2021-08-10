@@ -77,7 +77,6 @@ class SellCommand extends CustomSlashCommand {
 				return
 			}
 
-			console.log(price)
 			itemsToSell.push(foundItem)
 			price += foundItem.item.sellPrice
 		}

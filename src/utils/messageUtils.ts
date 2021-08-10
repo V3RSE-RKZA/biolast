@@ -1,5 +1,6 @@
 import { Message, User } from 'eris'
 import { MessageType, ComponentMessageContent } from '../types/Messages'
+import { logger } from './logger'
 
 export function reply<T extends Message> (msg: T, content: ComponentMessageContent): Promise<MessageType<T>> {
 	if (typeof content === 'string') {
@@ -23,7 +24,7 @@ export async function messageUser (user: User, content: ComponentMessageContent,
 		await dm.createMessage(content)
 	}
 	catch (err) {
-		console.warn(`Failed to send message to user: ${user.id}`)
+		logger.warn(`Failed to send message to user: ${user.id}`)
 
 		if (throwErr) {
 			throw new Error(err)

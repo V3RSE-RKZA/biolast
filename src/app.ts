@@ -19,6 +19,7 @@ import { items } from './resources/items'
 import { getPlayerXp } from './utils/playerUtils'
 import { getItemDisplay } from './utils/itemUtils'
 import { messageUser } from './utils/messageUtils'
+import { logger } from './utils/logger'
 
 class App {
 	bot: Eris.Client
@@ -141,7 +142,7 @@ class App {
 		})
 
 		this.slashCreator.on('debug', msg => {
-			console.log(msg)
+			logger.debug(msg)
 		})
 
 		// load bot gateway events
@@ -164,7 +165,7 @@ class App {
 			type: 0
 		})
 
-		console.info('[APP] Listening for events')
+		logger.info('[APP] Listening for events')
 		await this.bot.connect()
 	}
 
@@ -178,7 +179,7 @@ class App {
 				delete require.cache[require.resolve(`./commands/${file}`)]
 			}
 			catch (err) {
-				console.warn(err)
+				logger.warn(err)
 			}
 
 			const { command }: { command: TextCommand } = await import(`./commands/${file}`)
@@ -239,7 +240,7 @@ class App {
 			}
 		}
 		catch (err) {
-			console.error(err)
+			logger.error(err)
 		}
 	}
 
@@ -266,7 +267,7 @@ class App {
 			}
 		}
 		catch (err) {
-			console.error(err)
+			logger.error(err)
 		}
 	}
 
@@ -290,7 +291,7 @@ class App {
 					}
 				}
 				else {
-					console.log(`Starting raid timer for ${row.userId} which will expire in ${formatTime(timeLeft)}`)
+					logger.info(`Starting raid timer for ${row.userId} which will expire in ${formatTime(timeLeft)}`)
 
 					this.activeRaids.push({
 						userID: row.userId,
@@ -308,7 +309,7 @@ class App {
 								await guild.kickMember(row.userId, 'Raid time ran out')
 							}
 							catch (err) {
-								console.error(err)
+								logger.error(err)
 								// unable to kick user?
 							}
 						}, timeLeft)
@@ -433,10 +434,12 @@ class App {
 				await ctx.defer(command.deferEphemeral)
 			}
 
+			throw new Error('lol')
+
 			await command.run(ctx)
 		}
 		catch (err) {
-			console.error(err)
+			logger.error(err)
 			await ctx.send({
 				content: 'Command failed to execute... If this keeps happening please let a bot dev know!!',
 				flags: InteractionResponseFlags.EPHEMERAL

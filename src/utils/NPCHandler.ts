@@ -11,6 +11,7 @@ import { lowerHealth } from './db/players'
 import { removeUserFromRaid } from './db/raids'
 import formatHealth from './formatHealth'
 import { getEquips, getItemDisplay, getItems } from './itemUtils'
+import { logger } from './logger'
 import { getAttackDamage, getBodyPartHit } from './raidUtils'
 import getRandomInt from './randomInt'
 
@@ -61,7 +62,7 @@ class NPCHandler {
 											})
 										}
 										catch (err) {
-											console.warn(`Failed to send message: ${err}`)
+											logger.warn(`Failed to send message: ${err}`)
 										}
 									}, timer * 1000)
 
@@ -75,7 +76,7 @@ class NPCHandler {
 						}
 						else {
 							// this shouldn't happen
-							console.error(`UNABLE TO FIND CHANNEL WITH NAME: ${raidChannel.name} IN GUILD: ${guild.name} (${guild.id})`)
+							logger.error(`UNABLE TO FIND CHANNEL WITH NAME: ${raidChannel.name} IN GUILD: ${guild.name} (${guild.id})`)
 						}
 					}
 				}
@@ -96,7 +97,7 @@ class NPCHandler {
 			const timer = getRandomInt(raidChannel.npcSpawns.cooldownMin, raidChannel.npcSpawns.cooldownMax)
 			const possibleSpawns = raidChannel.npcSpawns.npcs
 
-			console.log(`Spawning NPC at channel: ${channelName} in ${timer} seconds`)
+			logger.info(`Spawning NPC at channel: ${channelName} in ${timer} seconds`)
 
 			setTimeout(async () => {
 				try {
@@ -118,19 +119,19 @@ class NPCHandler {
 							})
 						}
 						catch (err) {
-							console.warn(`Failed to send message: ${err}`)
+							logger.warn(`Failed to send message: ${err}`)
 						}
 					}, intervalTimer * 1000)
 
 					this.intervals.set(channelID, interval)
 				}
 				catch (err) {
-					console.error(err)
+					logger.error(err)
 				}
 			}, timer * 1000)
 		}
 		else {
-			console.error(`Channel: ${channelName} (${channelID}) is not a raid channel that spawns NPCs`)
+			logger.error(`Channel: ${channelName} (${channelID}) is not a raid channel that spawns NPCs`)
 		}
 	}
 
