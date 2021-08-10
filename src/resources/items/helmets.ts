@@ -32,5 +32,15 @@ export const items = helmetObject({
 		durability: 3,
 		level: 2,
 		slotsUsed: 2
+	},
+	tincan_helmet: {
+		type: 'Helmet',
+		name: 'tincan_helmet',
+		icon: '<:U_helmet:874671013181415434>',
+		aliases: ['tincan'],
+		sellPrice: 350,
+		durability: 5,
+		level: 1,
+		slotsUsed: 1
 	}
 })
