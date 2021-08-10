@@ -32,5 +32,15 @@ export const items = armorObject({
 		durability: 3,
 		level: 1,
 		slotsUsed: 2
+	},
+	metal_chestplate: {
+		type: 'Body Armor',
+		name: 'metal_chestplate',
+		icon: '<:U_shield:601366669474136074>',
+		aliases: ['chestplate'],
+		sellPrice: 3000,
+		durability: 5,
+		level: 5,
+		slotsUsed: 3
 	}
 })
