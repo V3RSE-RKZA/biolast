@@ -10,7 +10,7 @@ interface BaseItem {
 	slotsUsed: number
 }
 
-type ArmorLevel = 1 | 2 | 3 | 4
+type ArmorLevel = 1 | 2 | 3 | 4 | 5
 
 export interface RangedWeapon extends BaseItem {
 	type: 'Ranged Weapon'
