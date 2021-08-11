@@ -55,7 +55,7 @@ export const items = meleeObject({
 		damage: 35,
 		penetration: 0.9
 	},
-tomahawk: {
+	tomahawk: {
 		type: 'Melee Weapon',
 		name: 'tomahawk',
 		icon: '<:U_melee:601366669251575857>',
@@ -67,5 +67,5 @@ tomahawk: {
 		accuracy: 30,
 		damage: 40,
 		penetration: 1.1
-	},
+	}
 })
