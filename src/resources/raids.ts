@@ -177,7 +177,7 @@ export const locations = locationsObject({
 					cooldownMin: 60,
 					cooldownMax: 120
 				}
-			},
+			},      
 			{
 				type: 'LootChannel',
 				name: 'apartments',
@@ -268,11 +268,35 @@ export const locations = locationsObject({
 					cooldown: 1 * 10,
 					requiresKey: items.shed_key
 				},
-				evac: {
-					time: 30,
-					requiresKey: items.shed_key
-				}
-			}
+				{
+				type: 'LootChannel',
+				name: 'alleyway',
+				display: 'Alleyway',
+				scavange: {
+					common: {
+						items: [items.wooden_bat, items.wooden_helmet],
+						xp: 10
+					},
+					uncommon: {
+						items: [items['9mm_fmj'], items.knife],
+						xp: 15 type: 'LootChannel',
+			
+					
+					},
+					rare: {
+						items: [items.makeshift_pistol_ammo, items.metal_shank, items.cloth_backpack],
+						xp: 20
+					},
+					rolls: 2,
+					cooldown: 1 * 10
+				},
+                                npcSpawns: {
+					npcs: [npcs.walker_weak],
+					cooldownMin: 45,
+					cooldownMax: 120
+                                }
+                          }, 
+		     }
 		]
 	}
 })
