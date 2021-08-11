@@ -63,5 +63,17 @@ export const items = ammoObject({
 		ammoFor: [ranged.makeshift_shotgun],
 		sellPrice: 500,
 		slotsUsed: 1
+	},
+	'.303_fmj': {
+		type: 'Ammunition',
+		name: '.303_fmj',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['.303'],
+		description: 'Full metal jacket ammo for a lee-enfield.',
+		damage: 45,
+		penetration: 4.5,
+		ammoFor: [ranged['lee-enfield']],
+		sellPrice: 1100,
+		slotsUsed: 1
 	}
 })
