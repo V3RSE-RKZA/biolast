@@ -54,5 +54,18 @@ export const items = meleeObject({
 		accuracy: 25,
 		damage: 35,
 		penetration: 0.9
-	}
+	},
+tomahawk: {
+		type: 'Melee Weapon',
+		name: 'tomahawk',
+		icon: '<:U_melee:601366669251575857>',
+		aliases: ['toma'],
+		sellPrice: 3200,
+		durability: 6,
+		slotsUsed: 1,
+		fireRate: 25,
+		accuracy: 30,
+		damage: 40,
+		penetration: 1.1
+	},
 })
