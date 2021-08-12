@@ -47,6 +47,11 @@ export interface GroundItemRow extends ItemRow {
 	createdAt: Date
 }
 
+export interface ShopItemRow extends ItemRow {
+	createdAt: Date
+	price: number
+}
+
 export interface NPCRow {
 	channelId: string
 	createdAt: Date

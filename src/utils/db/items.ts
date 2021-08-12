@@ -1,4 +1,4 @@
-import { Query, ItemRow, BackpackItemRow, GroundItemRow } from '../../types/mysql'
+import { Query, ItemRow, BackpackItemRow, GroundItemRow, ShopItemRow } from '../../types/mysql'
 import { OkPacket } from 'mysql'
 
 /**
@@ -29,6 +29,25 @@ export async function getUserStash (query: Query, userID: string, forUpdate = fa
  */
 export async function getGroundItems (query: Query, channelID: string, forUpdate = false): Promise<GroundItemRow[]> {
 	return query(`SELECT items.id, items.item, items.durability, ground_items.createdAt FROM ground_items INNER JOIN items ON items.id = ground_items.itemId WHERE channelId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [channelID])
+}
+
+/**
+ * Retrieves 50 items available for sale at the shop (ordered by newest to oldest)
+ * @param query Query to use
+ * @returns Available shop items
+ */
+export async function getAllShopItems (query: Query): Promise<ShopItemRow[]> {
+	return query('SELECT items.id, items.item, items.durability, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId ORDER BY shop_items.createdAt ASC LIMIT 50')
+}
+
+/**
+ * Retrieve a shop item (to make sure it exists in the shop)
+ * @param query Query to use
+ * @param itemID ID of the item
+ * @returns A shop item
+ */
+export async function getShopItem (query: Query, itemID: number): Promise<ShopItemRow | undefined> {
+	return (await query('SELECT items.id, items.item, items.durability, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId WHERE items.id = ?', [itemID]))[0]
 }
 
 /**
@@ -90,11 +109,21 @@ export async function removeItemFromStash (query: Query, itemID: number): Promis
 /**
  * Drops item on ground, items on the ground will be deleted after 20 minutes
  * @param query Query to use
- * @param userID ID of channel to drop item in
+ * @param channelID ID of channel to drop item in
  * @param itemID ID of the item, you can get the id by using createItem()
  */
 export async function dropItemToGround (query: Query, channelID: string, itemID: number): Promise<void> {
 	await query('INSERT INTO ground_items (itemId, channelId) VALUES (?, ?)', [itemID, channelID])
+}
+
+/**
+ * Adds item to the shop, shop items are removed after 1 day
+ * @param query Query to use
+ * @param itemID ID of the item, you can get the id by using createItem()
+ * @param price Price item should be sold for
+ */
+export async function addItemToShop (query: Query, itemID: number, price: number): Promise<void> {
+	await query('INSERT INTO shop_items (itemId, price) VALUES (?, ?)', [itemID, price])
 }
 
 /**
@@ -104,6 +133,15 @@ export async function dropItemToGround (query: Query, channelID: string, itemID:
  */
 export async function removeItemFromGround (query: Query, itemID: number): Promise<void> {
 	await query('DELETE FROM ground_items WHERE itemId = ?', [itemID])
+}
+
+/**
+ * Removes item from shop (if it was purchased)
+ * @param query Query to use
+ * @param itemID ID of the item
+ */
+export async function removeItemFromShop (query: Query, itemID: number): Promise<void> {
+	await query('DELETE FROM shop_items WHERE itemId = ?', [itemID])
 }
 
 export async function lowerItemDurability (query: Query, itemID: number, amount = 1): Promise<void> {
