@@ -37,17 +37,18 @@ export async function getGroundItems (query: Query, channelID: string, forUpdate
  * @returns Available shop items
  */
 export async function getAllShopItems (query: Query): Promise<ShopItemRow[]> {
-	return query('SELECT items.id, items.item, items.durability, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId ORDER BY shop_items.createdAt ASC LIMIT 50')
+	return query('SELECT items.id, items.item, items.durability, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId ORDER BY shop_items.createdAt DESC LIMIT 50')
 }
 
 /**
  * Retrieve a shop item (to make sure it exists in the shop)
  * @param query Query to use
  * @param itemID ID of the item
+ * @param forUpdate Whether this is used in an SQL transaction
  * @returns A shop item
  */
-export async function getShopItem (query: Query, itemID: number): Promise<ShopItemRow | undefined> {
-	return (await query('SELECT items.id, items.item, items.durability, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId WHERE items.id = ?', [itemID]))[0]
+export async function getShopItem (query: Query, itemID: number, forUpdate = false): Promise<ShopItemRow | undefined> {
+	return (await query(`SELECT items.id, items.item, items.durability, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId WHERE items.id = ?${forUpdate ? ' FOR UPDATE' : ''}`, [itemID]))[0]
 }
 
 /**

@@ -56,7 +56,7 @@ class ItemCommand extends CustomSlashCommand {
 		}
 
 		if (item.sellPrice) {
-			itemEmbed.addField('Sell Price', formatNumber(item.sellPrice), true)
+			itemEmbed.addField('Sell Price', formatNumber(Math.floor(item.sellPrice * this.app.shopSellMultiplier)), true)
 		}
 
 		if (item.type === 'Backpack') {

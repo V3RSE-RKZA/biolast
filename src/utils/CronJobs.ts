@@ -2,6 +2,7 @@ import App from '../app'
 import cron from 'node-cron'
 import { query } from './db/mysql'
 import { logger } from './logger'
+import getRandomInt from './randomInt'
 
 class CronJobs {
 	private app: App
@@ -25,6 +26,8 @@ class CronJobs {
 
 	private async hourlyTasks (): Promise<void> {
 		logger.info('[CRONJOBS] Running hourly tasks')
+
+		this.app.shopSellMultiplier = getRandomInt(90, 110) / 100
 	}
 
 	private async oftenTasks (): Promise<void> {
@@ -32,6 +35,9 @@ class CronJobs {
 
 		// remove ground items that have been on the ground for 20+ minutes
 		await query('DELETE items FROM items INNER JOIN ground_items ON items.id = ground_items.itemId WHERE NOW() > ground_items.createdAt + INTERVAL 20 MINUTE')
+
+		// remove items from the shop that are older than 1 day
+		await query('DELETE items FROM items INNER JOIN shop_items ON items.id = shop_items.itemId WHERE NOW() > shop_items.createdAt + INTERVAL 1 DAY')
 	}
 }
 

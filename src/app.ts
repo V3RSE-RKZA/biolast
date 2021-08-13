@@ -20,6 +20,7 @@ import { getPlayerXp } from './utils/playerUtils'
 import { getItemDisplay } from './utils/itemUtils'
 import { messageUser } from './utils/messageUtils'
 import { logger } from './utils/logger'
+import getRandomInt from './utils/randomInt'
 
 class App {
 	bot: Eris.Client
@@ -34,6 +35,10 @@ class App {
 	}[]
 	acceptingCommands: boolean
 	npcHandler: NPCHandler
+	/**
+	 * The current multiplier for selling items to the shop (changes every hour)
+	 */
+	shopSellMultiplier: number
 
 	constructor (token: string, options: Eris.ClientOptions) {
 		if (!clientId) {
@@ -58,6 +63,7 @@ class App {
 		this.activeRaids = []
 		this.acceptingCommands = false
 		this.npcHandler = new NPCHandler(this)
+		this.shopSellMultiplier = getRandomInt(90, 110) / 100
 	}
 
 	async launch (): Promise<void> {
