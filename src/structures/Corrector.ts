@@ -9,7 +9,12 @@ class Corrector {
 		this.maxDistance = maxDistance
 	}
 
-	getWord (input: string): string | undefined {
+	/**
+	 * @param input Input to get word from
+	 * @param maxDistance Max distance between input and word, higher = more lenient. This overrides the maxDistance defined in the constructor
+	 * @returns A word if found
+	 */
+	getWord (input: string, maxDistance?: number): string | undefined {
 		if (!input) return undefined
 		else if (this.words.includes(input)) return input
 
@@ -24,7 +29,9 @@ class Corrector {
 
 		compared.sort((a, b) => a.steps - b.steps)
 
-		if (compared[0].steps <= this.maxDistance) return compared[0].word
+		if (compared[0].steps <= (maxDistance ?? this.maxDistance)) {
+			return compared[0].word
+		}
 
 		return undefined
 	}

@@ -1,11 +1,14 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
 import { allItems } from '../resources/items'
+import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { getItem } from '../utils/argParsers'
 import formatNumber from '../utils/formatNumber'
 import { getItemDisplay } from '../utils/itemUtils'
+
+const itemCorrector = new Corrector([...allItems.map(itm => itm.name), ...allItems.map(itm => itm.aliases).flat(1)])
 
 class ItemCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -34,9 +37,11 @@ class ItemCommand extends CustomSlashCommand {
 		const item = getItem([ctx.options.item])
 
 		if (!item) {
+			const related = itemCorrector.getWord(ctx.options.item, 5)
+
 			// TODO show results for items that were related to users input (if any)
 			await ctx.send({
-				content: '❌ Could not find an item matching that name.'
+				content: related ? `❌ Could not find an item matching that name. Did you mean \`${related}\`?` : '❌ Could not find an item matching that name.'
 			})
 			return
 		}
