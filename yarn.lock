@@ -23,7 +23,7 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@discordjs/collection@^0.2.0":
+"@discordjs/collection@^0.2.1":
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@discordjs/collection/-/collection-0.2.1.tgz#ea4bc7b41b7b7b6daa82e439141222ec95c469b2"
   integrity sha512-vhxqzzM8gkomw0TYRF3tgx7SwElzUlXT/Aa41O7mOcyN6wIJfj5JmDWaO5XGKsGSsNx7F3i5oIlrucCCWV1Nog==
@@ -604,7 +604,6 @@ enquirer@^2.3.5:
 
 "eris@github:abalabahaha/eris#dev":
   version "0.16.0-dev"
-  uid "53da0d5111cb884bffd2f2c1d0d5674a98558c26"
   resolved "https://codeload.github.com/abalabahaha/eris/tar.gz/53da0d5111cb884bffd2f2c1d0d5674a98558c26"
   dependencies:
     ws "^7.4.6"
@@ -1617,12 +1616,12 @@ shebang-regex@^3.0.0:
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
-slash-create@^3.4.3:
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/slash-create/-/slash-create-3.4.3.tgz#38c3fa5745fe23d09f59319529246142f4a6f233"
-  integrity sha512-aUS/tZ/IDInwOJfi6ZOItIDoXALJmLFbspEopWAmVEZHAE3HF40rKkeTcG1ZI+6XuETdspFCalYPeGSRbD8fHA==
+slash-create@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/slash-create/-/slash-create-4.0.1.tgz#a89e1a6b70e776a4a548b065bea393d19c5db0f2"
+  integrity sha512-UdQBbLLubYJiH7Zm1asyFL7/iENMCDmrKHQPNyzWp/Iv5ywSB7kIB/Jhszt1sYKMtLbVggx4bcmAkLz5VPFanA==
   dependencies:
-    "@discordjs/collection" "^0.2.0"
+    "@discordjs/collection" "^0.2.1"
     eventemitter3 "^4.0.7"
     lodash.isequal "^4.5.0"
     lodash.uniq "^4.5.0"

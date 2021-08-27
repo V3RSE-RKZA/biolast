@@ -28,7 +28,7 @@
     "node-fetch": "^2.6.1",
     "pino": "^6.13.1",
     "pino-pretty": "^6.0.0",
-    "slash-create": "^3.4.3"
+    "slash-create": "^4.0.1"
   },
   "devDependencies": {
     "@types/js-levenshtein": "^1.1.0",

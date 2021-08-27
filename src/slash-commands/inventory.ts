@@ -1,5 +1,5 @@
 import { CommandOptionType, SlashCreator, CommandContext, User } from 'slash-create'
-import ResolvedMember from 'slash-create/lib/structures/resolvedMember'
+import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import App from '../app'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
