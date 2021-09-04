@@ -13,7 +13,7 @@ export const items = meleeObject({
 		slotsUsed: 1,
 		fireRate: 10,
 		accuracy: 35,
-		damage: 30,
+		damage: 22,
 		penetration: 0.9
 	},
 	wooden_bat: {
@@ -26,7 +26,7 @@ export const items = meleeObject({
 		slotsUsed: 1,
 		fireRate: 10,
 		accuracy: 30,
-		damage: 20,
+		damage: 14,
 		penetration: 0.5
 	},
 	metal_bat: {
@@ -39,8 +39,8 @@ export const items = meleeObject({
 		slotsUsed: 1,
 		fireRate: 10,
 		accuracy: 20,
-		damage: 30,
-		penetration: 0.8
+		damage: 19,
+		penetration: 0.7
 	},
 	metal_shank: {
 		type: 'Melee Weapon',
@@ -52,8 +52,8 @@ export const items = meleeObject({
 		slotsUsed: 1,
 		fireRate: 15,
 		accuracy: 25,
-		damage: 35,
-		penetration: 0.9
+		damage: 20,
+		penetration: 2.0
 	},
 	claymore: {
 		type: 'Melee Weapon',
