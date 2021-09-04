@@ -604,7 +604,8 @@ enquirer@^2.3.5:
 
 "eris@github:abalabahaha/eris#dev":
   version "0.16.0-dev"
-  resolved "https://codeload.github.com/abalabahaha/eris/tar.gz/53da0d5111cb884bffd2f2c1d0d5674a98558c26"
+  uid e357991c686f900000450dc24834f3afc56b0943
+  resolved "https://codeload.github.com/abalabahaha/eris/tar.gz/e357991c686f900000450dc24834f3afc56b0943"
   dependencies:
     ws "^7.4.6"
   optionalDependencies:
