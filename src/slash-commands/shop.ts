@@ -103,14 +103,19 @@ class ShopCommand extends CustomSlashCommand {
 					return
 				}
 				else if (!foundItem.item.sellPrice) {
+					/*
 					await ctx.send({
 						content: `❌ ${getItemDisplay(foundItem.item)} cannot be sold.`
 					})
 					return
+					*/
+					itemsToSell.push(foundItem)
+					price += 0
 				}
-
-				itemsToSell.push(foundItem)
-				price += Math.floor(foundItem.item.sellPrice * this.app.shopSellMultiplier)
+				else {
+					itemsToSell.push(foundItem)
+					price += Math.floor(foundItem.item.sellPrice * this.app.shopSellMultiplier)
+				}
 			}
 
 			const botMessage = await ctx.send({
@@ -144,9 +149,12 @@ class ShopCommand extends CustomSlashCommand {
 
 					// verified user has items, continue selling
 					for (const i of itemsToSell) {
-						const sellPrice = Math.floor(i.item.sellPrice! * this.app.shopSellMultiplier)
 						await removeItemFromStash(transaction.query, i.row.id)
-						await addItemToShop(transaction.query, i.row.id, getRandomInt(sellPrice * 2, sellPrice * 3))
+
+						if (i.item.sellPrice) {
+							const sellPrice = Math.floor(i.item.sellPrice! * this.app.shopSellMultiplier)
+							await addItemToShop(transaction.query, i.row.id, getRandomInt(sellPrice * 2, sellPrice * 3))
+						}
 					}
 
 					await addMoney(transaction.query, ctx.user.id, price)
