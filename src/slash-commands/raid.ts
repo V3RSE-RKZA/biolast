@@ -5,7 +5,7 @@ import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { CONFIRM_BUTTONS } from '../utils/constants'
 import { formatTime } from '../utils/db/cooldowns'
-import { getUserBackpack, removeItemsFromBackpack } from '../utils/db/items'
+import { getUserBackpack, removeAllItemsFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { addUserToRaid, getAllUsers, getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
@@ -184,7 +184,7 @@ class RaidCommand extends CustomSlashCommand {
 							await removeUserFromRaid(expiredTransaction.query, ctx.user.id)
 
 							// remove items from backpack since user didn't evac
-							await removeItemsFromBackpack(expiredTransaction.query, ctx.user.id)
+							await removeAllItemsFromBackpack(expiredTransaction.query, ctx.user.id)
 							await expiredTransaction.commit()
 
 							await this.app.bot.kickGuildMember(raidGuild.id, ctx.user.id, 'Raid time ran out')

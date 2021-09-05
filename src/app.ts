@@ -10,7 +10,7 @@ import { clientId, botToken, adminUsers } from './config'
 import fs from 'fs'
 import path from 'path'
 import { beginTransaction, query } from './utils/db/mysql'
-import { addItemToBackpack, createItem, getUserBackpack, removeItemsFromBackpack } from './utils/db/items'
+import { addItemToBackpack, createItem, getUserBackpack, removeAllItemsFromBackpack } from './utils/db/items'
 import { formatTime } from './utils/db/cooldowns'
 import CustomSlashCommand from './structures/CustomSlashCommand'
 import { createAccount, getUserRow, increaseLevel } from './utils/db/players'
@@ -310,7 +310,7 @@ class App {
 								await removeUserFromRaid(transaction.query, row.userId)
 
 								// remove items from backpack since user didn't evac
-								await removeItemsFromBackpack(transaction.query, row.userId)
+								await removeAllItemsFromBackpack(transaction.query, row.userId)
 								await transaction.commit()
 
 								await guild.kickMember(row.userId, 'Raid time ran out')

@@ -112,7 +112,7 @@ export async function removeItemFromStash (query: Query, itemID: number): Promis
  * @param query Query to use
  * @param userID ID of the user
  */
-export async function removeItemsFromBackpack (query: Query, userID: string): Promise<void> {
+export async function removeAllItemsFromBackpack (query: Query, userID: string): Promise<void> {
 	await query('DELETE items FROM items INNER JOIN backpack_items ON items.id = backpack_items.itemId WHERE userId = ?', [userID])
 }
 

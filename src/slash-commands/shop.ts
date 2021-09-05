@@ -5,7 +5,7 @@ import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { ShopItemRow } from '../types/mysql'
 import { CONFIRM_BUTTONS } from '../utils/constants'
-import { addItemToShop, addItemToStash, getAllShopItems, getShopItem, getUserStash, removeItemFromShop, removeItemFromStash } from '../utils/db/items'
+import { addItemToShop, addItemToStash, getAllShopItems, getShopItem, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromShop, removeItemFromStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addMoney, getUserRow, removeMoney } from '../utils/db/players'
 import formatNumber from '../utils/formatNumber'
@@ -24,7 +24,7 @@ class ShopCommand extends CustomSlashCommand {
 				{
 					type: CommandOptionType.SUB_COMMAND,
 					name: 'sell',
-					description: 'Sell an item from your stash to the shop.',
+					description: 'Sell an item from your inventory or stash to the shop.',
 					options: [
 						{
 							type: CommandOptionType.INTEGER,
@@ -88,22 +88,24 @@ class ShopCommand extends CustomSlashCommand {
 			}
 
 			const stashRows = await getUserStash(query, ctx.user.id)
+			const backpackRows = await getUserBackpack(query, ctx.user.id)
 			const userStashData = getItems(stashRows)
+			const userBackpackData = getItems(backpackRows)
 			const itemsToSell = []
 			let price = 0
 
 			for (const i of items) {
-				const foundItem = userStashData.items.find(itm => itm.row.id === i)
+				const foundItem = userStashData.items.find(itm => itm.row.id === i) || userBackpackData.items.find(itm => itm.row.id === i)
 
 				// make sure user has item
 				if (!foundItem) {
 					await ctx.send({
-						content: `❌ You don't have an item with the ID **${i}** in your stash. You can find the IDs of items in your \`/stash\`.`
+						content: `❌ You don't have an item with the ID **${i}** in your inventory or stash. You can find the IDs of items in your \`/inventory\` or \`/stash\`.`
 					})
 					return
 				}
 				else if (!foundItem.item.sellPrice) {
-					/*
+					/* this will prevent users from being able to get rid of unsellable items.
 					await ctx.send({
 						content: `❌ ${getItemDisplay(foundItem.item)} cannot be sold.`
 					})
@@ -131,16 +133,18 @@ class ShopCommand extends CustomSlashCommand {
 					const transaction = await beginTransaction()
 					const userDataV = (await getUserRow(transaction.query, ctx.user.id, true))!
 					const stashRowsV = await getUserStash(transaction.query, ctx.user.id, true)
+					const backpackRowsV = await getUserBackpack(transaction.query, ctx.user.id, true)
 					const userStashDataV = getItems(stashRowsV)
+					const userBackpackDataV = getItems(backpackRowsV)
 
 					for (const i of itemsToSell) {
-						const foundItem = userStashDataV.items.find(itm => itm.row.id === i.row.id)
+						const foundItem = userStashDataV.items.find(itm => itm.row.id === i.row.id) || userBackpackDataV.items.find(itm => itm.row.id === i.row.id)
 
 						if (!foundItem) {
 							await transaction.commit()
 
 							await confirmed.editParent({
-								content: `❌ You don't have an item with the ID **${i.row.id}** in your stash. You can find the IDs of items in your \`/stash\`.`,
+								content: `❌ You don't have an item with the ID **${i.row.id}** in your inventory or stash. You can find the IDs of items in your \`/inventory\` or \`/stash\`.`,
 								components: []
 							})
 							return
@@ -149,7 +153,14 @@ class ShopCommand extends CustomSlashCommand {
 
 					// verified user has items, continue selling
 					for (const i of itemsToSell) {
-						await removeItemFromStash(transaction.query, i.row.id)
+						const isStashItem = userStashDataV.items.find(itm => itm.row.id === i.row.id)
+
+						if (isStashItem) {
+							await removeItemFromStash(transaction.query, i.row.id)
+						}
+						else {
+							await removeItemFromBackpack(transaction.query, i.row.id)
+						}
 
 						if (i.item.sellPrice) {
 							const sellPrice = Math.floor(i.item.sellPrice! * this.app.shopSellMultiplier)
