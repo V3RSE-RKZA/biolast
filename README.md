@@ -33,6 +33,7 @@
 - [x] ~~allow picking up of multiple items up to a max of like 4 items: `grab 10400 10401 10402`.~~ This was added with the migration to slash commands
 - [ ] `item` command should work with item ids: `t-item 10400`
 - [ ] unequip command (just for ease of use)
+- [ ] durability should affect how much item sells for
 
 ### Further down line:
 - [ ] when user votes for the bot on a bot list, they should receive a random item (maybe like 10% weapon, 30% ammo, 60% other stuff)
