@@ -55,6 +55,19 @@ export const items = meleeObject({
 		damage: 20,
 		penetration: 2.0
 	},
+	sledgehammer: {
+		type: 'Melee Weapon',
+		name: 'sledgehammer',
+		icon: '<:U_melee:601366669251575857>',
+		aliases: ['sledge'],
+		sellPrice: 3500,
+		durability: 8,
+		slotsUsed: 3,
+		fireRate: 25,
+		accuracy: 10,
+		damage: 40,
+		penetration: 1.2
+	},
 	claymore: {
 		type: 'Melee Weapon',
 		name: 'claymore',
