@@ -25,7 +25,7 @@ class HealCommand extends CustomSlashCommand {
 			category: 'items',
 			guildModsOnly: false,
 			worksInDMs: false,
-			onlyWorksInRaidGuild: true,
+			onlyWorksInRaidGuild: false,
 			canBeUsedInRaid: true,
 			guildIDs: []
 		})
