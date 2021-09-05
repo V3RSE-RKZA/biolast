@@ -197,6 +197,11 @@ export const locations = locationsObject({
 					},
 					rolls: 3,
 					cooldown: 1 * 10
+				},
+				npcSpawns: {
+					npcs: [npcs.raider],
+					cooldownMin: 60,
+					cooldownMax: 120
 				}
 			},
 			{
@@ -269,8 +274,7 @@ export const locations = locationsObject({
 					requiresKey: items.shed_key
 				},
 				evac: {
-					time: 30,
-					requiresKey: items.shed_key
+					time: 30
 				}
 			}
 		]
