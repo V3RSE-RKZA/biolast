@@ -334,11 +334,13 @@ class App {
 	}
 
 	clearRaidTimer (userID: string): void {
-		const activeRaid = this.activeRaids.find(raid => raid.userID === userID)
-
-		if (activeRaid) {
-			clearTimeout(activeRaid.timeout)
-			this.activeRaids.splice(this.activeRaids.indexOf(activeRaid, 1))
+		// backwards loop prevents splice from messing with the index
+		for (let i = this.activeRaids.length - 1; i >= 0; i--) {
+			if (this.activeRaids[i].userID === userID) {
+				logger.info(`Clearing raid timer for ${userID}`)
+				clearTimeout(this.activeRaids[i].timeout)
+				this.activeRaids.splice(i, 1)
+			}
 		}
 	}
 
