@@ -303,6 +303,7 @@ class App {
 						userID: row.userId,
 						timeout: setTimeout(async () => {
 							try {
+								const erisUser = await this.fetchUser(row.userId)
 								const transaction = await beginTransaction()
 								await getUsersRaid(transaction.query, row.userId, true)
 								await getUserBackpack(transaction.query, row.userId, true)
@@ -313,6 +314,13 @@ class App {
 								await transaction.commit()
 
 								await guild.kickMember(row.userId, 'Raid time ran out')
+								if (erisUser) {
+									await messageUser(erisUser, {
+										content: '❌ Raid failed!\n\n' +
+											'You spent too long in the raid and ran out of time to evac! Next time make sure you have enough time to find an evac and escape the raid.\n' +
+											'You lost all the items in your inventory.'
+									})
+								}
 							}
 							catch (err) {
 								logger.error(err)

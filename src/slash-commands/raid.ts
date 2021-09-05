@@ -9,6 +9,7 @@ import { getUserBackpack, removeItemsFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { addUserToRaid, getAllUsers, getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
+import { messageUser } from '../utils/messageUtils'
 import { isRaidGuild } from '../utils/raidUtils'
 
 class RaidCommand extends CustomSlashCommand {
@@ -176,6 +177,7 @@ class RaidCommand extends CustomSlashCommand {
 					userID: ctx.user.id,
 					timeout: setTimeout(async () => {
 						try {
+							const erisUser = await this.app.fetchUser(ctx.user.id)
 							const expiredTransaction = await beginTransaction()
 							await getUsersRaid(expiredTransaction.query, ctx.user.id, true)
 							await getUserBackpack(expiredTransaction.query, ctx.user.id, true)
@@ -186,6 +188,13 @@ class RaidCommand extends CustomSlashCommand {
 							await expiredTransaction.commit()
 
 							await this.app.bot.kickGuildMember(raidGuild.id, ctx.user.id, 'Raid time ran out')
+							if (erisUser) {
+								await messageUser(erisUser, {
+									content: '❌ Raid failed!\n\n' +
+										'You spent too long in the raid and ran out of time to evac! Next time make sure you have enough time to find an evac and escape the raid.\n' +
+										'You lost all the items in your inventory.'
+								})
+							}
 						}
 						catch (err) {
 							// unable to kick user?
