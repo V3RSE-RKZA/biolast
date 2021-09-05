@@ -166,7 +166,7 @@ export const locations = locationsObject({
 						xp: 15
 					},
 					rare: {
-						items: [items['glock-17'], items['9mm_fmj']],
+						items: [items['glock-17'], items['9mm_fmj'], items.sledgehammer],
 						xp: 20
 					},
 					rolls: 4,
