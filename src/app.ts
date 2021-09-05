@@ -463,6 +463,7 @@ class App {
 				await ctx.defer(command.deferEphemeral)
 			}
 
+			logger.info(`Command (${command.commandName}) run by ${ctx.user.username}#${ctx.user.discriminator} (${ctx.user.id}) in ${ctx.guildID ? `guild (${ctx.guildID})` : 'DMs'}`)
 			await command.run(ctx)
 		}
 		catch (err) {
