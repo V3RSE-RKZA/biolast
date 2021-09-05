@@ -61,12 +61,12 @@ export const items = meleeObject({
 		icon: '<:U_melee:601366669251575857>',
 		aliases: ['sledge'],
 		sellPrice: 1750,
-		durability: 8,
+		durability: 6,
 		slotsUsed: 3,
-		fireRate: 25,
+		fireRate: 35,
 		accuracy: 10,
-		damage: 40,
-		penetration: 1.2
+		damage: 30,
+		penetration: 0.75
 	},
 	claymore: {
 		type: 'Melee Weapon',
