@@ -105,7 +105,10 @@ class StashCommand extends CustomSlashCommand {
 			}
 
 			const transaction = await beginTransaction()
+			const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
 			const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
+			const stashRows = await getUserStash(transaction.query, ctx.user.id, true)
+			const userStashData = getItems(stashRows)
 			const userBackpackData = getItems(backpackRows)
 			const itemsToDeposit = []
 
@@ -126,6 +129,13 @@ class StashCommand extends CustomSlashCommand {
 				}
 			}
 
+			const slotsNeeded = itemsToDeposit.reduce((prev, curr) => prev + curr.item.slotsUsed, 0)
+			if (userStashData.slotsUsed + slotsNeeded > userData.stashSlots) {
+				await ctx.send({
+					content: `❌ You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`
+				})
+				return
+			}
 
 			for (const i of itemsToDeposit) {
 				await removeItemFromBackpack(transaction.query, i.row.id)
