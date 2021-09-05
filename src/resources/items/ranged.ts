@@ -22,7 +22,7 @@ export const items = rangedObject({
 		sellPrice: 10000,
 		durability: 10,
 		slotsUsed: 2,
-		fireRate: 60,
+		fireRate: 35,
 		accuracy: 30
 	},
 	'makeshift_pistol': {
