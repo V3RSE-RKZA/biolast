@@ -210,14 +210,13 @@ class EvacCommand extends CustomSlashCommand {
 						this.extractions.delete(ctx.user.id)
 
 						const member = await this.app.fetchMember(guild, ctx.user.id)
-						const activeRaid = this.app.activeRaids.find(raid => raid.userID === ctx.user.id)
 						const userRaid = await getUsersRaid(query, ctx.user.id)
 
-						if (member && activeRaid && userRaid) {
+						if (member && userRaid) {
 							const userBackpackV = await getUserBackpack(query, ctx.user.id)
 							const userBackpackDataV = getItems(userBackpackV)
 
-							clearTimeout(activeRaid.timeout)
+							this.app.clearRaidTimer(ctx.user.id)
 							await removeUserFromRaid(query, ctx.user.id)
 
 							try {

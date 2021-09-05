@@ -325,6 +325,15 @@ class App {
 		}
 	}
 
+	clearRaidTimer (userID: string): void {
+		const activeRaid = this.activeRaids.find(raid => raid.userID === userID)
+
+		if (activeRaid) {
+			clearTimeout(activeRaid.timeout)
+			this.activeRaids.splice(this.activeRaids.indexOf(activeRaid, 1))
+		}
+	}
+
 	private _getCommandFromInteraction (interaction: InteractionRequestData): CustomSlashCommand | undefined {
 		// blatantly taken from the slash-create library since the function is marked as private
 		return 'guild_id' in interaction ?

@@ -356,6 +356,7 @@ class AttackCommand extends CustomSlashCommand {
 					// player died
 					try {
 						const member = await this.app.fetchMember(guild, ctx.user.id)
+						this.app.clearRaidTimer(ctx.user.id)
 
 						if (member) {
 							await member.kick(`User was killed by NPC while trying to scavenge: ${npc.type} (${npc.display})`)
@@ -548,6 +549,7 @@ class AttackCommand extends CustomSlashCommand {
 			if (victimData.health - finalDamage.total <= 0) {
 				try {
 					const erisMember = await this.app.fetchMember(guild, member.id)
+					this.app.clearRaidTimer(ctx.user.id)
 
 					if (erisMember) {
 						await erisMember.kick(`User was killed by ${ctx.user.username}#${ctx.user.discriminator} (${ctx.user.id})`)
