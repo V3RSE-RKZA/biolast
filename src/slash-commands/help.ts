@@ -103,6 +103,12 @@ class HelpCommand extends CustomSlashCommand {
 				' A hit to the arms or legs deals half damage but you also avoid hitting any armor the target is wearing. **Your ability to successfully hit a targeted limb when using the `attack` command is dependent on your' +
 				' weapon\'s accuracy.**')
 
+		const healEmbed = new Embed()
+			.setTitle('How do I heal?')
+			.setDescription('If you find that you\'ve been attacked and need to replenish some health, you can use a **Medical** item to heal: `/heal <item id>`' +
+				'\n\nIf you don\'t have any medical items on you, you can check the shop (`/shop view`) to see if any medical items are for sale. If all else fails, you ' +
+				' will heal passively for **5 health** every **5 minutes** when out of raid.')
+
 		const botMessage = await ctx.send({
 			content: 'What do you need help with?',
 			components: [
@@ -126,6 +132,11 @@ class HelpCommand extends CustomSlashCommand {
 								{
 									label: 'How is damage calculated?',
 									value: 'damage',
+									description: ''
+								},
+								{
+									label: 'How do I heal?',
+									value: 'healing',
 									description: ''
 								}
 							]
@@ -155,6 +166,12 @@ class HelpCommand extends CustomSlashCommand {
 					await c.editParent({
 						content: '',
 						embeds: [damageEmbed.embed]
+					})
+				}
+				else if (c.values.includes('healing')) {
+					await c.editParent({
+						content: '',
+						embeds: [healEmbed.embed]
 					})
 				}
 			}

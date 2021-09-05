@@ -38,6 +38,14 @@ class CronJobs {
 
 		// remove items from the shop that are older than 1 day
 		await query('DELETE items FROM items INNER JOIN shop_items ON items.id = shop_items.itemId WHERE NOW() > shop_items.createdAt + INTERVAL 1 DAY')
+
+		// heal players not in raid passively (5 hp/5mins)
+		await query(`UPDATE users SET health = CASE
+			WHEN maxHealth - health >= 5 THEN health + 5
+			ELSE maxHealth
+		END
+		WHERE health < maxHealth
+		AND NOT EXISTS (SELECT null FROM active_raids WHERE active_raids.userId = users.userId)`)
 	}
 }
 

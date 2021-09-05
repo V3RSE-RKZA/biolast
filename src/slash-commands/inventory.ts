@@ -96,7 +96,7 @@ class InventoryCommand extends CustomSlashCommand {
 
 			const embed = new Embed()
 				.setAuthor(`${user.username}#${user.discriminator}'s Inventory`, user.avatarURL)
-				.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP\n${formatHealth(userData.health, userData.maxHealth)}`, true)
+				.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP (+5HP/5 mins)\n${formatHealth(userData.health, userData.maxHealth)}`, true)
 				.addField('__Experience__', `**Level**: ${userData.level}\n**XP**: ${playerXp.relativeLevelXp} / ${playerXp.levelTotalXpNeeded} xp`, true)
 				.addField('__Equips__', 'Equip an item with `/equip <item id>`.\n' +
 					`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}\n` +
