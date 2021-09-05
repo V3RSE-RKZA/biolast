@@ -76,7 +76,7 @@ class ItemCommand extends CustomSlashCommand {
 
 		if (item.type === 'Melee Weapon') {
 			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
-			itemEmbed.addField('Attack Rate', '30 seconds', true)
+			itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
 			itemEmbed.addField('Damage', item.damage.toString(), true)
 			itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
 		}
