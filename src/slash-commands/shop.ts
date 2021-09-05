@@ -1,9 +1,12 @@
 import { CommandOptionType, SlashCreator, CommandContext, Message } from 'slash-create'
 import App from '../app'
 import { allItems } from '../resources/items'
+import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
+import { Item } from '../types/Items'
 import { ShopItemRow } from '../types/mysql'
+import { getItem } from '../utils/argParsers'
 import { CONFIRM_BUTTONS } from '../utils/constants'
 import { addItemToShop, addItemToStash, getAllShopItems, getShopItem, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromShop, removeItemFromStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
@@ -13,6 +16,7 @@ import { getItemDisplay, getItems } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 
 const ITEMS_PER_PAGE = 10
+const itemCorrector = new Corrector([...allItems.map(itm => itm.name), ...allItems.map(itm => itm.aliases).flat(1)])
 
 class ShopCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -62,7 +66,15 @@ class ShopCommand extends CustomSlashCommand {
 				{
 					type: CommandOptionType.SUB_COMMAND,
 					name: 'view',
-					description: 'View the items for sale in the shop.'
+					description: 'View the items for sale in the shop.',
+					options: [
+						{
+							type: CommandOptionType.STRING,
+							name: 'item',
+							description: 'Name of item to search for.',
+							required: false
+						}
+					]
 				}
 			],
 			category: 'items',
@@ -284,8 +296,27 @@ class ShopCommand extends CustomSlashCommand {
 			}
 		}
 		else {
+			const searchedItem = getItem([ctx.options.view.item])
 			const shopItems = await getAllShopItems(query)
-			const pages = this.generatePages(shopItems)
+			let pages
+
+			if (ctx.options.view.item) {
+				// user tried searching for item
+
+				if (!searchedItem) {
+					const related = itemCorrector.getWord(ctx.options.view.item, 5)
+
+					await ctx.send({
+						content: related ? `❌ Could not find an item matching that name. Did you mean \`${related}\`?` : '❌ Could not find an item matching that name.'
+					})
+					return
+				}
+
+				pages = this.generatePages(shopItems.filter(i => i.item === searchedItem.name), searchedItem)
+			}
+			else {
+				pages = this.generatePages(shopItems)
+			}
 
 			if (pages.length === 1) {
 				await ctx.send({
@@ -298,7 +329,7 @@ class ShopCommand extends CustomSlashCommand {
 		}
 	}
 
-	generatePages (rows: ShopItemRow[]): Embed[] {
+	generatePages (rows: ShopItemRow[], searchedItem?: Item): Embed[] {
 		const itemData = getItems(rows)
 		const pages = []
 		const maxPage = Math.ceil(itemData.items.length / ITEMS_PER_PAGE) || 1
@@ -309,13 +340,12 @@ class ShopCommand extends CustomSlashCommand {
 			const filteredItems = itemData.items.slice(indexFirst, indexLast)
 
 			const embed = new Embed()
-				.setTitle('Market')
-				.setDescription('Use `/shop buy <item id>` to purchase an item.')
+				.setDescription(`**${searchedItem ? `Market Results For: ${getItemDisplay(searchedItem)}` : 'Market'}**\n\nUse \`/shop buy <item id>\` to purchase an item.`)
 				.setFooter('These deals will expire after 1 day!')
 
 			embed.addField('__Items Available__ (Sorted newest to oldest)',
 				filteredItems.map(itm => `<t:${itm.row.createdAt.getTime() / 1000}:R> ${getItemDisplay(itm.item, itm.row)} - ${formatNumber(itm.row.price)}`).join('\n') ||
-				'There no items available right now. When a player sells an item, you will see it for sale here.')
+				`There no ${searchedItem ? `${getItemDisplay(searchedItem)}'s` : 'items'} available right now. When a player sells an item, you will see it for sale here.`)
 
 			pages.push(embed)
 		}

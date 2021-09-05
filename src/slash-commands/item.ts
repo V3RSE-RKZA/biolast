@@ -39,7 +39,6 @@ class ItemCommand extends CustomSlashCommand {
 		if (!item) {
 			const related = itemCorrector.getWord(ctx.options.item, 5)
 
-			// TODO show results for items that were related to users input (if any)
 			await ctx.send({
 				content: related ? `❌ Could not find an item matching that name. Did you mean \`${related}\`?` : '❌ Could not find an item matching that name.'
 			})
