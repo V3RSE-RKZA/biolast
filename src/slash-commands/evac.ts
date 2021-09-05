@@ -67,7 +67,7 @@ class EvacCommand extends CustomSlashCommand {
 		const userBackpack = await getUserBackpack(preTransaction.query, ctx.user.id, true)
 		const userBackpackData = getItems(userBackpack)
 		const evacNeeded = raidChannel.evac.requiresKey
-		const evacItem = sortItemsByDurability(userBackpackData.items, true).find(i => i.item.name === evacNeeded?.name)
+		const evacItem = sortItemsByDurability(userBackpackData.items, true).reverse().find(i => i.item.name === evacNeeded?.name)
 		const npcRow = await getNPC(preTransaction.query, ctx.channelID, true)
 		const npc = allNPCs.find(n => n.id === npcRow?.id)
 

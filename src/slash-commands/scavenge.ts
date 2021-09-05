@@ -56,7 +56,7 @@ class ScavengeCommand extends CustomSlashCommand {
 			const backpackData = getItems(backpackRows)
 			const userEquips = getEquips(backpackRows)
 			const keyRequired = raidChannel.scavange.requiresKey
-			const hasRequiredKey = sortItemsByDurability(backpackData.items, true).find(i => i.item.name === keyRequired?.name)
+			const hasRequiredKey = sortItemsByDurability(backpackData.items, true).reverse().find(i => i.item.name === keyRequired?.name)
 			const scavengeCD = await getCooldown(transaction.query, ctx.user.id, 'scavenge')
 			const channelCD = await getCooldown(transaction.query, ctx.channelID, 'looted')
 			const backpackLimit = getBackpackLimit(userEquips.backpack?.item)
