@@ -8,7 +8,7 @@ export const items = medicalObject({
 		name: 'bandage',
 		icon: '<:U_usable:601366669259964418>',
 		aliases: ['bandage'],
-		sellPrice: 1000,
+		sellPrice: 500,
 		healsFor: 20,
 		slotsUsed: 1,
 		healRate: 25
@@ -18,7 +18,7 @@ export const items = medicalObject({
 		name: 'ifak_medkit',
 		icon: '<:U_usable:601366669259964418>',
 		aliases: ['ifak', 'medkit'],
-		sellPrice: 1700,
+		sellPrice: 850,
 		healsFor: 35,
 		slotsUsed: 1,
 		healRate: 30
@@ -28,7 +28,7 @@ export const items = medicalObject({
 		name: 'paracetamol',
 		icon: '<:U_usable:601366669259964418>',
 		aliases: ['paracet'],
-		sellPrice: 1300,
+		sellPrice: 650,
 		healsFor: 25,
 		slotsUsed: 1,
 		healRate: 25
