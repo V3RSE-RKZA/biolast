@@ -29,10 +29,11 @@
 - [ ] leveling up should increase stash space and max health.
 - [ ] add health regen over time.
 - [ ] more raid locations that require user to be a higher level to travel to, they should contain stronger NPCs and better scavenge loot. there could also be locations that require you to use a key.
-- [ ] can't type in channels but can use emotes
+- [ ] can't type in channels but can use emotes.
 - [x] ~~allow picking up of multiple items up to a max of like 4 items: `grab 10400 10401 10402`.~~ This was added with the migration to slash commands
 - [ ] `item` command should work with item ids: `t-item 10400`
 
 ### Further down line:
 - [ ] when user votes for the bot on a bot list, they should receive a random item (maybe like 10% weapon, 30% ammo, 60% other stuff)
+- [ ] 2 attachment slots that can be equipped (requires ranged weapon to already be equipped)
 - [ ] translations??? this might be confusing when other players see them using command in raid though... or maybe that would be cooler who knows
