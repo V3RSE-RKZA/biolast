@@ -103,6 +103,7 @@ class EvacCommand extends CustomSlashCommand {
 				// player died
 				try {
 					const member = await this.app.fetchMember(guild, ctx.user.id)
+					this.app.clearRaidTimer(ctx.user.id)
 
 					if (member) {
 						await member.kick(`User was killed by NPC while trying to evac: ${npc.type} (${npc.display})`)
