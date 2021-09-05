@@ -62,6 +62,26 @@ export async function increaseLevel (query: Query, userID: string, amount: numbe
 }
 
 /**
+ * Set a users max health
+ * @param query Query to use
+ * @param userID ID of user to set max health of
+ * @param amount Amount to set max health to
+ */
+export async function setMaxHealth (query: Query, userID: string, amount: number): Promise<void> {
+	await query('UPDATE users SET maxHealth = ? WHERE userId = ?', [amount, userID])
+}
+
+/**
+ * Set a users stash space
+ * @param query Query to use
+ * @param userID ID of user to set stash slots of
+ * @param amount Amount to set stash slots to
+ */
+export async function setStashSlots (query: Query, userID: string, amount: number): Promise<void> {
+	await query('UPDATE users SET stashSlots = ? WHERE userId = ?', [amount, userID])
+}
+
+/**
  * Add to users xp
  * @param query Query to use
  * @param userID ID of user to increase xp of

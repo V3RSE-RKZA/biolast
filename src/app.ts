@@ -13,7 +13,7 @@ import { beginTransaction, query } from './utils/db/mysql'
 import { addItemToBackpack, createItem, getUserBackpack, removeAllItemsFromBackpack } from './utils/db/items'
 import { formatTime } from './utils/db/cooldowns'
 import CustomSlashCommand from './structures/CustomSlashCommand'
-import { createAccount, getUserRow, increaseLevel } from './utils/db/players'
+import { createAccount, getUserRow, increaseLevel, setMaxHealth, setStashSlots } from './utils/db/players'
 import { isRaidGuild } from './utils/raidUtils'
 import { items } from './resources/items'
 import { getPlayerXp } from './utils/playerUtils'
@@ -424,6 +424,8 @@ class App {
 
 					if (userData.level !== newLevel) {
 						await increaseLevel(query, ctx.user.id, newLevel - userData.level)
+						await setMaxHealth(query, ctx.user.id, 100 + (newLevel * 5))
+						await setStashSlots(query, ctx.user.id, 15 + (newLevel * 5))
 
 						// I didn't WANT to use a DM for this but sending the level up message as a response to the
 						// slash command causes further responses to be sent as follow-ups, which would work EXCEPT
@@ -432,7 +434,9 @@ class App {
 						const erisUser = await this.fetchUser(ctx.user.id)
 						if (erisUser) {
 							messageUser(erisUser, {
-								content: `You leveled up!\n\nLevel **${userData.level}** → **${newLevel}**`
+								content: `**You leveled up!** (Lvl **${userData.level}** → **${newLevel}**)` +
+									`\n\n💗 Max Health: **${100 + (userData.level * 5)}** → **${100 + (newLevel * 5)}** HP` +
+									`\n💼 Stash Space: **${15 + (userData.level * 5)}** → **${15 + (newLevel * 5)}** slots`
 							})
 						}
 					}
