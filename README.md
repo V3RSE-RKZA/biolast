@@ -34,6 +34,7 @@
 - [ ] `item` command should work with item ids: `t-item 10400`
 - [ ] unequip command (just for ease of use)
 - [ ] durability should affect how much item sells for
+- [ ] add tests that make sure every item is obtainable, whether it be from scavenging channels in raids or as drops from an npc.
 
 ### Further down line:
 - [ ] when user votes for the bot on a bot list, they should receive a random item (maybe like 10% weapon, 30% ammo, 60% other stuff)
