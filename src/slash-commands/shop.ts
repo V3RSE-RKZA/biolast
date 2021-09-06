@@ -128,7 +128,13 @@ class ShopCommand extends CustomSlashCommand {
 				}
 				else {
 					itemsToSell.push(foundItem)
-					price += Math.floor(foundItem.item.sellPrice * this.app.shopSellMultiplier)
+
+					if (foundItem.row.durability && foundItem.item.durability) {
+						price += Math.floor((foundItem.row.durability / foundItem.item.durability) * (foundItem.item.sellPrice * this.app.shopSellMultiplier))
+					}
+					else {
+						price += Math.floor(foundItem.item.sellPrice * this.app.shopSellMultiplier)
+					}
 				}
 			}
 
@@ -175,7 +181,15 @@ class ShopCommand extends CustomSlashCommand {
 						}
 
 						if (i.item.sellPrice) {
-							const sellPrice = Math.floor(i.item.sellPrice! * this.app.shopSellMultiplier)
+							let sellPrice = 0
+
+							if (i.row.durability && i.item.durability) {
+								sellPrice += Math.floor((i.row.durability / i.item.durability) * (i.item.sellPrice * this.app.shopSellMultiplier))
+							}
+							else {
+								sellPrice += Math.floor(i.item.sellPrice * this.app.shopSellMultiplier)
+							}
+
 							await addItemToShop(transaction.query, i.row.id, getRandomInt(sellPrice * 2, sellPrice * 3))
 						}
 					}
