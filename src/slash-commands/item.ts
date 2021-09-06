@@ -4,9 +4,12 @@ import { allItems } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { getItem } from '../utils/argParsers'
+import { Item } from '../types/Items'
+import { getItem, getNumber } from '../utils/argParsers'
+import { getUserBackpack } from '../utils/db/items'
+import { query } from '../utils/db/mysql'
 import formatNumber from '../utils/formatNumber'
-import { getItemDisplay } from '../utils/itemUtils'
+import { getItemDisplay, getItems } from '../utils/itemUtils'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name), ...allItems.map(itm => itm.aliases).flat(1)])
 
@@ -35,16 +38,43 @@ class ItemCommand extends CustomSlashCommand {
 
 	async run (ctx: CommandContext): Promise<void> {
 		const item = getItem([ctx.options.item])
+		const itemID = getNumber(ctx.options.item)
 
-		if (!item) {
+		if (!item && !itemID) {
 			const related = itemCorrector.getWord(ctx.options.item, 5)
 
 			await ctx.send({
 				content: related ? `❌ Could not find an item matching that name. Did you mean \`${related}\`?` : '❌ Could not find an item matching that name.'
 			})
-			return
 		}
+		else if (itemID) {
+			const backpackRows = await getUserBackpack(query, ctx.user.id)
+			const userBackpackData = getItems(backpackRows)
+			const itemToCheck = userBackpackData.items.find(itm => itm.row.id === itemID)
 
+			if (!itemToCheck) {
+				await ctx.send({
+					content: `❌ You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
+				})
+				return
+			}
+
+			const itemEmbed = this.getItemEmbed(itemToCheck.item)
+
+			await ctx.send({
+				embeds: [itemEmbed.embed]
+			})
+		}
+		else if (item) {
+			const itemEmbed = this.getItemEmbed(item)
+
+			await ctx.send({
+				embeds: [itemEmbed.embed]
+			})
+		}
+	}
+
+	getItemEmbed (item: Item): Embed {
 		const itemEmbed = new Embed()
 			.setDescription(getItemDisplay(item))
 			.addField('Item Type', item.type)
@@ -101,9 +131,7 @@ class ItemCommand extends CustomSlashCommand {
 			itemEmbed.addField('Healing Rate', `${item.healRate} seconds`, true)
 		}
 
-		await ctx.send({
-			embeds: [itemEmbed.embed]
-		})
+		return itemEmbed
 	}
 }
 
