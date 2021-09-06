@@ -159,7 +159,13 @@ class ScavengeCommand extends CustomSlashCommand {
 					})
 
 					// check if users backpack has space for the item, otherwise throw it on ground
-					if (backpackData.slotsUsed + scavengedLoot.reduce((prev, curr) => prev + curr.item.slotsUsed, 0) <= backpackLimit) {
+					if (
+						backpackData.slotsUsed + scavengedLoot.reduce((prev, curr) => prev + curr.item.slotsUsed, 0) -
+						(
+							hasRequiredKey &&
+							(!hasRequiredKey.row.durability || hasRequiredKey.row.durability - 1 <= 0) ? hasRequiredKey.item.slotsUsed : 0
+						) <= backpackLimit
+					) {
 						itemsAddedToBackpack.push({
 							item: randomLoot.item,
 							row: itemRow
