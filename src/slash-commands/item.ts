@@ -38,40 +38,45 @@ class ItemCommand extends CustomSlashCommand {
 
 	async run (ctx: CommandContext): Promise<void> {
 		const item = getItem([ctx.options.item])
-		const itemID = getNumber(ctx.options.item)
 
-		if (!item && !itemID) {
-			const related = itemCorrector.getWord(ctx.options.item, 5)
+		if (!item) {
+			// check if user was specifying an item ID
+			const itemID = getNumber(ctx.options.item)
 
-			await ctx.send({
-				content: related ? `❌ Could not find an item matching that name. Did you mean \`${related}\`?` : '❌ Could not find an item matching that name.'
-			})
-		}
-		else if (itemID) {
-			const backpackRows = await getUserBackpack(query, ctx.user.id)
-			const userBackpackData = getItems(backpackRows)
-			const itemToCheck = userBackpackData.items.find(itm => itm.row.id === itemID)
+			if (itemID) {
+				const backpackRows = await getUserBackpack(query, ctx.user.id)
+				const userBackpackData = getItems(backpackRows)
+				const itemToCheck = userBackpackData.items.find(itm => itm.row.id === itemID)
 
-			if (!itemToCheck) {
+				if (!itemToCheck) {
+					await ctx.send({
+						content: `❌ You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
+					})
+					return
+				}
+
+				const itemEmbed = this.getItemEmbed(itemToCheck.item)
+
 				await ctx.send({
-					content: `❌ You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
+					embeds: [itemEmbed.embed]
 				})
-				return
+			}
+			else {
+				const related = itemCorrector.getWord(ctx.options.item, 5)
+
+				await ctx.send({
+					content: related ? `❌ Could not find an item matching that name. Did you mean \`${related}\`?` : '❌ Could not find an item matching that name.'
+				})
 			}
 
-			const itemEmbed = this.getItemEmbed(itemToCheck.item)
-
-			await ctx.send({
-				embeds: [itemEmbed.embed]
-			})
+			return
 		}
-		else if (item) {
-			const itemEmbed = this.getItemEmbed(item)
 
-			await ctx.send({
-				embeds: [itemEmbed.embed]
-			})
-		}
+		const itemEmbed = this.getItemEmbed(item)
+
+		await ctx.send({
+			embeds: [itemEmbed.embed]
+		})
 	}
 
 	getItemEmbed (item: Item): Embed {
