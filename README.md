@@ -26,8 +26,8 @@
 - [ ] There should be a `shop` that unlocks at a certain level. When a player sells an item to the shop, it should show as for sale by the shop for 2x - 3x (randomized) the price they sold it for. Other players could then buy these items from the shop using the item ID: `=shop buy <item id>` (items would only show on the shop for a limited time before being removed). Also, some items could require the player to be a certain level before they can purchase that item (to prevent users from buying end game items).
 - [ ] limit amount of item players can buy from shop each day.
 - [ ] respawn with health
-- [ ] leveling up should increase stash space and max health.
-- [ ] add health regen over time.
+- [x] leveling up should increase stash space and max health.
+- [x] add health regen over time.
 - [ ] more raid locations that require user to be a higher level to travel to, they should contain stronger NPCs and better scavenge loot. there could also be locations that require you to use a key.
 - [ ] can't type in channels but can use emotes.
 - [x] ~~allow picking up of multiple items up to a max of like 4 items: `grab 10400 10401 10402`.~~ This was added with the migration to slash commands
