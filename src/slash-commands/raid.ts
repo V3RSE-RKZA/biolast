@@ -4,7 +4,7 @@ import { allLocations } from '../resources/raids'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { CONFIRM_BUTTONS } from '../utils/constants'
-import { formatTime } from '../utils/db/cooldowns'
+import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { getUserBackpack, removeAllItemsFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
@@ -107,6 +107,17 @@ class RaidCommand extends CustomSlashCommand {
 			return
 		}
 
+		const raidCD = await getCooldown(query, ctx.user.id, `raid-${choice.id}`)
+
+		// prevent users from entering raid of same type
+		if (raidCD) {
+			await ctx.send({
+				content: `❌ You recently went on a raid in **${choice.display}**. You need to wait **${raidCD}** before you can raid this location again.`,
+				flags: InteractionResponseFlags.EPHEMERAL
+			})
+			return
+		}
+
 		const botMessage = await ctx.send({
 			content: `Join a raid in **${choice.display}**? The raid will last **${formatTime(choice.raidLength * 1000)}**.`,
 			flags: InteractionResponseFlags.EPHEMERAL,
@@ -171,6 +182,7 @@ class RaidCommand extends CustomSlashCommand {
 				const invite = await this.app.bot.createChannelInvite(inviteChannel.id, { maxAge: choice.raidLength }, `${ctx.user.username}#${ctx.user.discriminator} (${ctx.user.id}) started raid`)
 
 				await addUserToRaid(transaction.query, ctx.user.id, raidGuild.id, invite.code, choice.raidLength)
+				await createCooldown(transaction.query, ctx.user.id, `raid-${choice.id}`, choice.raidLength)
 				await transaction.commit()
 
 				this.app.activeRaids.push({
