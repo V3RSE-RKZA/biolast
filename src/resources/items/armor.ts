@@ -30,7 +30,7 @@ export const items = armorObject({
 		aliases: ['wood_armor'],
 		sellPrice: 1000,
 		durability: 3,
-		level: 1,
+		level: 2,
 		slotsUsed: 2
 	},
 	metal_chestplate: {
