@@ -24,7 +24,7 @@ export const items = meleeObject({
 		sellPrice: 500,
 		durability: 3,
 		slotsUsed: 1,
-		fireRate: 11,
+		fireRate: 15,
 		accuracy: 20,
 		damage: 13,
 		penetration: 0.5
@@ -34,12 +34,12 @@ export const items = meleeObject({
 		name: 'metal_bat',
 		icon: '<:U_melee:601366669251575857>',
 		aliases: [],
-		sellPrice: 700,
-		durability: 5,
+		sellPrice: 950,
+		durability: 6,
 		slotsUsed: 1,
-		fireRate: 12,
+		fireRate: 15,
 		accuracy: 20,
-		damage: 15,
+		damage: 13,
 		penetration: 0.8
 	},
 	metal_shank: {
