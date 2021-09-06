@@ -423,9 +423,11 @@ class App {
 					}
 
 					if (userData.level !== newLevel) {
+						const newMaxHealth = 100 + ((newLevel - 1) * 5)
+						const newStashSlots = 15 + ((newLevel - 1) * 5)
 						await increaseLevel(query, ctx.user.id, newLevel - userData.level)
-						await setMaxHealth(query, ctx.user.id, 100 + (newLevel * 5))
-						await setStashSlots(query, ctx.user.id, 15 + (newLevel * 5))
+						await setMaxHealth(query, ctx.user.id, newMaxHealth)
+						await setStashSlots(query, ctx.user.id, newStashSlots)
 
 						// I didn't WANT to use a DM for this but sending the level up message as a response to the
 						// slash command causes further responses to be sent as follow-ups, which would work EXCEPT
@@ -435,8 +437,8 @@ class App {
 						if (erisUser) {
 							messageUser(erisUser, {
 								content: `**You leveled up!** (Lvl **${userData.level}** → **${newLevel}**)` +
-									`\n\n💗 Max Health: **${100 + (userData.level * 5)}** → **${100 + (newLevel * 5)}** HP` +
-									`\n💼 Stash Space: **${15 + (userData.level * 5)}** → **${15 + (newLevel * 5)}** slots`
+									`\n\n💗 Max Health: **${newMaxHealth - 5}** → **${newMaxHealth}** HP` +
+									`\n💼 Stash Space: **${newStashSlots - 5}** → **${newStashSlots}** slots`
 							})
 						}
 					}
