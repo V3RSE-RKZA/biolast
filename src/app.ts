@@ -11,7 +11,7 @@ import fs from 'fs'
 import path from 'path'
 import { beginTransaction, query } from './utils/db/mysql'
 import { addItemToBackpack, createItem, getUserBackpack, removeAllItemsFromBackpack } from './utils/db/items'
-import { formatTime } from './utils/db/cooldowns'
+import { createCooldown, formatTime, getCooldown } from './utils/db/cooldowns'
 import CustomSlashCommand from './structures/CustomSlashCommand'
 import { createAccount, getUserRow, increaseLevel, setMaxHealth, setStashSlots } from './utils/db/players'
 import { isRaidGuild } from './utils/raidUtils'
@@ -467,6 +467,24 @@ class App {
 
 			logger.info(`Command (${command.commandName}) run by ${ctx.user.username}#${ctx.user.discriminator} (${ctx.user.id}) in ${ctx.guildID ? `guild (${ctx.guildID})` : 'DMs'}`)
 			await command.run(ctx)
+
+			// reminds users to use raidtime command to check how much time they have left in raid,
+			// it doesn't send the time in this message because I want players raidtime to be kept private from other players
+			if (isRaidGuild(ctx.guildID) && command.commandName !== 'raidtime') {
+				try {
+					const raidTimeReminderCD = await getCooldown(query, ctx.user.id, 'raidreminder')
+
+					if (!raidTimeReminderCD) {
+						await createCooldown(query, ctx.user.id, 'raidreminder', 5 * 60)
+						await ctx.send({
+							content: `<@${ctx.user.id}>, Make sure to check how much time you have left in this raid with \`/raidtime\`!`
+						})
+					}
+				}
+				catch (err) {
+					logger.error(err)
+				}
+			}
 		}
 		catch (err) {
 			logger.error(err)
