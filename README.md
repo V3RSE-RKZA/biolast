@@ -31,9 +31,9 @@
 - [ ] more raid locations that require user to be a higher level to travel to, they should contain stronger NPCs and better scavenge loot. there could also be locations that require you to use a key.
 - [ ] can't type in channels but can use emotes.
 - [x] ~~allow picking up of multiple items up to a max of like 4 items: `grab 10400 10401 10402`.~~ This was added with the migration to slash commands
-- [ ] `item` command should work with item ids: `t-item 10400`
-- [ ] unequip command (just for ease of use)
-- [ ] durability should affect how much item sells for
+- [x] `item` command should work with item ids: `t-item 10400`
+- [x] unequip command (just for ease of use)
+- [x] durability should affect how much item sells for
 - [ ] add tests that make sure every item is obtainable, whether it be from scavenging channels in raids or as drops from an npc.
 
 ### Further down line:
