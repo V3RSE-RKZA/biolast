@@ -22,7 +22,7 @@ export const items = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['9x19', '9mm'],
 		description: 'Full metal jacket ammunition for 9mm handguns.',
-		damage: 15,
+		damage: 20,
 		penetration: 1.5,
 		ammoFor: [ranged['glock-17']],
 		sellPrice: 750,
