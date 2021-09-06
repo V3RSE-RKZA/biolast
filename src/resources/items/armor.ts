@@ -10,7 +10,7 @@ export const items = armorObject({
 		aliases: ['paca'],
 		sellPrice: 2000,
 		durability: 3,
-		level: 4,
+		level: 3,
 		slotsUsed: 2
 	},
 	cloth_armor: {
