@@ -12,8 +12,8 @@ export const items = meleeObject({
 		durability: 3,
 		slotsUsed: 1,
 		fireRate: 10,
-		accuracy: 35,
-		damage: 22,
+		accuracy: 15,
+		damage: 20,
 		penetration: 0.9
 	},
 	wooden_bat: {
