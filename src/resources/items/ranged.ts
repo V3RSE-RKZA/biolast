@@ -12,7 +12,8 @@ export const items = rangedObject({
 		durability: 12,
 		slotsUsed: 3,
 		fireRate: 30,
-		accuracy: 35
+		accuracy: 35,
+		itemLevel: 5
 	},
 	'glock-17': {
 		type: 'Ranged Weapon',
@@ -23,7 +24,8 @@ export const items = rangedObject({
 		durability: 10,
 		slotsUsed: 2,
 		fireRate: 35,
-		accuracy: 30
+		accuracy: 30,
+		itemLevel: 3
 	},
 	'makeshift_pistol': {
 		type: 'Ranged Weapon',
@@ -35,7 +37,8 @@ export const items = rangedObject({
 		durability: 5,
 		slotsUsed: 1,
 		fireRate: 60,
-		accuracy: 10
+		accuracy: 10,
+		itemLevel: 1
 	},
 	'makeshift_rifle': {
 		type: 'Ranged Weapon',
@@ -47,7 +50,8 @@ export const items = rangedObject({
 		durability: 6,
 		slotsUsed: 2,
 		fireRate: 80,
-		accuracy: 14
+		accuracy: 14,
+		itemLevel: 3
 	},
 	'makeshift_shotgun': {
 		type: 'Ranged Weapon',
@@ -59,7 +63,8 @@ export const items = rangedObject({
 		durability: 6,
 		slotsUsed: 2,
 		fireRate: 80,
-		accuracy: 13
+		accuracy: 13,
+		itemLevel: 3
 	},
 	'lee-enfield': {
 		type: 'Ranged Weapon',
@@ -71,6 +76,7 @@ export const items = rangedObject({
 		durability: 9,
 		slotsUsed: 3,
 		fireRate: 120,
-		accuracy: 30
+		accuracy: 30,
+		itemLevel: 6
 	}
 })

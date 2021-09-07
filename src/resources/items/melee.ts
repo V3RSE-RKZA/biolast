@@ -14,7 +14,8 @@ export const items = meleeObject({
 		fireRate: 10,
 		accuracy: 15,
 		damage: 20,
-		penetration: 0.9
+		penetration: 0.9,
+		itemLevel: 1
 	},
 	wooden_bat: {
 		type: 'Melee Weapon',
@@ -27,7 +28,8 @@ export const items = meleeObject({
 		fireRate: 15,
 		accuracy: 20,
 		damage: 13,
-		penetration: 0.5
+		penetration: 0.5,
+		itemLevel: 1
 	},
 	metal_bat: {
 		type: 'Melee Weapon',
@@ -40,7 +42,8 @@ export const items = meleeObject({
 		fireRate: 15,
 		accuracy: 20,
 		damage: 13,
-		penetration: 0.8
+		penetration: 0.8,
+		itemLevel: 3
 	},
 	metal_shank: {
 		type: 'Melee Weapon',
@@ -53,7 +56,8 @@ export const items = meleeObject({
 		fireRate: 15,
 		accuracy: 25,
 		damage: 20,
-		penetration: 2.0
+		penetration: 2.0,
+		itemLevel: 5
 	},
 	sledgehammer: {
 		type: 'Melee Weapon',
@@ -66,7 +70,8 @@ export const items = meleeObject({
 		fireRate: 35,
 		accuracy: 10,
 		damage: 30,
-		penetration: 0.75
+		penetration: 0.75,
+		itemLevel: 3
 	},
 	claymore: {
 		type: 'Melee Weapon',
@@ -79,6 +84,7 @@ export const items = meleeObject({
 		fireRate: 20,
 		accuracy: 25,
 		damage: 30,
-		penetration: 0.7
+		penetration: 0.7,
+		itemLevel: 3
 	}
 })

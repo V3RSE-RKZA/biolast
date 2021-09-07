@@ -14,7 +14,8 @@ export const items = ammoObject({
 		penetration: 2,
 		ammoFor: [ranged['aks-74u']],
 		sellPrice: 3000,
-		slotsUsed: 1
+		slotsUsed: 1,
+		itemLevel: 5
 	},
 	'9mm_fmj': {
 		type: 'Ammunition',
@@ -26,7 +27,8 @@ export const items = ammoObject({
 		penetration: 1.5,
 		ammoFor: [ranged['glock-17']],
 		sellPrice: 750,
-		slotsUsed: 1
+		slotsUsed: 1,
+		itemLevel: 3
 	},
 	'makeshift_pistol_ammo': {
 		type: 'Ammunition',
@@ -38,7 +40,8 @@ export const items = ammoObject({
 		penetration: 0.9,
 		ammoFor: [ranged.makeshift_pistol],
 		sellPrice: 250,
-		slotsUsed: 1
+		slotsUsed: 1,
+		itemLevel: 1
 	},
 	'makeshift_rifle_ammo': {
 		type: 'Ammunition',
@@ -50,7 +53,8 @@ export const items = ammoObject({
 		penetration: 1.4,
 		ammoFor: [ranged.makeshift_rifle],
 		sellPrice: 450,
-		slotsUsed: 1
+		slotsUsed: 1,
+		itemLevel: 3
 	},
 	'makeshift_shell': {
 		type: 'Ammunition',
@@ -62,7 +66,8 @@ export const items = ammoObject({
 		penetration: 1.1,
 		ammoFor: [ranged.makeshift_shotgun],
 		sellPrice: 500,
-		slotsUsed: 1
+		slotsUsed: 1,
+		itemLevel: 3
 	},
 	'.303_fmj': {
 		type: 'Ammunition',
@@ -74,6 +79,7 @@ export const items = ammoObject({
 		penetration: 4.5,
 		ammoFor: [ranged['lee-enfield']],
 		sellPrice: 1100,
-		slotsUsed: 1
+		slotsUsed: 1,
+		itemLevel: 6
 	}
 })

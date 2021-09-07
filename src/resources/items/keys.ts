@@ -9,6 +9,7 @@ export const items = keysObject({
 		durability: 3,
 		aliases: [],
 		icon: '<:U_key:870786870852874260>',
-		slotsUsed: 3
+		slotsUsed: 3,
+		itemLevel: 1
 	}
 })

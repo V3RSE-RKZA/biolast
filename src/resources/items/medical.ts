@@ -11,7 +11,8 @@ export const items = medicalObject({
 		sellPrice: 500,
 		healsFor: 20,
 		slotsUsed: 1,
-		healRate: 25
+		healRate: 25,
+		itemLevel: 1
 	},
 	ifak_medkit: {
 		type: 'Medical',
@@ -21,7 +22,8 @@ export const items = medicalObject({
 		sellPrice: 850,
 		healsFor: 35,
 		slotsUsed: 1,
-		healRate: 30
+		healRate: 30,
+		itemLevel: 3
 	},
 	paracetamol: {
 		type: 'Medical',
@@ -31,6 +33,7 @@ export const items = medicalObject({
 		sellPrice: 650,
 		healsFor: 25,
 		slotsUsed: 1,
-		healRate: 25
+		healRate: 25,
+		itemLevel: 1
 	}
 })

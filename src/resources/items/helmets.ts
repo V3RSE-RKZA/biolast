@@ -11,7 +11,8 @@ export const items = helmetObject({
 		sellPrice: 2000,
 		durability: 3,
 		level: 3,
-		slotsUsed: 2
+		slotsUsed: 2,
+		itemLevel: 5
 	},
 	cloth_helmet: {
 		type: 'Helmet',
@@ -21,7 +22,8 @@ export const items = helmetObject({
 		sellPrice: 1000,
 		durability: 3,
 		level: 1,
-		slotsUsed: 2
+		slotsUsed: 2,
+		itemLevel: 1
 	},
 	wooden_helmet: {
 		type: 'Helmet',
@@ -31,7 +33,8 @@ export const items = helmetObject({
 		sellPrice: 1500,
 		durability: 3,
 		level: 2,
-		slotsUsed: 2
+		slotsUsed: 2,
+		itemLevel: 3
 	},
 	tincan_helmet: {
 		type: 'Helmet',
@@ -41,6 +44,7 @@ export const items = helmetObject({
 		sellPrice: 350,
 		durability: 5,
 		level: 1,
-		slotsUsed: 1
+		slotsUsed: 1,
+		itemLevel: 1
 	}
 })

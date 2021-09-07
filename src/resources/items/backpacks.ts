@@ -10,7 +10,8 @@ export const items = backpackObject({
 		aliases: ['pouch'],
 		sellPrice: 2000,
 		slots: 4,
-		slotsUsed: 1
+		slotsUsed: 1,
+		itemLevel: 5
 	},
 	cloth_backpack: {
 		type: 'Backpack',
@@ -19,6 +20,7 @@ export const items = backpackObject({
 		aliases: ['cloth', 'backpack'],
 		sellPrice: 4500,
 		slots: 7,
-		slotsUsed: 1
+		slotsUsed: 1,
+		itemLevel: 5
 	}
 })

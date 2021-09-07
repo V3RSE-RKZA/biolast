@@ -11,7 +11,8 @@ export const items = armorObject({
 		sellPrice: 2000,
 		durability: 5,
 		level: 3,
-		slotsUsed: 2
+		slotsUsed: 2,
+		itemLevel: 5
 	},
 	cloth_armor: {
 		type: 'Body Armor',
@@ -21,7 +22,8 @@ export const items = armorObject({
 		sellPrice: 750,
 		durability: 3,
 		level: 1,
-		slotsUsed: 2
+		slotsUsed: 2,
+		itemLevel: 1
 	},
 	wooden_armor: {
 		type: 'Body Armor',
@@ -31,7 +33,8 @@ export const items = armorObject({
 		sellPrice: 900,
 		durability: 3,
 		level: 2,
-		slotsUsed: 2
+		slotsUsed: 2,
+		itemLevel: 3
 	},
 	bone_armor: {
 		type: 'Body Armor',
@@ -42,6 +45,7 @@ export const items = armorObject({
 		sellPrice: 2500,
 		durability: 8,
 		level: 2,
-		slotsUsed: 2
+		slotsUsed: 2,
+		itemLevel: 3
 	}
 })

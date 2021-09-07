@@ -8,6 +8,11 @@ interface BaseItem {
 	buyPrice?: number
 	durability?: number
 	slotsUsed: number
+
+	/**
+	 * The recommended level for this item. Used as level required to buy this item from the shop (helps prevent new players from buying and using end game items)
+	 */
+	itemLevel: number
 }
 
 type ArmorLevel = 1 | 2 | 3 | 4 | 5
