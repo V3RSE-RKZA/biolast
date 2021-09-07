@@ -20,7 +20,8 @@ export const icons = {
 		start_50: '<:health_bar_start_50:849056171792007168>',
 		start_75: '<:health_bar_start_75:849056171540348959>',
 		empty: '<:health_bar_empty:849065056363872318>'
-	}
+	},
+	wave: '<:blobwave:884672272646963242>'
 }
 
 export const baseBackpackLimit = 15
