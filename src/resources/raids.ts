@@ -174,8 +174,8 @@ export const locations = locationsObject({
 				},
 				npcSpawns: {
 					npcs: [npcs.walker_weak],
-					cooldownMin: 3 * 60,
-					cooldownMax: 5 * 60
+					cooldownMin: 60,
+					cooldownMax: 2 * 60
 				}
 			},
 			{
@@ -200,8 +200,8 @@ export const locations = locationsObject({
 				},
 				npcSpawns: {
 					npcs: [npcs.raider],
-					cooldownMin: 5 * 60,
-					cooldownMax: 10 * 60
+					cooldownMin: 3 * 60,
+					cooldownMax: 5 * 60
 				}
 			},
 			{
