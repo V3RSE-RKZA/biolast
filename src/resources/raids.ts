@@ -227,8 +227,8 @@ export const locations = locationsObject({
 			},
 			{
 				type: 'EvacChannel',
-				name: 'backwoods-evac',
-				display: 'Backwoods',
+				name: 'woods-evac',
+				display: 'Woods',
 				evac: {
 					time: 15,
 					requiresKey: items.shed_key
