@@ -7,7 +7,7 @@
 
 - [x] Trying to scavenge or evac in a channel where there's an NPC should make the NPC attack you (gives more incentive to kill the NPCs and search the area before scavenging for loot).
 
-- [ ] Cooldowns before user can enter raid of same type to prevent someone dying then going back into same raid and taking their stuff off the ground.
+- [x] Cooldowns before user can enter raid of same type to prevent someone dying then going back into same raid and taking their stuff off the ground.
 
 - [x] Raider NPCs and zombie NPCs can wear armor that they will drop when killed (the durability of the armor would be random to pretend it was used). Raider NPCs should also be able to use a ranged weapon and ammo which they would drop on death.
 
@@ -24,7 +24,7 @@
 - [ ] `leaderboard` command for viewing players with most xp/level, money, successful raids, quests completed
 
 - [x] There should be a `shop` that unlocks at a certain level. When a player sells an item to the shop, it should show as for sale by the shop for 2x - 3x (randomized) the price they sold it for. Other players could then buy these items from the shop using the item ID: `=shop buy <item id>` (items would only show on the shop for a limited time before being removed). Also, some items could require the player to be a certain level before they can purchase that item (to prevent users from buying end game items).
-- [ ] limit amount of item players can buy from shop each day.
+- [x] limit amount of item players can buy from shop each day.
 - [x] leveling up should increase stash space and max health.
 - [x] add health regen over time.
 - [ ] more raid locations that require user to be a higher level to travel to, they should contain stronger NPCs and better scavenge loot. there could also be locations that require you to use a key.
@@ -34,6 +34,8 @@
 - [x] unequip command (just for ease of use)
 - [x] durability should affect how much item sells for
 - [ ] add tests that make sure every item is obtainable, whether it be from scavenging channels in raids or as drops from an npc.
+- [ ] change the currency from rubles to something else
+- [ ] commands shouldn't be able to be used while user is `evac`ing
 
 ### Further down line:
 - [ ] when user votes for the bot on a bot list, they should receive a random item (maybe like 10% weapon, 30% ammo, 60% other stuff)
