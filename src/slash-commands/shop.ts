@@ -227,6 +227,14 @@ class ShopCommand extends CustomSlashCommand {
 			}
 
 			const userData = (await getUserRow(query, ctx.user.id))!
+
+			if (userData.level < shopItem.itemLevel) {
+				await ctx.send({
+					content: `❌ You must be at least level **${shopItem.itemLevel}** to purchase ${getItemDisplay(shopItem, shopItemRow, { showDurability: false })}.`
+				})
+				return
+			}
+
 			const stashRows = await getUserStash(query, ctx.user.id)
 			const userStashData = getItems(stashRows)
 
@@ -311,7 +319,6 @@ class ShopCommand extends CustomSlashCommand {
 		}
 		else {
 			const searchedItem = getItem([ctx.options.view.item])
-			const shopItems = await getAllShopItems(query)
 			let pages
 
 			if (ctx.options.view.item) {
@@ -326,9 +333,12 @@ class ShopCommand extends CustomSlashCommand {
 					return
 				}
 
+				const shopItems = await getAllShopItems(query)
 				pages = this.generatePages(shopItems.filter(i => i.item === searchedItem.name), searchedItem)
 			}
 			else {
+				const userData = (await getUserRow(query, ctx.user.id))!
+				const shopItems = (await getAllShopItems(query)).filter(row => (allItems.find(i => i.name === row.item)?.itemLevel || 1) <= userData.level)
 				pages = this.generatePages(shopItems)
 			}
 
