@@ -97,6 +97,29 @@ export const npcs = npcsObject({
 		],
 		xp: 20
 	},
+	cain: {
+		type: 'raider',
+		subtype: 'ranged',
+		id: 'cain',
+		display: 'Cain, The Gravekeeper',
+		icon: '',
+		health: 125,
+		damage: 30,
+		drops: {
+			common: [items.bandage],
+			uncommon: [items['glock-17'], items.ifak_medkit],
+			rare: [items.sledgehammer],
+			rolls: 1
+		},
+		weapon: items['aks-74u'],
+		ammo: items['5.45x39_fmj'],
+		quotes: [
+			'~*You hear footsteps nearby*~'
+		],
+		armor: items.paca_armor,
+		helmet: items.wooden_helmet,
+		xp: 50
+	},
 	raider: {
 		type: 'raider',
 		subtype: 'ranged',

@@ -236,6 +236,16 @@ export const locations = locationsObject({
 				}
 			},
 			{
+				type: 'LootChannel',
+				name: 'graveyard',
+				display: 'Graveyard',
+				npcSpawns: {
+					npcs: [npcs.cain],
+					cooldownMin: 30 * 60,
+					cooldownMax: 60 * 60
+				}
+			},
+			{
 				type: 'EvacChannel',
 				name: 'sewers-evac',
 				display: 'Sewers',
