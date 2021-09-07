@@ -159,17 +159,17 @@ export const locations = locationsObject({
 				scavange: {
 					common: {
 						items: [items.makeshift_pistol, items.makeshift_pistol_ammo],
-						xp: 10
+						xp: 5
 					},
 					uncommon: {
 						items: [items.makeshift_rifle, items.makeshift_rifle_ammo],
-						xp: 15
+						xp: 10
 					},
 					rare: {
 						items: [items['glock-17'], items['9mm_fmj'], items.sledgehammer],
 						xp: 20
 					},
-					rolls: 4,
+					rolls: 2,
 					cooldown: 1 * 10
 				},
 				npcSpawns: {
@@ -185,7 +185,7 @@ export const locations = locationsObject({
 				scavange: {
 					common: {
 						items: [items.shed_key, items.wooden_bat],
-						xp: 10
+						xp: 5
 					},
 					uncommon: {
 						items: [items.ifak_medkit, items.metal_bat],
@@ -195,7 +195,7 @@ export const locations = locationsObject({
 						items: [items['glock-17'], items['9mm_fmj']],
 						xp: 20
 					},
-					rolls: 3,
+					rolls: 2,
 					cooldown: 1 * 10
 				},
 				npcSpawns: {
@@ -220,14 +220,14 @@ export const locations = locationsObject({
 				scavange: {
 					common: {
 						items: [items.cloth_armor, items.cloth_helmet],
-						xp: 10
+						xp: 5
 					},
 					uncommon: {
 						items: [items.wooden_armor, items.wooden_helmet],
-						xp: 15
+						xp: 10
 					},
 					rare: {
-						items: [items.knife, items.ifak_medkit, items.cloth_backpack],
+						items: [items.knife, items.ifak_medkit],
 						xp: 20
 					},
 					rolls: 2,
