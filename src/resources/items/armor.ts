@@ -28,7 +28,7 @@ export const items = armorObject({
 		name: 'wooden_armor',
 		icon: '<:U_shield:601366669474136074>',
 		aliases: ['wood_armor'],
-		sellPrice: 1000,
+		sellPrice: 1500,
 		durability: 3,
 		level: 2,
 		slotsUsed: 2
