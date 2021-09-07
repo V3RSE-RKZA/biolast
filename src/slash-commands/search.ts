@@ -51,8 +51,17 @@ class SearchCommand extends CustomSlashCommand {
 			return
 		}
 
+		let npcHealthDisplay = `${npcRow.health} / ${npc.health}`
+		let npcNameDisplay = npc.display
+
+		if (npc.type === 'boss' && npcRow.health >= npc.health) {
+			// boss npc that has full health (means this boss hasn't been attacked yet)
+			npcHealthDisplay = npcHealthDisplay.replace(/\w/g, '?')
+			npcNameDisplay = npcNameDisplay.replace(/\w/g, '?')
+		}
+
 		const npcDescription = [
-			`**Health**: ${formatHealth(npcRow.health, npc.health)} **${npcRow.health} / ${npc.health}**`,
+			`**Health**: ${formatHealth(npcRow.health, npc.health)} **${npcHealthDisplay}** HP`,
 			`**Kill XP**: 🌟 ${formatNumber(npc.xp, true)}`
 		]
 
@@ -74,7 +83,7 @@ class SearchCommand extends CustomSlashCommand {
 		}
 
 		await ctx.send({
-			content: `Enemy spotted: ${npc.icon}__**${npc.display}**__\n\n${npcDescription.join('\n')}\n\n` +
+			content: `Enemy spotted: ${npc.icon}__**${npcNameDisplay}**__\n\n${npcDescription.join('\n')}\n\n` +
 				`Attack this ${npc.type} with \`/attack npc\`.`
 		})
 	}
