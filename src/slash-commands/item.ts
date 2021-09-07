@@ -103,6 +103,7 @@ class ItemCommand extends CustomSlashCommand {
 		}
 
 		itemEmbed.addField('Item Weight', `Uses **${item.slotsUsed}** slot${item.slotsUsed === 1 ? '' : 's'}`, true)
+		itemEmbed.addField('Level Required to Purchase', `Level **${item.itemLevel}**`, true)
 
 		if (item.buyPrice) {
 			itemEmbed.addField('Buy Price', formatNumber(item.buyPrice), true)
