@@ -11,11 +11,11 @@ export const items = meleeObject({
 		sellPrice: 1000,
 		durability: 3,
 		slotsUsed: 1,
-		fireRate: 10,
+		fireRate: 5,
 		accuracy: 15,
-		damage: 20,
-		penetration: 0.9,
-		itemLevel: 1
+		damage: 10,
+		penetration: 1.0,
+		itemLevel: 2
 	},
 	wooden_bat: {
 		type: 'Melee Weapon',
