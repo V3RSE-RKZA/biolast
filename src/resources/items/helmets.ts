@@ -6,7 +6,7 @@ export const items = helmetObject({
 	paca_helmet: {
 		type: 'Helmet',
 		name: 'paca_helmet',
-		icon: '<:U_shield:601366669474136074>',
+		icon: '<:U_helmet:874671013181415434>',
 		aliases: ['helmet'],
 		sellPrice: 2000,
 		durability: 3,
@@ -17,7 +17,7 @@ export const items = helmetObject({
 	cloth_helmet: {
 		type: 'Helmet',
 		name: 'cloth_helmet',
-		icon: '<:U_shield:601366669474136074>',
+		icon: '<:U_helmet:874671013181415434>',
 		aliases: ['helmet'],
 		sellPrice: 1000,
 		durability: 3,
@@ -28,7 +28,7 @@ export const items = helmetObject({
 	wooden_helmet: {
 		type: 'Helmet',
 		name: 'wooden_helmet',
-		icon: '<:U_shield:601366669474136074>',
+		icon: '<:U_helmet:874671013181415434>',
 		aliases: ['wood_helmet'],
 		sellPrice: 1500,
 		durability: 3,
