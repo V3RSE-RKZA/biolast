@@ -36,15 +36,15 @@ export const items = helmetObject({
 		slotsUsed: 2,
 		itemLevel: 3
 	},
-	tincan_helmet: {
+	bone_helmet: {
 		type: 'Helmet',
-		name: 'tincan_helmet',
+		name: 'bone_helmet',
 		icon: '<:U_helmet:874671013181415434>',
-		aliases: ['tincan'],
-		sellPrice: 350,
-		durability: 5,
-		level: 1,
-		slotsUsed: 1,
-		itemLevel: 1
+		aliases: ['bone_helm'],
+		sellPrice: 2500,
+		durability: 9,
+		level: 2,
+		slotsUsed: 2,
+		itemLevel: 3
 	}
 })
