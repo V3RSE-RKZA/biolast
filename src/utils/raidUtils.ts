@@ -26,6 +26,10 @@ export function getRaidType (guildID: string): Location | undefined {
  * @returns An item
  */
 export function getRandomItem (raidChannel: RaidChannel): { item: Item, xp: number } {
+	if (!raidChannel.scavange) {
+		throw new Error(`Raid channel (${raidChannel.name}) cannot be scavenged`)
+	}
+
 	const rand = Math.random()
 	let randomItem
 	let xpEarned

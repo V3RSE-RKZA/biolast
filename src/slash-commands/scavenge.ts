@@ -48,6 +48,13 @@ class ScavengeCommand extends CustomSlashCommand {
 			throw new Error('Could not find raid channel')
 		}
 
+		else if (!raidChannel.scavange) {
+			await ctx.send({
+				content: '❌ You try to scavenge for items but find nothing.'
+			})
+			return
+		}
+
 		const transaction = await beginTransaction()
 
 		try {
