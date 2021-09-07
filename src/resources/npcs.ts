@@ -108,7 +108,7 @@ export const npcs = npcsObject({
 		drops: {
 			common: [items.bandage],
 			uncommon: [items['glock-17'], items.ifak_medkit],
-			rare: [items.sledgehammer],
+			rare: [items.sledgehammer, items.bone_armor],
 			rolls: 1
 		},
 		weapon: items['aks-74u'],
