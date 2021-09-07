@@ -131,6 +131,8 @@ class StashCommand extends CustomSlashCommand {
 
 			const slotsNeeded = itemsToDeposit.reduce((prev, curr) => prev + curr.item.slotsUsed, 0)
 			if (userStashData.slotsUsed + slotsNeeded > userData.stashSlots) {
+				await transaction.commit()
+
 				await ctx.send({
 					content: `❌ You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`
 				})
