@@ -25,7 +25,7 @@ export const icons = {
 }
 
 // How many items a single user can buy from the shop each day
-export const shopDailyBuyLimit = 5
+export const shopDailyBuyLimit = 10
 
 export const baseBackpackLimit = 15
 
