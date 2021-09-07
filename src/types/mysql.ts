@@ -16,6 +16,11 @@ export interface UserRow {
 	stashSlots: number
 	level: number
 	xp: number
+
+	/**
+	 * How many items this user has bought from the shop (resets every day)
+	 */
+	shopSales: number
 }
 
 export interface Cooldown {

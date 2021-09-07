@@ -22,6 +22,9 @@ class CronJobs {
 
 		// clean up cooldowns table, prevents the table from having inactive records
 		await query('DELETE FROM cooldowns WHERE NOW() > ADDDATE(createdAt, INTERVAL length SECOND)')
+
+		// reset shop sales for all users
+		await query('UPDATE users SET shopSales = 0 WHERE shopSales > 0')
 	}
 
 	private async hourlyTasks (): Promise<void> {

@@ -24,6 +24,9 @@ export const icons = {
 	wave: '<:blobwave:884672272646963242>'
 }
 
+// How many items a single user can buy from the shop each day
+export const shopDailyBuyLimit = 5
+
 export const baseBackpackLimit = 15
 
 // User ids of users who have admin permissions (can run commands with the 'admin' category)

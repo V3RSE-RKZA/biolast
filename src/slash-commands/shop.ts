@@ -1,5 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext, Message } from 'slash-create'
 import App from '../app'
+import { shopDailyBuyLimit } from '../config'
 import { allItems } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -10,7 +11,7 @@ import { getItem } from '../utils/argParsers'
 import { CONFIRM_BUTTONS } from '../utils/constants'
 import { addItemToShop, addItemToStash, getAllShopItems, getShopItem, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromShop, removeItemFromStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
-import { addMoney, getUserRow, removeMoney } from '../utils/db/players'
+import { addMoney, getUserRow, increaseShopSales, removeMoney } from '../utils/db/players'
 import formatNumber from '../utils/formatNumber'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
@@ -234,6 +235,12 @@ class ShopCommand extends CustomSlashCommand {
 				})
 				return
 			}
+			else if (userData.shopSales >= shopDailyBuyLimit) {
+				await ctx.send({
+					content: `❌ You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`
+				})
+				return
+			}
 
 			const stashRows = await getUserStash(query, ctx.user.id)
 			const userStashData = getItems(stashRows)
@@ -278,7 +285,16 @@ class ShopCommand extends CustomSlashCommand {
 					const stashRowsV = await getUserStash(transaction.query, ctx.user.id, true)
 					const userStashDataV = getItems(stashRowsV)
 
-					if (userStashDataV.slotsUsed + shopItem.slotsUsed > userDataV.stashSlots) {
+					if (userDataV.shopSales >= shopDailyBuyLimit) {
+						await transaction.commit()
+
+						await confirmed.editParent({
+							content: `❌ You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`,
+							components: []
+						})
+						return
+					}
+					else if (userStashDataV.slotsUsed + shopItem.slotsUsed > userDataV.stashSlots) {
 						await transaction.commit()
 
 						await confirmed.editParent({
@@ -295,6 +311,7 @@ class ShopCommand extends CustomSlashCommand {
 						return
 					}
 
+					await increaseShopSales(transaction.query, ctx.user.id, 1)
 					await removeMoney(transaction.query, ctx.user.id, shopItemRowV.price)
 					await removeItemFromShop(transaction.query, shopItemRowV.id)
 					await addItemToStash(transaction.query, ctx.user.id, shopItemRowV.id)
