@@ -10,9 +10,9 @@ export const items = rangedObject({
 		aliases: ['aks', 'ak-74'],
 		sellPrice: 5000,
 		durability: 12,
-		slotsUsed: 2,
-		fireRate: 60,
-		accuracy: 40
+		slotsUsed: 3,
+		fireRate: 30,
+		accuracy: 35
 	},
 	'glock-17': {
 		type: 'Ranged Weapon',
