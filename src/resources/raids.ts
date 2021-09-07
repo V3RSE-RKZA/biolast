@@ -170,12 +170,12 @@ export const locations = locationsObject({
 						xp: 20
 					},
 					rolls: 2,
-					cooldown: 1 * 10
+					cooldown: 1 * 30
 				},
 				npcSpawns: {
 					npcs: [npcs.walker_weak],
-					cooldownMin: 60,
-					cooldownMax: 120
+					cooldownMin: 3 * 60,
+					cooldownMax: 5 * 60
 				}
 			},
 			{
@@ -196,12 +196,12 @@ export const locations = locationsObject({
 						xp: 20
 					},
 					rolls: 2,
-					cooldown: 1 * 10
+					cooldown: 1 * 30
 				},
 				npcSpawns: {
 					npcs: [npcs.raider],
-					cooldownMin: 60,
-					cooldownMax: 120
+					cooldownMin: 5 * 60,
+					cooldownMax: 10 * 60
 				}
 			},
 			{
@@ -231,7 +231,7 @@ export const locations = locationsObject({
 						xp: 20
 					},
 					rolls: 2,
-					cooldown: 1 * 10,
+					cooldown: 1 * 30,
 					requiresKey: items.shed_key
 				}
 			},
