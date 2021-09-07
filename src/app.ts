@@ -480,8 +480,8 @@ class App {
 						if (userRaid) {
 							const timeLeft = (userRaid.length * 1000) - (Date.now() - userRaid.startedAt.getTime())
 
-							// send alert if less than 5 minutes remaining
-							if (timeLeft <= 5 * 60 * 1000) {
+							// send alert if 5 minutes remaining and there's at least 30 seconds so user can evac
+							if (timeLeft <= 5 * 60 * 1000 && timeLeft > 30 * 1000) {
 								await createCooldown(query, ctx.user.id, 'raidreminder', 3 * 60)
 
 								try {
