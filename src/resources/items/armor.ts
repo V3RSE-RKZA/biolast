@@ -37,10 +37,11 @@ export const items = armorObject({
 		type: 'Body Armor',
 		name: 'bone_armor',
 		icon: '<:U_shield:601366669474136074>',
+		description: 'Rare drop from Cain, The Gravekeeper',
 		aliases: ['bone'],
-		sellPrice: 2000,
+		sellPrice: 2500,
 		durability: 8,
 		level: 2,
-		slotsUsed: 3
+		slotsUsed: 2
 	}
 })
