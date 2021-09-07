@@ -130,7 +130,7 @@ export const npcs = npcsObject({
 		damage: 25,
 		drops: {
 			common: [items.bandage],
-			uncommon: [items.ifak_medkit],
+			uncommon: [items.ifak_medkit, items.cloth_backpack],
 			rare: [items['5.45x39_fmj']],
 			rolls: 1
 		},
