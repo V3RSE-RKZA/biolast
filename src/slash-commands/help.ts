@@ -3,6 +3,8 @@ import App from '../app'
 import { adminUsers } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
+import { logger } from '../utils/logger'
+import { isRaidGuild } from '../utils/raidUtils'
 
 class HelpCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -37,6 +39,19 @@ class HelpCommand extends CustomSlashCommand {
 				await ctx.send({
 					content: '❌ That command doesn\'t exist!'
 				})
+
+				// auto-delete message if in raid server so that users can't use the slash command options to communicate with each other.
+				if (isRaidGuild(ctx.guildID)) {
+					setTimeout(async () => {
+						try {
+							await ctx.delete()
+						}
+						catch (err) {
+							logger.warn(err)
+						}
+					}, 3000)
+				}
+
 				return
 			}
 

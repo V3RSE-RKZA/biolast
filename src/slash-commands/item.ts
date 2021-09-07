@@ -10,6 +10,8 @@ import { getUserBackpack } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
 import formatNumber from '../utils/formatNumber'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
+import { logger } from '../utils/logger'
+import { isRaidGuild } from '../utils/raidUtils'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name), ...allItems.map(itm => itm.aliases).flat(1)])
 
@@ -67,6 +69,18 @@ class ItemCommand extends CustomSlashCommand {
 				await ctx.send({
 					content: related ? `❌ Could not find an item matching that name. Did you mean \`${related}\`?` : '❌ Could not find an item matching that name.'
 				})
+
+				// auto-delete message if in raid server so that users can't use the slash command options to communicate with each other.
+				if (isRaidGuild(ctx.guildID)) {
+					setTimeout(async () => {
+						try {
+							await ctx.delete()
+						}
+						catch (err) {
+							logger.warn(err)
+						}
+					}, 3000)
+				}
 			}
 
 			return

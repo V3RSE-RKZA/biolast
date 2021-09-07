@@ -2,8 +2,16 @@ import { GuildTextableChannel, Message } from 'eris'
 import { prefix, adminUsers } from '../config'
 import App from '../app'
 import { logger } from '../utils/logger'
+import { isRaidGuild } from '../utils/raidUtils'
 
 export async function run (this: App, message: Message): Promise<void> {
+	// Deletes message sent by users in raid guilds,
+	// TODO move this to a separate bot in the future so this bot can function without
+	// the message intent.
+	if (!message.author.bot && isRaidGuild(message.guildID)) {
+		await message.delete()
+	}
+
 	if (message.author.bot || !this.acceptingCommands) {
 		return
 	}
