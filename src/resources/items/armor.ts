@@ -9,7 +9,7 @@ export const items = armorObject({
 		icon: '<:U_shield:601366669474136074>',
 		aliases: ['paca'],
 		sellPrice: 2000,
-		durability: 3,
+		durability: 5,
 		level: 3,
 		slotsUsed: 2
 	},

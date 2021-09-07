@@ -116,7 +116,7 @@ export const npcs = npcsObject({
 		quotes: [
 			'~*You hear footsteps nearby*~'
 		],
-		armor: items.paca_armor,
+		armor: items.wooden_armor,
 		helmet: items.wooden_helmet,
 		xp: 50
 	},

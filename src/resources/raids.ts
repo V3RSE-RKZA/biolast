@@ -209,7 +209,7 @@ export const locations = locationsObject({
 				name: 'backwoods-evac',
 				display: 'Backwoods',
 				evac: {
-					time: 30,
+					time: 15,
 					requiresKey: items.shed_key
 				}
 			},
@@ -223,11 +223,11 @@ export const locations = locationsObject({
 						xp: 5
 					},
 					uncommon: {
-						items: [items.wooden_armor, items.wooden_helmet],
+						items: [items.knife, items.wooden_helmet],
 						xp: 10
 					},
 					rare: {
-						items: [items.knife, items.ifak_medkit],
+						items: [items.knife, items.ifak_medkit, items.wooden_armor],
 						xp: 20
 					},
 					rolls: 2,
