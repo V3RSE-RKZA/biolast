@@ -196,7 +196,7 @@ class NPCHandler {
 		let bodyPartHit
 		let npcDamage
 
-		if (npc.type === 'raider') {
+		if (npc.type === 'raider' || npc.type === 'boss') {
 			bodyPartHit = getBodyPartHit(npc.weapon.accuracy)
 
 			if (npc.subtype === 'ranged') {

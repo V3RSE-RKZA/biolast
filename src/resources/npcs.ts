@@ -1,7 +1,7 @@
 import { Ammunition, Armor, Helmet, Item, MeleeWeapon, RangedWeapon } from '../types/Items'
 import { items } from './items'
 
-type NPCType = 'walker' | 'raider'
+type NPCType = 'walker' | 'raider' | 'boss'
 
 interface NPCBase {
 	type: NPCType
@@ -71,9 +71,34 @@ interface MeleeRaider extends NPCBase {
 	weapon: MeleeWeapon
 }
 
-type Raider = RangedRaider | MeleeRaider
+interface RangedBoss extends NPCBase {
+	type: 'boss'
+	subtype: 'ranged'
 
-export type NPC = Raider | Walker
+	/**
+	 * The weapon item this raider uses
+	 */
+	weapon: RangedWeapon
+
+	/**
+	 * The ammo if weapon is ranged
+	 */
+	ammo: Ammunition
+}
+interface MeleeBoss extends NPCBase {
+	type: 'boss'
+	subtype: 'melee'
+
+	/**
+	 * The weapon item this raider uses
+	 */
+	weapon: MeleeWeapon
+}
+
+type Raider = RangedRaider | MeleeRaider
+type Boss = RangedBoss | MeleeBoss
+
+export type NPC = Raider | Walker | Boss
 
 const npcsObject = <T>(et: { [K in keyof T]: NPC & { id: K } }) => et
 
@@ -98,7 +123,7 @@ export const npcs = npcsObject({
 		xp: 20
 	},
 	cain: {
-		type: 'raider',
+		type: 'boss',
 		subtype: 'ranged',
 		id: 'cain',
 		display: 'Cain, The Gravekeeper',

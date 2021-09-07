@@ -262,7 +262,7 @@ class AttackCommand extends CustomSlashCommand {
 					})
 				}
 
-				if (npc.type === 'raider') {
+				if (npc.type === 'raider' || npc.type === 'boss') {
 					// drop weapon and ammo on ground
 
 					if (npc.subtype === 'ranged') {
