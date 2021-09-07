@@ -154,6 +154,27 @@ export const locations = locationsObject({
 		channels: [
 			{
 				type: 'LootChannel',
+				name: 'backstreets',
+				display: 'Backstreets',
+				scavange: {
+					common: {
+						items: [items.wooden_bat],
+						xp: 5
+					},
+					uncommon: {
+						items: [items.bandage, items.makeshift_pistol_ammo],
+						xp: 10
+					},
+					rare: {
+						items: [items.metal_bat, items.makeshift_pistol],
+						xp: 20
+					},
+					rolls: 1,
+					cooldown: 1 * 30
+				}
+			},
+			{
+				type: 'LootChannel',
 				name: 'red-house',
 				display: 'Red House',
 				scavange: {
@@ -215,8 +236,8 @@ export const locations = locationsObject({
 			},
 			{
 				type: 'LootChannel',
-				name: 'backstreets',
-				display: 'Streets',
+				name: 'backyard-shed',
+				display: 'Backyard Shed',
 				scavange: {
 					common: {
 						items: [items.cloth_armor, items.cloth_helmet],
