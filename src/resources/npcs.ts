@@ -167,6 +167,25 @@ export const npcs = npcsObject({
 		armor: items.cloth_armor,
 		helmet: items.cloth_helmet,
 		xp: 40
+	},
+	bloated_walker: {
+		type: 'walker',
+		id: 'bloated_walker',
+		display: 'Bloated Walker',
+		icon: '🧟‍♂️',
+		health: 50,
+		damage: 35,
+		drops: {
+			common: [items.pitchfork],
+			uncommon: [items.apple],
+			rare: [items.fire_axe],
+			rolls: 1
+		},
+		quotes: [
+			'~*You hear footsteps nearby*~',
+			'~*You hear a deep growl close by*~'
+		],
+		xp: 50
 	}
 })
 
