@@ -288,11 +288,11 @@ export const locations = locationsObject({
 		channels: [
 			{
 				type: 'LootChannel',
-				name: 'backstreets',
-				display: 'Backstreets',
+				name: 'barn',
+				display: 'Barn',
 				scavange: {
 					common: {
-						items: [items.wooden_bat],
+						items: [items.scythe],
 						xp: 5
 					},
 					uncommon: {
@@ -402,8 +402,8 @@ export const locations = locationsObject({
 			},
 			{
 				type: 'EvacChannel',
-				name: 'sewers-evac',
-				display: 'Sewers',
+				name: 'corn-maze-evac',
+				display: 'Corn Maze',
 				evac: {
 					time: 30
 				}
