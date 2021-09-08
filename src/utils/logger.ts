@@ -1,9 +1,11 @@
 import pino from 'pino'
+import { PrettyOptions } from 'pino-pretty'
 import { debug } from '../config'
 
-const pinoPrettyOpts = {
+const pinoPrettyOpts: PrettyOptions = {
 	colorize: true,
-	ignore: 'pid,hostname'
+	ignore: 'pid,hostname',
+	translateTime: 'yyyy-mm-dd HH:MM:ss'
 }
 
 export const logger = pino({
