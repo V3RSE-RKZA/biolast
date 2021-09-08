@@ -33,6 +33,11 @@ class App {
 		userID: string
 		timeout: NodeJS.Timeout
 	}[]
+	/**
+	 * IDs of users who are currently evacuating a raid. Used to prevent them from using other command while
+	 * in the process of evacuating.
+	 */
+	extractingUsers: Set<string>
 	acceptingCommands: boolean
 	npcHandler: NPCHandler
 	/**
@@ -64,6 +69,7 @@ class App {
 		this.acceptingCommands = false
 		this.npcHandler = new NPCHandler(this)
 		this.shopSellMultiplier = getRandomInt(90, 110) / 100
+		this.extractingUsers = new Set()
 	}
 
 	async launch (): Promise<void> {
@@ -360,6 +366,13 @@ class App {
 			if (command.customOptions.category === 'admin' && !adminUsers.includes(ctx.user.id)) {
 				return ctx.send({
 					content: '❌ You don\'t have permission to run that command.',
+					flags: InteractionResponseFlags.EPHEMERAL
+				})
+			}
+
+			else if (command.commandName !== 'heal' && this.extractingUsers.has(ctx.user.id)) {
+				return ctx.send({
+					content: '❌ You cannot use that command while extracting!',
 					flags: InteractionResponseFlags.EPHEMERAL
 				})
 			}

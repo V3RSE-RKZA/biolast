@@ -15,11 +15,6 @@ import { messageUser } from '../utils/messageUtils'
 import { getRaidType } from '../utils/raidUtils'
 
 class EvacCommand extends CustomSlashCommand {
-	/**
-	 * IDs of users currently extracting
-	 */
-	extractions: Set<string>
-
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'evac',
@@ -37,7 +32,6 @@ class EvacCommand extends CustomSlashCommand {
 		})
 
 		this.filePath = __filename
-		this.extractions = new Set()
 	}
 
 	async run (ctx: CommandContext): Promise<void> {
@@ -137,7 +131,7 @@ class EvacCommand extends CustomSlashCommand {
 			const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id))[0]
 
 			if (confirmed.customID === 'confirmed') {
-				if (this.extractions.has(ctx.user.id)) {
+				if (this.app.extractingUsers.has(ctx.user.id)) {
 					await confirmed.editParent({
 						content: '❌ You are currently evacuating this raid.',
 						components: []
@@ -145,7 +139,7 @@ class EvacCommand extends CustomSlashCommand {
 					return
 				}
 
-				this.extractions.add(ctx.user.id)
+				this.app.extractingUsers.add(ctx.user.id)
 
 				if (evacItem) {
 					const transaction = await beginTransaction()
@@ -208,7 +202,7 @@ class EvacCommand extends CustomSlashCommand {
 
 				setTimeout(async () => {
 					try {
-						this.extractions.delete(ctx.user.id)
+						this.app.extractingUsers.delete(ctx.user.id)
 
 						const member = await this.app.fetchMember(guild, ctx.user.id)
 						const userRaid = await getUsersRaid(query, ctx.user.id)
