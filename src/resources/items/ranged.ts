@@ -11,7 +11,7 @@ export const items = rangedObject({
 		sellPrice: 5000,
 		durability: 12,
 		slotsUsed: 3,
-		fireRate: 30,
+		fireRate: 40,
 		accuracy: 35,
 		itemLevel: 5
 	},
