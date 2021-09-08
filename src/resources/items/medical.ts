@@ -12,7 +12,8 @@ export const items = medicalObject({
 		healsFor: 20,
 		slotsUsed: 1,
 		healRate: 25,
-		itemLevel: 1
+		itemLevel: 1,
+		durability: 1
 	},
 	ifak_medkit: {
 		type: 'Medical',
@@ -23,7 +24,8 @@ export const items = medicalObject({
 		healsFor: 35,
 		slotsUsed: 1,
 		healRate: 30,
-		itemLevel: 3
+		itemLevel: 3,
+		durability: 1
 	},
 	paracetamol: {
 		type: 'Medical',
@@ -34,7 +36,8 @@ export const items = medicalObject({
 		healsFor: 25,
 		slotsUsed: 1,
 		healRate: 25,
-		itemLevel: 1
+		itemLevel: 1,
+		durability: 1
 	},
 	corn: {
 		type: 'Medical',
@@ -45,7 +48,8 @@ export const items = medicalObject({
 		healsFor: 15,
 		slotsUsed: 1,
 		healRate: 30,
-		itemLevel: 3
+		itemLevel: 3,
+		durability: 1
 	},
 	apple: {
 		type: 'Medical',
@@ -56,6 +60,7 @@ export const items = medicalObject({
 		healsFor: 15,
 		slotsUsed: 1,
 		healRate: 20,
-		itemLevel: 3
+		itemLevel: 3,
+		durability: 1
 	}
 })

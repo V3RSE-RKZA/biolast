@@ -120,6 +120,11 @@ export interface Medical extends BaseItem {
 	type: 'Medical'
 
 	/**
+	 * How many times this item can be used to heal before it breaks
+	 */
+	durability: number
+
+	/**
 	 * Amount this medical item will heal player for
 	 */
 	healsFor: number

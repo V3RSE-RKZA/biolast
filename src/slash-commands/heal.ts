@@ -2,7 +2,7 @@ import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
-import { deleteItem, getUserBackpack } from '../utils/db/items'
+import { deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { addHealth, getUserRow } from '../utils/db/players'
 import formatHealth from '../utils/formatHealth'
@@ -79,13 +79,19 @@ class HealCommand extends CustomSlashCommand {
 			return
 		}
 
+		if (!itemToUse.row.durability || itemToUse.row.durability - 1 <= 0) {
+			await deleteItem(transaction.query, itemToUse.row.id)
+		}
+		else {
+			await lowerItemDurability(transaction.query, itemToUse.row.id, 1)
+		}
+
 		await createCooldown(transaction.query, ctx.user.id, 'heal', itemToUse.item.healRate)
-		await deleteItem(transaction.query, itemToUse.row.id)
 		await addHealth(transaction.query, ctx.user.id, maxHeal)
 		await transaction.commit()
 
 		await ctx.send({
-			content: `You use your ${getItemDisplay(itemToUse.item)} to heal for **${maxHeal}** health! You now have ${formatHealth(userData.health + maxHeal, userData.maxHealth)} **${userData.health + maxHeal} / ${userData.maxHealth}** health.`
+			content: `You use your ${getItemDisplay(itemToUse.item, { ...itemToUse.row, durability: itemToUse.row.durability ? itemToUse.row.durability - 1 : undefined })} to heal for **${maxHeal}** health! You now have ${formatHealth(userData.health + maxHeal, userData.maxHealth)} **${userData.health + maxHeal} / ${userData.maxHealth}** health.`
 		})
 	}
 }
