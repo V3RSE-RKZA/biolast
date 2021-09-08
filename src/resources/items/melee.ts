@@ -86,5 +86,47 @@ export const items = meleeObject({
 		damage: 30,
 		penetration: 0.7,
 		itemLevel: 3
+	},
+	scythe: {
+		type: 'Melee Weapon',
+		name: 'scythe',
+		icon: '<:U_melee:601366669251575857>',
+		aliases: [],
+		sellPrice: 1750,
+		durability: 3,
+		slotsUsed: 2,
+		fireRate: 40,
+		accuracy: 15,
+		damage: 15,
+		penetration: 0.5,
+		itemLevel: 2
+	},
+	pitchfork: {
+		type: 'Melee Weapon',
+		name: 'pitchfork',
+		icon: '<:U_melee:601366669251575857>',
+		aliases: ['pitch'],
+		sellPrice: 1050,
+		durability: 4,
+		slotsUsed: 2,
+		fireRate: 30,
+		accuracy: 20,
+		damage: 15,
+		penetration: 1.0,
+		itemLevel: 3
+	},
+	fire_axe: {
+		type: 'Melee Weapon',
+		name: 'fire_axe',
+		icon: '<:U_melee:601366669251575857>',
+		aliases: ['axe'],
+		sellPrice: 1050,
+		durability: 4,
+		slotsUsed: 2,
+		fireRate: 25,
+		accuracy: 20,
+		damage: 20,
+		penetration: 0.8,
+		itemLevel: 3
 	}
 })
