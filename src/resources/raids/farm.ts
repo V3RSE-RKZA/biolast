@@ -75,7 +75,7 @@ export const farm: Location = {
 					xp: 10
 				},
 				rare: {
-					items: [items['glock-17'], items['9mm_fmj'], items.fire_axe],
+					items: [items.makeshift_shotgun, items.makeshift_shell, items.fire_axe],
 					xp: 20
 				},
 				rolls: 2,
@@ -120,8 +120,8 @@ export const farm: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'graveyard',
-			display: 'Graveyard',
+			name: 'farmhouse',
+			display: 'Farmhouse',
 			npcSpawns: {
 				npcs: [npcs.cain],
 				cooldownMin: 30 * 60,
