@@ -113,42 +113,44 @@ class ItemCommand extends CustomSlashCommand {
 			itemEmbed.addField('Sell Price', formatNumber(Math.floor(item.sellPrice * this.app.shopSellMultiplier)), true)
 		}
 
-		if (item.type === 'Backpack') {
-			itemEmbed.addField('Carry Capacity', `Adds ***+${item.slots}*** slots`, true)
-		}
+		switch (item.type) {
+			case 'Backpack': {
+				itemEmbed.addField('Carry Capacity', `Adds ***+${item.slots}*** slots`, true)
+				break
+			}
+			case 'Ammunition': {
+				itemEmbed.addField('Damage', item.damage.toString(), true)
+				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
+				itemEmbed.addField('Ammo For', item.ammoFor.map(itm => getItemDisplay(itm)).join('\n'), true)
+				break
+			}
+			case 'Melee Weapon': {
+				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
+				itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
+				itemEmbed.addField('Damage', item.damage.toString(), true)
+				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
+				break
+			}
+			case 'Ranged Weapon': {
+				const ammunition = allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item))
 
-		if (item.type === 'Ammunition') {
-			itemEmbed.addField('Damage', item.damage.toString(), true)
-			itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
-			itemEmbed.addField('Ammo For', item.ammoFor.map(itm => getItemDisplay(itm)).join('\n'), true)
-		}
-
-		if (item.type === 'Melee Weapon') {
-			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
-			itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
-			itemEmbed.addField('Damage', item.damage.toString(), true)
-			itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
-		}
-
-		if (item.type === 'Ranged Weapon') {
-			const ammunition = allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item))
-
-			itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
-			itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
-			itemEmbed.addField('Compatible Ammo', ammunition.map(itm => getItemDisplay(itm)).join('\n'), true)
-		}
-
-		if (item.type === 'Body Armor') {
-			itemEmbed.addField('Armor Level', item.level.toString(), true)
-		}
-
-		if (item.type === 'Helmet') {
-			itemEmbed.addField('Armor Level', item.level.toString(), true)
-		}
-
-		if (item.type === 'Medical') {
-			itemEmbed.addField('Heals For', `${item.healsFor} health`, true)
-			itemEmbed.addField('Healing Rate', `${item.healRate} seconds`, true)
+				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
+				itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
+				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => getItemDisplay(itm)).join('\n'), true)
+				break
+			}
+			case 'Body Armor': {
+				itemEmbed.addField('Armor Level', item.level.toString(), true)
+				break
+			}
+			case 'Helmet': {
+				itemEmbed.addField('Armor Level', item.level.toString(), true)
+				break
+			}
+			case 'Medical': {
+				itemEmbed.addField('Heals For', `${item.healsFor} health`, true)
+				itemEmbed.addField('Healing Rate', `${item.healRate} seconds`, true)
+			}
 		}
 
 		return itemEmbed
