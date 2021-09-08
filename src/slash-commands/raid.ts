@@ -27,7 +27,7 @@ class RaidCommand extends CustomSlashCommand {
 					description: 'Location to raid.',
 					required: false,
 					choices: allLocations.map(loc => ({
-						name: `${loc.display} - Level Required: ${loc.requirements.level}`,
+						name: `${loc.display} - Level Required: ${loc.requirements.minLevel}`,
 						value: loc.id
 					}))
 				}
@@ -99,9 +99,16 @@ class RaidCommand extends CustomSlashCommand {
 			})
 			return
 		}
-		else if (choice.requirements.level > userData.level) {
+		else if (choice.requirements.minLevel > userData.level) {
 			await ctx.send({
-				content: `❌ You are not a high enough level to explore that location. Level required: **${choice.requirements.level}**`,
+				content: `❌ You are not a high enough level to explore that location. Level required: **${choice.requirements.minLevel}**`,
+				flags: InteractionResponseFlags.EPHEMERAL
+			})
+			return
+		}
+		else if (userData.level > choice.requirements.maxLevel) {
+			await ctx.send({
+				content: `❌ You are too high of a level to explore that location. Max level allowed: **${choice.requirements.maxLevel}**`,
 				flags: InteractionResponseFlags.EPHEMERAL
 			})
 			return
@@ -249,7 +256,8 @@ class RaidCommand extends CustomSlashCommand {
 			.setDescription('The bot is in early access, expect more locations to be added.')
 
 		for (const loc of allLocations) {
-			locationsEmb.addField(loc.display, `Level Required: **${loc.requirements.level}**\nMax Players: **${loc.playerLimit}**\nRaid Time: **${formatTime(loc.raidLength * 1000)}**`)
+			locationsEmb.addField(loc.display, `Levels Allowed: **${loc.requirements.minLevel}** - **${loc.requirements.maxLevel}**\n` +
+				`Max Players: **${loc.playerLimit}**\nRaid Time: **${formatTime(loc.raidLength * 1000)}**`, true)
 		}
 
 		return locationsEmb

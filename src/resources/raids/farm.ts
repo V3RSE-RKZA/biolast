@@ -8,7 +8,8 @@ export const farm: Location = {
 	display: 'The Farm',
 	guilds: raidGuilds.farmGuilds,
 	requirements: {
-		level: 3
+		minLevel: 3,
+		maxLevel: 10
 	},
 	raidLength: 20 * 60,
 	playerLimit: 15,

@@ -123,7 +123,14 @@ export interface Location {
 	playerLimit: number
 
 	requirements: {
-		level: number
+		/**
+		 * The minimum level required to enter this location
+		 */
+		minLevel: number
+		/**
+		 * The maximum level a user can be when entering this location
+		 */
+		maxLevel: number
 		item?: Item
 	}
 
