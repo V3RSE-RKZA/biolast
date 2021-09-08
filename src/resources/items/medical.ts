@@ -35,5 +35,27 @@ export const items = medicalObject({
 		slotsUsed: 1,
 		healRate: 25,
 		itemLevel: 1
+	},
+	corn: {
+		type: 'Medical',
+		name: 'corn',
+		icon: '<:U_usable:601366669259964418>',
+		aliases: [],
+		sellPrice: 850,
+		healsFor: 15,
+		slotsUsed: 1,
+		healRate: 30,
+		itemLevel: 3
+	},
+	apple: {
+		type: 'Medical',
+		name: 'apple',
+		icon: '<:U_usable:601366669259964418>',
+		aliases: [],
+		sellPrice: 850,
+		healsFor: 15,
+		slotsUsed: 1,
+		healRate: 20,
+		itemLevel: 3
 	}
 })
