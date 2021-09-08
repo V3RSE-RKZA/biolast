@@ -48,7 +48,7 @@ export async function run (this: App, guild: Guild, member: Member | MemberParti
 
 				await messageUser(member.user, {
 					content: '❌ Raid failed!\n\n' +
-						'You left the raid! This is called raid dodging and isn\'t allowed to prevent users from leaving raids when they\'re attacked.\n' +
+						'You left the raid! This is called raid dodging and isn\'t allowed.\n' +
 						`You lost all the items in your inventory (**${userBackpackData.items.length}** items).`
 				})
 			}
