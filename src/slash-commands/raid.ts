@@ -106,6 +106,13 @@ class RaidCommand extends CustomSlashCommand {
 			})
 			return
 		}
+		else if (!choice.guilds.length) {
+			await ctx.send({
+				content: '❌ This raid is currently unavailable while we work on it! Sorry...',
+				flags: InteractionResponseFlags.EPHEMERAL
+			})
+			return
+		}
 
 		const raidCD = await getCooldown(query, ctx.user.id, `raid-${choice.id}`)
 
