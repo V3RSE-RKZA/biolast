@@ -1,5 +1,6 @@
-import { Location, RaidChannel, allLocations } from '../resources/raids'
+import { allLocations } from '../resources/raids'
 import { Armor, Helmet, Item } from '../types/Items'
+import { Location, RaidChannel } from '../types/Raids'
 
 export type BodyPart = 'arm' | 'leg' | 'chest' | 'head'
 
