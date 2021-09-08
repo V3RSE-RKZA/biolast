@@ -16,49 +16,23 @@ export const farm: Location = {
 	channels: [
 		{
 			type: 'LootChannel',
-			name: 'barn',
-			display: 'Barn',
+			name: 'fields',
+			display: 'Fields',
 			scavange: {
 				common: {
 					items: [items.scythe],
 					xp: 5
 				},
 				uncommon: {
-					items: [items.bandage, items.makeshift_pistol_ammo],
+					items: [items.corn],
 					xp: 10
 				},
 				rare: {
-					items: [items.metal_bat, items.makeshift_pistol],
+					items: [items.pitchfork],
 					xp: 20
 				},
 				rolls: 1,
 				cooldown: 1 * 30
-			}
-		},
-		{
-			type: 'LootChannel',
-			name: 'red-house',
-			display: 'Red House',
-			scavange: {
-				common: {
-					items: [items.makeshift_pistol, items.makeshift_pistol_ammo],
-					xp: 5
-				},
-				uncommon: {
-					items: [items.makeshift_rifle, items.makeshift_rifle_ammo],
-					xp: 10
-				},
-				rare: {
-					items: [items['glock-17'], items['9mm_fmj'], items.sledgehammer],
-					xp: 20
-				},
-				rolls: 2,
-				cooldown: 1 * 30
-			},
-			npcSpawns: {
-				npcs: [npcs.walker_weak],
-				cooldownMin: 60,
-				cooldownMax: 2 * 60
 			}
 		},
 		{
@@ -88,9 +62,35 @@ export const farm: Location = {
 			}
 		},
 		{
+			type: 'LootChannel',
+			name: 'barn',
+			display: 'Barn',
+			scavange: {
+				common: {
+					items: [items.scythe, items.corn],
+					xp: 5
+				},
+				uncommon: {
+					items: [items.pitchfork, items.shed_key],
+					xp: 10
+				},
+				rare: {
+					items: [items['glock-17'], items['9mm_fmj'], items.fire_axe],
+					xp: 20
+				},
+				rolls: 2,
+				cooldown: 1 * 30
+			},
+			npcSpawns: {
+				npcs: [npcs.bloated_walker],
+				cooldownMin: 75,
+				cooldownMax: 2 * 75
+			}
+		},
+		{
 			type: 'EvacChannel',
-			name: 'woods-evac',
-			display: 'Woods',
+			name: 'corn-maze-evac',
+			display: 'Corn Maze',
 			evac: {
 				time: 15,
 				requiresKey: items.shed_key
@@ -98,15 +98,15 @@ export const farm: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'backyard-shed',
-			display: 'Backyard Shed',
+			name: 'tool-shed',
+			display: 'Tool Shed',
 			scavange: {
 				common: {
-					items: [items.cloth_armor, items.cloth_helmet],
+					items: [items.wooden_armor, items.wooden_helmet],
 					xp: 5
 				},
 				uncommon: {
-					items: [items.knife, items.wooden_helmet],
+					items: [items.knife, items.ifak_medkit],
 					xp: 10
 				},
 				rare: {
@@ -130,8 +130,8 @@ export const farm: Location = {
 		},
 		{
 			type: 'EvacChannel',
-			name: 'corn-maze-evac',
-			display: 'Corn Maze',
+			name: 'highway-evac',
+			display: 'Highway',
 			evac: {
 				time: 30
 			}
