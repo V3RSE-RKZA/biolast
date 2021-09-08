@@ -90,8 +90,15 @@ class HealCommand extends CustomSlashCommand {
 		await addHealth(transaction.query, ctx.user.id, maxHeal)
 		await transaction.commit()
 
+		const itemDisplay = getItemDisplay(itemToUse.item, {
+			...itemToUse.row,
+			durability: itemToUse.row.durability ? itemToUse.row.durability - 1 : undefined
+		}, {
+			showID: false
+		})
+
 		await ctx.send({
-			content: `You use your ${getItemDisplay(itemToUse.item, { ...itemToUse.row, durability: itemToUse.row.durability ? itemToUse.row.durability - 1 : undefined })} to heal for **${maxHeal}** health! You now have ${formatHealth(userData.health + maxHeal, userData.maxHealth)} **${userData.health + maxHeal} / ${userData.maxHealth}** health.`
+			content: `You use your ${itemDisplay} to heal for **${maxHeal}** health! You now have ${formatHealth(userData.health + maxHeal, userData.maxHealth)} **${userData.health + maxHeal} / ${userData.maxHealth}** health.`
 		})
 	}
 }
