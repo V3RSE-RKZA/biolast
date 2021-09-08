@@ -11,7 +11,7 @@
 
 - [x] Raider NPCs and zombie NPCs can wear armor that they will drop when killed (the durability of the armor would be random to pretend it was used). Raider NPCs should also be able to use a ranged weapon and ammo which they would drop on death.
 
-- [ ] Boss NPCs that have better armor/weapons and deal more damage. These would have a longer respawn rate than the basic NPCs
+- [x] Boss NPCs that have better armor/weapons and deal more damage. These would have a longer respawn rate than the basic NPCs
 
 - [x] Some channels require a **Key** item to use the `scavenge` command. When a key is used to scavenge for loot, the durability of the key should go down, if it goes to 0 the key should break. This could also work for certain evac channels.
 
@@ -35,7 +35,7 @@
 - [x] durability should affect how much item sells for
 - [ ] add tests that make sure every item is obtainable, whether it be from scavenging channels in raids or as drops from an npc.
 - [ ] change the currency from rubles to something else
-- [ ] commands shouldn't be able to be used while user is `evac`ing
+- [x] commands shouldn't be able to be used while user is `evac`ing
 
 ### Further down line:
 - [ ] when user votes for the bot on a bot list, they should receive a random item (maybe like 10% weapon, 30% ammo, 60% other stuff)

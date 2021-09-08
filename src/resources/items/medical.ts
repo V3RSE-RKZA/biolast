@@ -21,11 +21,11 @@ export const items = medicalObject({
 		icon: '<:U_usable:601366669259964418>',
 		aliases: ['ifak', 'medkit'],
 		sellPrice: 850,
-		healsFor: 35,
+		healsFor: 25,
 		slotsUsed: 1,
 		healRate: 30,
 		itemLevel: 3,
-		durability: 1
+		durability: 2
 	},
 	paracetamol: {
 		type: 'Medical',
@@ -49,7 +49,7 @@ export const items = medicalObject({
 		slotsUsed: 1,
 		healRate: 30,
 		itemLevel: 3,
-		durability: 1
+		durability: 3
 	},
 	apple: {
 		type: 'Medical',
@@ -61,6 +61,6 @@ export const items = medicalObject({
 		slotsUsed: 1,
 		healRate: 20,
 		itemLevel: 3,
-		durability: 1
+		durability: 2
 	}
 })
