@@ -444,6 +444,7 @@ class AttackCommand extends CustomSlashCommand {
 			const messages = []
 			let finalDamage
 			let ammoUsed
+			let attackPenetration
 
 			if (userEquips.weapon.item.type === 'Ranged Weapon') {
 				const weaponUsed = userEquips.weapon.item
@@ -461,12 +462,14 @@ class AttackCommand extends CustomSlashCommand {
 
 				ammoUsed = userAmmoUsed
 				const ammoItem = userAmmoUsed.item as Ammunition
+				attackPenetration = ammoItem.penetration
 				finalDamage = getAttackDamage(ammoItem.damage, ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item)
 				await deleteItem(transaction.query, userAmmoUsed.row.id)
 
 				messages.push(`You shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
 			}
 			else {
+				attackPenetration = userEquips.weapon.item.penetration
 				finalDamage = getAttackDamage(userEquips.weapon.item.damage, userEquips.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item)
 
 				messages.push(`You hit <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
@@ -497,25 +500,35 @@ class AttackCommand extends CustomSlashCommand {
 			if (bodyPartHit.result === 'head' && victimEquips.helmet) {
 				messages.push(`**${member.user.username}#${member.user.discriminator}**'s helmet (${getItemDisplay(victimEquips.helmet.item)}) reduced the damage by **${finalDamage.reduced}**.`)
 
-				if (victimEquips.helmet.row.durability - 1 <= 0) {
-					messages.push(`**${member.user.username}#${member.user.discriminator}**'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
+				// only lower helmet durability if attackers weapon penetrates at least 50% of
+				// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
+				// against someone who had level 3 armor, the armor would NOT lose durability)
+				if (attackPenetration >= victimEquips.helmet.item.level / 2) {
+					if (victimEquips.helmet.row.durability - 1 <= 0) {
+						messages.push(`**${member.user.username}#${member.user.discriminator}**'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
 
-					await deleteItem(transaction.query, victimEquips.helmet.row.id)
-				}
-				else {
-					await lowerItemDurability(transaction.query, victimEquips.helmet.row.id, 1)
+						await deleteItem(transaction.query, victimEquips.helmet.row.id)
+					}
+					else {
+						await lowerItemDurability(transaction.query, victimEquips.helmet.row.id, 1)
+					}
 				}
 			}
 			else if (bodyPartHit.result === 'chest' && victimEquips.armor) {
 				messages.push(`**${member.user.username}#${member.user.discriminator}**'s armor (${getItemDisplay(victimEquips.armor.item)}) reduced the damage by **${finalDamage.reduced}**.`)
 
-				if (victimEquips.armor.row.durability - 1 <= 0) {
-					messages.push(`**${member.user.username}#${member.user.discriminator}**'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
+				// only lower armor durability if attackers weapon penetrates at least 50% of
+				// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
+				// against someone who had level 3 armor, the armor would NOT lose durability)
+				if (attackPenetration >= victimEquips.armor.item.level / 2) {
+					if (victimEquips.armor.row.durability - 1 <= 0) {
+						messages.push(`**${member.user.username}#${member.user.discriminator}**'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
 
-					await deleteItem(transaction.query, victimEquips.armor.row.id)
-				}
-				else {
-					await lowerItemDurability(transaction.query, victimEquips.armor.row.id, 1)
+						await deleteItem(transaction.query, victimEquips.armor.row.id)
+					}
+					else {
+						await lowerItemDurability(transaction.query, victimEquips.armor.row.id, 1)
+					}
 				}
 			}
 
