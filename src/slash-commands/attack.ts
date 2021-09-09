@@ -10,6 +10,7 @@ import { createItem, deleteItem, dropItemToGround, getGroundItems, getUserBackpa
 import { beginTransaction } from '../utils/db/mysql'
 import { deleteNPC, getNPC, lowerHealth as lowerNPCHealth } from '../utils/db/npcs'
 import { addXp, getUserRow, increaseDeaths, increaseKills, lowerHealth } from '../utils/db/players'
+import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import formatHealth from '../utils/formatHealth'
 import { getEquips, getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
@@ -238,6 +239,7 @@ class AttackCommand extends CustomSlashCommand {
 			messages.push(`Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
 
 			if (npcRow.health - finalDamage.total <= 0) {
+				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'NPC Kills' || q.questType === 'Any Kills' || q.questType === 'Boss Kills')
 				const droppedItems = []
 
 				if (npc.armor) {
@@ -320,6 +322,18 @@ class AttackCommand extends CustomSlashCommand {
 				this.app.npcHandler.clearNPCInterval(ctx.channelID)
 				// start timer to spawn a new NPC
 				await this.app.npcHandler.spawnNPC(ctx.channelID, channel.name)
+
+				// check if user had any npc kill quests
+				for (const quest of userQuests) {
+					if (quest.progress < quest.progressGoal) {
+						if (
+							(quest.questType === 'Boss Kills' && npc.type === 'boss') ||
+							(quest.questType === 'Any Kills' || quest.questType === 'NPC Kills')
+						) {
+							await increaseProgress(transaction.query, quest.id, 1)
+						}
+					}
+				}
 
 				await transaction.commit()
 
@@ -535,6 +549,7 @@ class AttackCommand extends CustomSlashCommand {
 			messages.push(`Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
 
 			if (victimData.health - finalDamage.total <= 0) {
+				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'Player Kills' || q.questType === 'Any Kills')
 				let xpEarned = 15
 
 				for (const victimItem of victimBackpackData.items) {
@@ -549,6 +564,13 @@ class AttackCommand extends CustomSlashCommand {
 				await increaseDeaths(transaction.query, member.id, 1)
 				await addXp(transaction.query, ctx.user.id, xpEarned)
 				await removeUserFromRaid(transaction.query, member.id)
+
+				// check if user has any kill quests
+				for (const quest of userQuests) {
+					if (quest.progress < quest.progressGoal) {
+						await increaseProgress(transaction.query, quest.id, 1)
+					}
+				}
 
 				messages.push(`☠️ **${member.user.username}#${member.user.discriminator}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill.`)
 			}

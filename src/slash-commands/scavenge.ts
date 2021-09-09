@@ -1,6 +1,7 @@
 import { SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
 import { allNPCs } from '../resources/npcs'
+import { quests } from '../resources/quests'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { Item } from '../types/Items'
 import { RaidChannel } from '../types/Raids'
@@ -9,6 +10,7 @@ import { addItemToBackpack, createItem, deleteItem, dropItemToGround, getUserBac
 import { beginTransaction } from '../utils/db/mysql'
 import { getNPC } from '../utils/db/npcs'
 import { addXp, getUserRow, increaseDeaths } from '../utils/db/players'
+import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
@@ -204,6 +206,22 @@ class ScavengeCommand extends CustomSlashCommand {
 
 			// lower durability or remove key
 			if (hasRequiredKey) {
+				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'Scavenge With A Key')
+
+				// check if user had a quest to scavenge with a key
+				for (const questRow of userQuests) {
+					const quest = quests.find(q => q.id === questRow.questId)
+
+					if (
+						quest &&
+						quest.questType === 'Scavenge With A Key' &&
+						quest.key.name === hasRequiredKey.item.name &&
+						questRow.progress < questRow.progressGoal
+					) {
+						await increaseProgress(transaction.query, questRow.id, 1)
+					}
+				}
+
 				if (!hasRequiredKey.row.durability || hasRequiredKey.row.durability - 1 <= 0) {
 					await deleteItem(transaction.query, hasRequiredKey.row.id)
 				}

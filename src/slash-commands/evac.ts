@@ -8,6 +8,7 @@ import { getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '..
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getNPC } from '../utils/db/npcs'
 import { getUserRow, increaseDeaths } from '../utils/db/players'
+import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import { getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
@@ -213,11 +214,22 @@ class EvacCommand extends CustomSlashCommand {
 						const userRaid = await getUsersRaid(query, ctx.user.id)
 
 						if (member && userRaid) {
-							const userBackpackV = await getUserBackpack(query, ctx.user.id)
+							const evacTransaction = await beginTransaction()
+							const userQuests = (await getUserQuests(evacTransaction.query, ctx.user.id, true)).filter(q => q.questType === 'Evacs')
+							const userBackpackV = await getUserBackpack(evacTransaction.query, ctx.user.id)
 							const userBackpackDataV = getItems(userBackpackV)
+
+							// check if user had any evac quests
+							for (const quest of userQuests) {
+								if (quest.progress < quest.progressGoal) {
+									await increaseProgress(evacTransaction.query, quest.id, 1)
+								}
+							}
 
 							this.app.clearRaidTimer(ctx.user.id)
 							await removeUserFromRaid(query, ctx.user.id)
+
+							await evacTransaction.commit()
 
 							try {
 								await member.kick('User evacuated')

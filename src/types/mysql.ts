@@ -1,4 +1,5 @@
 import { QueryOptions } from 'mysql'
+import { QuestType } from '../resources/quests'
 
 export type Query = (sql: string | QueryOptions, args?: any[]) => Promise<any>
 
@@ -71,4 +72,17 @@ export interface NPCRow {
 	createdAt: Date
 	id: string
 	health: number
+}
+
+export interface QuestRow {
+	id: number
+	userId: string
+	questType: QuestType
+	questId: string
+	progress: number
+	progressGoal: number
+	itemReward?: string
+	xpReward?: number
+	moneyReward?: number
+	createdAt: Date
 }
