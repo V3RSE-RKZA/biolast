@@ -49,7 +49,7 @@ export const farm: Location = {
 					xp: 15
 				},
 				rare: {
-					items: [items['glock-17'], items['9mm_fmj']],
+					items: [items.sledgehammer, items['9mm_fmj']],
 					xp: 20
 				},
 				rolls: 2,
