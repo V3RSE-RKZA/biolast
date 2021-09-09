@@ -12,7 +12,7 @@ export const suburbs: Location = {
 		maxLevel: 10
 	},
 	raidLength: 20 * 60,
-	playerLimit: 20,
+	playerLimit: 10,
 	channels: [
 		{
 			type: 'LootChannel',
@@ -32,7 +32,7 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 1,
-				cooldown: 1 * 30
+				cooldown: 1 * 10
 			}
 		},
 		{
@@ -53,7 +53,7 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 30
+				cooldown: 1 * 10
 			},
 			npcSpawns: {
 				npcs: [npcs.walker_weak],
@@ -114,7 +114,7 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 30,
+				cooldown: 1 * 10,
 				requiresKey: items.shed_key,
 				keyIsOptional: false
 			}
