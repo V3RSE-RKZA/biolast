@@ -20,9 +20,9 @@ export const items = medicalObject({
 		name: 'ifak_medkit',
 		icon: '<:U_usable:601366669259964418>',
 		aliases: ['ifak', 'medkit'],
-		sellPrice: 850,
+		sellPrice: 950,
 		healsFor: 25,
-		slotsUsed: 1,
+		slotsUsed: 2,
 		healRate: 30,
 		itemLevel: 3,
 		durability: 2
