@@ -5,6 +5,7 @@ import { inspect } from 'util'
 import { allLocations } from '../resources/raids'
 import { query } from '../utils/db/mysql'
 import { allItems } from '../resources/items'
+import { getPlayerXp } from '../utils/playerUtils'
 
 export const command: TextCommand = {
 	name: 'eval',
@@ -14,7 +15,8 @@ export const command: TextCommand = {
 		const test = {
 			allLocations,
 			allItems,
-			query
+			query,
+			getPlayerXp
 		}
 		let commandInput = message.content.substring(5 + prefix.length)
 

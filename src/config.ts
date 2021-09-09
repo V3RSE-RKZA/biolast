@@ -30,7 +30,7 @@ export const shopDailyBuyLimit = 10
 export const baseBackpackLimit = 15
 
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
-export const adminUsers = ['168958344361541633']
+export const adminUsers = ['168958344361541633', '319897342415470592']
 
 // IDs of guilds where raids can take place. Refer to ./resources/raids.ts for what
 // channels a raid will need in order to work properly.
