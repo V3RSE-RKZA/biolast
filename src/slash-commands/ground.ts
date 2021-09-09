@@ -15,7 +15,7 @@ class GroundCommand extends CustomSlashCommand {
 			name: 'ground',
 			description: 'View the items on the ground in a channel.',
 			longDescription: 'View the items on the ground in a channel. You can drop items on the ground with the `drop` subcommand or pick up items from the ground using the `grab` subcommand.' +
-				' Items on the ground expire after **20 - 25 minutes**.',
+				' Items on the ground expire after **10 - 15 minutes**.',
 			options: [
 				{
 					type: CommandOptionType.SUB_COMMAND,
@@ -220,7 +220,7 @@ class GroundCommand extends CustomSlashCommand {
 
 			const content = `The following items are on the ground${maxPage > 1 ? ` (page ${i}/${maxPage})` : ''}:\n\n` +
 				`${filteredItems.map(itm => `Dropped **${formatTime(Date.now() - itm.row.createdAt.getTime())}** ago - ${getItemDisplay(itm.item, itm.row)}`).join('\n')}\n\n` +
-				'⚠️ Items on the ground will expire after **20 - 25 minutes**.\n' +
+				'⚠️ Items on the ground will expire after **10 - 15 minutes**.\n' +
 				'❔ Pick up an item with `/ground grab <item id>` or drop an item from your inventory onto the ground with `/ground drop <item id>`.'
 
 			pages.push(content)
