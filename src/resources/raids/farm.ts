@@ -37,8 +37,8 @@ export const farm: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'apartments',
-			display: 'Apartments',
+			name: 'cellar',
+			display: 'Cellar',
 			scavange: {
 				common: {
 					items: [items.shed_key, items.wooden_bat],
