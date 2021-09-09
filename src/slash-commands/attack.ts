@@ -9,7 +9,7 @@ import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { createItem, deleteItem, dropItemToGround, getGroundItems, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { deleteNPC, getNPC, lowerHealth as lowerNPCHealth } from '../utils/db/npcs'
-import { addXp, getUserRow, lowerHealth } from '../utils/db/players'
+import { addXp, getUserRow, increaseDeaths, increaseKills, lowerHealth } from '../utils/db/players'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import formatHealth from '../utils/formatHealth'
 import { getEquips, getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
@@ -313,6 +313,7 @@ class AttackCommand extends CustomSlashCommand {
 					}
 				}
 
+				await increaseKills(transaction.query, ctx.user.id, npc.type === 'boss' ? 'boss' : 'npc', 1)
 				await addXp(transaction.query, ctx.user.id, npc.xp)
 				await deleteNPC(transaction.query, ctx.channelID)
 				// stop sending npcs saying that an NPC is in the channel
@@ -531,6 +532,8 @@ class AttackCommand extends CustomSlashCommand {
 					await dropItemToGround(transaction.query, ctx.channelID, victimItem.row.id)
 				}
 
+				await increaseKills(transaction.query, ctx.user.id, 'player', 1)
+				await increaseDeaths(transaction.query, member.id, 1)
 				await addXp(transaction.query, ctx.user.id, xpEarned)
 				await removeUserFromRaid(transaction.query, member.id)
 

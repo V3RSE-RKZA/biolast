@@ -7,7 +7,7 @@ import { formatTime } from '../utils/db/cooldowns'
 import { getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getNPC } from '../utils/db/npcs'
-import { getUserRow } from '../utils/db/players'
+import { getUserRow, increaseDeaths } from '../utils/db/players'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import { getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
@@ -76,6 +76,11 @@ class EvacCommand extends CustomSlashCommand {
 		else if (npc) {
 			const userData = (await getUserRow(preTransaction.query, ctx.user.id, true))!
 			const attackResult = await this.app.npcHandler.attackPlayer(preTransaction.query, ctx.user, userData, userBackpack, npc, ctx.channelID, [])
+
+			if (userData.health - attackResult.damage <= 0) {
+				await increaseDeaths(preTransaction.query, ctx.user.id, 1)
+			}
+
 			await preTransaction.commit()
 
 			await ctx.send({

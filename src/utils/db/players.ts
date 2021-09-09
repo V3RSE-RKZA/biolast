@@ -72,6 +72,40 @@ export async function increaseShopSales (query: Query, userID: string, amount: n
 }
 
 /**
+ * Increases a users kill count
+ * @param query Query to use
+ * @param userID ID of user to increase kills of
+ * @param type The type of kill stat to increase. Can be player kills, npc kills,
+ * or boss npc kills (boss npc kills will increase both npc and boss)
+ * @param amount Amount to increase kills by
+ */
+export async function increaseKills (query: Query, userID: string, type: 'player' | 'npc' | 'boss', amount: number): Promise<void> {
+	switch (type) {
+		case 'player': {
+			await query('UPDATE users SET kills = kills + ? WHERE userId = ?', [amount, userID])
+			break
+		}
+		case 'npc': {
+			await query('UPDATE users SET npcKills = npcKills + ? WHERE userId = ?', [amount, userID])
+			break
+		}
+		case 'boss': {
+			await query('UPDATE users SET bossKills = bossKills + ?, npcKills = npcKills + ? WHERE userId = ?', [amount, amount, userID])
+		}
+	}
+}
+
+/**
+ * Increases a users death count
+ * @param query Query to use
+ * @param userID ID of user to increase deaths of
+ * @param amount Amount to increase deaths by
+ */
+export async function increaseDeaths (query: Query, userID: string, amount: number): Promise<void> {
+	await query('UPDATE users SET deaths = deaths + ? WHERE userId = ?', [amount, userID])
+}
+
+/**
  * Set a users max health
  * @param query Query to use
  * @param userID ID of user to set max health of

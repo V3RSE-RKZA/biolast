@@ -8,7 +8,7 @@ import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { addItemToBackpack, createItem, deleteItem, dropItemToGround, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { getNPC } from '../utils/db/npcs'
-import { addXp, getUserRow } from '../utils/db/players'
+import { addXp, getUserRow, increaseDeaths } from '../utils/db/players'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
@@ -102,6 +102,11 @@ class ScavengeCommand extends CustomSlashCommand {
 
 			if (npc) {
 				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.user, userData, backpackRows, npc, ctx.channelID, [])
+
+				if (userData.health - attackResult.damage <= 0) {
+					await increaseDeaths(transaction.query, ctx.user.id, 1)
+				}
+
 				await transaction.commit()
 
 				await ctx.send({

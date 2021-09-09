@@ -21,6 +21,15 @@ export interface UserRow {
 	 * How many items this user has bought from the shop (resets every day)
 	 */
 	shopSales: number
+
+	/**
+	 * Number of player kills this user has
+	 */
+	kills: number
+
+	npcKills: number
+	bossKills: number
+	deaths: number
 }
 
 export interface Cooldown {

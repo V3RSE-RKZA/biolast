@@ -1,0 +1,4 @@
+ALTER TABLE users DROP COLUMN kills;
+ALTER TABLE users DROP COLUMN deaths;
+ALTER TABLE users DROP COLUMN npcKills;
+ALTER TABLE users DROP COLUMN bossKills;
