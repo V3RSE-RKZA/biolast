@@ -66,7 +66,7 @@ export const command: TextCommand = {
 				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) drops this as a uncommon 25% drop`)
 			}
 			else if (npc.drops.rare.find(i => i.name === item.name)) {
-				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) drops this as a uncommon 15% drop`)
+				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) drops this as a rare 15% drop`)
 			}
 		}
 
