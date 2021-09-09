@@ -41,3 +41,4 @@
 - [ ] when user votes for the bot on a bot list, they should receive a random item (maybe like 10% weapon, 30% ammo, 60% other stuff)
 - [ ] 2 attachment slots that can be equipped (requires ranged weapon to already be equipped)
 - [ ] translations??? this might be confusing when other players see them using command in raid though... or maybe that would be cooler who knows
+- [ ] for late game, add a max level user can achieve and some sort of prestiging system that resets them (there should be some kind of reward involved)
