@@ -53,7 +53,9 @@ export const farm: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 30
+				cooldown: 1 * 30,
+				requiresKey: items.shed_key,
+				keyIsOptional: false
 			},
 			npcSpawns: {
 				npcs: [npcs.raider],
@@ -115,7 +117,8 @@ export const farm: Location = {
 				},
 				rolls: 2,
 				cooldown: 1 * 30,
-				requiresKey: items.shed_key
+				requiresKey: items.shed_key,
+				keyIsOptional: false
 			}
 		},
 		{
@@ -132,6 +135,30 @@ export const farm: Location = {
 			type: 'EvacChannel',
 			name: 'highway-evac',
 			display: 'Highway',
+			scavange: {
+				common: {
+					items: [items.wooden_armor, items.wooden_helmet],
+					xp: 5
+				},
+				uncommon: {
+					items: [items.knife, items.ifak_medkit],
+					xp: 10
+				},
+				rare: {
+					items: [items.knife, items.ifak_medkit, items.wooden_armor],
+					xp: 20
+				},
+				rolls: 2,
+				cooldown: 1 * 30,
+				requiresKey: items.shed_key,
+				keyIsOptional: true,
+
+				// this is the special loot user will receive if they have a key:
+				special: {
+					items: [items.apple],
+					xp: 12
+				}
+			},
 			evac: {
 				time: 30
 			}

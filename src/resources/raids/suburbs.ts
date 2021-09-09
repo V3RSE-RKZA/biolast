@@ -115,7 +115,8 @@ export const suburbs: Location = {
 				},
 				rolls: 2,
 				cooldown: 1 * 30,
-				requiresKey: items.shed_key
+				requiresKey: items.shed_key,
+				keyIsOptional: false
 			}
 		},
 		{

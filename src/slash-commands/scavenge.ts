@@ -2,6 +2,8 @@ import { SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
 import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
+import { Item } from '../types/Items'
+import { RaidChannel } from '../types/Raids'
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { addItemToBackpack, createItem, deleteItem, dropItemToGround, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
@@ -86,7 +88,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				})
 				return
 			}
-			else if (keyRequired && !hasRequiredKey) {
+			else if (keyRequired && !raidChannel.scavange.keyIsOptional && !hasRequiredKey) {
 				await transaction.commit()
 
 				await ctx.send({
@@ -153,7 +155,9 @@ class ScavengeCommand extends CustomSlashCommand {
 			let xpEarned = 0
 
 			for (let i = 0; i < raidChannel.scavange.rolls; i++) {
-				const randomLoot = getRandomItem(raidChannel)
+				const randomLoot = hasRequiredKey && raidChannel.scavange.keyIsOptional ?
+					this.getRandomSpecialItem(raidChannel) :
+					getRandomItem(raidChannel)
 
 				if (randomLoot) {
 					const itemRow = await createItem(transaction.query, randomLoot.item.name, randomLoot.item.durability)
@@ -241,6 +245,20 @@ class ScavengeCommand extends CustomSlashCommand {
 			logger.error(err)
 
 			await transaction.commit()
+		}
+	}
+
+	getRandomSpecialItem (raidChannel: RaidChannel): { item: Item, xp: number } {
+		if (!raidChannel.scavange) {
+			throw new Error(`Raid channel (${raidChannel.name}) cannot be scavenged`)
+		}
+		else if (!raidChannel.scavange.requiresKey || !raidChannel.scavange.keyIsOptional) {
+			throw new Error(`Raid channel (${raidChannel.name}) does not have special loot`)
+		}
+
+		return {
+			item: raidChannel.scavange.special.items[Math.floor(Math.random() * raidChannel.scavange.special.items.length)],
+			xp: raidChannel.scavange.special.xp
 		}
 	}
 }
