@@ -71,7 +71,7 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.ifak_medkit, items.metal_bat],
+					items: [items.bandage, items.metal_bat],
 					xp: 15
 				},
 				rare: {
@@ -79,7 +79,7 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 30
+				cooldown: 1 * 10
 			},
 			npcSpawns: {
 				npcs: [npcs.raider],
@@ -87,6 +87,7 @@ export const suburbs: Location = {
 				cooldownMax: 5 * 60
 			}
 		},
+
 		{
 			type: 'EvacChannel',
 			name: 'woods-evac',
@@ -111,6 +112,52 @@ export const suburbs: Location = {
 				},
 				rare: {
 					items: [items.knife, items.ifak_medkit, items.wooden_armor],
+					xp: 20
+				},
+				rolls: 2,
+				cooldown: 1 * 10,
+				requiresKey: items.shed_key,
+				keyIsOptional: false
+			}
+		},
+		{
+			type: 'LootChannel',
+			name: 'park',
+			display: 'Park',
+			scavange: {
+				common: {
+					items: [items.wooden_bat],
+					xp: 5
+				},
+				uncommon: {
+					items: [items.metal_bat, items.bandage],
+					xp: 10
+				},
+				rare: {
+					items: [items.wooden_helmet, items.cloth_backpack, items.metal_bat],
+					xp: 20
+				},
+				rolls: 2,
+				cooldown: 1 * 10,
+				requiresKey: items.shed_key,
+				keyIsOptional: false
+			}
+		},
+		{
+			type: 'LootChannel',
+			name: 'cedar-lake',
+			display: 'Cedar Lake',
+			scavange: {
+				common: {
+					items: [items.makeshift_rifle, items.makeshift_rifle_ammo],
+					xp: 5
+				},
+				uncommon: {
+					items: [items.bandage, items['9mm_fmj']],
+					xp: 10
+				},
+				rare: {
+					items: [items['glock-17'], items.wooden_helmet, items.wooden_armor],
 					xp: 20
 				},
 				rolls: 2,
