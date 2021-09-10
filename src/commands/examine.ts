@@ -4,6 +4,7 @@ import { allLocations } from '../resources/raids'
 import { getItem } from '../utils/argParsers'
 import { allNPCs } from '../resources/npcs'
 import { getItemDisplay } from '../utils/itemUtils'
+import { quests } from '../resources/quests'
 
 // yes this command is ugly its only for admins >:(
 
@@ -22,6 +23,7 @@ export const command: TextCommand = {
 
 		const obtainedFromNpcs = []
 		const obtainedFromChannels = []
+		const obtainedFromQuests = []
 
 		for (const loc of allLocations) {
 			for (const chan of loc.channels) {
@@ -70,10 +72,17 @@ export const command: TextCommand = {
 			}
 		}
 
+		for (const quest of quests) {
+			if (quest.rewards.item && quest.rewards.item.name === item.name) {
+				obtainedFromQuests.push(`\`${quest.id}\` (quest type: ${quest.questType}) gives this as a reward. Quest eligible for players level **${quest.minLevel}** - **${quest.maxLevel}**`)
+			}
+		}
+
 		await reply(message, {
 			content: `${getItemDisplay(item)} can be obtained from:\n\n` +
 				`**NPCS**:\n${obtainedFromNpcs.join('\n') || '❌ none'}\n\n` +
-				`**Channels**:\n${obtainedFromChannels.join('\n') || '❌ none'}`
+				`**Channels**:\n${obtainedFromChannels.join('\n') || '❌ none'}\n\n` +
+				`**Quests**:\n${obtainedFromQuests.join('\n') || '❌ none'}`
 		})
 	}
 }
