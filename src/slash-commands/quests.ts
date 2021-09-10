@@ -1,4 +1,4 @@
-import { SlashCreator, CommandContext, Message, ComponentButton, ComponentType, ButtonStyle } from 'slash-create'
+import { SlashCreator, CommandContext, Message, ComponentButton, ComponentType, ButtonStyle, InteractionResponseFlags } from 'slash-create'
 import App from '../app'
 import { Quest, quests } from '../resources/quests'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -180,7 +180,8 @@ class QuestsCommand extends CustomSlashCommand {
 					})
 
 					await ctx.send({
-						content: `Quest **#${completedQuestID}** complete! You received ${this.getRewardsString(completedQuest, itemRewardRow)}.`
+						content: `Quest **#${completedQuestID}** complete! You received ${this.getRewardsString(completedQuest, itemRewardRow)}.`,
+						flags: InteractionResponseFlags.EPHEMERAL
 					})
 				}
 				else {
