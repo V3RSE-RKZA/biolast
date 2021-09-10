@@ -32,7 +32,15 @@ export const farm: Location = {
 					xp: 20
 				},
 				rolls: 1,
-				cooldown: 1 * 30
+				cooldown: 1 * 10,
+				requiresKey: items.truck_key,
+				keyIsOptional: true,
+
+				// this is the special loot user will receive if they have a key:
+				special: {
+					items: [items.apple],
+					xp: 12
+				}
 			}
 		},
 		{
@@ -53,7 +61,7 @@ export const farm: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 30,
+				cooldown: 1 * 10,
 				requiresKey: items.shed_key,
 				keyIsOptional: false
 			},
@@ -81,7 +89,7 @@ export const farm: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 30
+				cooldown: 1 * 10
 			},
 			npcSpawns: {
 				npcs: [npcs.bloated_walker],
@@ -94,14 +102,13 @@ export const farm: Location = {
 			name: 'corn-maze-evac',
 			display: 'Corn Maze',
 			evac: {
-				time: 15,
-				requiresKey: items.shed_key
+				time: 30
 			}
 		},
 		{
 			type: 'LootChannel',
-			name: 'tool-shed',
-			display: 'Tool Shed',
+			name: 'warehouse',
+			display: 'Warehouse',
 			scavange: {
 				common: {
 					items: [items.wooden_armor, items.wooden_helmet],
@@ -116,8 +123,8 @@ export const farm: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 30,
-				requiresKey: items.shed_key,
+				cooldown: 1 * 10,
+				requiresKey: items.warehouse_key,
 				keyIsOptional: false
 			}
 		},
@@ -149,15 +156,9 @@ export const farm: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 30,
-				requiresKey: items.shed_key,
-				keyIsOptional: true,
-
-				// this is the special loot user will receive if they have a key:
-				special: {
-					items: [items.apple],
-					xp: 12
-				}
+				cooldown: 1 * 10,
+				requiresKey: items.truck_key,
+				keyIsOptional: false
 			},
 			evac: {
 				time: 30
