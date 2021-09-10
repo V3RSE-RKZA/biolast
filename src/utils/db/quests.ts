@@ -20,7 +20,7 @@ export async function getUserQuests (query: Query, userID: string, forUpdate = f
  * @param amount Amount to increase progress by
  */
 export async function increaseProgress (query: Query, questID: number, amount: number): Promise<void> {
-	await query('UPDATE quests SET progress = progress + ? WHERE questId = ?', [amount, questID])
+	await query('UPDATE quests SET progress = progress + ? WHERE id = ?', [amount, questID])
 }
 
 /**

@@ -61,12 +61,13 @@ export type Quest = BasicQuest | KeyScavengeQuest
 export const quests: Quest[] = [
 	{
 		id: 'low_lvl_kill_players',
-		questType: 'Player Kills',
+		questType: 'NPC Kills',
 		minLevel: 1,
 		maxLevel: 20,
 		progressGoal: 2,
 		rewards: {
-			item: items.bandage
+			item: items.bandage,
+			xp: 25
 		}
 	}
 ]
