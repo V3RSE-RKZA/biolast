@@ -1,6 +1,6 @@
 import { Guild, Member, MemberPartial } from 'eris'
 import App from '../app'
-import { getUserBackpack, removeItemFromBackpack } from '../utils/db/items'
+import { deleteItem, getUserBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import { getItems } from '../utils/itemUtils'
@@ -38,7 +38,7 @@ export async function run (this: App, guild: Guild, member: Member | MemberParti
 				const userBackpackData = getItems(userBackpack)
 
 				for (const userItem of userBackpackData.items) {
-					await removeItemFromBackpack(transaction.query, userItem.row.id)
+					await deleteItem(transaction.query, userItem.row.id)
 				}
 
 				await removeUserFromRaid(transaction.query, member.id)
