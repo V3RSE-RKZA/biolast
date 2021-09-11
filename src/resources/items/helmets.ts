@@ -46,5 +46,16 @@ export const items = helmetObject({
 		level: 2,
 		slotsUsed: 2,
 		itemLevel: 3
+	},
+	sauce_pan: {
+		type: 'Helmet',
+		name: 'sauce_pan',
+		icon: '<:U_helmet:874671013181415434>',
+		aliases: ['helmet'],
+		sellPrice: 100,
+		durability: 6,
+		level: 1,
+		slotsUsed: 2,
+		itemLevel: 1
 	}
 })
