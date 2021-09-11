@@ -63,9 +63,9 @@ export const items = ammoObject({
 		aliases: ['shell', 'makeshift'],
 		description: 'A handmade shotgun shell filled with cheap gunpowder and pellets.',
 		damage: 13,
-		penetration: 1.1,
+		penetration: 1.5,
 		ammoFor: [ranged.makeshift_shotgun],
-		sellPrice: 500,
+		sellPrice: 450,
 		slotsUsed: 1,
 		itemLevel: 3
 	},
@@ -76,10 +76,23 @@ export const items = ammoObject({
 		aliases: ['.303'],
 		description: 'Full metal jacket ammo for a lee-enfield.',
 		damage: 45,
-		penetration: 4.5,
+		penetration: 2.5,
 		ammoFor: [ranged['lee-enfield']],
-		sellPrice: 1100,
+		sellPrice: 1000,
 		slotsUsed: 1,
 		itemLevel: 6
+	},
+	'20_gauge_shell': {
+		type: 'Ammunition',
+		name: '20_gauge_shell',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['makeshift_ammo', 'pistol_ammo', 'pistol_bullet'],
+		description: 'The 20-gauge shell, also known as 20-bore, is a shell that is smaller in caliber than a 12-gauge.',
+		damage: 50,
+		penetration: 3,
+		ammoFor: [ranged.bobwhite_g2],
+		sellPrice: 1350,
+		slotsUsed: 1,
+		itemLevel: 8
 	}
 })
