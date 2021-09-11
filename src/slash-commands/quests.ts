@@ -5,13 +5,13 @@ import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { ItemRow } from '../types/mysql'
 import { formatTime } from '../utils/db/cooldowns'
-import { addItemToStash, createItem } from '../utils/db/items'
+import { addItemToStash, createItem, getUserStash } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { addMoney, addXp, getUserRow } from '../utils/db/players'
 import { createQuest, deleteQuest, getUserQuests } from '../utils/db/quests'
 import { getUsersRaid } from '../utils/db/raids'
 import formatNumber from '../utils/formatNumber'
-import { getItemDisplay } from '../utils/itemUtils'
+import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 
 class QuestsCommand extends CustomSlashCommand {
@@ -117,21 +117,21 @@ class QuestsCommand extends CustomSlashCommand {
 					const newQuestButtons: ComponentButton[] = []
 					let itemRewardRow
 
-					// remove invalid and completed quests
-					for (let i = completedUserQuestRows.length - 1; i >= 0; i--) {
-						const quest = quests.find(q => q.id === completedUserQuestRows[i].questId)
-
-						if (!quest || completedUserData.level > quest.maxLevel || completedUserQuestRows[i].id === completedQuestID) {
-							await deleteQuest(completedTransaction.query, completedUserQuestRows[i].id)
-
-							completedUserQuestRows.splice(i, 1)
-						}
-						else {
-							validUserQuests.push(quest)
-						}
-					}
-
 					if (completedQuest.rewards.item) {
+						const stashRows = await getUserStash(completedTransaction.query, ctx.user.id, true)
+						const userStashData = getItems(stashRows)
+
+						if (userStashData.slotsUsed + completedQuest.rewards.item.slotsUsed > userData.stashSlots) {
+							await completedTransaction.commit()
+
+							await ctx.send({
+								content: `❌ You don't have enough space in your stash to complete that quest. You need **${completedQuest.rewards.item.slotsUsed}** open slots in your stash. Sell items to clear up some space.`,
+								flags: InteractionResponseFlags.EPHEMERAL
+							})
+							return
+						}
+
+						// user has enough space in stash for reward
 						const itemRow = await createItem(completedTransaction.query, completedQuest.rewards.item.name, completedQuest.rewards.item.durability)
 						await addItemToStash(completedTransaction.query, ctx.user.id, itemRow.id)
 
@@ -144,6 +144,20 @@ class QuestsCommand extends CustomSlashCommand {
 
 					if (completedQuest.rewards.money) {
 						await addMoney(completedTransaction.query, ctx.user.id, completedQuest.rewards.money)
+					}
+
+					// remove invalid and completed quests
+					for (let i = completedUserQuestRows.length - 1; i >= 0; i--) {
+						const quest = quests.find(q => q.id === completedUserQuestRows[i].questId)
+
+						if (!quest || completedUserData.level > quest.maxLevel || completedUserQuestRows[i].id === completedQuestID) {
+							await deleteQuest(completedTransaction.query, completedUserQuestRows[i].id)
+
+							completedUserQuestRows.splice(i, 1)
+						}
+						else {
+							validUserQuests.push(quest)
+						}
 					}
 
 					questsEmbed = new Embed()
