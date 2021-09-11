@@ -128,5 +128,19 @@ export const items = meleeObject({
 		damage: 20,
 		penetration: 0.8,
 		itemLevel: 3
+	},
+	chainsaw: {
+		type: 'Melee Weapon',
+		name: 'chainsaw',
+		icon: '<:U_melee:601366669251575857>',
+		aliases: ['saw', 'chain'],
+		sellPrice: 1050,
+		durability: 4,
+		slotsUsed: 3,
+		fireRate: 30,
+		accuracy: 10,
+		damage: 30,
+		penetration: 1.45,
+		itemLevel: 7
 	}
 })
