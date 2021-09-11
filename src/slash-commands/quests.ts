@@ -4,6 +4,7 @@ import { Quest, quests } from '../resources/quests'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { ItemRow } from '../types/mysql'
+import { formatTime } from '../utils/db/cooldowns'
 import { addItemToStash, createItem } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { addMoney, addXp, getUserRow } from '../utils/db/players'
@@ -77,7 +78,8 @@ class QuestsCommand extends CustomSlashCommand {
 		for (let i = 0; i < userQuestRows.length; i++) {
 			questsEmbed.addField(`__Quest #${userQuestRows[i].id}__`,
 				`**Description**: ${this.getQuestDescription(userQuests[i])}\n**Progress**: ${userQuestRows[i].progress} / ${userQuestRows[i].progressGoal}\n` +
-				`**Reward**: ${this.getRewardsString(userQuests[i])}`
+				`**Reward**: ${this.getRewardsString(userQuests[i])}\n` +
+				`**Started**: ${formatTime(Date.now() - userQuestRows[i].createdAt.getTime())} ago`
 			)
 
 			questButtons.push(this.getQuestButton(userQuestRows[i].id, isInRaid ? true : userQuestRows[i].progress < userQuestRows[i].progressGoal))
@@ -164,7 +166,8 @@ class QuestsCommand extends CustomSlashCommand {
 					for (let i = 0; i < completedUserQuestRows.length; i++) {
 						questsEmbed.addField(`__Quest #${completedUserQuestRows[i].id}__`,
 							`**Description**: ${this.getQuestDescription(validUserQuests[i])}\n**Progress**: ${completedUserQuestRows[i].progress} / ${completedUserQuestRows[i].progressGoal}\n` +
-							`**Reward**: ${this.getRewardsString(validUserQuests[i])}`
+							`**Reward**: ${this.getRewardsString(validUserQuests[i])}\n` +
+							`**Started**: ${formatTime(Date.now() - userQuestRows[i].createdAt.getTime())} ago`
 						)
 
 						newQuestButtons.push(this.getQuestButton(completedUserQuestRows[i].id, completedUserQuestRows[i].progress < completedUserQuestRows[i].progressGoal))
