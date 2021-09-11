@@ -8,7 +8,7 @@ export const items = rangedObject({
 		name: 'aks-74u',
 		icon: '<:U_rifle:869647344344387624>',
 		aliases: ['aks', 'ak-74'],
-		sellPrice: 5000,
+		sellPrice: 6000,
 		durability: 12,
 		slotsUsed: 3,
 		fireRate: 40,
@@ -59,11 +59,11 @@ export const items = rangedObject({
 		icon: '<:U_weapon:601366669272678411>',
 		aliases: ['shotgun', 'shotty'],
 		description: 'A handmade shotgun that looks like it could break apart at any moment.',
-		sellPrice: 750,
-		durability: 6,
+		sellPrice: 850,
+		durability: 3,
 		slotsUsed: 2,
-		fireRate: 80,
-		accuracy: 13,
+		fireRate: 60,
+		accuracy: 20,
 		itemLevel: 3
 	},
 	'lee-enfield': {
@@ -77,6 +77,19 @@ export const items = rangedObject({
 		slotsUsed: 3,
 		fireRate: 120,
 		accuracy: 30,
+		itemLevel: 6
+	},
+	'bobwhite_g2': {
+		type: 'Ranged Weapon',
+		name: 'bobwhite_g2',
+		icon: '<:U_weapon:601366669272678411>',
+		aliases: ['coach', 'shotty', 'supreme'],
+		description: 'A double barrel shotgun manufactured by E.R. Amantino in Veranópolis, Brazil.',
+		sellPrice: 7500,
+		durability: 8,
+		slotsUsed: 3,
+		fireRate: 80,
+		accuracy: 40,
 		itemLevel: 6
 	}
 })
