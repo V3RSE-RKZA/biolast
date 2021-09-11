@@ -68,7 +68,7 @@ export function getRandomItem (raidChannel: RaidChannel): { item: Item, xp: numb
  * chest - 60%
  *
  * @param weaponAccuracy The weapons accuracy
- * @param choice The body part user is trying to taget
+ * @param choice The body part user is trying to target
  * @returns a random body part and whether or not the weapons accuracy influenced the result
  */
 export function getBodyPartHit (weaponAccuracy: number, choice?: BodyPart): { result: BodyPart, accurate: boolean } {

@@ -175,6 +175,7 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy, partChoice)
+			const missedPartChoice = partChoice && (partChoice !== bodyPartHit.result || !bodyPartHit.accurate)
 			const messages = []
 			const removedItems = []
 			let finalDamage
@@ -198,12 +199,22 @@ class AttackCommand extends CustomSlashCommand {
 				await deleteItem(transaction.query, userAmmoUsed.row.id)
 				removedItems.push(userAmmoUsed.row.id)
 
-				messages.push(`You shot the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
+				if (missedPartChoice) {
+					messages.push(`⛔ You try to shoot the \`${npc.type}\` in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}) **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
+				}
+				else {
+					messages.push(`You shot the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
+				}
 			}
 			else {
 				finalDamage = getAttackDamage(userEquips.weapon.item.damage, userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet)
 
-				messages.push(`You hit the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
+				if (missedPartChoice) {
+					messages.push(`⛔ You try to hit the \`${npc.type}\` in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
+				}
+				else {
+					messages.push(`You hit the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
+				}
 			}
 
 			// add attack cooldown based on weapon attack rate
@@ -213,32 +224,30 @@ class AttackCommand extends CustomSlashCommand {
 			if (bodyPartHit.accurate) {
 				messages.push(`You hit the targeted limb (**${bodyPartHit.result}**) successfully!`)
 			}
-			else if (partChoice && partChoice !== bodyPartHit.result) {
-				// user specified a body part but their weapon accuracy caused them to miss
-				messages.push(`You missed the targeted limb (**${partChoice}**).`)
-			}
 
 			// remove weapon annd ammo
 			if (userEquips.weapon.row.durability - 1 <= 0) {
-				messages.push(`Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)} broke from this attack.`)
+				messages.push(`Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
 
 				await deleteItem(transaction.query, userEquips.weapon.row.id)
 				removedItems.push(userEquips.weapon.row.id)
 			}
 			else {
+				messages.push(`Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row, { showDurability: false, showEquipped: false })} now has **${userEquips.weapon.row.durability - 1}** durability.`)
+
 				await lowerItemDurability(transaction.query, userEquips.weapon.row.id, 1)
 			}
 
-			if (bodyPartHit.result === 'head' && npc.helmet) {
+			if (!missedPartChoice && bodyPartHit.result === 'head' && npc.helmet) {
 				messages.push(`The \`${npc.type}\`'s helmet (${getItemDisplay(npc.helmet)}) reduced the damage by **${finalDamage.reduced}**.`)
 			}
-			else if (bodyPartHit.result === 'chest' && npc.armor) {
+			else if (!missedPartChoice && bodyPartHit.result === 'chest' && npc.armor) {
 				messages.push(`The \`${npc.type}\`'s armor (${getItemDisplay(npc.armor)}) reduced the damage by **${finalDamage.reduced}**.`)
 			}
 
 			messages.push(`Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
 
-			if (npcRow.health - finalDamage.total <= 0) {
+			if (!missedPartChoice && npcRow.health - finalDamage.total <= 0) {
 				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'NPC Kills' || q.questType === 'Any Kills' || q.questType === 'Boss Kills')
 				const droppedItems = []
 
@@ -350,8 +359,10 @@ class AttackCommand extends CustomSlashCommand {
 				})
 			}
 			else {
-				await lowerNPCHealth(transaction.query, ctx.channelID, finalDamage.total)
-				messages.push(`The \`${npc.type}\` is left with ${formatHealth(npcRow.health - finalDamage.total, npc.health)} **${npcRow.health - finalDamage.total}** health.`)
+				if (!missedPartChoice) {
+					await lowerNPCHealth(transaction.query, ctx.channelID, finalDamage.total)
+					messages.push(`The \`${npc.type}\` is left with ${formatHealth(npcRow.health - finalDamage.total, npc.health)} **${npcRow.health - finalDamage.total}** health.`)
+				}
 
 				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.user, userData, userBackpack, npc, ctx.channelID, removedItems)
 
@@ -455,6 +466,7 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy, partChoice)
+			const missedPartChoice = partChoice && (partChoice !== bodyPartHit.result || !bodyPartHit.accurate)
 			const messages = []
 			let finalDamage
 			let ammoUsed
@@ -480,13 +492,23 @@ class AttackCommand extends CustomSlashCommand {
 				finalDamage = getAttackDamage(ammoItem.damage, ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item)
 				await deleteItem(transaction.query, userAmmoUsed.row.id)
 
-				messages.push(`You shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
+				if (missedPartChoice) {
+					messages.push(`⛔ You try to shoot <@${member.id}> in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}) **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
+				}
+				else {
+					messages.push(`You shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
+				}
 			}
 			else {
 				attackPenetration = userEquips.weapon.item.penetration
 				finalDamage = getAttackDamage(userEquips.weapon.item.damage, userEquips.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item)
 
-				messages.push(`You hit <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
+				if (missedPartChoice) {
+					messages.push(`⛔ You try to hit <@${member.id}> in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
+				}
+				else {
+					messages.push(`You hit <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
+				}
 			}
 
 			// add attack cooldown based on weapon attack rate
@@ -496,22 +518,20 @@ class AttackCommand extends CustomSlashCommand {
 			if (bodyPartHit.accurate) {
 				messages.push(`You hit the targeted limb (**${bodyPartHit.result}**) successfully!`)
 			}
-			else if (partChoice && partChoice !== bodyPartHit.result) {
-				// user specified a body part but their weapon accuracy caused them to miss
-				messages.push(`You missed the targeted limb (**${partChoice}**).`)
-			}
 
 			// remove weapon annd ammo
 			if (userEquips.weapon.row.durability - 1 <= 0) {
-				messages.push(`Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)} broke from this attack.`)
+				messages.push(`Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
 
 				await deleteItem(transaction.query, userEquips.weapon.row.id)
 			}
 			else {
+				messages.push(`Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row, { showDurability: false, showEquipped: false })} now has **${userEquips.weapon.row.durability - 1}** durability.`)
+
 				await lowerItemDurability(transaction.query, userEquips.weapon.row.id, 1)
 			}
 
-			if (bodyPartHit.result === 'head' && victimEquips.helmet) {
+			if (!missedPartChoice && bodyPartHit.result === 'head' && victimEquips.helmet) {
 				messages.push(`**${member.user.username}#${member.user.discriminator}**'s helmet (${getItemDisplay(victimEquips.helmet.item)}) reduced the damage by **${finalDamage.reduced}**.`)
 
 				// only lower helmet durability if attackers weapon penetrates at least 50% of
@@ -528,7 +548,7 @@ class AttackCommand extends CustomSlashCommand {
 					}
 				}
 			}
-			else if (bodyPartHit.result === 'chest' && victimEquips.armor) {
+			else if (!missedPartChoice && bodyPartHit.result === 'chest' && victimEquips.armor) {
 				messages.push(`**${member.user.username}#${member.user.discriminator}**'s armor (${getItemDisplay(victimEquips.armor.item)}) reduced the damage by **${finalDamage.reduced}**.`)
 
 				// only lower armor durability if attackers weapon penetrates at least 50% of
@@ -548,7 +568,7 @@ class AttackCommand extends CustomSlashCommand {
 
 			messages.push(`Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
 
-			if (victimData.health - finalDamage.total <= 0) {
+			if (!missedPartChoice && victimData.health - finalDamage.total <= 0) {
 				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'Player Kills' || q.questType === 'Any Kills')
 				let xpEarned = 15
 
@@ -574,7 +594,7 @@ class AttackCommand extends CustomSlashCommand {
 
 				messages.push(`☠️ **${member.user.username}#${member.user.discriminator}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill.`)
 			}
-			else {
+			else if (!missedPartChoice) {
 				await lowerHealth(transaction.query, member.id, finalDamage.total)
 
 				messages.push(`**${member.user.username}#${member.user.discriminator}** is left with ${formatHealth(victimData.health - finalDamage.total, victimData.maxHealth)} **${victimData.health - finalDamage.total}** health.`)
@@ -583,8 +603,10 @@ class AttackCommand extends CustomSlashCommand {
 			// commit changes
 			await transaction.commit()
 
-			// send message to victim if they were killed
-			if (victimData.health - finalDamage.total <= 0) {
+			// send message to victim if they were killed.
+			// this has to go after the transaction.commit() because if discord api is laggy,
+			// it will cause the transaction to timeout (since the transaction would have to wait on discord to receive our message).
+			if (!missedPartChoice && victimData.health - finalDamage.total <= 0) {
 				try {
 					const erisMember = await this.app.fetchMember(guild, member.id)
 					this.app.clearRaidTimer(member.id)
