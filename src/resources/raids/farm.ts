@@ -81,7 +81,7 @@ export const farm: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.pitchfork, items.shed_key],
+					items: [items.pitchfork, items.warehouse_key],
 					xp: 10
 				},
 				rare: {
@@ -111,15 +111,15 @@ export const farm: Location = {
 			display: 'Warehouse',
 			scavange: {
 				common: {
-					items: [items.wooden_armor, items.wooden_helmet],
+					items: [items.apple, items.wooden_helmet],
 					xp: 5
 				},
 				uncommon: {
-					items: [items.knife, items.ifak_medkit],
+					items: [items.wooden_armor, items.knife],
 					xp: 10
 				},
 				rare: {
-					items: [items.knife, items.ifak_medkit, items.wooden_armor],
+					items: [items.chainsaw, items.ifak_medkit, items.truck_key],
 					xp: 20
 				},
 				rolls: 2,
@@ -142,26 +142,8 @@ export const farm: Location = {
 			type: 'EvacChannel',
 			name: 'highway-evac',
 			display: 'Highway',
-			scavange: {
-				common: {
-					items: [items.wooden_armor, items.wooden_helmet],
-					xp: 5
-				},
-				uncommon: {
-					items: [items.knife, items.ifak_medkit],
-					xp: 10
-				},
-				rare: {
-					items: [items.knife, items.ifak_medkit, items.wooden_armor],
-					xp: 20
-				},
-				rolls: 2,
-				cooldown: 1 * 10,
-				requiresKey: items.truck_key,
-				keyIsOptional: false
-			},
 			evac: {
-				time: 30
+				time: 15
 			}
 		}
 	]
