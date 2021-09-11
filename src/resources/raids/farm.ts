@@ -133,7 +133,7 @@ export const farm: Location = {
 			name: 'farmhouse',
 			display: 'Farmhouse',
 			npcSpawns: {
-				npcs: [npcs.cain],
+				npcs: [npcs.dave],
 				cooldownMin: 30 * 60,
 				cooldownMax: 60 * 60
 			}
