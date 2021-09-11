@@ -186,6 +186,29 @@ export const npcs = npcsObject({
 			'~*You hear a deep growl close by*~'
 		],
 		xp: 50
+	},
+	dave: {
+		type: 'boss',
+		subtype: 'ranged',
+		id: 'dave',
+		display: 'Dave, The Redneck',
+		icon: '',
+		health: 175,
+		damage: 20,
+		drops: {
+			common: [items.pitchfork],
+			uncommon: [items.sauce_pan, items.ifak_medkit],
+			rare: [items.sledgehammer, items.bone_armor],
+			rolls: 1
+		},
+		weapon: items['glock-17'],
+		ammo: items['9mm_fmj'],
+		quotes: [
+			'~*You hear the giggles and crackles of a man...*~'
+		],
+		armor: items.cloth_armor,
+		helmet: items.sauce_pan,
+		xp: 75
 	}
 })
 
