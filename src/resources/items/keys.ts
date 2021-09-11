@@ -29,5 +29,14 @@ export const items = keysObject({
 		icon: '<:U_key:870786870852874260>',
 		slotsUsed: 2,
 		itemLevel: 3
+	},
+	gunsafe_code: {
+		type: 'Key',
+		name: 'gunsafe_code',
+		durability: 1,
+		aliases: ['gunsafe'],
+		icon: '<:U_key:870786870852874260>',
+		slotsUsed: 1,
+		itemLevel: 8
 	}
 })
