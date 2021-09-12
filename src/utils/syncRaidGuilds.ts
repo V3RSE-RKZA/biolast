@@ -225,7 +225,7 @@ export async function syncRaidGuilds (app: App): Promise<void> {
 				}
 
 				const scavVoiceScavengerPerms = scavVoiceChannel.permissionOverwrites.get(scavRole.id)
-				const scavVoiceScavengerAllowedPerms = Constants.Permissions.viewChannel + Constants.Permissions.voiceConnect + Constants.Permissions.voiceSpeak
+				const scavVoiceScavengerAllowedPerms = Constants.Permissions.viewChannel + Constants.Permissions.voiceConnect + Constants.Permissions.voiceSpeak + Constants.Permissions.voiceUseVAD
 				if (scavVoiceScavengerPerms?.allow !== scavVoiceScavengerAllowedPerms || scavVoiceScavengerPerms?.deny !== 0n) {
 					await scavVoiceChannel.editPermission(scavRole.id, scavVoiceScavengerAllowedPerms, 0n, 0, 'raid guild sync')
 					logger.debug(`[RAID GUILD SYNC] Modified channel (${scavVoiceChannel.name} ID: ${scavVoiceChannel.id}) permissions for Scavenger role: ${scavRole.id} (allow: ${scavVoiceScavengerAllowedPerms} deny: 0n)`)
