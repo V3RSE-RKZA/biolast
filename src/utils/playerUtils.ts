@@ -3,7 +3,7 @@
  * @param level The level to get XP required for
  * @returns The XP required for specified level
  */
-const LEVEL_FORMULA = (level: number) => Math.floor(100 * (level ** 1.7))
+const LEVEL_FORMULA = (level: number) => Math.floor(200 * (level ** 1.7))
 
 /**
  *
