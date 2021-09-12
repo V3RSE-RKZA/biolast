@@ -192,13 +192,13 @@ export const npcs = npcsObject({
 		subtype: 'ranged',
 		id: 'dave',
 		display: 'Dave, The Redneck',
-		icon: '',
-		health: 175,
+		icon: '👨‍🌾',
+		health: 185,
 		damage: 20,
 		drops: {
 			common: [items.pitchfork],
 			uncommon: [items.sauce_pan, items.ifak_medkit],
-			rare: [items.sledgehammer, items.bone_armor],
+			rare: [items.sledgehammer, items.gunsafe_code],
 			rolls: 1
 		},
 		weapon: items['glock-17'],
