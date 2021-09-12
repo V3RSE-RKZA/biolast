@@ -12,7 +12,7 @@ export const items = meleeObject({
 		durability: 2,
 		slotsUsed: 1,
 		fireRate: 8,
-		accuracy: 15,
+		accuracy: 65,
 		damage: 8,
 		penetration: 1.0,
 		itemLevel: 2
@@ -26,7 +26,7 @@ export const items = meleeObject({
 		durability: 3,
 		slotsUsed: 1,
 		fireRate: 15,
-		accuracy: 20,
+		accuracy: 75,
 		damage: 13,
 		penetration: 0.5,
 		itemLevel: 1
@@ -40,7 +40,7 @@ export const items = meleeObject({
 		durability: 6,
 		slotsUsed: 1,
 		fireRate: 15,
-		accuracy: 20,
+		accuracy: 75,
 		damage: 13,
 		penetration: 0.8,
 		itemLevel: 3
@@ -55,7 +55,7 @@ export const items = meleeObject({
 		slotsUsed: 1,
 		fireRate: 15,
 		accuracy: 25,
-		damage: 20,
+		damage: 65,
 		penetration: 2.0,
 		itemLevel: 5
 	},
@@ -68,7 +68,7 @@ export const items = meleeObject({
 		durability: 6,
 		slotsUsed: 3,
 		fireRate: 35,
-		accuracy: 10,
+		accuracy: 65,
 		damage: 30,
 		penetration: 0.75,
 		itemLevel: 3
@@ -82,7 +82,7 @@ export const items = meleeObject({
 		durability: 6,
 		slotsUsed: 1,
 		fireRate: 20,
-		accuracy: 25,
+		accuracy: 75,
 		damage: 30,
 		penetration: 0.7,
 		itemLevel: 3
@@ -96,7 +96,7 @@ export const items = meleeObject({
 		durability: 3,
 		slotsUsed: 2,
 		fireRate: 40,
-		accuracy: 15,
+		accuracy: 75,
 		damage: 15,
 		penetration: 0.5,
 		itemLevel: 2
@@ -110,7 +110,7 @@ export const items = meleeObject({
 		durability: 4,
 		slotsUsed: 2,
 		fireRate: 30,
-		accuracy: 20,
+		accuracy: 70,
 		damage: 15,
 		penetration: 1.0,
 		itemLevel: 3
@@ -124,7 +124,7 @@ export const items = meleeObject({
 		durability: 4,
 		slotsUsed: 2,
 		fireRate: 25,
-		accuracy: 20,
+		accuracy: 80,
 		damage: 20,
 		penetration: 0.8,
 		itemLevel: 3
@@ -138,7 +138,7 @@ export const items = meleeObject({
 		durability: 4,
 		slotsUsed: 3,
 		fireRate: 30,
-		accuracy: 10,
+		accuracy: 80,
 		damage: 30,
 		penetration: 1.45,
 		itemLevel: 7
