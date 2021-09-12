@@ -163,6 +163,7 @@ class RaidCommand extends CustomSlashCommand {
 
 					if (players.length <= choice.playerLimit) {
 						raidGuildID = id
+						break
 					}
 				}
 
