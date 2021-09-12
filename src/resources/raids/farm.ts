@@ -157,7 +157,7 @@ export const farm: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items.ifak_medkit, items.glock - 17],
+					items: [items.ifak_medkit, items['glock-17']],
 					xp: 15
 				},
 				rare: {
