@@ -49,7 +49,7 @@ export const farm: Location = {
 			display: 'Cellar',
 			scavange: {
 				common: {
-					items: [items.shed_key, items.wooden_bat],
+					items: [items.bandage, items.wooden_bat],
 					xp: 5
 				},
 				uncommon: {
