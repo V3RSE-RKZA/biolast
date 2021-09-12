@@ -401,7 +401,7 @@ class App {
 					await createAccount(query, ctx.user.id)
 
 					const batRow = await createItem(query, items.wooden_bat.name, items.wooden_bat.durability)
-					const bandageRow = await createItem(query, items.bandage.name)
+					const bandageRow = await createItem(query, items.bandage.name, items.bandage.durability)
 
 					await addItemToBackpack(query, ctx.user.id, batRow.id)
 					await addItemToBackpack(query, ctx.user.id, bandageRow.id)
