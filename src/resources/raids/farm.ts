@@ -145,6 +145,30 @@ export const farm: Location = {
 			evac: {
 				time: 15
 			}
+
+		},
+		{
+			type: 'LootChannel',
+			name: 'bedroom',
+			display: 'bedroom',
+			scavange: {
+				common: {
+					items: [items.truck_key, items.warehouse_key, items['9mm_fmj']],
+					xp: 10
+				},
+				uncommon: {
+					items: [items.ifak_medkit, items.glock - 17],
+					xp: 15
+				},
+				rare: {
+					items: [items.bobwhite_g2, items['20_gauge_shell']],
+					xp: 25
+				},
+				rolls: 4,
+				cooldown: 1 * 10,
+				requiresKey: items.gunsafe_code,
+				keyIsOptional: false
+			}
 		}
 	]
 }
