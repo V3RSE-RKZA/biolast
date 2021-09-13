@@ -195,6 +195,7 @@ class NPCHandler {
 		const userEquips = getEquips(userBackpack)
 		let bodyPartHit
 		let npcDamage
+		let npcAttackPenetration
 
 		if (npc.type === 'raider' || npc.type === 'boss') {
 			bodyPartHit = getBodyPartHit(npc.weapon.accuracy)
@@ -202,11 +203,13 @@ class NPCHandler {
 			if (npc.subtype === 'ranged') {
 				// raider is using ranged weapon
 				npcDamage = getAttackDamage(npc.damage, npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
+				npcAttackPenetration = npc.ammo.penetration
 
 				messages.push(`The \`${npc.type}\` shot <@${user.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
 			}
 			else {
 				npcDamage = getAttackDamage(npc.damage, npc.weapon.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
+				npcAttackPenetration = npc.weapon.penetration
 
 				messages.push(`The \`${npc.type}\` lunged at <@${user.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
 			}
@@ -214,7 +217,8 @@ class NPCHandler {
 		else {
 			// walker doesn't use a weapon, instead just swipes at user
 			bodyPartHit = getBodyPartHit(50)
-			npcDamage = getAttackDamage(npc.damage, 0.75, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
+			npcAttackPenetration = 0.75
+			npcDamage = getAttackDamage(npc.damage, npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
 
 			messages.push(`The \`${npc.type}\` took a swipe at <@${user.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${npcDamage.total}** damage dealt.\n`)
 		}
@@ -222,27 +226,34 @@ class NPCHandler {
 		if (bodyPartHit.result === 'head' && userEquips.helmet) {
 			messages.push(`**${user.username}#${user.discriminator}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${npcDamage.reduced}**.`)
 
-			if (userEquips.helmet.row.durability - 1 <= 0) {
-				messages.push(`**${user.username}#${user.discriminator}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
+			// only lower helmet durability if npcs weapon penetrates at least 50% of
+			// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
+			// against someone who had level 3 armor, the armor would NOT lose durability)
+			if (npcAttackPenetration >= userEquips.helmet.item.level / 2) {
+				if (userEquips.helmet.row.durability - 1 <= 0) {
+					messages.push(`**${user.username}#${user.discriminator}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
 
-				await deleteItem(transactionQuery, userEquips.helmet.row.id)
-				removedItems.push(userEquips.helmet.row.id)
-			}
-			else {
-				await lowerItemDurability(transactionQuery, userEquips.helmet.row.id, 1)
+					await deleteItem(transactionQuery, userEquips.helmet.row.id)
+					removedItems.push(userEquips.helmet.row.id)
+				}
+				else {
+					await lowerItemDurability(transactionQuery, userEquips.helmet.row.id, 1)
+				}
 			}
 		}
 		else if (bodyPartHit.result === 'chest' && userEquips.armor) {
 			messages.push(`**${user.username}#${user.discriminator}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${npcDamage.reduced}**.`)
 
-			if (userEquips.armor.row.durability - 1 <= 0) {
-				messages.push(`**${user.username}#${user.discriminator}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
+			if (npcAttackPenetration >= userEquips.armor.item.level / 2) {
+				if (userEquips.armor.row.durability - 1 <= 0) {
+					messages.push(`**${user.username}#${user.discriminator}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
 
-				await deleteItem(transactionQuery, userEquips.armor.row.id)
-				removedItems.push(userEquips.armor.row.id)
-			}
-			else {
-				await lowerItemDurability(transactionQuery, userEquips.armor.row.id, 1)
+					await deleteItem(transactionQuery, userEquips.armor.row.id)
+					removedItems.push(userEquips.armor.row.id)
+				}
+				else {
+					await lowerItemDurability(transactionQuery, userEquips.armor.row.id, 1)
+				}
 			}
 		}
 
