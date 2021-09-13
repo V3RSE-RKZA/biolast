@@ -143,9 +143,9 @@ export const farm: Location = {
 			name: 'highway-evac',
 			display: 'Highway',
 			evac: {
-				time: 15
+				time: 15,
+				requiresKey: items.truck_key
 			}
-
 		},
 		{
 			type: 'LootChannel',
