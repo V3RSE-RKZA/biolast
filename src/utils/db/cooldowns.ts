@@ -2,29 +2,57 @@ import { Query, Cooldown } from '../../types/mysql'
 import { logger } from '../logger'
 
 /**
- *
+ * Check if user has a cooldown and returns the string formatted version if it exists, undefined if not
  * @param query Query to use
  * @param key ID to search for cooldown
  * @param type The cooldown type
+ * @param forUpdate Whether the row should be locked (prevent other queries from updating modifying this cd)
  * @returns The time left for the cooldown or undefined if there is no cooldown
  */
-export async function getCooldown (query: Query, key: string, type: string): Promise<string | undefined> {
-	const cooldown: Cooldown = (await query('SELECT * FROM cooldowns WHERE id = ? AND type = ?', [key, type]))[0]
-
+export async function getCooldown (query: Query, key: string, type: string, forUpdate = false): Promise<string | undefined> {
+	const cooldown = await getCooldownRow(query, key, type, forUpdate)
 
 	if (cooldown) {
-		const timeLeft = (cooldown.length * 1000) - (Date.now() - cooldown.createdAt.getTime())
+		const timeLeft = getCooldownTimeLeft(cooldown.length, cooldown.createdAt.getTime())
+
+		return formatTime(timeLeft)
+	}
+
+	// no cooldown found
+	return undefined
+}
+
+/**
+ * @param query Query to use
+ * @param key ID to search for cooldown
+ * @param type The cooldown type
+ * @param forUpdate Whether the row should be locked (prevent other queries from updating modifying this cd)
+ * @returns The time left for the cooldown or undefined if there is no cooldown
+ */
+export async function getCooldownRow (query: Query, key: string, type: string, forUpdate = false): Promise<Cooldown | undefined> {
+	const row: Cooldown | undefined = (await query(`SELECT * FROM cooldowns WHERE id = ? AND type = ?${forUpdate ? ' FOR UPDATE' : ''}`, [key, type]))[0]
+
+	if (row) {
+		const timeLeft = getCooldownTimeLeft(row.length, row.createdAt.getTime())
 
 		if (timeLeft > 0) {
-			return formatTime(timeLeft)
+			return row
 		}
 
 		// remove expired cooldown from database
 		await query('DELETE FROM cooldowns WHERE id = ? AND type = ?', [key, type])
 	}
 
-	// no cooldown found
 	return undefined
+}
+
+/**
+ * @param length The length of the cooldown in seconds
+ * @param createdAt The EPOCH time that cooldown was created at
+ * @returns The number of milliseconds remaining
+ */
+export function getCooldownTimeLeft (length: number, createdAt: number): number {
+	return (length * 1000) - (Date.now() - createdAt)
 }
 
 /**
@@ -63,6 +91,11 @@ export async function clearCooldown (query: Query, key: string, type: string): P
 		'No cooldown to remove'
 }
 
+/**
+ * Converts milliseconds into a readable string
+ * @param ms Time in milliseconds
+ * @returns String representation of time
+ */
 export function formatTime (ms: number): string {
 	let remaining = ms
 	const finalStr = []
