@@ -5,7 +5,7 @@ import { Quest, quests } from '../resources/quests'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { BackpackItemRow, ItemRow, QuestRow } from '../types/mysql'
-import { formatTime } from '../utils/db/cooldowns'
+import { createCooldown, formatTime, getCooldownRow, getCooldownTimeLeft } from '../utils/db/cooldowns'
 import { addItemToStash, createItem, deleteItem, getUserBackpack, getUserStash } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { addMoney, addXp, getUserRow } from '../utils/db/players'
@@ -14,6 +14,9 @@ import { getUsersRaid } from '../utils/db/raids'
 import formatNumber from '../utils/formatNumber'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
+
+// how long a user should have to complete their quests before they receive a new one
+const questCooldown = 24 * 60 * 60
 
 class QuestsCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -37,17 +40,19 @@ class QuestsCommand extends CustomSlashCommand {
 	async run (ctx: CommandContext): Promise<void> {
 		const transaction = await beginTransaction()
 		const isInRaid = await getUsersRaid(transaction.query, ctx.user.id)
+		const questCDRow = await getCooldownRow(transaction.query, ctx.user.id, 'quest', true)
 		const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
 		const userQuestRows = await getUserQuests(transaction.query, ctx.user.id, true)
 		const userBackpackRows = await getUserBackpack(transaction.query, ctx.user.id)
 		const userStashRows = await getUserStash(transaction.query, ctx.user.id)
 		const userQuests = []
+		let questCDTimeLeft
 
 		// remove invalid quests
 		for (let i = userQuestRows.length - 1; i >= 0; i--) {
 			const quest = quests.find(q => q.id === userQuestRows[i].questId)
 
-			if (!quest || userData.level > quest.maxLevel) {
+			if (!questCDRow || !quest || userData.level > quest.maxLevel) {
 				await deleteQuest(transaction.query, userQuestRows[i].id)
 
 				userQuestRows.splice(i, 1)
@@ -58,11 +63,12 @@ class QuestsCommand extends CustomSlashCommand {
 			}
 		}
 
-		// user has no quests active, assign a new random quest
-		if (!userQuestRows.length) {
+		// users quest cooldown has expired, assign a new random quest
+		if (!questCDRow) {
 			const newQuest = this.fetchRandomQuest(userData.level)
 
 			if (!newQuest) {
+				// this should not happen, there should always be a quest available for a user
 				await transaction.commit()
 				throw new Error(`No eligible quest found for user (${ctx.user.id}, level ${userData.level})`)
 			}
@@ -70,6 +76,11 @@ class QuestsCommand extends CustomSlashCommand {
 			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest)
 			userQuestRows.push(newQuestRow)
 			userQuests.push(newQuest)
+			questCDTimeLeft = questCooldown * 1000
+			await createCooldown(transaction.query, ctx.user.id, 'quest', questCooldown)
+		}
+		else {
+			questCDTimeLeft = getCooldownTimeLeft(questCDRow.length, questCDRow.createdAt.getTime())
 		}
 
 		await transaction.commit()
@@ -77,7 +88,7 @@ class QuestsCommand extends CustomSlashCommand {
 		const questButtons: ComponentButton[] = []
 		let questsEmbed = new Embed()
 			.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
-			.setDescription(isInRaid ? `${icons.danger} You cannot complete quests while in a raid!` : `${icons.warning} You have **24 hours** to complete a quest and claim it's reward before the quest expires.`)
+			.setDescription(isInRaid ? `${icons.danger} You cannot complete quests while in a raid!` : `${icons.warning} You have **${formatTime(questCDTimeLeft)}** to complete this quest.`)
 
 		for (let i = 0; i < userQuestRows.length; i++) {
 			questsEmbed.addField(`__Quest #${userQuestRows[i].id}__`, this.getQuestDescription(userQuests[i], userQuestRows[i]))
@@ -85,20 +96,25 @@ class QuestsCommand extends CustomSlashCommand {
 			questButtons.push(this.getQuestButton(userQuests[i], userQuestRows[i], isInRaid ? true : !this.questCanBeCompleted(userQuests[i], userQuestRows[i], userBackpackRows, userStashRows)))
 		}
 
+		if (!userQuestRows.length) {
+			questsEmbed.setDescription(`${icons.information} You've completed all of your quests! You will receive a new one in **${formatTime(questCDTimeLeft)}**.`)
+		}
+
 		const botMessage = await ctx.send({
 			embeds: [questsEmbed.embed],
-			components: [{
+			components: questButtons.length ? [{
 				type: ComponentType.ACTION_ROW,
 				components: questButtons
-			}]
+			}] : []
 		}) as Message
 
-		const { collector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 30000)
+		const { collector, stopCollector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 30000)
 
 		collector.on('collect', async buttonCtx => {
 			try {
 				const completedQuestID = parseInt(buttonCtx.customID)
 				const completedTransaction = await beginTransaction()
+				const completedQuestCDRow = await getCooldownRow(completedTransaction.query, ctx.user.id, 'quest', true)
 				const completedUserData = (await getUserRow(completedTransaction.query, ctx.user.id, true))!
 				const completedUserQuestRows = await getUserQuests(completedTransaction.query, ctx.user.id, true)
 				const completedQuestRow = completedUserQuestRows.find(row => row.id === completedQuestID)
@@ -109,16 +125,19 @@ class QuestsCommand extends CustomSlashCommand {
 
 				if (
 					!isInRaid &&
+					completedQuestCDRow &&
 					completedQuest &&
 					completedUserData.level <= completedQuest.maxLevel &&
 					completedQuestRow &&
 					this.questCanBeCompleted(completedQuest, completedQuestRow, completedUserBackpackRows, completedUserStashRows)
 				) {
 					const newQuestButtons: ComponentButton[] = []
+					const completedQuestCDTimeLeft = getCooldownTimeLeft(completedQuestCDRow.length, completedQuestCDRow.createdAt.getTime())
 
 					if (
 						completedQuest.questType === 'Retrieve Item' &&
-						completedQuestRow.progress < completedQuestRow.progressGoal
+						completedQuestRow.progress < completedQuestRow.progressGoal &&
+						completedQuestCDRow
 					) {
 						const userBackpack = getItems(completedUserBackpackRows)
 						const userStash = getItems(completedUserStashRows)
@@ -152,13 +171,9 @@ class QuestsCommand extends CustomSlashCommand {
 
 						questsEmbed = new Embed()
 							.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
-							.setDescription(`${icons.warning} You have **24 hours** to complete a quest and claim it's reward before the quest expires.`)
+							.setDescription(`${icons.warning} You have **${formatTime(completedQuestCDTimeLeft)}** to complete this quest.`)
 
 						await completedTransaction.commit()
-
-						if (!completedUserQuestRows.length) {
-							questsEmbed.setDescription(`${icons.warning} You are not eligible for any quests right now.`)
-						}
 
 						for (let i = 0; i < completedUserQuestRows.length; i++) {
 							questsEmbed.addField(`__Quest #${completedUserQuestRows[i].id}__`, this.getQuestDescription(validUserQuests[i], completedUserQuestRows[i]))
@@ -166,12 +181,12 @@ class QuestsCommand extends CustomSlashCommand {
 							newQuestButtons.push(this.getQuestButton(
 								validUserQuests[i],
 								completedUserQuestRows[i],
-								!this.questCanBeCompleted(validUserQuests[i], completedUserQuestRows[i], userBackpackRows.filter(r => r.id !== questItemToRemove.row.id), userStashRows.filter(r => r.id !== questItemToRemove.row.id))
+								!this.questCanBeCompleted(validUserQuests[i], completedUserQuestRows[i], completedUserBackpackRows.filter(r => r.id !== questItemToRemove.row.id), completedUserStashRows.filter(r => r.id !== questItemToRemove.row.id))
 							))
 						}
 
 						await buttonCtx.editParent({
-							content: `Successfully turned in ${getItemDisplay(questItemToRemove.item, questItemToRemove.row, { showDurability: false, showEquipped: false })} for quest **#${completedQuestID}**.`,
+							content: `${icons.checkmark} Successfully turned in ${getItemDisplay(questItemToRemove.item, questItemToRemove.row, { showDurability: false, showEquipped: false })} for quest **#${completedQuestID}**.`,
 							embeds: [questsEmbed.embed],
 							components: newQuestButtons.length ? [{
 								type: ComponentType.ACTION_ROW,
@@ -180,8 +195,6 @@ class QuestsCommand extends CustomSlashCommand {
 						})
 					}
 					else {
-						// quest completed, assign a new random quest
-						const newQuest = this.fetchRandomQuest(completedUserData.level, completedQuest.id)
 						let itemRewardRow
 
 						if (completedQuest.rewards.item) {
@@ -229,29 +242,23 @@ class QuestsCommand extends CustomSlashCommand {
 
 						questsEmbed = new Embed()
 							.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
-							.setDescription(`${icons.warning} You have **24 hours** to complete a quest and claim it's reward before the quest expires.`)
-							.addField(`__Quest #${completedQuestID}__`, `${icons.checkmark} Complete!`)
-
-						if (newQuest) {
-							const newQuestRow = await createQuest(completedTransaction.query, ctx.user.id, newQuest)
-							completedUserQuestRows.push(newQuestRow)
-							validUserQuests.push(newQuest)
-						}
+							.setDescription(`${icons.warning} You have **${formatTime(completedQuestCDTimeLeft)}** to complete this quest.`)
+							.addField(`__Quest #${completedQuestID}__`, 'Complete!')
 
 						await completedTransaction.commit()
 
 						if (!completedUserQuestRows.length) {
-							questsEmbed.setDescription(`${icons.warning} You are not eligible for any quests right now.`)
+							questsEmbed.setDescription(`${icons.information} You've completed all of your quests! You will receive a new one in **${formatTime(completedQuestCDTimeLeft)}**.`)
 						}
 
 						for (let i = 0; i < completedUserQuestRows.length; i++) {
 							questsEmbed.addField(`__Quest #${completedUserQuestRows[i].id}__`, this.getQuestDescription(validUserQuests[i], completedUserQuestRows[i]))
 
-							newQuestButtons.push(this.getQuestButton(validUserQuests[i], completedUserQuestRows[i], !this.questCanBeCompleted(validUserQuests[i], completedUserQuestRows[i], userBackpackRows, userStashRows)))
+							newQuestButtons.push(this.getQuestButton(validUserQuests[i], completedUserQuestRows[i], !this.questCanBeCompleted(validUserQuests[i], completedUserQuestRows[i], completedUserBackpackRows, completedUserStashRows)))
 						}
 
 						await buttonCtx.editParent({
-							content: `Quest **#${completedQuestID}** complete, assigning new quest...`,
+							content: `Quest **#${completedQuestID}** completed.`,
 							embeds: [questsEmbed.embed],
 							components: newQuestButtons.length ? [{
 								type: ComponentType.ACTION_ROW,
@@ -260,13 +267,14 @@ class QuestsCommand extends CustomSlashCommand {
 						})
 
 						await ctx.send({
-							content: `Quest **#${completedQuestID}** complete! You received ${this.getRewardsString(completedQuest, itemRewardRow)}. Item rewards are added to your **stash**, not inventory.`,
+							content: `${icons.checkmark} Quest **#${completedQuestID}** complete! You received ${this.getRewardsString(completedQuest, itemRewardRow)}. Item rewards are added to your **stash**.`,
 							flags: InteractionResponseFlags.EPHEMERAL
 						})
 					}
 				}
 				else {
 					await completedTransaction.commit()
+					stopCollector()
 					throw new Error('User not eligible to complete quest')
 				}
 			}
@@ -345,44 +353,37 @@ class QuestsCommand extends CustomSlashCommand {
 			case 'Any Kills': {
 				return `**Description**: Kill **${quest.progressGoal}** players or mobs.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}\n` +
-					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
+					`**Reward**: ${this.getRewardsString(quest)}`
 			}
 			case 'Player Kills': {
 				return `**Description**: Kill **${quest.progressGoal}** players.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}\n` +
-					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
+					`**Reward**: ${this.getRewardsString(quest)}`
 			}
 			case 'Boss Kills': {
 				return `**Description**: Kill **${quest.progressGoal}** bosses.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}\n` +
-					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
+					`**Reward**: ${this.getRewardsString(quest)}`
 			}
 			case 'NPC Kills': {
 				return `**Description**: Kill **${quest.progressGoal}** mobs (bosses count).\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}\n` +
-					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
+					`**Reward**: ${this.getRewardsString(quest)}`
 			}
 			case 'Evacs': {
 				return `**Description**: Successfully evac **${quest.progressGoal}** times.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}\n` +
-					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
+					`**Reward**: ${this.getRewardsString(quest)}`
 			}
 			case 'Scavenge With A Key': {
 				return `**Description**: Scavenge an area using a ${getItemDisplay(quest.key)}.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}\n` +
-					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
+					`**Reward**: ${this.getRewardsString(quest)}`
 			}
 			case 'Retrieve Item': {
 				return `**Description**: Find and turn in ${questRow.progressGoal}x ${getItemDisplay(quest.item)}.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal} items\n` +
-					`**Reward**: ${this.getRewardsString(quest)}\n` +
-					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
+					`**Reward**: ${this.getRewardsString(quest)}`
 			}
 		}
 	}
