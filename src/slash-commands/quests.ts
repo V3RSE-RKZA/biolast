@@ -419,8 +419,6 @@ class QuestsCommand extends CustomSlashCommand {
 			const backpack = getItems(backpackRows)
 			const stash = getItems(stashRows)
 
-			logger.info(backpack.items)
-
 			if (backpack.items.find(itm => itm.item.name === quest.item.name)) {
 				return true
 			}
