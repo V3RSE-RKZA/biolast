@@ -1,5 +1,6 @@
 import { SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { query } from '../utils/db/mysql'
@@ -46,7 +47,7 @@ class SearchCommand extends CustomSlashCommand {
 
 		if (!npcRow || !npc) {
 			await ctx.send({
-				content: 'You examine the area thoroughly and find no threats. Now would be a good time to scavenge for items.'
+				content: `${icons.checkmark} You examine the area thoroughly and find no threats. Now would be a good time to scavenge for items.`
 			})
 			return
 		}

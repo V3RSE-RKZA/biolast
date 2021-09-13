@@ -11,6 +11,10 @@ const itemCorrector = new Corrector([...allItems.map(itm => itm.name), ...allIte
  * @returns An item
  */
 export function getItem (args: string[]): Item | undefined {
+	if (args[0] && args.length === 1) {
+		args = args[0].split(/ +/)
+	}
+
 	for (let i = 0; i < args.slice(0, 6).length; i++) {
 		// get the args that come after this one
 		const afterArgs = args.slice(i, 6)

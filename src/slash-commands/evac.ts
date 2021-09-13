@@ -1,5 +1,6 @@
 import { SlashCreator, CommandContext, Message } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { CONFIRM_BUTTONS } from '../utils/constants'
@@ -53,7 +54,7 @@ class EvacCommand extends CustomSlashCommand {
 
 		if (raidChannel.type !== 'EvacChannel') {
 			await ctx.send({
-				content: '❌ You can\'t evac from this channel. Look for an evac channel to escape this raid.'
+				content: `${icons.warning} You can't evac from this channel. Look for an evac channel to escape this raid.`
 			})
 			return
 		}
@@ -70,7 +71,7 @@ class EvacCommand extends CustomSlashCommand {
 			await preTransaction.commit()
 
 			await ctx.send({
-				content: `❌ Using this evac requires you to have a ${getItemDisplay(evacNeeded)} in your inventory.`
+				content: `${icons.information} Using this evac requires you to have a ${getItemDisplay(evacNeeded)} in your inventory.`
 			})
 			return
 		}
@@ -85,7 +86,7 @@ class EvacCommand extends CustomSlashCommand {
 			await preTransaction.commit()
 
 			await ctx.send({
-				content: 'You try to evac but there was a threat roaming the area!'
+				content: `${icons.danger} You try to evac but there was a threat roaming the area!`
 			})
 
 			setTimeout(async () => {
@@ -116,7 +117,7 @@ class EvacCommand extends CustomSlashCommand {
 				const erisUser = await this.app.fetchUser(ctx.user.id)
 				if (erisUser) {
 					await messageUser(erisUser, {
-						content: '❌ Raid failed!\n\n' +
+						content: `${icons.danger} Raid failed!\n\n` +
 							`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time search the area before you evac.\n` +
 							`You lost all the items in your inventory (**${userBackpackData.items.length - attackResult.removedItems}** items).`
 					})
@@ -139,7 +140,7 @@ class EvacCommand extends CustomSlashCommand {
 			if (confirmed.customID === 'confirmed') {
 				if (this.app.extractingUsers.has(ctx.user.id)) {
 					await confirmed.editParent({
-						content: '❌ You are currently evacuating this raid.',
+						content: `${icons.danger} You are currently evacuating this raid.`,
 						components: []
 					})
 					return
@@ -159,7 +160,7 @@ class EvacCommand extends CustomSlashCommand {
 						await transaction.commit()
 
 						await confirmed.editParent({
-							content: `❌ Using this evac requires you to have a ${getItemDisplay(evacItem.item)} in your inventory.`,
+							content: `${icons.information} Using this evac requires you to have a ${getItemDisplay(evacItem.item)} in your inventory.`,
 							components: []
 						})
 						return
@@ -182,7 +183,7 @@ class EvacCommand extends CustomSlashCommand {
 
 						if (member) {
 							await ctx.send({
-								content: `<@${member.id}>, **${formatTime((raidChannel.evac.time - (raidChannel.evac.time / 3)) * 1000)}** until extraction!`
+								content: `<@${member.id}>, ${icons.warning} **${formatTime((raidChannel.evac.time - (raidChannel.evac.time / 3)) * 1000)}** until extraction!`
 							})
 						}
 					}
@@ -197,7 +198,7 @@ class EvacCommand extends CustomSlashCommand {
 
 						if (member) {
 							await ctx.send({
-								content: `<@${member.id}>, **${formatTime((raidChannel.evac.time - ((raidChannel.evac.time / 3) * 2)) * 1000)}** until extraction!`
+								content: `<@${member.id}>, ${icons.warning} **${formatTime((raidChannel.evac.time - ((raidChannel.evac.time / 3) * 2)) * 1000)}** until extraction!`
 							})
 						}
 					}
@@ -235,7 +236,7 @@ class EvacCommand extends CustomSlashCommand {
 								await member.kick('User evacuated')
 
 								await messageUser(member.user, {
-									content: `✅ **${raidType.display}** raid successful!\n\n` +
+									content: `${icons.checkmark} **${raidType.display}** raid successful!\n\n` +
 										`You spent a total of **${formatTime(Date.now() - userRaid.startedAt.getTime())}** in raid and managed to evac with **${userBackpackDataV.items.length}** items in your inventory.`
 								})
 							}
@@ -250,7 +251,7 @@ class EvacCommand extends CustomSlashCommand {
 				}, raidChannel.evac.time * 1000)
 
 				await confirmed.editParent({
-					content: `✅ Escaping this raid in **${formatTime(raidChannel.evac.time * 1000)}**. Try not to die in that time.`,
+					content: `${icons.checkmark} Escaping this raid in **${formatTime(raidChannel.evac.time * 1000)}**. Try not to die in that time.`,
 					components: []
 				})
 			}
@@ -260,7 +261,7 @@ class EvacCommand extends CustomSlashCommand {
 		}
 		catch (err) {
 			await botMessage.edit({
-				content: '❌ Command timed out.',
+				content: `${icons.danger} Command timed out.`,
 				components: []
 			})
 		}

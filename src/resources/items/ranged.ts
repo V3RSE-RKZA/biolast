@@ -2,7 +2,7 @@ import { RangedWeapon } from '../../types/Items'
 
 const rangedObject = <T>(et: { [K in keyof T]: RangedWeapon & { name: K } }) => et
 
-export const items = rangedObject({
+export const ranged = rangedObject({
 	'aks-74u': {
 		type: 'Ranged Weapon',
 		name: 'aks-74u',

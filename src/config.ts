@@ -21,7 +21,13 @@ export const icons = {
 		start_75: '<:health_bar_start_75:849056171540348959>',
 		empty: '<:health_bar_empty:849065056363872318>'
 	},
-	wave: '<:blobwave:884672272646963242>'
+	wave: '<:blobwave:884672272646963242>',
+	checkmark: '<:complete:886737255274786846>',
+	cancel: '<:cancel:886737255165755432>',
+	warning: '<:warning:886737255379636274>',
+	question: '<:question:886737255299940392>',
+	information: '<:information:886737255148957767>',
+	danger: '<:danger:886836924558491648>'
 }
 
 // How many items a single user can buy from the shop each day

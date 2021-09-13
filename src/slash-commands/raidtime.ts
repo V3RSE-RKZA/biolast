@@ -1,5 +1,6 @@
 import { SlashCreator, CommandContext, InteractionResponseFlags } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { formatTime } from '../utils/db/cooldowns'
 import { query } from '../utils/db/mysql'
@@ -38,7 +39,7 @@ class RaidTimeCommand extends CustomSlashCommand {
 		const timeLeft = (userRaid.length * 1000) - (Date.now() - userRaid.startedAt.getTime())
 
 		await ctx.send({
-			content: `You have **${formatTime(timeLeft)}** to find an evac and escape from this raid. If you are still in the raid when this timer expires, you will be kicked and you'll lose everything in your inventory.`,
+			content: `${icons.information} You have **${formatTime(timeLeft)}** to find an evac and escape from this raid. If you are still in the raid when this timer expires, you will be kicked and you'll lose everything in your inventory.`,
 			flags: InteractionResponseFlags.EPHEMERAL
 		})
 	}

@@ -2,7 +2,7 @@ import { Key } from '../../types/Items'
 
 const keysObject = <T>(et: { [K in keyof T]: Key & { name: K } }) => et
 
-export const items = keysObject({
+export const keys = keysObject({
 	shed_key: {
 		type: 'Key',
 		name: 'shed_key',

@@ -1,5 +1,6 @@
 import { SlashCreator, CommandContext, Message, ComponentButton, ComponentType, ButtonStyle, InteractionResponseFlags } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import { Quest, quests } from '../resources/quests'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
@@ -63,7 +64,7 @@ class QuestsCommand extends CustomSlashCommand {
 
 			if (!newQuest) {
 				await transaction.commit()
-				throw new Error(`No eligilbe quest found for user (${ctx.user.id}, level ${userData.level})`)
+				throw new Error(`No eligible quest found for user (${ctx.user.id}, level ${userData.level})`)
 			}
 
 			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest)
@@ -76,7 +77,7 @@ class QuestsCommand extends CustomSlashCommand {
 		const questButtons: ComponentButton[] = []
 		let questsEmbed = new Embed()
 			.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
-			.setDescription(isInRaid ? '❗ You cannot complete quests while in a raid!' : '⚠️ You have **24 hours** to complete a quest and claim it\'s reward before the quest expires.')
+			.setDescription(isInRaid ? `${icons.danger} You cannot complete quests while in a raid!` : `${icons.warning} You have **24 hours** to complete a quest and claim it's reward before the quest expires.`)
 
 		for (let i = 0; i < userQuestRows.length; i++) {
 			questsEmbed.addField(`__Quest #${userQuestRows[i].id}__`, this.getQuestDescription(userQuests[i], userQuestRows[i]))
@@ -151,12 +152,12 @@ class QuestsCommand extends CustomSlashCommand {
 
 						questsEmbed = new Embed()
 							.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
-							.setDescription('⚠️ You have **24 hours** to complete a quest and claim it\'s reward before the quest expires.')
+							.setDescription(`${icons.warning} You have **24 hours** to complete a quest and claim it's reward before the quest expires.`)
 
 						await completedTransaction.commit()
 
 						if (!completedUserQuestRows.length) {
-							questsEmbed.setDescription('⚠️ You are not eligible for any quests right now.')
+							questsEmbed.setDescription(`${icons.warning} You are not eligible for any quests right now.`)
 						}
 
 						for (let i = 0; i < completedUserQuestRows.length; i++) {
@@ -191,7 +192,7 @@ class QuestsCommand extends CustomSlashCommand {
 								await completedTransaction.commit()
 
 								await ctx.send({
-									content: `❌ You don't have enough space in your stash to complete that quest. You need **${completedQuest.rewards.item.slotsUsed}** open slots in your stash. Sell items to clear up some space.`,
+									content: `${icons.cancel} You don't have enough space in your stash to complete that quest. You need **${completedQuest.rewards.item.slotsUsed}** open slots in your stash. Sell items to clear up some space.`,
 									flags: InteractionResponseFlags.EPHEMERAL
 								})
 								return
@@ -228,8 +229,8 @@ class QuestsCommand extends CustomSlashCommand {
 
 						questsEmbed = new Embed()
 							.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
-							.setDescription('⚠️ You have **24 hours** to complete a quest and claim it\'s reward before the quest expires.')
-							.addField(`__Quest #${completedQuestID}__`, '✅ Complete!')
+							.setDescription(`${icons.warning} You have **24 hours** to complete a quest and claim it's reward before the quest expires.`)
+							.addField(`__Quest #${completedQuestID}__`, `${icons.checkmark} Complete!`)
 
 						if (newQuest) {
 							const newQuestRow = await createQuest(completedTransaction.query, ctx.user.id, newQuest)
@@ -240,7 +241,7 @@ class QuestsCommand extends CustomSlashCommand {
 						await completedTransaction.commit()
 
 						if (!completedUserQuestRows.length) {
-							questsEmbed.setDescription('⚠️ You are not eligible for any quests right now.')
+							questsEmbed.setDescription(`${icons.warning} You are not eligible for any quests right now.`)
 						}
 
 						for (let i = 0; i < completedUserQuestRows.length; i++) {
@@ -273,7 +274,7 @@ class QuestsCommand extends CustomSlashCommand {
 				logger.warn(err)
 
 				await ctx.editOriginal({
-					content: '❌ That quest cannot be completed (you may have leveled up and are no longer eligible or you are in a raid). Please re-run the command.',
+					content: `${icons.cancel} That quest cannot be completed (you may have leveled up and are no longer eligible or you are in a raid). Please re-run the command.`,
 					embeds: [questsEmbed.embed],
 					components: []
 				})
@@ -378,7 +379,7 @@ class QuestsCommand extends CustomSlashCommand {
 					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
 			}
 			case 'Retrieve Item': {
-				return `**Description**: Retrieve ${questRow.progressGoal}x ${getItemDisplay(quest.item)}.\n` +
+				return `**Description**: Find and turn in ${questRow.progressGoal}x ${getItemDisplay(quest.item)}.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal} items\n` +
 					`**Reward**: ${this.getRewardsString(quest)}\n` +
 					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`

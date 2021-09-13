@@ -5,6 +5,7 @@ import { getItem } from '../utils/argParsers'
 import { allNPCs } from '../resources/npcs'
 import { getItemDisplay } from '../utils/itemUtils'
 import { quests } from '../resources/quests'
+import { icons } from '../config'
 
 // yes this command is ugly its only for admins >:(
 
@@ -16,7 +17,7 @@ export const command: TextCommand = {
 
 		if (!item) {
 			await reply(message, {
-				content: '❌ Unable to find item with that name. `=examine <item name>`'
+				content: `${icons.danger} Unable to find item with that name. \`=examine <item name>\``
 			})
 			return
 		}

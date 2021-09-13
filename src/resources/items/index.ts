@@ -1,11 +1,12 @@
-import { items as ranged } from './ranged'
-import { items as melee } from './melee'
-import { items as armor } from './armor'
-import { items as helmets } from './helmets'
-import { items as ammunition } from './ammunition'
-import { items as medical } from './medical'
-import { items as keys } from './keys'
-import { items as backpacks } from './backpacks'
+import { ranged } from './ranged'
+import { melee } from './melee'
+import { armor } from './armor'
+import { helmets } from './helmets'
+import { ammunition } from './ammunition'
+import { medical } from './medical'
+import { keys } from './keys'
+import { backpacks } from './backpacks'
+import { quest } from './quest'
 
 export const items = {
 	...ranged,
@@ -15,7 +16,8 @@ export const items = {
 	...ammunition,
 	...medical,
 	...keys,
-	...backpacks
+	...backpacks,
+	...quest
 }
 
 export const allItems = Object.values(items)

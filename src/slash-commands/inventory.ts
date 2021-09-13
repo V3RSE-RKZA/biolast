@@ -1,6 +1,7 @@
 import { CommandOptionType, SlashCreator, CommandContext, User } from 'slash-create'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import App from '../app'
+import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { BackpackItemRow, UserRow } from '../types/mysql'
@@ -47,7 +48,7 @@ class InventoryCommand extends CustomSlashCommand {
 
 			if (!userData) {
 				await ctx.send({
-					content: `❌ **${member.user.username}#${member.user.discriminator}** does not have an account!`
+					content: `${icons.warning} **${member.user.username}#${member.user.discriminator}** does not have an account!`
 				})
 				return
 			}

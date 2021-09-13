@@ -2,7 +2,7 @@ import { MeleeWeapon } from '../../types/Items'
 
 const meleeObject = <T>(et: { [K in keyof T]: MeleeWeapon & { name: K } }) => et
 
-export const items = meleeObject({
+export const melee = meleeObject({
 	knife: {
 		type: 'Melee Weapon',
 		name: 'knife',

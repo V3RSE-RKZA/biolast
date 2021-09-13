@@ -1,5 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { equipItem, getUserBackpack, unequipItem } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
@@ -43,7 +44,7 @@ class EquipCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `❌ You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
+				content: `${icons.warning} You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
 			})
 			return
 		}
@@ -51,7 +52,7 @@ class EquipCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `❌ Unequippable item. You cannot equip items of type **${itemToEquip.item.type}**. Specify a weapon, helmet, armor, or backpack to equip.`
+				content: `${icons.warning} Unequippable item. You cannot equip items of type **${itemToEquip.item.type}**. Specify a weapon, helmet, armor, or backpack to equip.`
 			})
 			return
 		}
@@ -81,8 +82,8 @@ class EquipCommand extends CustomSlashCommand {
 
 		await ctx.send({
 			content: unequippedItem ?
-				`🧤 Successfully unequipped ${getItemDisplay(unequippedItem.item, unequippedItem.row, { showEquipped: false })} and equipped ${getItemDisplay(itemToEquip.item, itemToEquip.row)}` :
-				`🧤 Successfully equipped ${getItemDisplay(itemToEquip.item, itemToEquip.row)}`
+				`${icons.checkmark} Successfully unequipped ${getItemDisplay(unequippedItem.item, unequippedItem.row, { showEquipped: false })} and equipped ${getItemDisplay(itemToEquip.item, itemToEquip.row)}` :
+				`${icons.checkmark} Successfully equipped ${getItemDisplay(itemToEquip.item, itemToEquip.row)}`
 		})
 	}
 }

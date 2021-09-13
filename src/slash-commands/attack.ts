@@ -1,5 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import { allItems } from '../resources/items'
 import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -133,18 +134,18 @@ class AttackCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: '❌ There are no NPC\'s in this channel.'
+					content: `${icons.warning} There are no NPC's in this channel.`
 				})
 				return
 			}
 
-			const npc = allNPCs.find(n => n.id === npcRow.id)
+			const npc = allNPCs.find(n => n.id === npcRow?.id)
 
 			if (!npc) {
 				await transaction.commit()
 
 				await ctx.send({
-					content: '❌ There are no NPC\'s in this channel.'
+					content: `${icons.warning} There are no NPC's in this channel.`
 				})
 				return
 			}
@@ -152,7 +153,7 @@ class AttackCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `❌ Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
+					content: `${icons.warning} Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
 				})
 				return
 			}
@@ -169,7 +170,7 @@ class AttackCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: '❌ You don\'t have a weapon equipped. Equip a weapon from your inventory with `/equip <item id>`.'
+					content: `${icons.warning} You don't have a weapon equipped. Equip a weapon from your inventory with \`/equip <item id>\`.`
 				})
 				return
 			}
@@ -188,7 +189,7 @@ class AttackCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await ctx.send({
-						content: `❌ You don't have any ammo for your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row, { showEquipped: false })}.` +
+						content: `${icons.danger} You don't have any ammo for your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row, { showEquipped: false })}.` +
 							` You need one of the following ammunitions in your inventory:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponUsed)).map(i => getItemDisplay(i)).join(', ')}.`
 					})
 					return
@@ -200,7 +201,7 @@ class AttackCommand extends CustomSlashCommand {
 				removedItems.push(userAmmoUsed.row.id)
 
 				if (missedPartChoice) {
-					messages.push(`⛔ You try to shoot the \`${npc.type}\` in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}) **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
+					messages.push(`${icons.danger} You try to shoot the \`${npc.type}\` in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}) **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
 				}
 				else {
 					messages.push(`You shot the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
@@ -210,7 +211,7 @@ class AttackCommand extends CustomSlashCommand {
 				finalDamage = getAttackDamage(userEquips.weapon.item.damage, userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet)
 
 				if (missedPartChoice) {
-					messages.push(`⛔ You try to hit the \`${npc.type}\` in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
+					messages.push(`${icons.danger} You try to hit the \`${npc.type}\` in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
 				}
 				else {
 					messages.push(`You hit the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
@@ -395,7 +396,7 @@ class AttackCommand extends CustomSlashCommand {
 					const erisUser = await this.app.fetchUser(ctx.user.id)
 					if (erisUser) {
 						await messageUser(erisUser, {
-							content: '❌ Raid failed!\n\n' +
+							content: `${icons.danger} Raid failed!\n\n` +
 								`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time make sure you're well equipped to attack enemies.\n` +
 								`You lost all the items in your inventory (**${userBackpackData.items.length - attackResult.removedItems}** items).`
 						})
@@ -410,13 +411,13 @@ class AttackCommand extends CustomSlashCommand {
 
 			if (!member) {
 				await ctx.send({
-					content: '❌ You need to pick someone to attack!'
+					content: `${icons.danger} You need to pick someone to attack!`
 				})
 				return
 			}
 			else if (member.id === ctx.user.id) {
 				await ctx.send({
-					content: '❌ What are you doing? You can\'t attack yourself...'
+					content: `${icons.warning} What are you doing? You can't attack yourself...`
 				})
 				return
 			}
@@ -429,7 +430,7 @@ class AttackCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `❌ **${member.user.username}#${member.user.discriminator}** is not active in this raid!`
+					content: `${icons.warning} **${member.user.username}#${member.user.discriminator}** is not active in this raid!`
 				})
 				return
 			}
@@ -440,7 +441,7 @@ class AttackCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `❌ Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
+					content: `${icons.warning} Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
 				})
 				return
 			}
@@ -460,7 +461,7 @@ class AttackCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: '❌ You don\'t have a weapon equipped. Equip a weapon from your inventory with `/equip <item id>`.'
+					content: `${icons.warning} You don't have a weapon equipped. Equip a weapon from your inventory with \`/equip <item id>\`.`
 				})
 				return
 			}
@@ -480,7 +481,7 @@ class AttackCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await ctx.send({
-						content: `❌ You don't have any ammo for your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)}.` +
+						content: `${icons.danger} You don't have any ammo for your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row)}.` +
 							` You need one of the following ammunitions in your inventory:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponUsed)).map(i => getItemDisplay(i)).join(', ')}.`
 					})
 					return
@@ -493,7 +494,7 @@ class AttackCommand extends CustomSlashCommand {
 				await deleteItem(transaction.query, userAmmoUsed.row.id)
 
 				if (missedPartChoice) {
-					messages.push(`⛔ You try to shoot <@${member.id}> in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}) **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
+					messages.push(`${icons.danger} You try to shoot <@${member.id}> in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}) **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
 				}
 				else {
 					messages.push(`You shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
@@ -504,7 +505,7 @@ class AttackCommand extends CustomSlashCommand {
 				finalDamage = getAttackDamage(userEquips.weapon.item.damage, userEquips.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item)
 
 				if (missedPartChoice) {
-					messages.push(`⛔ You try to hit <@${member.id}> in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
+					messages.push(`${icons.danger} You try to hit <@${member.id}> in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
 				}
 				else {
 					messages.push(`You hit <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
@@ -615,7 +616,7 @@ class AttackCommand extends CustomSlashCommand {
 						await erisMember.kick(`User was killed by ${ctx.user.username}#${ctx.user.discriminator} (${ctx.user.id})`)
 
 						await messageUser(erisMember.user, {
-							content: '❌ Raid failed!\n\n' +
+							content: `${icons.danger} Raid failed!\n\n` +
 								`You were killed by **${ctx.user.username}#${ctx.user.discriminator}** who hit you for **${finalDamage.total}** damage using their ${getItemDisplay(userEquips.weapon.item)}${ammoUsed ? ` (ammo: ${getItemDisplay(ammoUsed.item)})` : ''}.\n` +
 								`You lost all the items in your inventory (**${victimBackpackData.items.length}** items).`
 						})

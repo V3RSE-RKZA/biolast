@@ -1,9 +1,9 @@
 import { Ammunition } from '../../types/Items'
-import { items as ranged } from './ranged'
+import { ranged } from './ranged'
 
 const ammoObject = <T>(et: { [K in keyof T]: Ammunition & { name: K } }) => et
 
-export const items = ammoObject({
+export const ammunition = ammoObject({
 	'5.45x39_fmj': {
 		type: 'Ammunition',
 		name: '5.45x39_fmj',

@@ -1,6 +1,7 @@
 import { CommandOptionType, SlashCreator, CommandContext, User } from 'slash-create'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import App from '../app'
+import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { ItemRow, UserRow } from '../types/mysql'
@@ -99,7 +100,7 @@ class StashCommand extends CustomSlashCommand {
 
 			if ((new Set(items)).size !== items.length) {
 				await ctx.send({
-					content: '❌ You specified the same item multiple times! Are you trying to break me?? >:('
+					content: `${icons.danger} You specified the same item multiple times! Are you trying to break me?? >:(`
 				})
 				return
 			}
@@ -123,7 +124,7 @@ class StashCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await ctx.send({
-						content: `❌ You don't have an item with the ID **${i}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
+						content: `${icons.warning} You don't have an item with the ID **${i}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
 					})
 					return
 				}
@@ -134,7 +135,7 @@ class StashCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `❌ You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`
+					content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`
 				})
 				return
 			}
@@ -147,7 +148,7 @@ class StashCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `Successfully moved the following from your inventory to your stash:\n\n${itemsToDeposit.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`
+				content: `${icons.checkmark} Successfully moved the following from your inventory to your stash:\n\n${itemsToDeposit.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`
 			})
 			return
 		}
@@ -156,7 +157,7 @@ class StashCommand extends CustomSlashCommand {
 
 			if ((new Set(items)).size !== items.length) {
 				await ctx.send({
-					content: '❌ You specified the same item multiple times! Are you trying to break me?? >:('
+					content: `${icons.danger} You specified the same item multiple times! Are you trying to break me?? >:(`
 				})
 				return
 			}
@@ -177,7 +178,7 @@ class StashCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await ctx.send({
-						content: `❌ You don't have an item with the ID **${i}** in your stash. You can find the IDs of items in your \`/stash\`.`
+						content: `${icons.warning} You don't have an item with the ID **${i}** in your stash. You can find the IDs of items in your \`/stash\`.`
 					})
 					return
 				}
@@ -192,7 +193,7 @@ class StashCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `Successfully moved the following from your stash to your inventory:\n\n${itemsToWithdraw.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`
+				content: `${icons.checkmark} Successfully moved the following from your stash to your inventory:\n\n${itemsToWithdraw.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`
 			})
 			return
 		}
@@ -205,7 +206,7 @@ class StashCommand extends CustomSlashCommand {
 
 			if (!userData) {
 				await ctx.send({
-					content: `❌ **${member.user.username}#${member.user.discriminator}** does not have an account!`
+					content: `${icons.warning} **${member.user.username}#${member.user.discriminator}** does not have an account!`
 				})
 				return
 			}
@@ -255,7 +256,7 @@ class StashCommand extends CustomSlashCommand {
 				.addField('__Stash Info__', `**Rubles**: ${formatNumber(userData.money)}\n` +
 				`**Number of Items**: ${itemData.items.length}`)
 				.addField(`__Items in Stash__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})`,
-					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || 'No items found. Move items from your inventory to your stash with `/stash put <item id>`.')
+					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your inventory to your stash with \`/stash put <item id>\`.`)
 			pages.push(embed)
 		}
 

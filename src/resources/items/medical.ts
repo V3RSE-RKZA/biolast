@@ -2,7 +2,7 @@ import { Medical } from '../../types/Items'
 
 const medicalObject = <T>(et: { [K in keyof T]: Medical & { name: K } }) => et
 
-export const items = medicalObject({
+export const medical = medicalObject({
 	bandage: {
 		type: 'Medical',
 		name: 'bandage',

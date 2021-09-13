@@ -2,7 +2,7 @@ import { Armor } from '../../types/Items'
 
 const armorObject = <T>(et: { [K in keyof T]: (Armor) & { name: K } }) => et
 
-export const items = armorObject({
+export const armor = armorObject({
 	paca_armor: {
 		type: 'Body Armor',
 		name: 'paca_armor',

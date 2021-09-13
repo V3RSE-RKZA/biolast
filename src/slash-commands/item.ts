@@ -1,5 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import { allItems } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -52,7 +53,7 @@ class ItemCommand extends CustomSlashCommand {
 
 				if (!itemToCheck) {
 					await ctx.send({
-						content: `❌ You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
+						content: `${icons.warning} You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
 					})
 					return
 				}
@@ -67,7 +68,7 @@ class ItemCommand extends CustomSlashCommand {
 				const related = itemCorrector.getWord(ctx.options.item, 5)
 
 				await ctx.send({
-					content: related ? `❌ Could not find an item matching that name. Did you mean \`${related}\`?` : '❌ Could not find an item matching that name.'
+					content: related ? `${icons.information} Could not find an item matching that name. Did you mean \`${related}\`?` : `${icons.warning} Could not find an item matching that name.`
 				})
 
 				// auto-delete message if in raid server so that users can't use the slash command options to communicate with each other.

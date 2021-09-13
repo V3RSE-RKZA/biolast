@@ -1,5 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
@@ -36,7 +37,7 @@ class HealthCommand extends CustomSlashCommand {
 
 			if (!userData) {
 				await ctx.send({
-					content: `❌ **${member.user.username}#${member.user.discriminator}** does not have an account!`
+					content: `${icons.warning} **${member.user.username}#${member.user.discriminator}** does not have an account!`
 				})
 				return
 			}

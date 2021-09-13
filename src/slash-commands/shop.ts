@@ -1,6 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext, Message } from 'slash-create'
 import App from '../app'
-import { shopDailyBuyLimit } from '../config'
+import { icons, shopDailyBuyLimit } from '../config'
 import { allItems } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -95,7 +95,7 @@ class ShopCommand extends CustomSlashCommand {
 
 			if ((new Set(items)).size !== items.length) {
 				await ctx.send({
-					content: '❌ You specified the same item multiple times! Are you trying to break me?? >:('
+					content: `${icons.danger} You specified the same item multiple times! Are you trying to break me?? >:(`
 				})
 				return
 			}
@@ -113,14 +113,14 @@ class ShopCommand extends CustomSlashCommand {
 				// make sure user has item
 				if (!foundItem) {
 					await ctx.send({
-						content: `❌ You don't have an item with the ID **${i}** in your inventory or stash. You can find the IDs of items in your \`/inventory\` or \`/stash\`.`
+						content: `${icons.warning} You don't have an item with the ID **${i}** in your inventory or stash. You can find the IDs of items in your \`/inventory\` or \`/stash\`.`
 					})
 					return
 				}
 				else if (!foundItem.item.sellPrice) {
 					/* this will prevent users from being able to get rid of unsellable items.
 					await ctx.send({
-						content: `❌ ${getItemDisplay(foundItem.item)} cannot be sold.`
+						content: `${icons.danger} ${getItemDisplay(foundItem.item)} cannot be sold.`
 					})
 					return
 					*/
@@ -163,7 +163,7 @@ class ShopCommand extends CustomSlashCommand {
 							await transaction.commit()
 
 							await confirmed.editParent({
-								content: `❌ You don't have an item with the ID **${i.row.id}** in your inventory or stash. You can find the IDs of items in your \`/inventory\` or \`/stash\`.`,
+								content: `${icons.warning} You don't have an item with the ID **${i.row.id}** in your inventory or stash. You can find the IDs of items in your \`/inventory\` or \`/stash\`.`,
 								components: []
 							})
 							return
@@ -199,8 +199,8 @@ class ShopCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `✅ Sold **${itemsToSell.length}x** items for **${formatNumber(price)}**.\n\n${itemsToSell.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
-							`You now have **${formatNumber(userDataV.money + price)}** rubles.`,
+						content: `${icons.checkmark} Sold **${itemsToSell.length}x** items for **${formatNumber(price)}**.\n\n${itemsToSell.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
+							`${icons.information} You now have **${formatNumber(userDataV.money + price)}** rubles.`,
 						components: []
 					})
 				}
@@ -210,7 +210,7 @@ class ShopCommand extends CustomSlashCommand {
 			}
 			catch (err) {
 				await botMessage.edit({
-					content: '❌ Command timed out.',
+					content: `${icons.danger} Command timed out.`,
 					components: []
 				})
 			}
@@ -222,7 +222,7 @@ class ShopCommand extends CustomSlashCommand {
 
 			if (!shopItemRow || !shopItem) {
 				await ctx.send({
-					content: `❌ Could not find an item available in the shop with the ID **${itemID}**. You view the shop with \`/shop view\`.`
+					content: `${icons.warning} Could not find an item available in the shop with the ID **${itemID}**. You view the shop with \`/shop view\`.`
 				})
 				return
 			}
@@ -231,13 +231,13 @@ class ShopCommand extends CustomSlashCommand {
 
 			if (userData.level < shopItem.itemLevel) {
 				await ctx.send({
-					content: `❌ You must be at least level **${shopItem.itemLevel}** to purchase ${getItemDisplay(shopItem, shopItemRow, { showDurability: false })}.`
+					content: `${icons.warning} You must be at least level **${shopItem.itemLevel}** to purchase ${getItemDisplay(shopItem, shopItemRow, { showDurability: false })}.`
 				})
 				return
 			}
 			else if (userData.shopSales >= shopDailyBuyLimit) {
 				await ctx.send({
-					content: `❌ You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`
+					content: `${icons.danger} You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`
 				})
 				return
 			}
@@ -247,13 +247,13 @@ class ShopCommand extends CustomSlashCommand {
 
 			if (userStashData.slotsUsed + shopItem.slotsUsed > userData.stashSlots) {
 				await ctx.send({
-					content: `❌ You don't have enough space in your stash. You need **${shopItem.slotsUsed}** open slots in your stash. Sell items to clear up some space.`
+					content: `${icons.danger} You don't have enough space in your stash. You need **${shopItem.slotsUsed}** open slots in your stash. Sell items to clear up some space.`
 				})
 				return
 			}
 			else if (userData.money < shopItemRow.price) {
 				await ctx.send({
-					content: `❌ You don't have enough rubles. You need **${formatNumber(shopItemRow.price)}** but you only have **${formatNumber(userData.money)}**.`
+					content: `${icons.danger} You don't have enough rubles. You need **${formatNumber(shopItemRow.price)}** but you only have **${formatNumber(userData.money)}**.`
 				})
 				return
 			}
@@ -275,7 +275,7 @@ class ShopCommand extends CustomSlashCommand {
 						await transaction.commit()
 
 						await confirmed.editParent({
-							content: `❌ Could not find an item available in the shop with the ID **${itemID}**. You view the shop with \`/shop view\`.`,
+							content: `${icons.warning} Could not find an item available in the shop with the ID **${itemID}**. You view the shop with \`/shop view\`.`,
 							components: []
 						})
 						return
@@ -289,7 +289,7 @@ class ShopCommand extends CustomSlashCommand {
 						await transaction.commit()
 
 						await confirmed.editParent({
-							content: `❌ You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`,
+							content: `${icons.danger} You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`,
 							components: []
 						})
 						return
@@ -298,14 +298,14 @@ class ShopCommand extends CustomSlashCommand {
 						await transaction.commit()
 
 						await confirmed.editParent({
-							content: `❌ You don't have enough space in your stash. You need **${shopItem.slotsUsed}** open slots in your stash. Sell items to clear up some space.`,
+							content: `${icons.danger} You don't have enough space in your stash. You need **${shopItem.slotsUsed}** open slots in your stash. Sell items to clear up some space.`,
 							components: []
 						})
 						return
 					}
 					else if (userDataV.money < shopItemRowV.price) {
 						await confirmed.editParent({
-							content: `❌ You don't have enough rubles. You need **${formatNumber(shopItemRowV.price)}** but you only have **${formatNumber(userDataV.money)}**.`,
+							content: `${icons.danger} You don't have enough rubles. You need **${formatNumber(shopItemRowV.price)}** but you only have **${formatNumber(userDataV.money)}**.`,
 							components: []
 						})
 						return
@@ -318,8 +318,8 @@ class ShopCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `✅ Purchased ${getItemDisplay(shopItem, shopItemRowV)} for **${formatNumber(shopItemRowV.price)}**. You can find this item in your stash.\n\n` +
-							`You now have **${formatNumber(userDataV.money - shopItemRowV.price)}** rubles.`,
+						content: `${icons.checkmark} Purchased ${getItemDisplay(shopItem, shopItemRowV)} for **${formatNumber(shopItemRowV.price)}**. You can find this item in your stash.\n\n` +
+							`${icons.information} You now have **${formatNumber(userDataV.money - shopItemRowV.price)}** rubles.`,
 						components: []
 					})
 				}
@@ -329,7 +329,7 @@ class ShopCommand extends CustomSlashCommand {
 			}
 			catch (err) {
 				await botMessage.edit({
-					content: '❌ Command timed out.',
+					content: `${icons.danger} Command timed out.`,
 					components: []
 				})
 			}
@@ -345,7 +345,7 @@ class ShopCommand extends CustomSlashCommand {
 					const related = itemCorrector.getWord(ctx.options.view.item, 5)
 
 					await ctx.send({
-						content: related ? `❌ Could not find an item matching that name. Did you mean \`${related}\`?` : '❌ Could not find an item matching that name.'
+						content: related ? `${icons.information} Could not find an item matching that name. Did you mean \`${related}\`?` : `${icons.warning} Could not find an item matching that name.`
 					})
 					return
 				}
@@ -381,8 +381,7 @@ class ShopCommand extends CustomSlashCommand {
 			const filteredItems = itemData.items.slice(indexFirst, indexLast)
 
 			const embed = new Embed()
-				.setDescription(`**${searchedItem ? `Market Results For: ${getItemDisplay(searchedItem)}` : 'Market'}**\n\nUse \`/shop buy <item id>\` to purchase an item.`)
-				.setFooter('These deals will expire after 1 day!')
+				.setDescription(`**${searchedItem ? `Market Results For: ${getItemDisplay(searchedItem)}` : 'Market'}**\n\n${icons.information} Use \`/shop buy <item id>\` to purchase an item.\n${icons.warning} These deals will expire after 1 day.`)
 
 			embed.addField('__Items Available__ (Sorted newest to oldest)',
 				filteredItems.map(itm => `<t:${itm.row.createdAt.getTime() / 1000}:R> ${getItemDisplay(itm.item, itm.row)} - ${formatNumber(itm.row.price)}`).join('\n') ||

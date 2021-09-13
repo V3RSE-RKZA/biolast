@@ -6,7 +6,7 @@ import ComponentCollector from './utils/ComponentCollector'
 import NPCHandler from './utils/NPCHandler'
 import CronJobs from './utils/CronJobs'
 import { getAllRaids, getUsersRaid, removeUserFromRaid, userInRaid } from './utils/db/raids'
-import { clientId, botToken, adminUsers } from './config'
+import { clientId, botToken, adminUsers, icons } from './config'
 import fs from 'fs'
 import path from 'path'
 import { beginTransaction, query } from './utils/db/mysql'
@@ -102,7 +102,7 @@ class App {
 					body: {
 						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 						data: {
-							content: '❌ The bot is currently restarting. Try using this command again in a minute or two...',
+							content: `${icons.danger} The bot is currently restarting. Try using this command again in a minute or two...`,
 							flags: InteractionResponseFlags.EPHEMERAL
 						}
 					}
@@ -117,7 +117,7 @@ class App {
 					body: {
 						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 						data: {
-							content: '❌ That command was recently removed.',
+							content: `${icons.danger} That command was recently removed.`,
 							flags: InteractionResponseFlags.EPHEMERAL
 						}
 					}
@@ -322,7 +322,7 @@ class App {
 								await guild.kickMember(row.userId, 'Raid time ran out')
 								if (erisUser) {
 									await messageUser(erisUser, {
-										content: '❌ Raid failed!\n\n' +
+										content: `${icons.danger} Raid failed!\n\n` +
 											'You spent too long in the raid and ran out of time to evac! Next time make sure you have enough time to find an evac and escape the raid.\n' +
 											'You lost all the items in your inventory.'
 									})
@@ -365,14 +365,14 @@ class App {
 		try {
 			if (command.customOptions.category === 'admin' && !adminUsers.includes(ctx.user.id)) {
 				return ctx.send({
-					content: '❌ You don\'t have permission to run that command.',
+					content: `${icons.danger} You don't have permission to run that command.`,
 					flags: InteractionResponseFlags.EPHEMERAL
 				})
 			}
 
 			else if (command.commandName !== 'heal' && this.extractingUsers.has(ctx.user.id)) {
 				return ctx.send({
-					content: '❌ You cannot use that command while extracting!',
+					content: `${icons.warning} You cannot use that command while extracting!`,
 					flags: InteractionResponseFlags.EPHEMERAL
 				})
 			}
@@ -384,14 +384,14 @@ class App {
 				// check if user has manage server permission before running GuildModCommand
 				if (command.customOptions.guildModsOnly && (!ctx.member || !ctx.member.permissions.has(Constants.Permissions.manageGuild))) {
 					return ctx.send({
-						content: '❌ You need the `Manage Server` permission to use this command!',
+						content: `${icons.danger} You need the \`Manage Server\` permission to use this command!`,
 						flags: InteractionResponseFlags.EPHEMERAL
 					})
 				}
 
 				else if (command.customOptions.onlyWorksInRaidGuild && !isRaidGuild(ctx.guildID)) {
 					return ctx.send({
-						content: '❌ That command can **ONLY** be used in a raid. Join a raid with the `raid` command.',
+						content: `${icons.danger} That command can **ONLY** be used in a raid. Join a raid with the \`raid\` command.`,
 						flags: InteractionResponseFlags.EPHEMERAL
 					})
 				}
@@ -461,14 +461,14 @@ class App {
 			// non-worksInDMs command cannot be used in DM channel
 			else if (!command.customOptions.worksInDMs) {
 				return ctx.send({
-					content: '❌ That command cannot be used in DMs.',
+					content: `${icons.warning} That command cannot be used in DMs.`,
 					flags: InteractionResponseFlags.EPHEMERAL
 				})
 			}
 
 			if (!command.customOptions.canBeUsedInRaid && (isRaidGuild(ctx.guildID) || await userInRaid(query, ctx.user.id))) {
 				return ctx.send({
-					content: '❌ That command cannot be used while you are in an active raid! You need to evac to finish the raid (dying also works).',
+					content: `${icons.warning} That command cannot be used while you are in an active raid! You need to evac to finish the raid (dying also works).`,
 					flags: InteractionResponseFlags.EPHEMERAL
 				})
 			}

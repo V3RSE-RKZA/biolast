@@ -1,5 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { getUserBackpack, unequipItem } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
@@ -78,7 +79,7 @@ class UnequipCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `❌ You don't have an item of type **${itemType}** equipped. You can find your equipped items in your \`/inventory\`.`
+				content: `${icons.warning} You don't have an item of type **${itemType}** equipped. You can find your equipped items in your \`/inventory\`.`
 			})
 			return
 		}
@@ -86,7 +87,7 @@ class UnequipCommand extends CustomSlashCommand {
 		await transaction.commit()
 
 		await ctx.send({
-			content: `🧤 Successfully unequipped ${getItemDisplay(unequippedItem.item, unequippedItem.row, { showEquipped: false })}.`
+			content: `${icons.checkmark} Successfully unequipped ${getItemDisplay(unequippedItem.item, unequippedItem.row, { showEquipped: false })}.`
 		})
 	}
 }

@@ -1,5 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
@@ -47,7 +48,7 @@ class HealCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `❌ You need to wait **${healCD}** before you can heal again.`
+				content: `${icons.warning} You need to wait **${healCD}** before you can heal again.`
 			})
 			return
 		}
@@ -55,7 +56,7 @@ class HealCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `❌ You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
+				content: `${icons.warning} You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
 			})
 			return
 		}
@@ -63,7 +64,7 @@ class HealCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `❌ ${getItemDisplay(itemToUse.item, itemToUse.row)} cannot be used to heal.`
+				content: `${icons.danger} ${getItemDisplay(itemToUse.item, itemToUse.row)} cannot be used to heal.`
 			})
 			return
 		}
@@ -74,7 +75,7 @@ class HealCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: '❌ You are already at max health!'
+				content: `${icons.danger} You are already at max health!`
 			})
 			return
 		}
@@ -98,7 +99,7 @@ class HealCommand extends CustomSlashCommand {
 		})
 
 		await ctx.send({
-			content: `You use your ${itemDisplay} to heal for **${maxHeal}** health! You now have ${formatHealth(userData.health + maxHeal, userData.maxHealth)} **${userData.health + maxHeal} / ${userData.maxHealth}** health.`
+			content: `${icons.checkmark} You use your ${itemDisplay} to heal for **${maxHeal}** health! You now have ${formatHealth(userData.health + maxHeal, userData.maxHealth)} **${userData.health + maxHeal} / ${userData.maxHealth}** health.`
 		})
 	}
 }

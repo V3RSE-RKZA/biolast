@@ -1,5 +1,6 @@
 import { Guild, Member, MemberPartial } from 'eris'
 import App from '../app'
+import { icons } from '../config'
 import { deleteItem, getUserBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
@@ -47,7 +48,7 @@ export async function run (this: App, guild: Guild, member: Member | MemberParti
 				this.clearRaidTimer(member.id)
 
 				await messageUser(member.user, {
-					content: '❌ Raid failed!\n\n' +
+					content: `${icons.danger} Raid failed!\n\n` +
 						'You left the raid! This is called raid dodging and isn\'t allowed.\n' +
 						`You lost all the items in your inventory (**${userBackpackData.items.length}** items).`
 				})

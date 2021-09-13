@@ -1,5 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { GroundItemRow } from '../types/mysql'
 import { formatTime } from '../utils/db/cooldowns'
@@ -91,7 +92,7 @@ class GroundCommand extends CustomSlashCommand {
 
 			if ((new Set(items)).size !== items.length) {
 				await ctx.send({
-					content: '❌ You specified the same item multiple times! Are you trying to break me?? >:('
+					content: `${icons.danger} You specified the same item multiple times! Are you trying to break me?? >:(`
 				})
 				return
 			}
@@ -113,7 +114,7 @@ class GroundCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await ctx.send({
-						content: `❌ You don't have an item with the ID **${i}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
+						content: `${icons.warning} You don't have an item with the ID **${i}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
 					})
 					return
 				}
@@ -128,7 +129,7 @@ class GroundCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `Successfully dropped **${itemsToDrop.length}x** items onto the ground:\n\n${itemsToDrop.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`
+				content: `${icons.checkmark} Successfully dropped **${itemsToDrop.length}x** items onto the ground:\n\n${itemsToDrop.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`
 			})
 			return
 		}
@@ -137,7 +138,7 @@ class GroundCommand extends CustomSlashCommand {
 
 			if ((new Set(items)).size !== items.length) {
 				await ctx.send({
-					content: '❌ You specified the same item multiple times! Are you trying to break me?? >:('
+					content: `${icons.danger} You specified the same item multiple times! Are you trying to break me?? >:(`
 				})
 				return
 			}
@@ -161,7 +162,7 @@ class GroundCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await ctx.send({
-						content: `❌ Could not find an item with the ID **${i}** on the ground. You can find the IDs of ground items with \`/ground view\`.`
+						content: `${icons.warning} Could not find an item with the ID **${i}** on the ground. You can find the IDs of ground items with \`/ground view\`.`
 					})
 					return
 				}
@@ -171,7 +172,7 @@ class GroundCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `❌ You don't have enough space in your inventory. You need **${spaceNeeded}** open slots in your inventory. Drop items onto the ground to clear up some space.`
+					content: `${icons.danger} You don't have enough space in your inventory. You need **${spaceNeeded}** open slots in your inventory. Drop items onto the ground to clear up some space.`
 				})
 				return
 			}
@@ -184,7 +185,7 @@ class GroundCommand extends CustomSlashCommand {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `Successfully picked up **${itemsToGrab.length}x** items from the ground:\n\n${itemsToGrab.map(i => getItemDisplay(i.item, i.row)).join('\n')}`
+				content: `${icons.checkmark} Successfully picked up **${itemsToGrab.length}x** items from the ground:\n\n${itemsToGrab.map(i => getItemDisplay(i.item, i.row)).join('\n')}`
 			})
 			return
 		}
@@ -195,7 +196,7 @@ class GroundCommand extends CustomSlashCommand {
 
 		if (!pages.length) {
 			await ctx.send({
-				content: 'There are no items on the ground in this channel. You can drop an item from your inventory onto the ground with `/ground drop <item id>`.'
+				content: `There are no items on the ground in this channel.\n\n${icons.information} You can drop an item from your inventory onto the ground with \`/ground drop <item id>\`.`
 			})
 		}
 		else if (pages.length === 1) {
@@ -220,8 +221,8 @@ class GroundCommand extends CustomSlashCommand {
 
 			const content = `The following items are on the ground${maxPage > 1 ? ` (page ${i}/${maxPage})` : ''}:\n\n` +
 				`${filteredItems.map(itm => `Dropped **${formatTime(Date.now() - itm.row.createdAt.getTime())}** ago - ${getItemDisplay(itm.item, itm.row)}`).join('\n')}\n\n` +
-				'⚠️ Items on the ground will expire after **10 - 15 minutes**.\n' +
-				'❔ Pick up an item with `/ground grab <item id>` or drop an item from your inventory onto the ground with `/ground drop <item id>`.'
+				`${icons.warning} Items on the ground will expire after **10 - 15 minutes**.\n` +
+				`${icons.information} Pick up an item with \`/ground grab <item id>\` or drop an item from your inventory onto the ground with \`/ground drop <item id>\`.`
 
 			pages.push(content)
 		}

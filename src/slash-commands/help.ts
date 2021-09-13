@@ -1,6 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext, ComponentType, Message } from 'slash-create'
 import App from '../app'
-import { adminUsers } from '../config'
+import { adminUsers, icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { logger } from '../utils/logger'
@@ -37,7 +37,7 @@ class HelpCommand extends CustomSlashCommand {
 
 			if (!cmd || (cmd.customOptions.category === 'admin' && !adminUsers.includes(ctx.user.id))) {
 				await ctx.send({
-					content: '❌ That command doesn\'t exist!'
+					content: `${icons.danger} That command doesn't exist!`
 				})
 
 				// auto-delete message if in raid server so that users can't use the slash command options to communicate with each other.

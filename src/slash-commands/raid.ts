@@ -1,5 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext, Message, InteractionResponseFlags } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import { allLocations } from '../resources/raids'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
@@ -50,14 +51,14 @@ class RaidCommand extends CustomSlashCommand {
 
 		if (isRaidGuild(ctx.guildID)) {
 			await ctx.send({
-				content: '❌ You are in a raid right now!! 🤔',
+				content: `${icons.danger} You are in a raid right now!! 🤔`,
 				flags: InteractionResponseFlags.EPHEMERAL
 			})
 			return
 		}
 		else if (isInRaid) {
 			const botMessage = await ctx.send({
-				content: '⚠️ You are already in a raid. Are you looking for the invite link?',
+				content: `${icons.warning} You are already in a raid. Are you looking for the invite link?`,
 				flags: InteractionResponseFlags.EPHEMERAL,
 				components: CONFIRM_BUTTONS
 			}) as Message
@@ -67,21 +68,21 @@ class RaidCommand extends CustomSlashCommand {
 
 				if (confirmed.customID === 'confirmed') {
 					await confirmed.editParent({
-						content: `✅ Click here to join the raid: https://discord.gg/${isInRaid.invite}\n\n` +
-							'⚠️ This is not an advertisement, this server is temporary and is designed strictly for the game.',
+						content: `${icons.checkmark} Click here to join the raid: https://discord.gg/${isInRaid.invite}\n\n` +
+							`${icons.warning} This is not an advertisement, this server is temporary and is designed strictly for the game.`,
 						components: []
 					})
 				}
 				else {
 					await confirmed.editParent({
-						content: '✅ Canceled.',
+						content: `${icons.cancel} Canceled.`,
 						components: []
 					})
 				}
 			}
 			catch (err) {
 				await ctx.editOriginal({
-					content: '❌ Command timed out.',
+					content: `${icons.danger} Command timed out.`,
 					components: []
 				})
 			}
@@ -93,7 +94,7 @@ class RaidCommand extends CustomSlashCommand {
 
 		if (!choice) {
 			await ctx.send({
-				content: '❌ You need to specify a location you want to raid. The following locations are available:',
+				content: `${icons.warning} You need to specify a location you want to raid. The following locations are available:`,
 				flags: InteractionResponseFlags.EPHEMERAL,
 				embeds: [this.getLocationsEmbed().embed]
 			})
@@ -101,21 +102,21 @@ class RaidCommand extends CustomSlashCommand {
 		}
 		else if (choice.requirements.minLevel > userData.level) {
 			await ctx.send({
-				content: `❌ You are not a high enough level to explore that location. Level required: **${choice.requirements.minLevel}**`,
+				content: `${icons.warning} You are not a high enough level to explore that location. Level required: **${choice.requirements.minLevel}**`,
 				flags: InteractionResponseFlags.EPHEMERAL
 			})
 			return
 		}
 		else if (userData.level > choice.requirements.maxLevel) {
 			await ctx.send({
-				content: `❌ You are too high of a level to explore that location. Max level allowed: **${choice.requirements.maxLevel}**`,
+				content: `${icons.warning} You are too high of a level to explore that location. Max level allowed: **${choice.requirements.maxLevel}**`,
 				flags: InteractionResponseFlags.EPHEMERAL
 			})
 			return
 		}
 		else if (!choice.guilds.length) {
 			await ctx.send({
-				content: '❌ This raid is currently unavailable while we work on it! Sorry...',
+				content: `${icons.warning} This raid is currently unavailable while we work on it! Sorry...`,
 				flags: InteractionResponseFlags.EPHEMERAL
 			})
 			return
@@ -126,7 +127,7 @@ class RaidCommand extends CustomSlashCommand {
 		// prevent users from entering raid of same type
 		if (raidCD) {
 			await ctx.send({
-				content: `❌ You recently went on a raid in **${choice.display}**. You need to wait **${raidCD}** before you can raid this location again.`,
+				content: `${icons.warning} You recently went on a raid in **${choice.display}**. You need to wait **${raidCD}** before you can raid this location again.`,
 				flags: InteractionResponseFlags.EPHEMERAL
 			})
 			return
@@ -151,7 +152,7 @@ class RaidCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: '❌ You are already in an active raid!',
+						content: `${icons.danger} You are already in an active raid!`,
 						components: []
 					})
 					return
@@ -172,7 +173,7 @@ class RaidCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `❌ All of the **${choice.display}** raids are full! Try again in 5 - 10 minutes after some players have left the raid.`,
+						content: `${icons.danger} All of the **${choice.display}** raids are full! Try again in 5 - 10 minutes after some players have left the raid.`,
 						components: []
 					})
 					return
@@ -217,7 +218,7 @@ class RaidCommand extends CustomSlashCommand {
 							await this.app.bot.kickGuildMember(raidGuild.id, ctx.user.id, 'Raid time ran out')
 							if (erisUser) {
 								await messageUser(erisUser, {
-									content: '❌ Raid failed!\n\n' +
+									content: `${icons.danger} Raid failed!\n\n` +
 										'You spent too long in the raid and ran out of time to evac! Next time make sure you have enough time to find an evac and escape the raid.\n' +
 										'You lost all the items in your inventory.'
 								})
@@ -230,22 +231,22 @@ class RaidCommand extends CustomSlashCommand {
 				})
 
 				await confirmed.editParent({
-					content: `✅ **${choice.display} raid started!** You have **${formatTime(choice.raidLength * 1000)}** to join this raid and evac with whatever loot you can find.` +
+					content: `${icons.checkmark} **${choice.display} raid started!** You have **${formatTime(choice.raidLength * 1000)}** to join this raid and evac with whatever loot you can find.` +
 						` **You can use \`/raidtime\` in the raid to view how much time you have left.**\n\nClick here to join the raid: https://discord.gg/${invite.code}\n\n` +
-						'⚠️ This is not an advertisement, this server is temporary and is designed strictly for the game.',
+						`${icons.warning} This is not an advertisement, this server is temporary and is designed strictly for the game.`,
 					components: []
 				})
 			}
 			else {
 				await confirmed.editParent({
-					content: '✅ Canceled.',
+					content: `${icons.cancel} Canceled.`,
 					components: []
 				})
 			}
 		}
 		catch (err) {
 			await ctx.editOriginal({
-				content: '❌ Command timed out.',
+				content: `${icons.danger} Command timed out.`,
 				components: []
 			})
 		}
@@ -254,7 +255,7 @@ class RaidCommand extends CustomSlashCommand {
 	getLocationsEmbed (): Embed {
 		const locationsEmb = new Embed()
 			.setTitle('Available Locations')
-			.setDescription('The bot is in early access, expect more locations to be added.')
+			.setDescription(`${icons.warning} The bot is in early access, expect more locations to be added.`)
 
 		for (const loc of allLocations) {
 			locationsEmb.addField(loc.display, `Levels Allowed: **${loc.requirements.minLevel}** - **${loc.requirements.maxLevel}**\n` +

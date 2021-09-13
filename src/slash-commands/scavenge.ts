@@ -1,5 +1,6 @@
 import { SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import { allNPCs } from '../resources/npcs'
 import { quests } from '../resources/quests'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -54,7 +55,7 @@ class ScavengeCommand extends CustomSlashCommand {
 
 		else if (!raidChannel.scavange) {
 			await ctx.send({
-				content: '❌ You try to scavenge for items but find nothing.'
+				content: `${icons.warning} You try to scavenge for items but find nothing.`
 			})
 			return
 		}
@@ -78,7 +79,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `❌ This channel was recently scavenged by another player! Loot will respawn in **${channelCD}**.`
+					content: `${icons.warning} This channel was recently scavenged by another player! Loot will respawn in **${channelCD}**.`
 				})
 				return
 			}
@@ -86,7 +87,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `❌ You need to wait **${scavengeCD}** before you can scavenge again.`
+					content: `${icons.warning} You need to wait **${scavengeCD}** before you can scavenge again.`
 				})
 				return
 			}
@@ -94,7 +95,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `❌ You need a ${getItemDisplay(keyRequired)} to scavenge here.`
+					content: `${icons.information} You need a ${getItemDisplay(keyRequired)} to scavenge here.`
 				})
 				return
 			}
@@ -112,7 +113,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `You try to scavenge **${raidChannel.display}** but there was a threat roaming the area!`
+					content: `${icons.danger} You try to scavenge **${raidChannel.display}** but there was a threat roaming the area!`
 				})
 
 				setTimeout(async () => {
@@ -143,7 +144,7 @@ class ScavengeCommand extends CustomSlashCommand {
 					const erisUser = await this.app.fetchUser(ctx.user.id)
 					if (erisUser) {
 						await messageUser(erisUser, {
-							content: '❌ Raid failed!\n\n' +
+							content: `${icons.danger} Raid failed!\n\n` +
 								`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time search the area before you scavenge for loot.\n` +
 								`You lost all the items in your inventory (**${backpackData.items.length - attackResult.removedItems}** items).`
 						})
@@ -245,22 +246,22 @@ class ScavengeCommand extends CustomSlashCommand {
 				// items were added to both backpack and ground
 				await ctx.send({
 					content: `${finalMessage}\n\n` +
-						`These items were added to your **inventory**: ${itemsAddedToBackpack.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}\n\n` +
-						`Your inventory ran out of space and you were forced to leave the following on the **ground**: ${itemsAddedToGround.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}`
+						`${icons.checkmark} These items were added to your **inventory**: ${itemsAddedToBackpack.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}\n\n` +
+						`${icons.warning} Your inventory ran out of space and you were forced to leave the following on the **ground**: ${itemsAddedToGround.map(itm => getItemDisplay(itm.item, itm.row)).join(', ')}`
 				})
 			}
 			else if (itemsAddedToBackpack.length && !itemsAddedToGround.length) {
 				// all items were added to backpack
 				await ctx.send({
 					content: `${finalMessage}\n\n` +
-						'These items were added to your inventory.'
+						`${icons.checkmark} These items were added to your inventory.`
 				})
 			}
 			else if (itemsAddedToGround.length && !itemsAddedToBackpack.length) {
 				// all items were put on ground
 				await ctx.send({
 					content: `${finalMessage}\n\n` +
-						'Your inventory ran out of space and you were forced to leave these items on the **ground**.'
+						`${icons.warning} Your inventory ran out of space and you were forced to leave these items on the **ground**.`
 				})
 			}
 		}
