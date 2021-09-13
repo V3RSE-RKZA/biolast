@@ -95,10 +95,10 @@ export const melee = meleeObject({
 		sellPrice: 1750,
 		durability: 3,
 		slotsUsed: 2,
-		fireRate: 15,
+		fireRate: 20,
 		accuracy: 75,
 		damage: 20,
-		penetration: 1.0,
+		penetration: 0.5,
 		itemLevel: 2
 	},
 	pitchfork: {
