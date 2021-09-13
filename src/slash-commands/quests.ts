@@ -3,12 +3,12 @@ import App from '../app'
 import { Quest, quests } from '../resources/quests'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { ItemRow } from '../types/mysql'
+import { BackpackItemRow, ItemRow, QuestRow } from '../types/mysql'
 import { formatTime } from '../utils/db/cooldowns'
-import { addItemToStash, createItem, getUserStash } from '../utils/db/items'
+import { addItemToStash, createItem, deleteItem, getUserBackpack, getUserStash } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { addMoney, addXp, getUserRow } from '../utils/db/players'
-import { createQuest, deleteQuest, getUserQuests } from '../utils/db/quests'
+import { createQuest, deleteQuest, getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getUsersRaid } from '../utils/db/raids'
 import formatNumber from '../utils/formatNumber'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
@@ -38,6 +38,8 @@ class QuestsCommand extends CustomSlashCommand {
 		const isInRaid = await getUsersRaid(transaction.query, ctx.user.id)
 		const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
 		const userQuestRows = await getUserQuests(transaction.query, ctx.user.id, true)
+		const userBackpackRows = await getUserBackpack(transaction.query, ctx.user.id)
+		const userStashRows = await getUserStash(transaction.query, ctx.user.id)
 		const userQuests = []
 
 		// remove invalid quests
@@ -50,7 +52,8 @@ class QuestsCommand extends CustomSlashCommand {
 				userQuestRows.splice(i, 1)
 			}
 			else {
-				userQuests.push(quest)
+				// have to unshift because loop is running backwards
+				userQuests.unshift(quest)
 			}
 		}
 
@@ -76,13 +79,9 @@ class QuestsCommand extends CustomSlashCommand {
 			.setDescription(isInRaid ? '❗ You cannot complete quests while in a raid!' : '⚠️ You have **24 hours** to complete a quest and claim it\'s reward before the quest expires.')
 
 		for (let i = 0; i < userQuestRows.length; i++) {
-			questsEmbed.addField(`__Quest #${userQuestRows[i].id}__`,
-				`**Description**: ${this.getQuestDescription(userQuests[i])}\n**Progress**: ${userQuestRows[i].progress} / ${userQuestRows[i].progressGoal}\n` +
-				`**Reward**: ${this.getRewardsString(userQuests[i])}\n` +
-				`**Started**: ${formatTime(Date.now() - userQuestRows[i].createdAt.getTime())} ago`
-			)
+			questsEmbed.addField(`__Quest #${userQuestRows[i].id}__`, this.getQuestDescription(userQuests[i], userQuestRows[i]))
 
-			questButtons.push(this.getQuestButton(userQuestRows[i].id, isInRaid ? true : userQuestRows[i].progress < userQuestRows[i].progressGoal))
+			questButtons.push(this.getQuestButton(userQuests[i], userQuestRows[i], isInRaid ? true : !this.questCanBeCompleted(userQuests[i], userQuestRows[i], userBackpackRows, userStashRows)))
 		}
 
 		const botMessage = await ctx.send({
@@ -103,107 +102,170 @@ class QuestsCommand extends CustomSlashCommand {
 				const completedUserQuestRows = await getUserQuests(completedTransaction.query, ctx.user.id, true)
 				const completedQuestRow = completedUserQuestRows.find(row => row.id === completedQuestID)
 				const completedQuest = quests.find(q => q.id === completedQuestRow?.questId)
+				const completedUserBackpackRows = await getUserBackpack(completedTransaction.query, ctx.user.id, true)
+				const completedUserStashRows = await getUserStash(completedTransaction.query, ctx.user.id, true)
 				const validUserQuests = []
 
 				if (
+					!isInRaid &&
 					completedQuest &&
 					completedUserData.level <= completedQuest.maxLevel &&
 					completedQuestRow &&
-					completedQuestRow.progress >= completedQuestRow.progressGoal &&
-					!isInRaid
+					this.questCanBeCompleted(completedQuest, completedQuestRow, completedUserBackpackRows, completedUserStashRows)
 				) {
-					// quest completed, assign a new random quest
-					const newQuest = this.fetchRandomQuest(completedUserData.level, completedQuest.id)
 					const newQuestButtons: ComponentButton[] = []
-					let itemRewardRow
 
-					if (completedQuest.rewards.item) {
-						const stashRows = await getUserStash(completedTransaction.query, ctx.user.id, true)
-						const userStashData = getItems(stashRows)
+					if (
+						completedQuest.questType === 'Retrieve Item' &&
+						completedQuestRow.progress < completedQuestRow.progressGoal
+					) {
+						const userBackpack = getItems(completedUserBackpackRows)
+						const userStash = getItems(completedUserStashRows)
+						const questItemToRemove = userBackpack.items.find(itm => itm.item.name === completedQuest.item.name) || userStash.items.find(itm => itm.item.name === completedQuest.item.name)
 
-						if (userStashData.slotsUsed + completedQuest.rewards.item.slotsUsed > userData.stashSlots) {
+						if (!questItemToRemove) {
 							await completedTransaction.commit()
-
-							await ctx.send({
-								content: `❌ You don't have enough space in your stash to complete that quest. You need **${completedQuest.rewards.item.slotsUsed}** open slots in your stash. Sell items to clear up some space.`,
-								flags: InteractionResponseFlags.EPHEMERAL
-							})
-							return
+							throw new Error('User not eligible to complete quest')
 						}
 
-						// user has enough space in stash for reward
-						const itemRow = await createItem(completedTransaction.query, completedQuest.rewards.item.name, completedQuest.rewards.item.durability)
-						await addItemToStash(completedTransaction.query, ctx.user.id, itemRow.id)
+						await increaseProgress(completedTransaction.query, completedQuestRow.id, 1)
+						await deleteItem(completedTransaction.query, questItemToRemove.row.id)
 
-						itemRewardRow = itemRow
-					}
+						// remove invalid quests and add progress to retrieve item quest
+						for (let i = completedUserQuestRows.length - 1; i >= 0; i--) {
+							const quest = quests.find(q => q.id === completedUserQuestRows[i].questId)
 
-					if (completedQuest.rewards.xp) {
-						await addXp(completedTransaction.query, ctx.user.id, completedQuest.rewards.xp)
-					}
+							if (!quest || completedUserData.level > quest.maxLevel) {
+								await deleteQuest(completedTransaction.query, completedUserQuestRows[i].id)
 
-					if (completedQuest.rewards.money) {
-						await addMoney(completedTransaction.query, ctx.user.id, completedQuest.rewards.money)
-					}
-
-					// remove invalid and completed quests
-					for (let i = completedUserQuestRows.length - 1; i >= 0; i--) {
-						const quest = quests.find(q => q.id === completedUserQuestRows[i].questId)
-
-						if (!quest || completedUserData.level > quest.maxLevel || completedUserQuestRows[i].id === completedQuestID) {
-							await deleteQuest(completedTransaction.query, completedUserQuestRows[i].id)
-
-							completedUserQuestRows.splice(i, 1)
+								completedUserQuestRows.splice(i, 1)
+							}
+							else if (completedUserQuestRows[i].id === completedQuestID) {
+								completedUserQuestRows[i].progress += 1
+								validUserQuests.unshift(quest)
+							}
+							else {
+								validUserQuests.unshift(quest)
+							}
 						}
-						else {
-							validUserQuests.push(quest)
+
+						questsEmbed = new Embed()
+							.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
+							.setDescription('⚠️ You have **24 hours** to complete a quest and claim it\'s reward before the quest expires.')
+
+						await completedTransaction.commit()
+
+						if (!completedUserQuestRows.length) {
+							questsEmbed.setDescription('⚠️ You are not eligible for any quests right now.')
 						}
+
+						for (let i = 0; i < completedUserQuestRows.length; i++) {
+							questsEmbed.addField(`__Quest #${completedUserQuestRows[i].id}__`, this.getQuestDescription(validUserQuests[i], completedUserQuestRows[i]))
+
+							newQuestButtons.push(this.getQuestButton(
+								validUserQuests[i],
+								completedUserQuestRows[i],
+								!this.questCanBeCompleted(validUserQuests[i], completedUserQuestRows[i], userBackpackRows.filter(r => r.id !== questItemToRemove.row.id), userStashRows.filter(r => r.id !== questItemToRemove.row.id))
+							))
+						}
+
+						await buttonCtx.editParent({
+							content: `Successfully turned in ${getItemDisplay(questItemToRemove.item, questItemToRemove.row, { showDurability: false, showEquipped: false })} for quest **#${completedQuestID}**.`,
+							embeds: [questsEmbed.embed],
+							components: newQuestButtons.length ? [{
+								type: ComponentType.ACTION_ROW,
+								components: newQuestButtons
+							}] : []
+						})
 					}
+					else {
+						// quest completed, assign a new random quest
+						const newQuest = this.fetchRandomQuest(completedUserData.level, completedQuest.id)
+						let itemRewardRow
 
-					questsEmbed = new Embed()
-						.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
-						.setDescription('⚠️ You have **24 hours** to complete a quest and claim it\'s reward before the quest expires.')
-						.addField(`__Quest #${completedQuestID}__`, '✅ Complete!')
+						if (completedQuest.rewards.item) {
+							const stashRows = await getUserStash(completedTransaction.query, ctx.user.id, true)
+							const userStashData = getItems(stashRows)
 
-					if (newQuest) {
-						const newQuestRow = await createQuest(completedTransaction.query, ctx.user.id, newQuest)
-						completedUserQuestRows.push(newQuestRow)
-						validUserQuests.push(newQuest)
+							if (userStashData.slotsUsed + completedQuest.rewards.item.slotsUsed > userData.stashSlots) {
+								await completedTransaction.commit()
+
+								await ctx.send({
+									content: `❌ You don't have enough space in your stash to complete that quest. You need **${completedQuest.rewards.item.slotsUsed}** open slots in your stash. Sell items to clear up some space.`,
+									flags: InteractionResponseFlags.EPHEMERAL
+								})
+								return
+							}
+
+							// user has enough space in stash for reward
+							const itemRow = await createItem(completedTransaction.query, completedQuest.rewards.item.name, completedQuest.rewards.item.durability)
+							await addItemToStash(completedTransaction.query, ctx.user.id, itemRow.id)
+
+							itemRewardRow = itemRow
+						}
+
+						if (completedQuest.rewards.xp) {
+							await addXp(completedTransaction.query, ctx.user.id, completedQuest.rewards.xp)
+						}
+
+						if (completedQuest.rewards.money) {
+							await addMoney(completedTransaction.query, ctx.user.id, completedQuest.rewards.money)
+						}
+
+						// remove invalid and completed quests
+						for (let i = completedUserQuestRows.length - 1; i >= 0; i--) {
+							const quest = quests.find(q => q.id === completedUserQuestRows[i].questId)
+
+							if (!quest || completedUserData.level > quest.maxLevel || completedUserQuestRows[i].id === completedQuestID) {
+								await deleteQuest(completedTransaction.query, completedUserQuestRows[i].id)
+
+								completedUserQuestRows.splice(i, 1)
+							}
+							else {
+								validUserQuests.unshift(quest)
+							}
+						}
+
+						questsEmbed = new Embed()
+							.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
+							.setDescription('⚠️ You have **24 hours** to complete a quest and claim it\'s reward before the quest expires.')
+							.addField(`__Quest #${completedQuestID}__`, '✅ Complete!')
+
+						if (newQuest) {
+							const newQuestRow = await createQuest(completedTransaction.query, ctx.user.id, newQuest)
+							completedUserQuestRows.push(newQuestRow)
+							validUserQuests.push(newQuest)
+						}
+
+						await completedTransaction.commit()
+
+						if (!completedUserQuestRows.length) {
+							questsEmbed.setDescription('⚠️ You are not eligible for any quests right now.')
+						}
+
+						for (let i = 0; i < completedUserQuestRows.length; i++) {
+							questsEmbed.addField(`__Quest #${completedUserQuestRows[i].id}__`, this.getQuestDescription(validUserQuests[i], completedUserQuestRows[i]))
+
+							newQuestButtons.push(this.getQuestButton(validUserQuests[i], completedUserQuestRows[i], !this.questCanBeCompleted(validUserQuests[i], completedUserQuestRows[i], userBackpackRows, userStashRows)))
+						}
+
+						await buttonCtx.editParent({
+							content: `Quest **#${completedQuestID}** complete, assigning new quest...`,
+							embeds: [questsEmbed.embed],
+							components: newQuestButtons.length ? [{
+								type: ComponentType.ACTION_ROW,
+								components: newQuestButtons
+							}] : []
+						})
+
+						await ctx.send({
+							content: `Quest **#${completedQuestID}** complete! You received ${this.getRewardsString(completedQuest, itemRewardRow)}. Item rewards are added to your **stash**, not inventory.`,
+							flags: InteractionResponseFlags.EPHEMERAL
+						})
 					}
-
-					await completedTransaction.commit()
-
-					if (!completedUserQuestRows.length) {
-						questsEmbed.setDescription('⚠️ You are not eligible for any quests right now.')
-					}
-
-					for (let i = 0; i < completedUserQuestRows.length; i++) {
-						questsEmbed.addField(`__Quest #${completedUserQuestRows[i].id}__`,
-							`**Description**: ${this.getQuestDescription(validUserQuests[i])}\n**Progress**: ${completedUserQuestRows[i].progress} / ${completedUserQuestRows[i].progressGoal}\n` +
-							`**Reward**: ${this.getRewardsString(validUserQuests[i])}\n` +
-							`**Started**: ${formatTime(Date.now() - userQuestRows[i].createdAt.getTime())} ago`
-						)
-
-						newQuestButtons.push(this.getQuestButton(completedUserQuestRows[i].id, completedUserQuestRows[i].progress < completedUserQuestRows[i].progressGoal))
-					}
-
-					await buttonCtx.editParent({
-						content: `Quest **#${completedQuestID}** complete, assigning new quest...`,
-						embeds: [questsEmbed.embed],
-						components: newQuestButtons.length ? [{
-							type: ComponentType.ACTION_ROW,
-							components: newQuestButtons
-						}] : []
-					})
-
-					await ctx.send({
-						content: `Quest **#${completedQuestID}** complete! You received ${this.getRewardsString(completedQuest, itemRewardRow)}.`,
-						flags: InteractionResponseFlags.EPHEMERAL
-					})
 				}
 				else {
 					await completedTransaction.commit()
-
 					throw new Error('User not eligible to complete quest')
 				}
 			}
@@ -277,37 +339,97 @@ class QuestsCommand extends CustomSlashCommand {
 		return `${display.join(', ')}, and ${last}`
 	}
 
-	getQuestDescription (quest: Quest): string {
+	getQuestDescription (quest: Quest, questRow: QuestRow): string {
 		switch (quest.questType) {
 			case 'Any Kills': {
-				return `Kill **${quest.progressGoal}** players or mobs.`
+				return `**Description**: Kill **${quest.progressGoal}** players or mobs.\n` +
+					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
+					`**Reward**: ${this.getRewardsString(quest)}\n` +
+					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
 			}
 			case 'Player Kills': {
-				return `Kill **${quest.progressGoal}** players.`
+				return `**Description**: Kill **${quest.progressGoal}** players.\n` +
+					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
+					`**Reward**: ${this.getRewardsString(quest)}\n` +
+					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
 			}
 			case 'Boss Kills': {
-				return `Kill **${quest.progressGoal}** bosses.`
+				return `**Description**: Kill **${quest.progressGoal}** bosses.\n` +
+					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
+					`**Reward**: ${this.getRewardsString(quest)}\n` +
+					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
 			}
 			case 'NPC Kills': {
-				return `Kill **${quest.progressGoal}** mobs (bosses count).`
+				return `**Description**: Kill **${quest.progressGoal}** mobs (bosses count).\n` +
+					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
+					`**Reward**: ${this.getRewardsString(quest)}\n` +
+					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
 			}
 			case 'Evacs': {
-				return `Successfully evac **${quest.progressGoal}** times.`
+				return `**Description**: Successfully evac **${quest.progressGoal}** times.\n` +
+					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
+					`**Reward**: ${this.getRewardsString(quest)}\n` +
+					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
 			}
 			case 'Scavenge With A Key': {
-				return `Scavenge an area using a ${getItemDisplay(quest.key)}.`
+				return `**Description**: Scavenge an area using a ${getItemDisplay(quest.key)}.\n` +
+					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
+					`**Reward**: ${this.getRewardsString(quest)}\n` +
+					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
+			}
+			case 'Retrieve Item': {
+				return `**Description**: Retrieve ${questRow.progressGoal}x ${getItemDisplay(quest.item)}.\n` +
+					`**Progress**: ${questRow.progress} / ${questRow.progressGoal} items\n` +
+					`**Reward**: ${this.getRewardsString(quest)}\n` +
+					`**Started**: ${formatTime(Date.now() - questRow.createdAt.getTime())} ago`
 			}
 		}
 	}
 
-	getQuestButton (questNumber: number, disabled: boolean): ComponentButton {
+	getQuestButton (quest: Quest, questRow: QuestRow, disabled: boolean): ComponentButton {
+		if (quest.questType === 'Retrieve Item' && questRow.progress < questRow.progressGoal) {
+			const iconID = quest.item.icon.match(/:([0-9]*)>/)
+
+			return {
+				type: ComponentType.BUTTON,
+				label: `Quest #${questRow.id} - Turn in 1x ${quest.item.name}`,
+				emoji: iconID ? {
+					id: iconID[1]
+				} : undefined,
+				style: ButtonStyle.SECONDARY,
+				custom_id: questRow.id.toString(),
+				disabled
+			}
+		}
+
 		return {
 			type: ComponentType.BUTTON,
-			label: `Complete Quest #${questNumber}`,
+			label: `Complete Quest #${questRow.id}`,
 			style: disabled ? ButtonStyle.SECONDARY : ButtonStyle.SUCCESS,
-			custom_id: questNumber.toString(),
+			custom_id: questRow.id.toString(),
 			disabled
 		}
+	}
+
+	questCanBeCompleted (quest: Quest, questRow: QuestRow, backpackRows: BackpackItemRow[], stashRows: ItemRow[]): boolean {
+		if (questRow.progress >= questRow.progressGoal) {
+			return true
+		}
+		else if (quest.questType === 'Retrieve Item') {
+			const backpack = getItems(backpackRows)
+			const stash = getItems(stashRows)
+
+			logger.info(backpack.items)
+
+			if (backpack.items.find(itm => itm.item.name === quest.item.name)) {
+				return true
+			}
+			else if (stash.items.find(itm => itm.item.name === quest.item.name)) {
+				return true
+			}
+		}
+
+		return false
 	}
 }
 

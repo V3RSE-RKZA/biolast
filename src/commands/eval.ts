@@ -6,17 +6,25 @@ import { allLocations } from '../resources/raids'
 import { query } from '../utils/db/mysql'
 import { allItems } from '../resources/items'
 import { getPlayerXp } from '../utils/playerUtils'
+import { createQuest } from '../utils/db/quests'
+import { quests } from '../resources/quests'
+import { addItemToBackpack, createItem } from '../utils/db/items'
+
 
 export const command: TextCommand = {
 	name: 'eval',
 	aliases: [],
 	async execute (app, message, { args, prefix }) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const test = {
+		const t = {
 			allLocations,
 			allItems,
 			query,
-			getPlayerXp
+			getPlayerXp,
+			createQuest,
+			quests,
+			createItem,
+			addItemToBackpack
 		}
 		let commandInput = message.content.substring(5 + prefix.length)
 

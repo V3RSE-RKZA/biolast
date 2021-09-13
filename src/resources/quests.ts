@@ -8,7 +8,7 @@ type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
         [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>
     }[Keys]
 
-export type QuestType = 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Evacs' |'Scavenge With A Key'
+export type QuestType = 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Evacs' |'Scavenge With A Key' | 'Retrieve Item'
 
 interface BaseQuest {
 	/**
@@ -56,7 +56,15 @@ interface KeyScavengeQuest extends BaseQuest {
 	key: Item
 }
 
-export type Quest = BasicQuest | KeyScavengeQuest
+/**
+ * This quest type requires a quest item to be specified
+ */
+ interface QuestItemQuest extends BaseQuest {
+	questType: 'Retrieve Item'
+	item: Item
+}
+
+export type Quest = BasicQuest | KeyScavengeQuest | QuestItemQuest
 
 export const quests: Quest[] = [
 	{
@@ -65,6 +73,18 @@ export const quests: Quest[] = [
 		minLevel: 1,
 		maxLevel: 20,
 		progressGoal: 2,
+		rewards: {
+			item: items.bandage,
+			xp: 25
+		}
+	},
+	{
+		id: 'quest_item_test',
+		questType: 'Retrieve Item',
+		minLevel: 1,
+		maxLevel: 20,
+		progressGoal: 2,
+		item: items.bandage,
 		rewards: {
 			item: items.bandage,
 			xp: 25
