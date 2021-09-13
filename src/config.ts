@@ -27,7 +27,9 @@ export const icons = {
 	warning: '<:warning:886737255379636274>',
 	question: '<:question:886737255299940392>',
 	information: '<:information:886737255148957767>',
-	danger: '<:danger:886836924558491648>'
+	danger: '<:danger:886836924558491648>',
+	crosshair: '<:crosshair:886854038161874954>',
+	timer: '<:cooldown:886855254568747028>'
 }
 
 // How many items a single user can buy from the shop each day

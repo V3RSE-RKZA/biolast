@@ -153,7 +153,7 @@ class AttackCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `${icons.warning} Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
+					content: `${icons.timer} Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
 				})
 				return
 			}
@@ -223,12 +223,12 @@ class AttackCommand extends CustomSlashCommand {
 
 			// add message if users weapon accuracy allowed them to hit their targeted body part
 			if (bodyPartHit.accurate) {
-				messages.push(`You hit the targeted limb (**${bodyPartHit.result}**) successfully!`)
+				messages.push(`${icons.crosshair} You hit the targeted limb (**${bodyPartHit.result}**)!`)
 			}
 
 			// remove weapon annd ammo
 			if (userEquips.weapon.row.durability - 1 <= 0) {
-				messages.push(`Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
+				messages.push(`${icons.danger} Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
 
 				await deleteItem(transaction.query, userEquips.weapon.row.id)
 				removedItems.push(userEquips.weapon.row.id)
@@ -246,7 +246,7 @@ class AttackCommand extends CustomSlashCommand {
 				messages.push(`The \`${npc.type}\`'s armor (${getItemDisplay(npc.armor)}) reduced the damage by **${finalDamage.reduced}**.`)
 			}
 
-			messages.push(`Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
+			messages.push(`${icons.timer} Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
 
 			if (!missedPartChoice && npcRow.health - finalDamage.total <= 0) {
 				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'NPC Kills' || q.questType === 'Any Kills' || q.questType === 'Boss Kills')
@@ -347,7 +347,7 @@ class AttackCommand extends CustomSlashCommand {
 
 				await transaction.commit()
 
-				messages.push(`☠️ **The \`${npc.type}\` DIED!** You earned 🌟 ***+${npc.xp}*** xp for this kill.`)
+				messages.push(`\n☠️ **The \`${npc.type}\` DIED!** You earned 🌟 ***+${npc.xp}*** xp for this kill.`)
 
 				const lootEmbed = new Embed()
 					.setTitle('Items Dropped')
@@ -362,7 +362,7 @@ class AttackCommand extends CustomSlashCommand {
 			else {
 				if (!missedPartChoice) {
 					await lowerNPCHealth(transaction.query, ctx.channelID, finalDamage.total)
-					messages.push(`The \`${npc.type}\` is left with ${formatHealth(npcRow.health - finalDamage.total, npc.health)} **${npcRow.health - finalDamage.total}** health.`)
+					messages.push(`\nThe \`${npc.type}\` is left with ${formatHealth(npcRow.health - finalDamage.total, npc.health)} **${npcRow.health - finalDamage.total}** health.`)
 				}
 
 				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.user, userData, userBackpack, npc, ctx.channelID, removedItems)
@@ -441,7 +441,7 @@ class AttackCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `${icons.warning} Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
+					content: `${icons.timer} Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
 				})
 				return
 			}
@@ -517,12 +517,12 @@ class AttackCommand extends CustomSlashCommand {
 
 			// add message if users weapon accuracy allowed them to hit their targeted body part
 			if (bodyPartHit.accurate) {
-				messages.push(`You hit the targeted limb (**${bodyPartHit.result}**) successfully!`)
+				messages.push(`${icons.crosshair} You hit the targeted limb (**${bodyPartHit.result}**)!`)
 			}
 
 			// remove weapon annd ammo
 			if (userEquips.weapon.row.durability - 1 <= 0) {
-				messages.push(`Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
+				messages.push(`${icons.danger} Your ${getItemDisplay(userEquips.weapon.item, userEquips.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
 
 				await deleteItem(transaction.query, userEquips.weapon.row.id)
 			}
@@ -567,7 +567,7 @@ class AttackCommand extends CustomSlashCommand {
 				}
 			}
 
-			messages.push(`Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
+			messages.push(`${icons.timer} Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
 
 			if (!missedPartChoice && victimData.health - finalDamage.total <= 0) {
 				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'Player Kills' || q.questType === 'Any Kills')
@@ -593,12 +593,12 @@ class AttackCommand extends CustomSlashCommand {
 					}
 				}
 
-				messages.push(`☠️ **${member.user.username}#${member.user.discriminator}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill.`)
+				messages.push(`\n☠️ **${member.user.username}#${member.user.discriminator}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill.`)
 			}
 			else if (!missedPartChoice) {
 				await lowerHealth(transaction.query, member.id, finalDamage.total)
 
-				messages.push(`**${member.user.username}#${member.user.discriminator}** is left with ${formatHealth(victimData.health - finalDamage.total, victimData.maxHealth)} **${victimData.health - finalDamage.total}** health.`)
+				messages.push(`\n**${member.user.username}#${member.user.discriminator}** is left with ${formatHealth(victimData.health - finalDamage.total, victimData.maxHealth)} **${victimData.health - finalDamage.total}** health.`)
 			}
 
 			// commit changes

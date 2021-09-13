@@ -256,12 +256,12 @@ class NPCHandler {
 
 			await removeUserFromRaid(transactionQuery, user.id)
 
-			messages.push(`☠️ **${user.username}#${user.discriminator}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
+			messages.push(`\n☠️ **${user.username}#${user.discriminator}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
 		}
 		else {
 			await lowerHealth(transactionQuery, user.id, npcDamage.total)
 
-			messages.push(`**${user.username}#${user.discriminator}** is left with ${formatHealth(userRow.health - npcDamage.total, userRow.maxHealth)} **${userRow.health - npcDamage.total}** health.`)
+			messages.push(`\n**${user.username}#${user.discriminator}** is left with ${formatHealth(userRow.health - npcDamage.total, userRow.maxHealth)} **${userRow.health - npcDamage.total}** health.`)
 		}
 
 		return {
