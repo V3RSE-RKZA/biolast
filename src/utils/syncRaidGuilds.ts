@@ -1,4 +1,4 @@
-import { Constants } from 'eris'
+import { Constants, TextChannel } from 'eris'
 import App from '../app'
 import { allLocations } from '../resources/raids'
 import { logger } from './logger'
@@ -111,7 +111,7 @@ export async function syncRaidGuilds (app: App): Promise<void> {
 					else if (channel.name === 'Scavenger Voice' && channel.type === Constants.ChannelTypes.GUILD_VOICE) {
 						scavVoiceChannel = channel
 					}
-					else if (!location.channels.find(c => c.name === channel.name)) {
+					else if (!location.channels.find(c => c.name === channel.name && channel.type === Constants.ChannelTypes.GUILD_TEXT)) {
 						await channel.delete('raid guild sync')
 						logger.debug(`[RAID GUILD SYNC] Deleted channel (${channel.name} ID: ${channel.id}) in raid guild (${guild.name} ID: ${guild.id})`)
 					}
@@ -236,7 +236,7 @@ export async function syncRaidGuilds (app: App): Promise<void> {
 				 */
 				for (let i = 0; i < location.channels.length; i++) {
 					const raidChan = location.channels[i]
-					let channel = guild.channels.find(ch => ch.name === raidChan.name)
+					let channel = guild.channels.find(ch => ch.name === raidChan.name) as TextChannel | undefined
 
 					if (!channel) {
 						channel = await guild.createChannel(raidChan.name, Constants.ChannelTypes.GUILD_TEXT, {
@@ -256,6 +256,13 @@ export async function syncRaidGuilds (app: App): Promise<void> {
 					if (channel.position !== i + 1) {
 						await channel.editPosition(i + 1)
 						logger.debug(`[RAID GUILD SYNC] Moved channel (${channel.name} ID: ${channel.id}) position to ${i + 1}`)
+					}
+
+					if (raidChan.topic && (!channel.topic || channel.topic !== raidChan.topic)) {
+						await channel.edit({
+							topic: raidChan.topic
+						})
+						logger.debug(`[RAID GUILD SYNC] Modified channel (${channel.name} ID: ${channel.id}) topic to ${raidChan.topic}`)
 					}
 				}
 

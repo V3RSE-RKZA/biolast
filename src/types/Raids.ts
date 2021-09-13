@@ -115,6 +115,11 @@ interface RaidChannelBase {
 	scavange?: ScavengeOptions
 
 	/**
+	 * Topic of the channel (kinda like a description for the channel, users will see this)
+	 */
+	topic?: string
+
+	/**
 	 * Whether or not NPCs spawn in this channel
 	 */
 	npcSpawns?: {

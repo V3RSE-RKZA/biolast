@@ -39,6 +39,7 @@ export const suburbs: Location = {
 			type: 'LootChannel',
 			name: 'red-house',
 			display: 'Red House',
+			topic: 'It\'s quiet in here...',
 			scavange: {
 				common: {
 					items: [items.makeshift_pistol, items.makeshift_pistol_ammo],
@@ -65,6 +66,7 @@ export const suburbs: Location = {
 			type: 'LootChannel',
 			name: 'apartments',
 			display: 'Apartments',
+			topic: 'Who knows what lies down these dark halls.',
 			scavange: {
 				common: {
 					items: [items.shed_key, items.wooden_bat],
@@ -92,6 +94,7 @@ export const suburbs: Location = {
 			type: 'EvacChannel',
 			name: 'woods-evac',
 			display: 'Woods',
+			topic: 'Not much noise coming from these woods. This could be a good place to escape the area.',
 			evac: {
 				time: 15,
 				requiresKey: items.shed_key
@@ -170,6 +173,7 @@ export const suburbs: Location = {
 			type: 'LootChannel',
 			name: 'graveyard',
 			display: 'Graveyard',
+			topic: 'Is there someone else here?',
 			npcSpawns: {
 				npcs: [npcs.cain],
 				cooldownMin: 30 * 60,
