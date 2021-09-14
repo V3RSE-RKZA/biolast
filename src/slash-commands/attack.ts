@@ -180,6 +180,8 @@ class AttackCommand extends CustomSlashCommand {
 			const messages = []
 			const removedItems = []
 			let finalDamage
+			const npcDisplayName = npc.type === 'boss' ? `**${npc.display}**` : `the \`${npc.type}\``
+			const npcDisplayCapitalized = npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``
 
 			if (userEquips.weapon.item.type === 'Ranged Weapon') {
 				const weaponUsed = userEquips.weapon.item
@@ -201,20 +203,20 @@ class AttackCommand extends CustomSlashCommand {
 				removedItems.push(userAmmoUsed.row.id)
 
 				if (missedPartChoice) {
-					messages.push(`${icons.danger} You try to shoot the \`${npc.type}\` in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}) **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
+					messages.push(`${icons.danger} You try to shoot ${npcDisplayName} in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}) **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
 				}
 				else {
-					messages.push(`You shot the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
+					messages.push(`You shot ${npcDisplayName} in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(userAmmoUsed.item)}). **${finalDamage.total}** damage dealt.\n`)
 				}
 			}
 			else {
 				finalDamage = getAttackDamage(userEquips.weapon.item.damage, userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet)
 
 				if (missedPartChoice) {
-					messages.push(`${icons.danger} You try to hit the \`${npc.type}\` in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
+					messages.push(`${icons.danger} You try to hit ${npcDisplayName} in the **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
 				}
 				else {
-					messages.push(`You hit the \`${npc.type}\` in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
+					messages.push(`You hit ${npcDisplayName} in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${finalDamage.total}** damage dealt.\n`)
 				}
 			}
 
@@ -240,10 +242,10 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			if (!missedPartChoice && bodyPartHit.result === 'head' && npc.helmet) {
-				messages.push(`The \`${npc.type}\`'s helmet (${getItemDisplay(npc.helmet)}) reduced the damage by **${finalDamage.reduced}**.`)
+				messages.push(`${npcDisplayCapitalized}'s helmet (${getItemDisplay(npc.helmet)}) reduced the damage by **${finalDamage.reduced}**.`)
 			}
 			else if (!missedPartChoice && bodyPartHit.result === 'chest' && npc.armor) {
-				messages.push(`The \`${npc.type}\`'s armor (${getItemDisplay(npc.armor)}) reduced the damage by **${finalDamage.reduced}**.`)
+				messages.push(`${npcDisplayCapitalized}'s armor (${getItemDisplay(npc.armor)}) reduced the damage by **${finalDamage.reduced}**.`)
 			}
 
 			messages.push(`${icons.timer} Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
@@ -347,7 +349,7 @@ class AttackCommand extends CustomSlashCommand {
 
 				await transaction.commit()
 
-				messages.push(`\n☠️ **The \`${npc.type}\` DIED!** You earned 🌟 ***+${npc.xp}*** xp for this kill.`)
+				messages.push(`\n☠️ ${npcDisplayCapitalized} **DIED!** You earned 🌟 ***+${npc.xp}*** xp for this kill.`)
 
 				const lootEmbed = new Embed()
 					.setTitle('Items Dropped')
@@ -362,7 +364,7 @@ class AttackCommand extends CustomSlashCommand {
 			else {
 				if (!missedPartChoice) {
 					await lowerNPCHealth(transaction.query, ctx.channelID, finalDamage.total)
-					messages.push(`\nThe \`${npc.type}\` is left with ${formatHealth(npcRow.health - finalDamage.total, npc.health)} **${npcRow.health - finalDamage.total}** health.`)
+					messages.push(`\n${npcDisplayCapitalized} is left with ${formatHealth(npcRow.health - finalDamage.total, npc.health)} **${npcRow.health - finalDamage.total}** health.`)
 				}
 
 				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.user, userData, userBackpack, npc, ctx.channelID, removedItems)
@@ -397,7 +399,7 @@ class AttackCommand extends CustomSlashCommand {
 					if (erisUser) {
 						await messageUser(erisUser, {
 							content: `${icons.danger} Raid failed!\n\n` +
-								`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time make sure you're well equipped to attack enemies.\n` +
+								`You were killed by ${npc.type === 'boss' ? npc.display : `a ${npc.type}`} who hit you for **${attackResult.damage}** damage. Next time make sure you're well equipped to attack enemies.\n` +
 								`You lost all the items in your inventory (**${userBackpackData.items.length - attackResult.removedItems}** items).`
 						})
 					}

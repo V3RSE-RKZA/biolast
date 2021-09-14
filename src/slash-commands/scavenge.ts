@@ -145,7 +145,7 @@ class ScavengeCommand extends CustomSlashCommand {
 					if (erisUser) {
 						await messageUser(erisUser, {
 							content: `${icons.danger} Raid failed!\n\n` +
-								`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time search the area before you scavenge for loot.\n` +
+								`You were killed by ${npc.type === 'boss' ? npc.display : `a ${npc.type}`} who hit you for **${attackResult.damage}** damage. Next time search the area before you scavenge for loot.\n` +
 								`You lost all the items in your inventory (**${backpackData.items.length - attackResult.removedItems}** items).`
 						})
 					}

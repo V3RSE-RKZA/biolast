@@ -118,7 +118,7 @@ class EvacCommand extends CustomSlashCommand {
 				if (erisUser) {
 					await messageUser(erisUser, {
 						content: `${icons.danger} Raid failed!\n\n` +
-							`You were killed by a \`${npc.type}\` who hit you for **${attackResult.damage}** damage. Next time search the area before you evac.\n` +
+							`You were killed by ${npc.type === 'boss' ? npc.display : `a ${npc.type}`} who hit you for **${attackResult.damage}** damage. Next time search the area before you evac.\n` +
 							`You lost all the items in your inventory (**${userBackpackData.items.length - attackResult.removedItems}** items).`
 					})
 				}
