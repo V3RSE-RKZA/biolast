@@ -47,6 +47,9 @@ export const raidGuilds = {
 	farmGuilds: process.env.FARM_GUILDS ? process.env.FARM_GUILDS.split(',') : []
 }
 
+// seconds that the user wont be allowed to enter a raid after having just finished a raid
+export const raidCooldown = 10 * 60
+
 // Slash commands will be registered here while debug is true. Registering commands to a guild is faster than registering globally.
 // If you leave this unset, commands will be registered globally regardless if debug is true.
 export const testingGuildId = process.env.TESTING_GUILD_ID

@@ -104,7 +104,7 @@ class ScavengeCommand extends CustomSlashCommand {
 			await createCooldown(transaction.query, ctx.user.id, 'scavenge', 60)
 
 			if (npc) {
-				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.user, userData, backpackRows, npc, ctx.channelID, [])
+				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.user, userData, backpackRows, npc, ctx.channelID, [], raidType)
 
 				if (userData.health - attackResult.damage <= 0) {
 					await increaseDeaths(transaction.query, ctx.user.id, 1)

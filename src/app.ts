@@ -6,15 +6,15 @@ import ComponentCollector from './utils/ComponentCollector'
 import NPCHandler from './utils/NPCHandler'
 import CronJobs from './utils/CronJobs'
 import { getAllRaids, getUsersRaid, removeUserFromRaid, userInRaid } from './utils/db/raids'
-import { clientId, botToken, adminUsers, icons } from './config'
+import { clientId, botToken, adminUsers, icons, raidCooldown } from './config'
 import fs from 'fs'
 import path from 'path'
 import { beginTransaction, query } from './utils/db/mysql'
 import { addItemToBackpack, createItem, getUserBackpack, removeAllItemsFromBackpack } from './utils/db/items'
-import { createCooldown, formatTime, getCooldown } from './utils/db/cooldowns'
+import { createCooldown, formatTime, getCooldown, getCooldownTimeLeft } from './utils/db/cooldowns'
 import CustomSlashCommand from './structures/CustomSlashCommand'
 import { createAccount, getUserRow, increaseLevel, setMaxHealth, setStashSlots } from './utils/db/players'
-import { isRaidGuild } from './utils/raidUtils'
+import { getRaidType, isRaidGuild } from './utils/raidUtils'
 import { items } from './resources/items'
 import { getPlayerXp } from './utils/playerUtils'
 import { getItemDisplay } from './utils/itemUtils'
@@ -293,8 +293,10 @@ class App {
 			const guild = this.bot.guilds.get(row.guildId)
 
 			if (guild) {
-				const timeLeft = (row.length * 1000) - (Date.now() - row.startedAt.getTime())
-				if (timeLeft <= 0) {
+				const timeLeft = getCooldownTimeLeft(row.length, row.startedAt.getTime())
+				const raidType = getRaidType(row.guildId)
+
+				if (!raidType || timeLeft <= 0) {
 					// raid ended while the bot was offline, dont remove items from users backpack since bot was offline
 					await removeUserFromRaid(query, row.userId)
 
@@ -317,6 +319,7 @@ class App {
 								await getUsersRaid(transaction.query, row.userId, true)
 								await getUserBackpack(transaction.query, row.userId, true)
 								await removeUserFromRaid(transaction.query, row.userId)
+								await createCooldown(transaction.query, row.userId, `raid-${raidType.id}`, raidCooldown)
 
 								// remove items from backpack since user didn't evac
 								await removeAllItemsFromBackpack(transaction.query, row.userId)

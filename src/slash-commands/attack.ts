@@ -1,6 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
-import { icons } from '../config'
+import { icons, raidCooldown } from '../config'
 import { allItems } from '../resources/items'
 import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -17,7 +17,7 @@ import formatHealth from '../utils/formatHealth'
 import { getEquips, getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
-import { BodyPart, getAttackDamage, getBodyPartHit } from '../utils/raidUtils'
+import { BodyPart, getAttackDamage, getBodyPartHit, getRaidType } from '../utils/raidUtils'
 import getRandomInt from '../utils/randomInt'
 
 class AttackCommand extends CustomSlashCommand {
@@ -120,6 +120,10 @@ class AttackCommand extends CustomSlashCommand {
 		const channel = guild.channels.get(ctx.channelID)
 		if (!channel) {
 			throw new Error('Could not find channel in Eris cache')
+		}
+		const raidType = getRaidType(guild.id)
+		if (!raidType) {
+			throw new Error(`Could not find raid location for guild (${guild.name} ID: ${guild.id})`)
 		}
 
 		if (ctx.options.npc) {
@@ -367,7 +371,7 @@ class AttackCommand extends CustomSlashCommand {
 					messages.push(`\n${npcDisplayCapitalized} is left with ${formatHealth(npcRow.health - finalDamage.total, npc.health)} **${npcRow.health - finalDamage.total}** health.`)
 				}
 
-				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.user, userData, userBackpack, npc, ctx.channelID, removedItems)
+				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.user, userData, userBackpack, npc, ctx.channelID, removedItems, raidType)
 
 				await transaction.commit()
 
@@ -606,6 +610,7 @@ class AttackCommand extends CustomSlashCommand {
 				await increaseDeaths(transaction.query, member.id, 1)
 				await addXp(transaction.query, ctx.user.id, xpEarned)
 				await removeUserFromRaid(transaction.query, member.id)
+				await createCooldown(transaction.query, member.id, `raid-${raidType.id}`, raidCooldown)
 
 				// check if user has any kill quests
 				for (const quest of userQuests) {

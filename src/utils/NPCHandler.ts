@@ -1,9 +1,12 @@
 import { User } from 'slash-create'
 import App from '../app'
+import { raidCooldown } from '../config'
 import { allNPCs, NPC } from '../resources/npcs'
 import { allLocations } from '../resources/raids'
 import { Item } from '../types/Items'
 import { BackpackItemRow, Query, UserRow } from '../types/mysql'
+import { Location } from '../types/Raids'
+import { createCooldown } from './db/cooldowns'
 import { deleteItem, dropItemToGround, lowerItemDurability, removeItemFromBackpack } from './db/items'
 import { query } from './db/mysql'
 import { createNPC, deleteNPC, getAllNPCs } from './db/npcs'
@@ -188,7 +191,8 @@ class NPCHandler {
 		userBackpack: BackpackItemRow[],
 		npc: NPC,
 		channelID: string,
-		removedItems: number[]
+		removedItems: number[],
+		raidType: Location
 	): Promise<{ messages: string[], damage: number, removedItems: number }> {
 		const messages = []
 		const userBackpackData = getItems(userBackpack)
@@ -276,6 +280,7 @@ class NPCHandler {
 			}
 
 			await removeUserFromRaid(transactionQuery, user.id)
+			await createCooldown(transactionQuery, user.id, `raid-${raidType.id}`, raidCooldown)
 
 			messages.push(`☠️ **${user.username}#${user.discriminator}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
 		}

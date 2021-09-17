@@ -1,16 +1,18 @@
 import { Guild, Member, MemberPartial } from 'eris'
 import App from '../app'
-import { icons } from '../config'
+import { icons, raidCooldown } from '../config'
+import { createCooldown } from '../utils/db/cooldowns'
 import { deleteItem, getUserBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import { getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
-import { isRaidGuild } from '../utils/raidUtils'
+import { getRaidType } from '../utils/raidUtils'
 
 export async function run (this: App, guild: Guild, member: Member | MemberPartial): Promise<void> {
-	if (isRaidGuild(guild.id)) {
+	const raidType = getRaidType(guild.id)
+	if (raidType) {
 		const scavRole = guild.roles.find(r => r.name === 'Scavenger')
 
 		if (!scavRole) {
@@ -43,6 +45,7 @@ export async function run (this: App, guild: Guild, member: Member | MemberParti
 				}
 
 				await removeUserFromRaid(transaction.query, member.id)
+				await createCooldown(transaction.query, member.id, `raid-${raidType.id}`, raidCooldown)
 				await transaction.commit()
 
 				this.clearRaidTimer(member.id)

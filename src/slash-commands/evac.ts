@@ -1,10 +1,10 @@
 import { SlashCreator, CommandContext, Message } from 'slash-create'
 import App from '../app'
-import { icons } from '../config'
+import { icons, raidCooldown } from '../config'
 import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { CONFIRM_BUTTONS } from '../utils/constants'
-import { formatTime } from '../utils/db/cooldowns'
+import { createCooldown, formatTime } from '../utils/db/cooldowns'
 import { getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getNPC } from '../utils/db/npcs'
@@ -77,7 +77,7 @@ class EvacCommand extends CustomSlashCommand {
 		}
 		else if (npc) {
 			const userData = (await getUserRow(preTransaction.query, ctx.user.id, true))!
-			const attackResult = await this.app.npcHandler.attackPlayer(preTransaction.query, ctx.user, userData, userBackpack, npc, ctx.channelID, [])
+			const attackResult = await this.app.npcHandler.attackPlayer(preTransaction.query, ctx.user, userData, userBackpack, npc, ctx.channelID, [], raidType)
 
 			if (userData.health - attackResult.damage <= 0) {
 				await increaseDeaths(preTransaction.query, ctx.user.id, 1)
@@ -228,7 +228,8 @@ class EvacCommand extends CustomSlashCommand {
 							}
 
 							this.app.clearRaidTimer(ctx.user.id)
-							await removeUserFromRaid(query, ctx.user.id)
+							await createCooldown(evacTransaction.query, ctx.user.id, `raid-${raidType.id}`, raidCooldown)
+							await removeUserFromRaid(evacTransaction.query, ctx.user.id)
 
 							await evacTransaction.commit()
 
