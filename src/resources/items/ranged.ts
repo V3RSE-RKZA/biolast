@@ -8,6 +8,18 @@ export const ranged = rangedObject({
 		name: 'aks-74u',
 		icon: '<:U_rifle:869647344344387624>',
 		aliases: ['aks', 'ak-74'],
+		sellPrice: 10000,
+		durability: 12,
+		slotsUsed: 3,
+		fireRate: 45,
+		accuracy: 91,
+		itemLevel: 7
+	},
+	'glock-17': {
+		type: 'Ranged Weapon',
+		name: 'glock-17',
+		icon: '<:U_weapon:601366669272678411>',
+		aliases: ['glock'],
 		sellPrice: 6000,
 		durability: 12,
 		slotsUsed: 3,
@@ -15,11 +27,11 @@ export const ranged = rangedObject({
 		accuracy: 91,
 		itemLevel: 5
 	},
-	'glock-17': {
+	'luger': {
 		type: 'Ranged Weapon',
-		name: 'glock-17',
+		name: 'luger',
 		icon: '<:U_weapon:601366669272678411>',
-		aliases: ['glock'],
+		aliases: [],
 		sellPrice: 5000,
 		durability: 10,
 		slotsUsed: 2,

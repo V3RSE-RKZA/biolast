@@ -153,7 +153,7 @@ export const farm: Location = {
 			display: 'bedroom',
 			scavange: {
 				common: {
-					items: [items.truck_key, items.warehouse_key, items['9mm_fmj']],
+					items: [items.truck_key, items.warehouse_key, items['.22lr_bullet']],
 					xp: 10
 				},
 				uncommon: {

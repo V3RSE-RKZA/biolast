@@ -10,12 +10,12 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['545', '545_rifle', '545x39', '545_fmj', '545_bullet'],
 		description: 'Full metal jacket 5.45x39mm ammunition for Kalashnikov rifles.',
-		damage: 20,
-		penetration: 2,
+		damage: 31,
+		penetration: 2.2,
 		ammoFor: [ranged['aks-74u']],
-		sellPrice: 3000,
+		sellPrice: 4000,
 		slotsUsed: 1,
-		itemLevel: 5
+		itemLevel: 7
 	},
 	'9mm_fmj': {
 		type: 'Ammunition',
@@ -24,8 +24,21 @@ export const ammunition = ammoObject({
 		aliases: ['9x19', '9mm'],
 		description: 'Full metal jacket ammunition for 9mm handguns.',
 		damage: 20,
-		penetration: 1.5,
+		penetration: 2,
 		ammoFor: [ranged['glock-17']],
+		sellPrice: 3000,
+		slotsUsed: 1,
+		itemLevel: 5
+	},
+	'.22lr_bullet': {
+		type: 'Ammunition',
+		name: '.22lr_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['.22', '.22lr', 'rimfire', '.22_rimfire'],
+		description: 'Small bullet used for .22 caliber weapons.',
+		damage: 20,
+		penetration: 1.5,
+		ammoFor: [ranged.luger],
 		sellPrice: 750,
 		slotsUsed: 1,
 		itemLevel: 3

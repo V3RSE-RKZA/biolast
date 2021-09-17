@@ -132,12 +132,12 @@ export const npcs = npcsObject({
 		damage: 30,
 		drops: {
 			common: [items.bandage],
-			uncommon: [items['glock-17'], items.ifak_medkit],
+			uncommon: [items.ifak_medkit],
 			rare: [items.sledgehammer, items.bone_armor],
 			rolls: 1
 		},
-		weapon: items['aks-74u'],
-		ammo: items['5.45x39_fmj'],
+		weapon: items['glock-17'],
+		ammo: items['9mm_fmj'],
 		quotes: [
 			'~*You hear footsteps nearby*~'
 		],
@@ -156,11 +156,11 @@ export const npcs = npcsObject({
 		drops: {
 			common: [items.bandage],
 			uncommon: [items.ifak_medkit, items.cloth_backpack],
-			rare: [items['5.45x39_fmj']],
+			rare: [items['5.45x39_fmj'], items['9mm_fmj']],
 			rolls: 1
 		},
-		weapon: items['glock-17'],
-		ammo: items['9mm_fmj'],
+		weapon: items.luger,
+		ammo: items['.22lr_bullet'],
 		quotes: [
 			'~*You hear footsteps nearby*~'
 		],
@@ -201,8 +201,8 @@ export const npcs = npcsObject({
 			rare: [items.sledgehammer, items.gunsafe_code],
 			rolls: 1
 		},
-		weapon: items['glock-17'],
-		ammo: items['9mm_fmj'],
+		weapon: items['aks-74u'],
+		ammo: items['5.45x39_fmj'],
 		quotes: [
 			'~*You hear the giggles and crackles of a man...*~'
 		],
