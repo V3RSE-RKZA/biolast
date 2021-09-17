@@ -426,6 +426,7 @@ class AttackCommand extends CustomSlashCommand {
 
 			const transaction = await beginTransaction()
 			const victimData = await getUserRow(transaction.query, member.id, true)
+			const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
 			const victimRaidRow = await getUsersRaid(transaction.query, member.id, true)
 
 			if (!victimData || !victimRaidRow) {
@@ -444,6 +445,24 @@ class AttackCommand extends CustomSlashCommand {
 
 				await ctx.send({
 					content: `${icons.timer} Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
+				})
+				return
+			}
+
+			else if (userData.level <= 1) {
+				await transaction.commit()
+
+				await ctx.send({
+					content: `${icons.danger} You are level **${userData.level}** and cannot engage in PvP until you reach level **2** (this is to help protect new players).`
+				})
+				return
+			}
+
+			else if (victimData.level <= 1) {
+				await transaction.commit()
+
+				await ctx.send({
+					content: `${icons.danger} **${member.user.username}#${member.user.discriminator}** is only level **${victimData.level}** and has PvP protection until they reach level 2.`
 				})
 				return
 			}
