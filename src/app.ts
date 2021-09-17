@@ -21,6 +21,7 @@ import { getItemDisplay } from './utils/itemUtils'
 import { messageUser } from './utils/messageUtils'
 import { logger } from './utils/logger'
 import getRandomInt from './utils/randomInt'
+import TutorialHandler from './utils/TutorialHandler'
 
 class App {
 	bot: Eris.Client
@@ -44,6 +45,7 @@ class App {
 	 * The current multiplier for selling items to the shop (changes every hour)
 	 */
 	shopSellMultiplier: number
+	tutorialHandler: TutorialHandler
 
 	constructor (token: string, options: Eris.ClientOptions) {
 		if (!clientId) {
@@ -70,6 +72,7 @@ class App {
 		this.npcHandler = new NPCHandler(this)
 		this.shopSellMultiplier = getRandomInt(90, 110) / 100
 		this.extractingUsers = new Set()
+		this.tutorialHandler = new TutorialHandler(this)
 	}
 
 	async launch (): Promise<void> {
@@ -406,6 +409,9 @@ class App {
 					await addItemToBackpack(query, ctx.user.id, batRow.id)
 					await addItemToBackpack(query, ctx.user.id, bandageRow.id)
 
+					// start tutorial
+					this.tutorialHandler.tutorialUsers.set(ctx.user.id, 0)
+
 					// send welcome DM
 					const erisUser = await this.fetchUser(ctx.user.id)
 					if (erisUser) {
@@ -480,6 +486,13 @@ class App {
 
 			logger.info(`Command (${command.commandName}) run by ${ctx.user.username}#${ctx.user.discriminator} (${ctx.user.id}) in ${ctx.guildID ? `guild (${ctx.guildID})` : 'DMs'}`)
 			await command.run(ctx)
+
+			try {
+				await this.tutorialHandler.handle(command, ctx)
+			}
+			catch (err) {
+				logger.error(err)
+			}
 
 			// reminds users to use raidtime command to check how much time they have left in raid,
 			// it doesn't send the time in this message because I want players raidtime to be kept private from other players

@@ -20,6 +20,22 @@ export const CONFIRM_BUTTONS: ComponentActionRow[] = [
 	}
 ]
 
+export const RED_BUTTON = (label: string, customID: string, disabled?: boolean): ComponentButton => ({
+	type: ComponentType.BUTTON,
+	label,
+	custom_id: customID,
+	style: ButtonStyle.DESTRUCTIVE,
+	disabled
+})
+
+export const GRAY_BUTTON = (label: string, customID: string, disabled?: boolean): ComponentButton => ({
+	type: ComponentType.BUTTON,
+	label,
+	custom_id: customID,
+	style: ButtonStyle.SECONDARY,
+	disabled
+})
+
 export const PREVIOUS_BUTTON = (disabled: boolean): ComponentButton => ({
 	type: ComponentType.BUTTON,
 	label: 'Previous Page',
