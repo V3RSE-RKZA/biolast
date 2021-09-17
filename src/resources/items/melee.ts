@@ -95,8 +95,8 @@ export const melee = meleeObject({
 		sellPrice: 1750,
 		durability: 3,
 		slotsUsed: 2,
-		fireRate: 20,
-		accuracy: 75,
+		fireRate: 30,
+		accuracy: 70,
 		damage: 20,
 		penetration: 0.5,
 		itemLevel: 2
@@ -109,8 +109,8 @@ export const melee = meleeObject({
 		sellPrice: 1050,
 		durability: 4,
 		slotsUsed: 2,
-		fireRate: 30,
-		accuracy: 70,
+		fireRate: 25,
+		accuracy: 65,
 		damage: 15,
 		penetration: 1.0,
 		itemLevel: 3
@@ -123,11 +123,11 @@ export const melee = meleeObject({
 		sellPrice: 1050,
 		durability: 4,
 		slotsUsed: 2,
-		fireRate: 25,
-		accuracy: 80,
+		fireRate: 20,
+		accuracy: 75,
 		damage: 20,
-		penetration: 1.5,
-		itemLevel: 3
+		penetration: 1.2,
+		itemLevel: 4
 	},
 	chainsaw: {
 		type: 'Melee Weapon',
@@ -138,7 +138,7 @@ export const melee = meleeObject({
 		durability: 4,
 		slotsUsed: 3,
 		fireRate: 30,
-		accuracy: 80,
+		accuracy: 70,
 		damage: 30,
 		penetration: 1.45,
 		itemLevel: 7
