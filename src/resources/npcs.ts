@@ -112,7 +112,7 @@ export const npcs = npcsObject({
 		damage: 25,
 		drops: {
 			common: [items.bandage],
-			uncommon: [items.makeshift_pistol_bullet],
+			uncommon: [items.makeshift_pistol_bullet, items.small_pouch],
 			rare: [items['9mm_fmj_bullet']],
 			rolls: 1
 		},
@@ -155,7 +155,7 @@ export const npcs = npcsObject({
 		damage: 25,
 		drops: {
 			common: [items.bandage],
-			uncommon: [items.ifak_medkit, items.cloth_backpack],
+			uncommon: [items.ifak_medkit],
 			rare: [items['5.45x39_fmj_bullet'], items['9mm_fmj_bullet']],
 			rolls: 1
 		},

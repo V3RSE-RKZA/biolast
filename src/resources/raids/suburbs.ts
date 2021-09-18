@@ -50,7 +50,7 @@ export const suburbs: Location = {
 					xp: 10
 				},
 				rare: {
-					items: [items.luger, items['.22lr_bullet'], items.sledgehammer],
+					items: [items.luger, items['.22lr_bullet'], items.sledgehammer, items.shed_key],
 					xp: 20
 				},
 				rolls: 2,
