@@ -84,7 +84,7 @@ export const suburbs: Location = {
 				cooldown: 1 * 10
 			},
 			npcSpawns: {
-				npcs: [npcs.raider],
+				npcs: [npcs.raider_weak],
 				cooldownMin: 3 * 60,
 				cooldownMax: 5 * 60
 			}

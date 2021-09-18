@@ -66,7 +66,7 @@ export const farm: Location = {
 				keyIsOptional: false
 			},
 			npcSpawns: {
-				npcs: [npcs.raider],
+				npcs: [npcs.raider_weak],
 				cooldownMin: 3 * 60,
 				cooldownMax: 5 * 60
 			}

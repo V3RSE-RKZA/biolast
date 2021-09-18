@@ -145,10 +145,10 @@ export const npcs = npcsObject({
 		helmet: items.wooden_helmet,
 		xp: 50
 	},
-	raider: {
+	raider_weak: {
 		type: 'raider',
 		subtype: 'ranged',
-		id: 'raider',
+		id: 'raider_weak',
 		display: 'Raider',
 		icon: '',
 		health: 30,
