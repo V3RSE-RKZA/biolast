@@ -4,11 +4,11 @@ import { ranged } from './ranged'
 const ammoObject = <T>(et: { [K in keyof T]: Ammunition & { name: K } }) => et
 
 export const ammunition = ammoObject({
-	'5.45x39_fmj': {
+	'5.45x39_fmj_bullet': {
 		type: 'Ammunition',
-		name: '5.45x39_fmj',
+		name: '5.45x39_fmj_bullet',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['545', '545_rifle', '545x39', '545_fmj', '545_bullet'],
+		aliases: ['545', '545_rifle', '545x39', '545_fmj', '545_bullet', '5.45x39_fmj'],
 		description: 'Full metal jacket 5.45x39mm ammunition for Kalashnikov rifles.',
 		damage: 31,
 		penetration: 2.2,
@@ -17,11 +17,11 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 7
 	},
-	'9mm_fmj': {
+	'9mm_fmj_bullet': {
 		type: 'Ammunition',
-		name: '9mm_fmj',
+		name: '9mm_fmj_bullet',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['9x19', '9mm'],
+		aliases: ['9x19', '9mm', '9mm_fmj'],
 		description: 'Full metal jacket ammunition for 9mm handguns.',
 		damage: 20,
 		penetration: 2,
@@ -34,7 +34,7 @@ export const ammunition = ammoObject({
 		type: 'Ammunition',
 		name: '.22lr_bullet',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['.22', '.22lr', 'rimfire', '.22_rimfire'],
+		aliases: ['.22', '.22lr', 'rimfire', '.22_rimfire', '.22_bullet'],
 		description: 'Small bullet used for .22 caliber weapons.',
 		damage: 20,
 		penetration: 1.5,
@@ -43,9 +43,9 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 3
 	},
-	'makeshift_pistol_ammo': {
+	'makeshift_pistol_bullet': {
 		type: 'Ammunition',
-		name: 'makeshift_pistol_ammo',
+		name: 'makeshift_pistol_bullet',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['makeshift_ammo', 'pistol_ammo', 'pistol_bullet'],
 		description: 'A used pistol cartridge filled with homemade powder and a new bullet.',
@@ -56,9 +56,9 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 1
 	},
-	'makeshift_rifle_ammo': {
+	'makeshift_rifle_bullet': {
 		type: 'Ammunition',
-		name: 'makeshift_rifle_ammo',
+		name: 'makeshift_rifle_bullet',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['rifle_ammo', 'rifle_bullet'],
 		description: 'A used rifle cartridge filled with homemade powder and a new bullet.',
@@ -82,11 +82,11 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 3
 	},
-	'.303_fmj': {
+	'.303_fmj_bullet': {
 		type: 'Ammunition',
-		name: '.303_fmj',
+		name: '.303_fmj_bullet',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['.303'],
+		aliases: ['.303', '.303_fmj', '.303_bullet'],
 		description: 'Full metal jacket ammo for a lee-enfield.',
 		damage: 45,
 		penetration: 2.5,
@@ -99,7 +99,7 @@ export const ammunition = ammoObject({
 		type: 'Ammunition',
 		name: '20_gauge_shell',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['makeshift_ammo', 'pistol_ammo', 'pistol_bullet'],
+		aliases: ['20g_shell', '20g_shotgun'],
 		description: 'The 20-gauge shell, also known as 20-bore, is a shell that is smaller in caliber than a 12-gauge.',
 		damage: 50,
 		penetration: 3,

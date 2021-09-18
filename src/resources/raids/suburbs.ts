@@ -24,7 +24,7 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.bandage, items.makeshift_pistol_ammo],
+					items: [items.bandage, items.makeshift_pistol_bullet],
 					xp: 10
 				},
 				rare: {
@@ -42,11 +42,11 @@ export const suburbs: Location = {
 			topic: 'It\'s quiet in here...',
 			scavange: {
 				common: {
-					items: [items.makeshift_pistol, items.makeshift_pistol_ammo],
+					items: [items.makeshift_pistol, items.makeshift_pistol_bullet],
 					xp: 5
 				},
 				uncommon: {
-					items: [items.makeshift_rifle, items.makeshift_rifle_ammo],
+					items: [items.makeshift_rifle, items.makeshift_rifle_bullet],
 					xp: 10
 				},
 				rare: {
@@ -152,11 +152,11 @@ export const suburbs: Location = {
 			display: 'Cedar Lake',
 			scavange: {
 				common: {
-					items: [items.makeshift_rifle, items.makeshift_rifle_ammo, items['.22lr_bullet']],
+					items: [items.makeshift_rifle, items.makeshift_rifle_bullet, items['.22lr_bullet']],
 					xp: 5
 				},
 				uncommon: {
-					items: [items.bandage, items['9mm_fmj']],
+					items: [items.bandage, items['9mm_fmj_bullet']],
 					xp: 10
 				},
 				rare: {
