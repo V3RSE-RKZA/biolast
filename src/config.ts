@@ -8,7 +8,7 @@ export const clientId = process.env.BOT_CLIENT_ID
 export const prefix = process.env.PREFIX || '='
 
 export const icons = {
-	money: '₽',
+	money: '<:bullet:888384240042004482>',
 	health: {
 		start_full: '<:health_bar_start_full:849053369368313906>',
 		mid_full: '<:health_bar_mid_full:849053369317326868>',

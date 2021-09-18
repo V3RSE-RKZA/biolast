@@ -200,7 +200,7 @@ class ShopCommand extends CustomSlashCommand {
 
 					await confirmed.editParent({
 						content: `${icons.checkmark} Sold **${itemsToSell.length}x** items for **${formatNumber(price)}**.\n\n${itemsToSell.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
-							`${icons.information} You now have **${formatNumber(userDataV.money + price)}** rubles.`,
+							`${icons.information} You now have **${formatNumber(userDataV.money + price)}** bullets.`,
 						components: []
 					})
 				}
@@ -253,7 +253,7 @@ class ShopCommand extends CustomSlashCommand {
 			}
 			else if (userData.money < shopItemRow.price) {
 				await ctx.send({
-					content: `${icons.danger} You don't have enough rubles. You need **${formatNumber(shopItemRow.price)}** but you only have **${formatNumber(userData.money)}**.`
+					content: `${icons.danger} You don't have enough bullets. You need **${formatNumber(shopItemRow.price)}** but you only have **${formatNumber(userData.money)}**.`
 				})
 				return
 			}
@@ -305,7 +305,7 @@ class ShopCommand extends CustomSlashCommand {
 					}
 					else if (userDataV.money < shopItemRowV.price) {
 						await confirmed.editParent({
-							content: `${icons.danger} You don't have enough rubles. You need **${formatNumber(shopItemRowV.price)}** but you only have **${formatNumber(userDataV.money)}**.`,
+							content: `${icons.danger} You don't have enough bullets. You need **${formatNumber(shopItemRowV.price)}** but you only have **${formatNumber(userDataV.money)}**.`,
 							components: []
 						})
 						return
@@ -319,7 +319,7 @@ class ShopCommand extends CustomSlashCommand {
 
 					await confirmed.editParent({
 						content: `${icons.checkmark} Purchased ${getItemDisplay(shopItem, shopItemRowV)} for **${formatNumber(shopItemRowV.price)}**. You can find this item in your stash.\n\n` +
-							`${icons.information} You now have **${formatNumber(userDataV.money - shopItemRowV.price)}** rubles.`,
+							`${icons.information} You now have **${formatNumber(userDataV.money - shopItemRowV.price)}** bullets.`,
 						components: []
 					})
 				}

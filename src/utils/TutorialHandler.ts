@@ -125,8 +125,8 @@ class TutorialHandler {
 			case 3: {
 				if (command.commandName === 'shop' && ctx.options.view) {
 					await ctx.sendFollowUp({
-						content: `Tutorial Step 4/10:\n\n${icons.checkmark} This is the item shop! These items can be purchased using your rubles.` +
-							' You can gain rubles by selling some of your items to the shop. When you sell an item to the shop, it will be available for other' +
+						content: `Tutorial Step 4/10:\n\n${icons.checkmark} This is the item shop! Items can be purchased using bullets, the currency of this post-apocalyptic world.` +
+							' You can gain bullets by selling some of your items to the shop. When you sell something, it will be available for other' +
 							' players to purchase. All of the items you are seeing here were sold to the shop by another player. To sell an item, use `/shop sell <item id>` or use' +
 							' `/shop buy <item id>` to purchase an item from the shop.\n\nIt\'s time for you to learn how to get more items.' +
 							' The game is based around entering **raids** filled with monsters, raiders, other players, and loot to fight over.' +

@@ -253,7 +253,7 @@ class StashCommand extends CustomSlashCommand {
 
 			const embed = new Embed()
 				.setAuthor(`${user.username}#${user.discriminator}'s Stash`, user.avatarURL)
-				.addField('__Stash Info__', `**Rubles**: ${formatNumber(userData.money)}\n` +
+				.addField('__Stash Info__', `**Bullets**: ${formatNumber(userData.money)}\n` +
 				`**Number of Items**: ${itemData.items.length}`)
 				.addField(`__Items in Stash__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})`,
 					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your inventory to your stash with \`/stash put <item id>\`.`)
