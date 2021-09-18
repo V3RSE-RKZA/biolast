@@ -13,7 +13,7 @@ export const ammunition = ammoObject({
 		damage: 31,
 		penetration: 2.2,
 		ammoFor: [ranged['aks-74u']],
-		sellPrice: 4000,
+		sellPrice: 342,
 		slotsUsed: 1,
 		itemLevel: 7
 	},
@@ -26,7 +26,7 @@ export const ammunition = ammoObject({
 		damage: 20,
 		penetration: 2,
 		ammoFor: [ranged['glock-17']],
-		sellPrice: 3000,
+		sellPrice: 158,
 		slotsUsed: 1,
 		itemLevel: 5
 	},
@@ -39,7 +39,7 @@ export const ammunition = ammoObject({
 		damage: 20,
 		penetration: 1.5,
 		ammoFor: [ranged.luger],
-		sellPrice: 750,
+		sellPrice: 51,
 		slotsUsed: 1,
 		itemLevel: 3
 	},
@@ -52,7 +52,7 @@ export const ammunition = ammoObject({
 		damage: 10,
 		penetration: 0.9,
 		ammoFor: [ranged.makeshift_pistol],
-		sellPrice: 250,
+		sellPrice: 8,
 		slotsUsed: 1,
 		itemLevel: 1
 	},
@@ -65,7 +65,7 @@ export const ammunition = ammoObject({
 		damage: 15,
 		penetration: 1.4,
 		ammoFor: [ranged.makeshift_rifle],
-		sellPrice: 450,
+		sellPrice: 32,
 		slotsUsed: 1,
 		itemLevel: 3
 	},
@@ -78,7 +78,7 @@ export const ammunition = ammoObject({
 		damage: 13,
 		penetration: 1.5,
 		ammoFor: [ranged.makeshift_shotgun],
-		sellPrice: 450,
+		sellPrice: 34,
 		slotsUsed: 1,
 		itemLevel: 3
 	},
@@ -89,9 +89,9 @@ export const ammunition = ammoObject({
 		aliases: ['.303', '.303_fmj', '.303_bullet'],
 		description: 'Full metal jacket ammo for a lee-enfield.',
 		damage: 45,
-		penetration: 2.5,
+		penetration: 3,
 		ammoFor: [ranged['lee-enfield']],
-		sellPrice: 1000,
+		sellPrice: 502,
 		slotsUsed: 1,
 		itemLevel: 6
 	},
@@ -102,9 +102,9 @@ export const ammunition = ammoObject({
 		aliases: ['20g_shell', '20g_shotgun'],
 		description: 'The 20-gauge shell, also known as 20-bore, is a shell that is smaller in caliber than a 12-gauge.',
 		damage: 50,
-		penetration: 3,
+		penetration: 2.5,
 		ammoFor: [ranged.bobwhite_g2],
-		sellPrice: 1350,
+		sellPrice: 415,
 		slotsUsed: 1,
 		itemLevel: 8
 	}
