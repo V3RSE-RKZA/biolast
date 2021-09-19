@@ -178,5 +178,17 @@ export const quests: Quest[] = [
 			xp: 50
 		},
 		item: items['glock-17']
+	},
+	{
+		id: 'low_lvl_retrieve_item_2',
+		questType: 'Retrieve Item',
+		minLevel: 3,
+		maxLevel: 10,
+		progressGoal: 2,
+		rewards: {
+			money: 300,
+			xp: 50
+		},
+		item: items.walker_goop
 	}
 ]

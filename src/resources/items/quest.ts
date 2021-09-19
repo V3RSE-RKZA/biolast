@@ -3,12 +3,12 @@ import { QuestItem } from '../../types/Items'
 const questObject = <T>(et: { [K in keyof T]: QuestItem & { name: K } }) => et
 
 export const quest = questObject({
-	test_quest_item: {
+	walker_goop: {
 		type: 'Quest Item',
-		name: 'test_quest_item',
-		aliases: [],
+		name: 'walker_goop',
+		aliases: ['goop'],
 		icon: '<:quest_item:886561850525896724>',
-		slotsUsed: 3,
+		slotsUsed: 2,
 		itemLevel: 1
 	}
 })
