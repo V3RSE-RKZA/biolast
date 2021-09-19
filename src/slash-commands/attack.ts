@@ -125,6 +125,9 @@ class AttackCommand extends CustomSlashCommand {
 		if (!raidType) {
 			throw new Error(`Could not find raid location for guild (${guild.name} ID: ${guild.id})`)
 		}
+		else if (!ctx.member) {
+			throw new Error('Member not attached to interaction')
+		}
 
 		if (ctx.options.npc) {
 			// attacking npc
@@ -371,7 +374,7 @@ class AttackCommand extends CustomSlashCommand {
 					messages.push(`\n${npcDisplayCapitalized} is left with ${formatHealth(npcRow.health - finalDamage.total, npc.health)} **${npcRow.health - finalDamage.total}** health.`)
 				}
 
-				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.user, userData, userBackpack, npc, ctx.channelID, removedItems, raidType)
+				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.member, userData, userBackpack, npc, ctx.channelID, removedItems, raidType)
 
 				await transaction.commit()
 
@@ -437,7 +440,7 @@ class AttackCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `${icons.warning} **${member.user.username}#${member.user.discriminator}** is not active in this raid!`
+					content: `${icons.warning} **${member.displayName}** is not active in this raid!`
 				})
 				return
 			}
@@ -466,7 +469,7 @@ class AttackCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `${icons.danger} **${member.user.username}#${member.user.discriminator}** is only level **${victimData.level}** and has PvP protection until they reach level 2.`
+					content: `${icons.danger} **${member.displayName}** is only level **${victimData.level}** and has PvP protection until they reach level 2.`
 				})
 				return
 			}
@@ -558,14 +561,14 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			if (!missedPartChoice && bodyPartHit.result === 'head' && victimEquips.helmet) {
-				messages.push(`**${member.user.username}#${member.user.discriminator}**'s helmet (${getItemDisplay(victimEquips.helmet.item)}) reduced the damage by **${finalDamage.reduced}**.`)
+				messages.push(`**${member.displayName}**'s helmet (${getItemDisplay(victimEquips.helmet.item)}) reduced the damage by **${finalDamage.reduced}**.`)
 
 				// only lower helmet durability if attackers weapon penetrates at least 50% of
 				// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
 				// against someone who had level 3 armor, the armor would NOT lose durability)
 				if (attackPenetration >= victimEquips.helmet.item.level / 2) {
 					if (victimEquips.helmet.row.durability - 1 <= 0) {
-						messages.push(`**${member.user.username}#${member.user.discriminator}**'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
+						messages.push(`**${member.displayName}**'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
 
 						await deleteItem(transaction.query, victimEquips.helmet.row.id)
 					}
@@ -575,14 +578,14 @@ class AttackCommand extends CustomSlashCommand {
 				}
 			}
 			else if (!missedPartChoice && bodyPartHit.result === 'chest' && victimEquips.armor) {
-				messages.push(`**${member.user.username}#${member.user.discriminator}**'s armor (${getItemDisplay(victimEquips.armor.item)}) reduced the damage by **${finalDamage.reduced}**.`)
+				messages.push(`**${member.displayName}**'s armor (${getItemDisplay(victimEquips.armor.item)}) reduced the damage by **${finalDamage.reduced}**.`)
 
 				// only lower armor durability if attackers weapon penetrates at least 50% of
 				// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
 				// against someone who had level 3 armor, the armor would NOT lose durability)
 				if (attackPenetration >= victimEquips.armor.item.level / 2) {
 					if (victimEquips.armor.row.durability - 1 <= 0) {
-						messages.push(`**${member.user.username}#${member.user.discriminator}**'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
+						messages.push(`**${member.displayName}**'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
 
 						await deleteItem(transaction.query, victimEquips.armor.row.id)
 					}
@@ -619,12 +622,12 @@ class AttackCommand extends CustomSlashCommand {
 					}
 				}
 
-				messages.push(`\n☠️ **${member.user.username}#${member.user.discriminator}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill.`)
+				messages.push(`\n☠️ **${member.displayName}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill.`)
 			}
 			else if (!missedPartChoice) {
 				await lowerHealth(transaction.query, member.id, finalDamage.total)
 
-				messages.push(`\n**${member.user.username}#${member.user.discriminator}** is left with ${formatHealth(victimData.health - finalDamage.total, victimData.maxHealth)} **${victimData.health - finalDamage.total}** health.`)
+				messages.push(`\n**${member.displayName}** is left with ${formatHealth(victimData.health - finalDamage.total, victimData.maxHealth)} **${victimData.health - finalDamage.total}** health.`)
 			}
 
 			// commit changes
