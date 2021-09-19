@@ -1,4 +1,4 @@
-import { User } from 'slash-create'
+import { Member } from 'slash-create'
 import App from '../app'
 import { raidCooldown } from '../config'
 import { allNPCs, NPC } from '../resources/npcs'
@@ -176,7 +176,7 @@ class NPCHandler {
 	/**
 	 * Simulates an NPCs attack on a player
 	 * @param transactionQuery The transaction query, used to keep all queries inside a transaction. THIS FUNCTION DOES NOT COMMIT THE TRANSACTION, DO THAT AFTER YOU CALL THIS FUNCTION
-	 * @param user The slash-create user object of the player getting attacked
+	 * @param member The slash-create member object of the player getting attacked
 	 * @param userRow The user row of player getting attacked
 	 * @param userBackpack The backpack of player getting attacked
 	 * @param npc The NPC attacking
@@ -186,7 +186,7 @@ class NPCHandler {
 	 */
 	async attackPlayer (
 		transactionQuery: Query,
-		user: User,
+		member: Member,
 		userRow: UserRow,
 		userBackpack: BackpackItemRow[],
 		npc: NPC,
@@ -210,10 +210,10 @@ class NPCHandler {
 				npcAttackPenetration = npc.ammo.penetration
 
 				if (npc.type === 'boss') {
-					messages.push(`**${npc.display}** shot <@${user.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
+					messages.push(`**${npc.display}** shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
 				}
 				else {
-					messages.push(`The \`${npc.type}\` shot <@${user.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
+					messages.push(`The \`${npc.type}\` shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
 				}
 			}
 			else {
@@ -221,10 +221,10 @@ class NPCHandler {
 				npcAttackPenetration = npc.weapon.penetration
 
 				if (npc.type === 'boss') {
-					messages.push(`**${npc.display}** lunged at <@${user.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
+					messages.push(`**${npc.display}** lunged at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
 				}
 				else {
-					messages.push(`The \`${npc.type}\` lunged at <@${user.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
+					messages.push(`The \`${npc.type}\` lunged at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
 				}
 			}
 		}
@@ -234,18 +234,18 @@ class NPCHandler {
 			npcAttackPenetration = 0.75
 			npcDamage = getAttackDamage(npc.damage, npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
 
-			messages.push(`The \`${npc.type}\` took a swipe at <@${user.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${npcDamage.total}** damage dealt.\n`)
+			messages.push(`The \`${npc.type}\` took a swipe at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${npcDamage.total}** damage dealt.\n`)
 		}
 
 		if (bodyPartHit.result === 'head' && userEquips.helmet) {
-			messages.push(`**${user.username}#${user.discriminator}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${npcDamage.reduced}**.`)
+			messages.push(`**${member.displayName}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${npcDamage.reduced}**.`)
 
 			// only lower helmet durability if npcs weapon penetrates at least 50% of
 			// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
 			// against someone who had level 3 armor, the armor would NOT lose durability)
 			if (npcAttackPenetration >= userEquips.helmet.item.level / 2) {
 				if (userEquips.helmet.row.durability - 1 <= 0) {
-					messages.push(`**${user.username}#${user.discriminator}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
+					messages.push(`**${member.displayName}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
 
 					await deleteItem(transactionQuery, userEquips.helmet.row.id)
 					removedItems.push(userEquips.helmet.row.id)
@@ -256,11 +256,11 @@ class NPCHandler {
 			}
 		}
 		else if (bodyPartHit.result === 'chest' && userEquips.armor) {
-			messages.push(`**${user.username}#${user.discriminator}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${npcDamage.reduced}**.`)
+			messages.push(`**${member.displayName}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${npcDamage.reduced}**.`)
 
 			if (npcAttackPenetration >= userEquips.armor.item.level / 2) {
 				if (userEquips.armor.row.durability - 1 <= 0) {
-					messages.push(`**${user.username}#${user.discriminator}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
+					messages.push(`**${member.displayName}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
 
 					await deleteItem(transactionQuery, userEquips.armor.row.id)
 					removedItems.push(userEquips.armor.row.id)
@@ -279,15 +279,15 @@ class NPCHandler {
 				}
 			}
 
-			await removeUserFromRaid(transactionQuery, user.id)
-			await createCooldown(transactionQuery, user.id, `raid-${raidType.id}`, raidCooldown)
+			await removeUserFromRaid(transactionQuery, member.id)
+			await createCooldown(transactionQuery, member.id, `raid-${raidType.id}`, raidCooldown)
 
-			messages.push(`☠️ **${user.username}#${user.discriminator}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
+			messages.push(`☠️ **${member.displayName}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
 		}
 		else {
-			await lowerHealth(transactionQuery, user.id, npcDamage.total)
+			await lowerHealth(transactionQuery, member.id, npcDamage.total)
 
-			messages.push(`**${user.username}#${user.discriminator}** is left with ${formatHealth(userRow.health - npcDamage.total, userRow.maxHealth)} **${userRow.health - npcDamage.total}** health.`)
+			messages.push(`**${member.displayName}** is left with ${formatHealth(userRow.health - npcDamage.total, userRow.maxHealth)} **${userRow.health - npcDamage.total}** health.`)
 		}
 
 		return {

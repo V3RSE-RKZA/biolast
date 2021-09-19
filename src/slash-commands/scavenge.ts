@@ -52,6 +52,9 @@ class ScavengeCommand extends CustomSlashCommand {
 			// raid channel not found, was the channel not specified in the location?
 			throw new Error('Could not find raid channel')
 		}
+		else if (!ctx.member) {
+			throw new Error('Member not attached to interaction')
+		}
 
 		else if (!raidChannel.scavange) {
 			await ctx.send({
@@ -104,7 +107,7 @@ class ScavengeCommand extends CustomSlashCommand {
 			await createCooldown(transaction.query, ctx.user.id, 'scavenge', 60)
 
 			if (npc) {
-				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.user, userData, backpackRows, npc, ctx.channelID, [], raidType)
+				const attackResult = await this.app.npcHandler.attackPlayer(transaction.query, ctx.member, userData, backpackRows, npc, ctx.channelID, [], raidType)
 
 				if (userData.health - attackResult.damage <= 0) {
 					await increaseDeaths(transaction.query, ctx.user.id, 1)

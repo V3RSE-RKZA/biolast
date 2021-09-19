@@ -51,6 +51,9 @@ class EvacCommand extends CustomSlashCommand {
 			// raid channel not found, was the channel not specified in the location?
 			throw new Error('Could not find raid channel')
 		}
+		else if (!ctx.member) {
+			throw new Error('Member not attached to interaction')
+		}
 
 		if (raidChannel.type !== 'EvacChannel') {
 			await ctx.send({
@@ -77,7 +80,7 @@ class EvacCommand extends CustomSlashCommand {
 		}
 		else if (npc) {
 			const userData = (await getUserRow(preTransaction.query, ctx.user.id, true))!
-			const attackResult = await this.app.npcHandler.attackPlayer(preTransaction.query, ctx.user, userData, userBackpack, npc, ctx.channelID, [], raidType)
+			const attackResult = await this.app.npcHandler.attackPlayer(preTransaction.query, ctx.member, userData, userBackpack, npc, ctx.channelID, [], raidType)
 
 			if (userData.health - attackResult.damage <= 0) {
 				await increaseDeaths(preTransaction.query, ctx.user.id, 1)
