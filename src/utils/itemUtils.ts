@@ -247,30 +247,20 @@ export function sortItemsByAmmo (arr: (Item | ItemWithRow<ItemRow>)[], containsR
 	}
 
 	return (arr as Item[]).sort((a, b) => {
-		let aPenetration = 0
-		let aDamage = 0
-		let bPenetration = 0
-		let bDamage = 0
+		let aItemLevel = 0
+		let bItemLevel = 0
 
 		if (a.type === 'Ammunition') {
-			aPenetration = a.penetration
-			aDamage = a.damage
+			aItemLevel = a.itemLevel
 		}
 		if (b.type === 'Ammunition') {
-			bPenetration = b.penetration
-			bDamage = b.damage
+			bItemLevel = b.itemLevel
 		}
 
-		if (bPenetration < aPenetration) {
+		if (bItemLevel < aItemLevel) {
 			return -1
 		}
-		else if (bPenetration > aPenetration) {
-			return 1
-		}
-		else if (bDamage < aDamage) {
-			return -1
-		}
-		else if (bDamage > aDamage) {
+		else if (bItemLevel > aItemLevel) {
 			return 1
 		}
 
