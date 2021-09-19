@@ -5,12 +5,12 @@ import { allItems } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { Item } from '../types/Items'
+import { Ammunition, Item } from '../types/Items'
 import { getItem, getNumber } from '../utils/argParsers'
 import { getUserBackpack } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
 import formatNumber from '../utils/formatNumber'
-import { getItemDisplay, getItems } from '../utils/itemUtils'
+import { getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { isRaidGuild } from '../utils/raidUtils'
 
@@ -133,11 +133,11 @@ class ItemCommand extends CustomSlashCommand {
 				break
 			}
 			case 'Ranged Weapon': {
-				const ammunition = allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item))
+				const ammunition = sortItemsByAmmo(allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item))) as Ammunition[]
 
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 				itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
-				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => getItemDisplay(itm)).join('\n'), true)
+				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (**${itm.damage}** damage)`).join('\n'), true)
 				break
 			}
 			case 'Body Armor': {
