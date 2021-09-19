@@ -179,7 +179,8 @@ export async function syncRaidGuilds (app: App): Promise<void> {
 
 					await welcomeChannel.createMessage({
 						content: '**I can\'t see any channels, what do I do?**\nLeave the server and rejoin using your invite link. You can use the `/raid` command to fetch your invite link.' +
-							'\n\n**How do I find items?**\nUse the `/scavenge` command in channels to search for items. Once you\'ve gathered some loot, head to an evac channel and use `/evac` to escape the raid.'
+							'\n\n**How do I find items?**\nUse the `/scavenge` command in channels to search for items. Once you\'ve gathered some loot, head to an evac channel and use `/evac` to escape the raid.' +
+							'\n\n**Why can\'t I talk?**\nThis server is not meant for chatting. If you wish to communicate with other players, use commands like `/wave`.'
 					})
 				}
 
