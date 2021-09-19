@@ -167,3 +167,62 @@ export function getAttackDamage (damage: number, penetration: number, bodyPartHi
 		reduced: damage - adjusted
 	}
 }
+
+/**
+ * Get all the items that can be found at a location
+ * @param location The location to get items from
+ * @returns An array of possible items
+ */
+export function getPossibleItems (location: Location): Item[] {
+	const items = []
+
+	for (const raidChan of location.channels) {
+		if (raidChan.scavange) {
+			for (const item of raidChan.scavange.common.items) {
+				items.push(item)
+			}
+			for (const item of raidChan.scavange.uncommon.items) {
+				items.push(item)
+			}
+			for (const item of raidChan.scavange.rare.items) {
+				items.push(item)
+			}
+
+			if (raidChan.scavange.rarest) {
+				for (const item of raidChan.scavange.rarest.items) {
+					items.push(item)
+				}
+			}
+		}
+
+		if (raidChan.npcSpawns) {
+			for (const npc of raidChan.npcSpawns.npcs) {
+				if (npc.armor) {
+					items.push(npc.armor)
+				}
+				else if (npc.helmet) {
+					items.push(npc.helmet)
+				}
+				else if ((npc.type === 'raider' || npc.type === 'boss')) {
+					items.push(npc.weapon)
+
+					if (npc.subtype === 'ranged') {
+						items.push(npc.ammo)
+					}
+				}
+
+				for (const item of npc.drops.common) {
+					items.push(item)
+				}
+				for (const item of npc.drops.uncommon) {
+					items.push(item)
+				}
+				for (const item of npc.drops.rare) {
+					items.push(item)
+				}
+			}
+		}
+	}
+
+	return [...new Set(items)]
+}

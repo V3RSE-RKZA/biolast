@@ -280,7 +280,7 @@ export function sortItemsByAmmo (arr: (Item | ItemWithRow<ItemRow>)[], containsR
 }
 
 /**
- * Sorts an array of items from by name their name a-z
+ * Sorts an array of items by their name a-z
  * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
  * @param containsRows Whether or not the function is sorting items with rows
  */
@@ -292,4 +292,31 @@ export function sortItemsByName (arr: (Item | ItemWithRow<ItemRow>)[], containsR
 	}
 
 	return (arr as Item[]).sort((a, b) => a.name.localeCompare(b.name))
+}
+
+/**
+ * Sorts an array of items by their type
+ * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
+ * @param containsRows Whether or not the function is sorting items with rows
+ */
+export function sortItemsByType (arr: Item[], containsRows?: false): Item[]
+export function sortItemsByType<T extends ItemRow> (arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
+export function sortItemsByType (arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
+	if (containsRows) {
+		return (arr as ItemWithRow<ItemRow>[]).sort((a, b) => {
+			if (a.item.type === b.item.type) {
+				return a.item.name.localeCompare(b.item.name)
+			}
+
+			return a.item.type.localeCompare(b.item.type)
+		})
+	}
+
+	return (arr as Item[]).sort((a, b) => {
+		if (a.type === b.type) {
+			return a.name.localeCompare(b.name)
+		}
+
+		return a.type.localeCompare(b.type)
+	})
 }

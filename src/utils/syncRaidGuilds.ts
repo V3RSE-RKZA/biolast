@@ -1,7 +1,12 @@
 import { Constants, TextChannel } from 'eris'
 import App from '../app'
 import { allLocations } from '../resources/raids'
+import { Item } from '../types/Items'
+import { getItemDisplay, sortItemsByType } from './itemUtils'
 import { logger } from './logger'
+import { getPossibleItems } from './raidUtils'
+import fs from 'fs'
+import path from 'path'
 
 // This function will make sure all raid guilds defined in the .env have the proper structure
 
@@ -127,7 +132,47 @@ export async function syncRaidGuilds (app: App): Promise<void> {
 					})
 					logger.debug(`[RAID GUILD SYNC] Created channel (${welcomeChannel.name} ID: ${welcomeChannel.id})`)
 
-					// TODO maybe send a short description message about the raid?
+					const possibleItems = sortItemsByType(getPossibleItems(location))
+					const possibleItemTypes = possibleItems.reduce<{ [key: string]: Item[] }>((prev, curr) => {
+						if (prev[curr.type]) {
+							prev[curr.type] = [...prev[curr.type], curr]
+						}
+						else {
+							prev[curr.type] = [curr]
+						}
+
+						return prev
+					}, {})
+					const lootDisplay = []
+					const lootImage = fs.readFileSync(path.join(__dirname, '../../src/resources/images/loot.png'))
+					const faqImage = fs.readFileSync(path.join(__dirname, '../../src/resources/images/faq.png'))
+
+					for (const type of Object.keys(possibleItemTypes)) {
+						lootDisplay.push(`**${type}**: ${possibleItemTypes[type].map(i => getItemDisplay(i)).join(', ')}`)
+					}
+
+					await welcomeChannel.createMessage({
+						content: `**Welcome to ${location.display}!**`
+					})
+
+					await welcomeChannel.createMessage({}, {
+						file: lootImage,
+						name: 'loot.png'
+					})
+
+					await welcomeChannel.createMessage({
+						content: lootDisplay.join('\n\n')
+					})
+
+					await welcomeChannel.createMessage({}, {
+						file: faqImage,
+						name: 'faq.png'
+					})
+
+					await welcomeChannel.createMessage({
+						content: '**I can\'t see any channels, what do I do?**\nLeave the server and rejoin using your invite link. You can use the `/raid` command to fetch your invite link.' +
+							'\n\n**How do I find items?**\nUse the `/scavenge` command in channels to search for items. Once you\'ve gathered some loot, head to an evac channel and use `/evac` to escape the raid.'
+					})
 				}
 
 				if (welcomeChannel.position !== 0) {
