@@ -68,26 +68,115 @@ export type Quest = BasicQuest | KeyScavengeQuest | QuestItemQuest
 
 export const quests: Quest[] = [
 	{
-		id: 'low_lvl_kill_players',
+		id: 'lowest_lvl_npc_kills_1',
 		questType: 'NPC Kills',
 		minLevel: 1,
-		maxLevel: 20,
-		progressGoal: 2,
+		maxLevel: 4,
+		progressGoal: 1,
 		rewards: {
 			item: items.bandage,
 			xp: 25
 		}
 	},
 	{
-		id: 'quest_item_test',
-		questType: 'Retrieve Item',
+		id: 'lowest_lvl_npc_kills_2',
+		questType: 'NPC Kills',
 		minLevel: 1,
-		maxLevel: 20,
-		progressGoal: 2,
-		item: items.bandage,
+		maxLevel: 4,
+		progressGoal: 1,
 		rewards: {
-			item: items.bandage,
+			money: 40,
 			xp: 25
 		}
+	},
+	{
+		id: 'lowest_lvl_evacs_1',
+		questType: 'Evacs',
+		minLevel: 1,
+		maxLevel: 4,
+		progressGoal: 3,
+		rewards: {
+			item: items['.22lr_bullet'],
+			xp: 25
+		}
+	},
+	{
+		id: 'lowest_lvl_evacs_2',
+		questType: 'Evacs',
+		minLevel: 1,
+		maxLevel: 4,
+		progressGoal: 3,
+		rewards: {
+			money: 50,
+			xp: 25
+		}
+	},
+	{
+		id: 'low_lvl_npc_kills_1',
+		questType: 'NPC Kills',
+		minLevel: 3,
+		maxLevel: 8,
+		progressGoal: 2,
+		rewards: {
+			item: items.ifak_medkit,
+			xp: 40
+		}
+	},
+	{
+		id: 'low_lvl_npc_kills_2',
+		questType: 'NPC Kills',
+		minLevel: 3,
+		maxLevel: 8,
+		progressGoal: 2,
+		rewards: {
+			money: 100,
+			xp: 40
+		}
+	},
+	{
+		id: 'low_lvl_player_kills_1',
+		questType: 'Player Kills',
+		minLevel: 3,
+		maxLevel: 8,
+		progressGoal: 2,
+		rewards: {
+			item: items['9mm_fmj_bullet'],
+			xp: 40
+		}
+	},
+	{
+		id: 'low_lvl_player_kills_2',
+		questType: 'Player Kills',
+		minLevel: 3,
+		maxLevel: 8,
+		progressGoal: 2,
+		rewards: {
+			money: 150,
+			xp: 40
+		}
+	},
+	{
+		id: 'low_lvl_scavenge_1',
+		questType: 'Scavenge With A Key',
+		minLevel: 3,
+		maxLevel: 10,
+		progressGoal: 1,
+		key: items.shed_key,
+		rewards: {
+			money: 200,
+			xp: 40
+		}
+	},
+	{
+		id: 'low_lvl_retrieve_item_1',
+		questType: 'Retrieve Item',
+		minLevel: 3,
+		maxLevel: 10,
+		progressGoal: 1,
+		rewards: {
+			money: 325,
+			xp: 50
+		},
+		item: items['glock-17']
 	}
 ]
