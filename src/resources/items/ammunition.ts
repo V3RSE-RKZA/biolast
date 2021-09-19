@@ -22,13 +22,26 @@ export const ammunition = ammoObject({
 		name: '9mm_fmj_bullet',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['9x19', '9mm', '9mm_fmj'],
-		description: 'Full metal jacket ammunition for 9mm handguns.',
+		description: 'Full metal jacket ammunition for 9mm weapons.',
 		damage: 20,
 		penetration: 2,
 		ammoFor: [ranged['glock-17']],
 		sellPrice: 158,
 		slotsUsed: 1,
 		itemLevel: 5
+	},
+	'9mm_hp_bullet': {
+		type: 'Ammunition',
+		name: '9mm_hp_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['9x19_hp', '9mm_hp'],
+		description: 'Hollow point ammunition for 9mm weapons. Hollow point bullets expand when they hit their target, causing more damage.',
+		damage: 30,
+		penetration: 1.9,
+		ammoFor: [ranged['glock-17']],
+		sellPrice: 302,
+		slotsUsed: 1,
+		itemLevel: 8
 	},
 	'.22lr_bullet': {
 		type: 'Ammunition',

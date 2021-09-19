@@ -32,6 +32,7 @@ export const ranged = rangedObject({
 		name: 'luger',
 		icon: '<:U_weapon:601366669272678411>',
 		aliases: [],
+		description: '.22 caliber pistol produced by Stoeger, based off of the German Luger from the early 1900s.',
 		sellPrice: 124,
 		durability: 10,
 		slotsUsed: 2,
