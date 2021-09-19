@@ -125,6 +125,14 @@ export async function syncRaidGuilds (app: App): Promise<void> {
 				/**
 				 * Verify welcome channel
 				 */
+				if (welcomeChannel && snowflakeToDate(welcomeChannel.id).getTime() + (7 * 24 * 60 * 60 * 1000) < Date.now()) {
+					// delete the welcome channel since it was older than 7 days (helps keep loot information up to date)
+					await welcomeChannel.delete()
+
+					logger.debug(`[RAID GUILD SYNC] Deleted welcome channel (${welcomeChannel.name} ID: ${welcomeChannel.id}) in raid guild (${guild.name} ID: ${guild.id}) since it was older than 7 days`)
+					welcomeChannel = undefined
+				}
+
 				if (!welcomeChannel) {
 					welcomeChannel = await guild.createChannel('welcome', Constants.ChannelTypes.GUILD_TEXT, {
 						reason: 'raid guild sync',
@@ -321,4 +329,8 @@ export async function syncRaidGuilds (app: App): Promise<void> {
 	}
 
 	logger.info(`[RAID GUILD SYNC] Successfully synced ${successfulSyncs} raid guilds on shard(s): ${Array.from(app.bot.shards.keys()).join(', ')}`)
+}
+
+function snowflakeToDate (snowflake: string): Date {
+	return new Date(Math.floor((parseInt(snowflake) / 4194304) + 1420070400000))
 }
