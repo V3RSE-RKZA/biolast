@@ -37,13 +37,13 @@ class HealthCommand extends CustomSlashCommand {
 
 			if (!userData) {
 				await ctx.send({
-					content: `${icons.warning} **${member.user.username}#${member.user.discriminator}** does not have an account!`
+					content: `${icons.warning} **${member.displayName}** does not have an account!`
 				})
 				return
 			}
 
 			await ctx.send({
-				content: `**${member.user.username}#${member.user.discriminator}** currently has ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP`
+				content: `**${member.displayName}** currently has ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP`
 			})
 			return
 		}

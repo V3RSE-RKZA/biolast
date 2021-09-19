@@ -87,7 +87,7 @@ class QuestsCommand extends CustomSlashCommand {
 
 		const questButtons: ComponentButton[] = []
 		let questsEmbed = new Embed()
-			.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
+			.setAuthor('Your Quests', ctx.user.avatarURL)
 			.setDescription(isInRaid ? `${icons.danger} You cannot complete quests while in a raid!` : `${icons.warning} You have **${formatTime(questCDTimeLeft)}** to complete this quest.`)
 
 		for (let i = 0; i < userQuestRows.length; i++) {
@@ -170,7 +170,7 @@ class QuestsCommand extends CustomSlashCommand {
 						}
 
 						questsEmbed = new Embed()
-							.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
+							.setAuthor('Your Quests', ctx.user.avatarURL)
 							.setDescription(`${icons.warning} You have **${formatTime(completedQuestCDTimeLeft)}** to complete this quest.`)
 
 						await completedTransaction.commit()
@@ -241,7 +241,7 @@ class QuestsCommand extends CustomSlashCommand {
 						}
 
 						questsEmbed = new Embed()
-							.setAuthor(`${ctx.user.username}#${ctx.user.discriminator}'s Quests`, ctx.user.avatarURL)
+							.setAuthor('Your Quests', ctx.user.avatarURL)
 							.setDescription(`${icons.warning} You have **${formatTime(completedQuestCDTimeLeft)}** to complete this quest.`)
 							.addField(`__Quest #${completedQuestID}__`, 'Complete!')
 

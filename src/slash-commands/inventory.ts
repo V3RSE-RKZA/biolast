@@ -48,7 +48,7 @@ class InventoryCommand extends CustomSlashCommand {
 
 			if (!userData) {
 				await ctx.send({
-					content: `${icons.warning} **${member.user.username}#${member.user.discriminator}** does not have an account!`
+					content: `${icons.warning} **${member.displayName}** does not have an account!`
 				})
 				return
 			}
@@ -69,7 +69,7 @@ class InventoryCommand extends CustomSlashCommand {
 
 		const userData = (await getUserRow(query, ctx.user.id))!
 		const userBackpack = await getUserBackpack(query, ctx.user.id)
-		const pages = this.generatePages(ctx.user, userBackpack, userData)
+		const pages = this.generatePages(ctx.member || ctx.user, userBackpack, userData)
 
 		if (pages.length === 1) {
 			await ctx.send({
@@ -83,6 +83,7 @@ class InventoryCommand extends CustomSlashCommand {
 
 	generatePages (member: ResolvedMember | User, rows: BackpackItemRow[], userData: UserRow): Embed[] {
 		const user = 'user' in member ? member.user : member
+		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
 		const itemData = getItems(rows)
 		const playerXp = getPlayerXp(userData.xp, userData.level)
 		const equips = getEquips(rows)
@@ -96,7 +97,7 @@ class InventoryCommand extends CustomSlashCommand {
 			const filteredItems = sortedItems.slice(indexFirst, indexLast)
 
 			const embed = new Embed()
-				.setAuthor(`${user.username}#${user.discriminator}'s Inventory`, user.avatarURL)
+				.setAuthor(`${userDisplay}'s Inventory`, user.avatarURL)
 				.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP (+5HP/5 mins)\n${formatHealth(userData.health, userData.maxHealth)}`, true)
 				.addField('__Experience__', `**Level**: ${userData.level}\n**XP**: ${playerXp.relativeLevelXp} / ${playerXp.levelTotalXpNeeded} xp`, true)
 				.addField('__Equips__', 'Equip an item with `/equip <item id>`.\n' +

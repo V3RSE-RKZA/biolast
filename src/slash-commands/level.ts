@@ -37,7 +37,7 @@ class LevelCommand extends CustomSlashCommand {
 
 			if (!userData) {
 				await ctx.send({
-					content: `${icons.warning} **${member.user.username}#${member.user.discriminator}** does not have an account!`
+					content: `${icons.warning} **${member.displayName}** does not have an account!`
 				})
 				return
 			}
@@ -45,7 +45,7 @@ class LevelCommand extends CustomSlashCommand {
 			const playerXp = getPlayerXp(userData.xp, userData.level)
 
 			await ctx.send({
-				content: `**${member.user.username}#${member.user.discriminator}** is currently level **${userData.level}** (XP: **${playerXp.relativeLevelXp} / ${playerXp.levelTotalXpNeeded}**)`
+				content: `**${member.displayName}** is currently level **${userData.level}** (XP: **${playerXp.relativeLevelXp} / ${playerXp.levelTotalXpNeeded}**)`
 			})
 			return
 		}

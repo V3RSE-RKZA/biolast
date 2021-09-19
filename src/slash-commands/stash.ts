@@ -206,7 +206,7 @@ class StashCommand extends CustomSlashCommand {
 
 			if (!userData) {
 				await ctx.send({
-					content: `${icons.warning} **${member.user.username}#${member.user.discriminator}** does not have an account!`
+					content: `${icons.warning} **${member.displayName}** does not have an account!`
 				})
 				return
 			}
@@ -227,7 +227,7 @@ class StashCommand extends CustomSlashCommand {
 
 		const userData = (await getUserRow(query, ctx.user.id))!
 		const userStash = await getUserStash(query, ctx.user.id)
-		const pages = this.generatePages(ctx.user, userStash, userData)
+		const pages = this.generatePages(ctx.member || ctx.user, userStash, userData)
 
 		if (pages.length === 1) {
 			await ctx.send({
@@ -241,6 +241,7 @@ class StashCommand extends CustomSlashCommand {
 
 	generatePages (member: ResolvedMember | User, rows: ItemRow[], userData: UserRow): Embed[] {
 		const user = 'user' in member ? member.user : member
+		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
 		const itemData = getItems(rows)
 		const sortedItems = sortItemsByName(itemData.items, true)
 		const pages = []
@@ -252,7 +253,7 @@ class StashCommand extends CustomSlashCommand {
 			const filteredItems = sortedItems.slice(indexFirst, indexLast)
 
 			const embed = new Embed()
-				.setAuthor(`${user.username}#${user.discriminator}'s Stash`, user.avatarURL)
+				.setAuthor(`${userDisplay}'s Stash`, user.avatarURL)
 				.addField('__Stash Info__', `**Bullets**: ${formatNumber(userData.money)}\n` +
 				`**Number of Items**: ${itemData.items.length}`)
 				.addField(`__Items in Stash__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})`,
