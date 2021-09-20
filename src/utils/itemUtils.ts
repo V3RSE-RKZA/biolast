@@ -44,6 +44,7 @@ export function getItems<T extends ItemRow> (itemRows: T[]): { items: ItemWithRo
  */
 export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<{ showEquipped: boolean, showID: boolean, showDurability: boolean }> = {}): string {
 	const { showEquipped = true, showID = true, showDurability = true } = options
+	const itemDisplayName = item.name.replace(/_/g, ' ')
 
 	if (itemRow) {
 		const attributes = []
@@ -53,20 +54,20 @@ export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<
 			const currentDura = itemRow.durability / item.durability
 
 			if (currentDura >= 0.8) {
-				display = `*Pristine* ${item.icon}\`${item.name}\``
+				display = `*Pristine* ${item.icon}\`${itemDisplayName}\``
 			}
 			else if (currentDura >= 0.6) {
-				display = `*Used* ${item.icon}\`${item.name}\``
+				display = `*Used* ${item.icon}\`${itemDisplayName}\``
 			}
 			else if (currentDura >= 0.4) {
-				display = `*Shoddy* ${item.icon}\`${item.name}\``
+				display = `*Shoddy* ${item.icon}\`${itemDisplayName}\``
 			}
 			else {
-				display = `*Damaged* ${item.icon}\`${item.name}\``
+				display = `*Damaged* ${item.icon}\`${itemDisplayName}\``
 			}
 		}
 		else {
-			display = `${item.icon}\`${item.name}\``
+			display = `${item.icon}\`${itemDisplayName}\``
 
 			if (showDurability && itemRow.durability) {
 				attributes.push(`**${itemRow.durability}** uses left`)
@@ -84,7 +85,7 @@ export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<
 		return `${display} ${attributes.length ? `(${attributes.join(', ')})` : ''}`
 	}
 
-	return `${item.icon}\`${item.name}\``
+	return `${item.icon}\`${itemDisplayName}\``
 }
 
 /**

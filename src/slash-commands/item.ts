@@ -14,7 +14,7 @@ import { getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { isRaidGuild } from '../utils/raidUtils'
 
-const itemCorrector = new Corrector([...allItems.map(itm => itm.name), ...allItems.map(itm => itm.aliases).flat(1)])
+const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
 class ItemCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -66,9 +66,10 @@ class ItemCommand extends CustomSlashCommand {
 			}
 			else {
 				const related = itemCorrector.getWord(ctx.options.item, 5)
+				const relatedItem = allItems.find(i => i.name.toLowerCase() === related)
 
 				await ctx.send({
-					content: related ? `${icons.information} Could not find an item matching that name. Did you mean \`${related}\`?` : `${icons.warning} Could not find an item matching that name.`
+					content: relatedItem ? `${icons.information} Could not find an item matching that name. Did you mean ${getItemDisplay(relatedItem)}?` : `${icons.warning} Could not find an item matching that name.`
 				})
 
 				// auto-delete message if in raid server so that users can't use the slash command options to communicate with each other.

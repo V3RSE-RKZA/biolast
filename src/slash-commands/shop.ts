@@ -17,7 +17,7 @@ import { getItemDisplay, getItems } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 
 const ITEMS_PER_PAGE = 10
-const itemCorrector = new Corrector([...allItems.map(itm => itm.name), ...allItems.map(itm => itm.aliases).flat(1)])
+const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
 class ShopCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -343,9 +343,10 @@ class ShopCommand extends CustomSlashCommand {
 
 				if (!searchedItem) {
 					const related = itemCorrector.getWord(ctx.options.view.item, 5)
+					const relatedItem = allItems.find(i => i.name.toLowerCase() === related)
 
 					await ctx.send({
-						content: related ? `${icons.information} Could not find an item matching that name. Did you mean \`${related}\`?` : `${icons.warning} Could not find an item matching that name.`
+						content: relatedItem ? `${icons.information} Could not find an item matching that name. Did you mean ${getItemDisplay(relatedItem)}?` : `${icons.warning} Could not find an item matching that name.`
 					})
 					return
 				}

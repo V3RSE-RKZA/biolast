@@ -3,7 +3,7 @@ import Corrector from '../structures/Corrector'
 import { allItems } from '../resources/items'
 import { Item } from '../types/Items'
 
-const itemCorrector = new Corrector([...allItems.map(itm => itm.name), ...allItems.map(itm => itm.aliases).flat(1)])
+const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
 /**
  * Uses spell correction to find an item from given arguments
@@ -19,9 +19,9 @@ export function getItem (args: string[]): Item | undefined {
 		// get the args that come after this one
 		const afterArgs = args.slice(i, 6)
 
-		const correctedItem = itemCorrector.getWord(afterArgs.join('_'))
+		const correctedItem = itemCorrector.getWord(afterArgs.join('_').toLowerCase())
 
-		const item = allItems.find(itm => itm.name === correctedItem || (correctedItem && itm.aliases.includes(correctedItem)))
+		const item = allItems.find(itm => itm.name.toLowerCase() === correctedItem || (correctedItem && itm.aliases.map(a => a.toLowerCase()).includes(correctedItem)))
 
 		if (item) {
 			return item
