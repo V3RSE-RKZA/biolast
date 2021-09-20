@@ -161,7 +161,7 @@ export const farm: Location = {
 					xp: 15
 				},
 				rare: {
-					items: [items.bobwhite_g2, items['20_gauge_shell']],
+					items: [items.bobwhite_g2, items['20_gauge_buckshot']],
 					xp: 25
 				},
 				rolls: 4,

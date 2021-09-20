@@ -108,11 +108,11 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 6
 	},
-	'20_gauge_shell': {
+	'20_gauge_buckshot': {
 		type: 'Ammunition',
-		name: '20_gauge_shell',
+		name: '20_gauge_buckshot',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['20g_shell', '20g_shotgun'],
+		aliases: ['buckshot', '20_guage', '20g_buckshot', '20g_shell', '20g_shotgun'],
 		description: 'The 20-gauge shell, also known as 20-bore, is a shell that is smaller in caliber than a 12-gauge.',
 		damage: 50,
 		penetration: 2.5,
