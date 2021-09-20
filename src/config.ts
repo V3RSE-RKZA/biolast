@@ -40,8 +40,8 @@ export const baseBackpackLimit = 15
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
 export const adminUsers = ['168958344361541633', '319897342415470592']
 
-// IDs of guilds where raids can take place. Refer to ./resources/raids.ts for what
-// channels a raid will need in order to work properly.
+// IDs of guilds where raids can take place. They will be automatically set up by the bot on
+// start-up (make sure you invite the bot with admin perms to these guilds)
 export const raidGuilds = {
 	suburbsGuilds: process.env.SUBURBS_GUILDS ? process.env.SUBURBS_GUILDS.split(',') : [],
 	farmGuilds: process.env.FARM_GUILDS ? process.env.FARM_GUILDS.split(',') : []
