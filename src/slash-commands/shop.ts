@@ -343,7 +343,7 @@ class ShopCommand extends CustomSlashCommand {
 
 				if (!searchedItem) {
 					const related = itemCorrector.getWord(ctx.options.view.item, 5)
-					const relatedItem = allItems.find(i => i.name.toLowerCase() === related)
+					const relatedItem = related && allItems.find(i => i.name.toLowerCase() === related || i.aliases.map(a => a.toLowerCase()).includes(related))
 
 					await ctx.send({
 						content: relatedItem ? `${icons.information} Could not find an item matching that name. Did you mean ${getItemDisplay(relatedItem)}?` : `${icons.warning} Could not find an item matching that name.`
