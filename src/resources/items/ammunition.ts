@@ -4,9 +4,9 @@ import { ranged } from './ranged'
 const ammoObject = <T>(et: { [K in keyof T]: Ammunition & { name: K } }) => et
 
 export const ammunition = ammoObject({
-	'5.45x39_fmj_bullet': {
+	'5.45x39_FMJ_bullet': {
 		type: 'Ammunition',
-		name: '5.45x39_fmj_bullet',
+		name: '5.45x39_FMJ_bullet',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['545', '545_rifle', '545x39', '545_fmj', '545_bullet', '5.45x39_fmj'],
 		description: 'Full metal jacket 5.45x39mm ammunition for Kalashnikov rifles.',
@@ -30,9 +30,9 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 5
 	},
-	'9mm_hp_bullet': {
+	'9mm_HP_bullet': {
 		type: 'Ammunition',
-		name: '9mm_hp_bullet',
+		name: '9mm_HP_bullet',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['9x19_hp', '9mm_hp'],
 		description: 'Hollow point ammunition for 9mm weapons. Hollow point bullets expand when they hit their target, causing more damage.',
@@ -43,9 +43,9 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 8
 	},
-	'.22lr_bullet': {
+	'.22LR_bullet': {
 		type: 'Ammunition',
-		name: '.22lr_bullet',
+		name: '.22LR_bullet',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['.22', '.22lr', 'rimfire', '.22_rimfire', '.22_bullet'],
 		description: 'Small bullet used for .22 caliber weapons.',
@@ -95,9 +95,9 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 3
 	},
-	'.303_fmj_bullet': {
+	'.303_FMJ_bullet': {
 		type: 'Ammunition',
-		name: '.303_fmj_bullet',
+		name: '.303_FMJ_bullet',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['.303', '.303_fmj', '.303_bullet'],
 		description: 'Full metal jacket ammo for a lee-enfield.',

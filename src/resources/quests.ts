@@ -96,7 +96,7 @@ export const quests: Quest[] = [
 		maxLevel: 4,
 		progressGoal: 3,
 		rewards: {
-			item: items['.22lr_bullet'],
+			item: items['.22LR_bullet'],
 			xp: 25
 		}
 	},

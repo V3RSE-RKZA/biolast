@@ -50,7 +50,7 @@ export const suburbs: Location = {
 					xp: 10
 				},
 				rare: {
-					items: [items.luger, items['.22lr_bullet'], items.sledgehammer, items.shed_key],
+					items: [items.luger, items['.22LR_bullet'], items.sledgehammer, items.shed_key],
 					xp: 20
 				},
 				rolls: 2,
@@ -77,7 +77,7 @@ export const suburbs: Location = {
 					xp: 15
 				},
 				rare: {
-					items: [items.luger, items['.22lr_bullet']],
+					items: [items.luger, items['.22LR_bullet']],
 					xp: 20
 				},
 				rolls: 2,
@@ -152,7 +152,7 @@ export const suburbs: Location = {
 			display: 'Cedar Lake',
 			scavange: {
 				common: {
-					items: [items.makeshift_rifle, items.makeshift_rifle_bullet, items['.22lr_bullet']],
+					items: [items.makeshift_rifle, items.makeshift_rifle_bullet, items['.22LR_bullet']],
 					xp: 5
 				},
 				uncommon: {
