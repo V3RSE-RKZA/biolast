@@ -23,7 +23,7 @@ interface CollectorEvents<T> {
 	(event: 'end', listener: (msg: string | ComponentContext[]) => void): T
 }
 
-class ButtonCollector {
+class ComponentCollector {
 	private app: App
 	private collectors: Collector[]
 
@@ -270,4 +270,4 @@ class ButtonCollector {
 	}
 }
 
-export default ButtonCollector
+export default ComponentCollector
