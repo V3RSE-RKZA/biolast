@@ -57,7 +57,7 @@ export const farm: Location = {
 					xp: 15
 				},
 				rare: {
-					items: [items.sledgehammer, items['9mm_fmj_bullet']],
+					items: [items.sledgehammer, items['9mm_FMJ_bullet']],
 					xp: 20
 				},
 				rolls: 2,

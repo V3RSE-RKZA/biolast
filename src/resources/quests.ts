@@ -140,7 +140,7 @@ export const quests: Quest[] = [
 		maxLevel: 8,
 		progressGoal: 2,
 		rewards: {
-			item: items['9mm_fmj_bullet'],
+			item: items['9mm_FMJ_bullet'],
 			xp: 40
 		}
 	},

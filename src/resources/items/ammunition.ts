@@ -17,9 +17,9 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 7
 	},
-	'9mm_fmj_bullet': {
+	'9mm_FMJ_bullet': {
 		type: 'Ammunition',
-		name: '9mm_fmj_bullet',
+		name: '9mm_FMJ_bullet',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['9x19', '9mm', '9mm_fmj'],
 		description: 'Full metal jacket ammunition for 9mm weapons.',

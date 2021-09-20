@@ -113,7 +113,7 @@ export const npcs = npcsObject({
 		drops: {
 			common: [items.bandage],
 			uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.walker_goop],
-			rare: [items['9mm_fmj_bullet']],
+			rare: [items['9mm_FMJ_bullet']],
 			rolls: 1
 		},
 		quotes: [
@@ -137,7 +137,7 @@ export const npcs = npcsObject({
 			rolls: 1
 		},
 		weapon: items['glock-17'],
-		ammo: items['9mm_fmj_bullet'],
+		ammo: items['9mm_FMJ_bullet'],
 		quotes: [
 			'~*You hear footsteps nearby*~'
 		],
@@ -156,7 +156,7 @@ export const npcs = npcsObject({
 		drops: {
 			common: [items.bandage],
 			uncommon: [items.ifak_medkit],
-			rare: [items['5.45x39_fmj_bullet'], items['9mm_fmj_bullet']],
+			rare: [items['5.45x39_fmj_bullet'], items['9mm_FMJ_bullet']],
 			rolls: 1
 		},
 		weapon: items.luger,

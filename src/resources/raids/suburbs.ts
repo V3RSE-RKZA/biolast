@@ -156,7 +156,7 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.bandage, items['9mm_fmj_bullet']],
+					items: [items.bandage, items['9mm_FMJ_bullet']],
 					xp: 10
 				},
 				rare: {
