@@ -20,4 +20,14 @@ export const items = {
 	...quest
 }
 
-export const allItems = Object.values(items)
+export const allItems = [
+	...Object.values(ranged),
+	...Object.values(melee),
+	...Object.values(armor),
+	...Object.values(helmets),
+	...Object.values(ammunition),
+	...Object.values(medical),
+	...Object.values(keys),
+	...Object.values(backpacks),
+	...Object.values(quest)
+]

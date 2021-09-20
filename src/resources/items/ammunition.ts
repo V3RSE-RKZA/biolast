@@ -86,7 +86,7 @@ export const ammunition = ammoObject({
 		type: 'Ammunition',
 		name: 'makeshift_shell',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['shell', 'makeshift'],
+		aliases: ['shell'],
 		description: 'A handmade shotgun shell filled with cheap gunpowder and pellets.',
 		damage: 13,
 		penetration: 1.5,

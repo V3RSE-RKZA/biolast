@@ -10,5 +10,13 @@ export const quest = questObject({
 		icon: '<:quest_item:886561850525896724>',
 		slotsUsed: 2,
 		itemLevel: 1
+	},
+	cloth_backpack: {
+		type: 'Quest Item',
+		name: 'cloth_backpack',
+		aliases: [],
+		icon: '<:quest_item:886561850525896724>',
+		slotsUsed: 2,
+		itemLevel: 1
 	}
 })
