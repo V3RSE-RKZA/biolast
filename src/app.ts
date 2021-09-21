@@ -507,29 +507,20 @@ class App {
 						const userRaid = await getUsersRaid(query, ctx.user.id)
 
 						if (userRaid) {
-							const timeLeft = (userRaid.length * 1000) - (Date.now() - userRaid.startedAt.getTime())
+							const timeLeft = getCooldownTimeLeft(userRaid.length, userRaid.startedAt.getTime())
 
 							// send alert if 5 minutes remaining and there's at least 30 seconds so user can evac
 							if (timeLeft <= 5 * 60 * 1000 && timeLeft > 30 * 1000) {
 								await createCooldown(query, ctx.user.id, 'raidreminder', 3 * 60)
 
 								try {
-									const erisUser = await this.fetchUser(ctx.user.id)
-									if (erisUser) {
-										await messageUser(erisUser, {
-											content: `You have **${formatTime(timeLeft)}** to find an evac and escape from this raid. You should start looking for an evac channel now.`
-										}, true)
-									}
-									else {
-										throw new Error('User not found in cache')
-									}
+									await ctx.sendFollowUp({
+										content: `${icons.warning} You have **${formatTime(timeLeft)}** to find an evac and escape from this raid. You should start looking for an evac channel now.`,
+										flags: InteractionResponseFlags.EPHEMERAL
+									})
 								}
 								catch (err) {
-									// unable to send dm to user, send message in chat in this case
 									logger.warn(err)
-									await ctx.send({
-										content: `<@${ctx.user.id}>, Make sure to check how much time you have left in this raid with \`/raidtime\`!`
-									})
 								}
 							}
 						}

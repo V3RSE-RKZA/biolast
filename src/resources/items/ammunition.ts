@@ -112,7 +112,7 @@ export const ammunition = ammoObject({
 		type: 'Ammunition',
 		name: '20_gauge_buckshot',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['buckshot', '20_guage', '20g_buckshot', '20g_shell', '20g_shotgun', '20g'],
+		aliases: ['buckshot', '20_guage', '20g_buckshot', '20g_shell', '20g_shotgun', '20g', 'buck'],
 		description: '20-gauge buckshot is a shell that is smaller in caliber than a 12-gauge and fires many small pellets at a target.',
 		damage: 50,
 		penetration: 2.3,
