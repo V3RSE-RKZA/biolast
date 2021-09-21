@@ -121,11 +121,14 @@ class ItemCommand extends CustomSlashCommand {
 				break
 			}
 			case 'Ammunition': {
-				itemEmbed.addField('Damage', item.damage.toString(), true)
-				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
 				if (item.spreadsDamageToLimbs) {
+					itemEmbed.addField('Damage', `${item.damage} (${Math.round(item.damage / item.spreadsDamageToLimbs)} x ${item.spreadsDamageToLimbs} limbs)`, true)
 					itemEmbed.addField('Special', `Spreads damage across **${item.spreadsDamageToLimbs}** limbs.`, true)
 				}
+				else {
+					itemEmbed.addField('Damage', item.damage.toString(), true)
+				}
+				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
 				itemEmbed.addField('Ammo For', item.ammoFor.map(itm => getItemDisplay(itm)).join('\n'), true)
 				break
 			}
@@ -141,7 +144,7 @@ class ItemCommand extends CustomSlashCommand {
 
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 				itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
-				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (**${itm.damage}** damage)`).join('\n'), true)
+				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (${itm.spreadsDamageToLimbs ? `**${Math.round(itm.damage / itm.spreadsDamageToLimbs)} x ${itm.spreadsDamageToLimbs}** damage` : `**${itm.damage}** damage`})`).join('\n'), true)
 				break
 			}
 			case 'Body Armor': {
