@@ -369,6 +369,8 @@ class App {
 
 	private async _handleSlashCommand (command: CustomSlashCommand, ctx: CommandContext) {
 		try {
+			let userLeveledUpMessage
+
 			if (command.customOptions.category === 'admin' && !adminUsers.includes(ctx.user.id)) {
 				return ctx.send({
 					content: `${icons.danger} You don't have permission to run that command.`,
@@ -451,18 +453,9 @@ class App {
 						await setMaxHealth(query, ctx.user.id, newMaxHealth)
 						await setStashSlots(query, ctx.user.id, newStashSlots)
 
-						// I didn't WANT to use a DM for this but sending the level up message as a response to the
-						// slash command causes further responses to be sent as follow-ups, which would work EXCEPT
-						// I wanted the level up message to be ephemeral and follow-ups to ephemeral messages show up
-						// as "Original message was deleted" for other users...
-						const erisUser = await this.fetchUser(ctx.user.id)
-						if (erisUser) {
-							messageUser(erisUser, {
-								content: `**You leveled up!** (Lvl **${userData.level}** → **${newLevel}**)` +
-									`\n\n💗 Max Health: **${newMaxHealth - 5}** → **${newMaxHealth}** HP` +
-									`\n💼 Stash Space: **${newStashSlots - 5}** → **${newStashSlots}** slots`
-							})
-						}
+						userLeveledUpMessage = `**You leveled up!** (Lvl **${userData.level}** → **${newLevel}**)` +
+							`\n\n💗 Max Health: **${newMaxHealth - 5}** → **${newMaxHealth}** HP` +
+							`\n💼 Stash Space: **${newStashSlots - 5}** → **${newStashSlots}** slots`
 					}
 				}
 			}
@@ -528,6 +521,19 @@ class App {
 				}
 				catch (err) {
 					logger.error(err)
+				}
+			}
+
+			// send level up message as a follow up after user uses command
+			if (userLeveledUpMessage) {
+				try {
+					await ctx.sendFollowUp({
+						content: userLeveledUpMessage,
+						flags: InteractionResponseFlags.EPHEMERAL
+					})
+				}
+				catch (err) {
+					logger.warn(err)
 				}
 			}
 		}
