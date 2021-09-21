@@ -123,6 +123,9 @@ class ItemCommand extends CustomSlashCommand {
 			case 'Ammunition': {
 				itemEmbed.addField('Damage', item.damage.toString(), true)
 				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
+				if (item.spreadsDamageToLimbs) {
+					itemEmbed.addField('Special', `Spreads damage across **${item.spreadsDamageToLimbs}** limbs.`, true)
+				}
 				itemEmbed.addField('Ammo For', item.ammoFor.map(itm => getItemDisplay(itm)).join('\n'), true)
 				break
 			}
