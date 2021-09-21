@@ -112,14 +112,27 @@ export const ammunition = ammoObject({
 		type: 'Ammunition',
 		name: '20_gauge_buckshot',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['buckshot', '20_guage', '20g_buckshot', '20g_shell', '20g_shotgun'],
-		description: 'The 20-gauge shell, also known as 20-bore, is a shell that is smaller in caliber than a 12-gauge.',
+		aliases: ['buckshot', '20_guage', '20g_buckshot', '20g_shell', '20g_shotgun', '20g'],
+		description: '20-gauge buckshot is a shell that is smaller in caliber than a 12-gauge and fires many small pellets at a target.',
 		damage: 50,
-		penetration: 2.5,
+		penetration: 2.3,
 		ammoFor: [ranged.bobwhite_g2],
 		sellPrice: 415,
 		slotsUsed: 1,
 		itemLevel: 8,
 		spreadsDamageToLimbs: 2
+	},
+	'20_gauge_slug': {
+		type: 'Ammunition',
+		name: '20_gauge_slug',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['slug', '20g_slug', 'slug_shell', 'shotgun_slug'],
+		description: 'A 20-gauge slug shell that fires a single, large projectile.',
+		damage: 65,
+		penetration: 2.5,
+		ammoFor: [ranged.bobwhite_g2],
+		sellPrice: 615,
+		slotsUsed: 1,
+		itemLevel: 12
 	}
 })

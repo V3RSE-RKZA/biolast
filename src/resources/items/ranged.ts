@@ -96,7 +96,7 @@ export const ranged = rangedObject({
 		type: 'Ranged Weapon',
 		name: 'bobwhite_g2',
 		icon: '<:U_weapon:601366669272678411>',
-		aliases: ['coach', 'supreme'],
+		aliases: ['bobwhite', 'g2'],
 		description: 'A double barrel shotgun manufactured by E.R. Amantino in Veranópolis, Brazil.',
 		sellPrice: 703,
 		durability: 8,
