@@ -119,6 +119,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.bobwhite_g2],
 		sellPrice: 415,
 		slotsUsed: 1,
-		itemLevel: 8
+		itemLevel: 8,
+		spreadsDamageToLimbs: 2
 	}
 })
