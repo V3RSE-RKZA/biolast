@@ -20,6 +20,7 @@ export const medical = medicalObject({
 		name: 'ifak_medkit',
 		icon: '<:U_usable:601366669259964418>',
 		aliases: ['ifak', 'medkit'],
+		description: 'An individual first aid kit which contains supplies for immediate minor injuries.',
 		sellPrice: 102,
 		healsFor: 25,
 		slotsUsed: 2,
@@ -44,11 +45,11 @@ export const medical = medicalObject({
 		name: 'corn',
 		icon: '<:U_usable:601366669259964418>',
 		aliases: [],
-		sellPrice: 27,
-		healsFor: 15,
+		sellPrice: 8,
+		healsFor: 6,
 		slotsUsed: 1,
-		healRate: 30,
-		itemLevel: 3,
+		healRate: 16,
+		itemLevel: 1,
 		durability: 3
 	},
 	apple: {
@@ -56,11 +57,11 @@ export const medical = medicalObject({
 		name: 'apple',
 		icon: '<:U_usable:601366669259964418>',
 		aliases: [],
-		sellPrice: 77,
-		healsFor: 15,
+		sellPrice: 9,
+		healsFor: 7,
 		slotsUsed: 1,
-		healRate: 20,
-		itemLevel: 3,
+		healRate: 15,
+		itemLevel: 1,
 		durability: 2
 	}
 })
