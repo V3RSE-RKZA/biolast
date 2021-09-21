@@ -6,7 +6,7 @@ import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { addHealth, getUserRow } from '../utils/db/players'
-import formatHealth from '../utils/formatHealth'
+import { formatHealth } from '../utils/stringUtils'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 
 class HealCommand extends CustomSlashCommand {

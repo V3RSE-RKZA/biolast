@@ -12,7 +12,7 @@ import { query } from './db/mysql'
 import { createNPC, deleteNPC, getAllNPCs } from './db/npcs'
 import { lowerHealth } from './db/players'
 import { removeUserFromRaid } from './db/raids'
-import formatHealth from './formatHealth'
+import { combineArrayWithAnd, formatHealth, getBodyPartEmoji } from './stringUtils'
 import { getEquips, getItemDisplay, getItems } from './itemUtils'
 import { logger } from './logger'
 import { getAttackDamage, getBodyPartHit } from './raidUtils'
@@ -197,8 +197,9 @@ class NPCHandler {
 		const messages = []
 		const userBackpackData = getItems(userBackpack)
 		const userEquips = getEquips(userBackpack)
+		const limbsHit = []
+		let totalDamage
 		let bodyPartHit
-		let npcDamage
 		let npcAttackPenetration
 
 		if (npc.type === 'raider' || npc.type === 'boss') {
@@ -206,72 +207,111 @@ class NPCHandler {
 
 			if (npc.subtype === 'ranged') {
 				// raider is using ranged weapon
-				npcDamage = getAttackDamage(npc.damage, npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
 				npcAttackPenetration = npc.ammo.penetration
 
-				if (npc.type === 'boss') {
-					messages.push(`**${npc.display}** shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
+				if (npc.ammo.spreadsDamageToLimbs) {
+					limbsHit.push({
+						damage: getAttackDamage(npc.damage / npc.ammo.spreadsDamageToLimbs, npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+						limb: bodyPartHit.result
+					})
+
+					for (let i = 0; i < npc.ammo.spreadsDamageToLimbs - 1; i++) {
+						let limb = getBodyPartHit(npc.weapon.accuracy)
+
+						// make sure no duplicate limbs are hit
+						while (limbsHit.find(l => l.limb === limb.result)) {
+							limb = getBodyPartHit(npc.weapon.accuracy)
+						}
+
+						limbsHit.push({
+							damage: getAttackDamage(npc.damage / npc.ammo.spreadsDamageToLimbs, npc.ammo.penetration, limb.result, userEquips.armor?.item, userEquips.helmet?.item),
+							limb: limb.result
+						})
+					}
 				}
 				else {
-					messages.push(`The \`${npc.type}\` shot <@${member.id}> in the **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${npcDamage.total}** damage dealt.\n`)
+					limbsHit.push({
+						damage: getAttackDamage(npc.damage, npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+						limb: bodyPartHit.result
+					})
+				}
+
+				totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
+
+				if (npc.ammo.spreadsDamageToLimbs) {
+					const limbsHitStrings = []
+
+					for (const limbHit of limbsHit) {
+						limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+					}
+
+					messages.push(`${npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``} shot <@${member.id}> in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${totalDamage}** damage dealt.\n`)
+				}
+				else {
+					messages.push(`${npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``} shot <@${member.id}> in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${totalDamage}** damage dealt.\n`)
 				}
 			}
 			else {
-				npcDamage = getAttackDamage(npc.damage, npc.weapon.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
 				npcAttackPenetration = npc.weapon.penetration
+				limbsHit.push({
+					damage: getAttackDamage(npc.damage, npc.weapon.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+					limb: bodyPartHit.result
+				})
+				totalDamage = limbsHit[0].damage.total
 
-				if (npc.type === 'boss') {
-					messages.push(`**${npc.display}** lunged at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
-				}
-				else {
-					messages.push(`The \`${npc.type}\` lunged at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${npcDamage.total}** damage dealt.\n`)
-				}
+				messages.push(`${npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``} lunged at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${totalDamage}** damage dealt.\n`)
 			}
 		}
 		else {
 			// walker doesn't use a weapon, instead just swipes at user
 			bodyPartHit = getBodyPartHit(50)
 			npcAttackPenetration = 0.75
-			npcDamage = getAttackDamage(npc.damage, npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item)
+			limbsHit.push({
+				damage: getAttackDamage(npc.damage, npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+				limb: bodyPartHit.result
+			})
+			totalDamage = limbsHit[0].damage.total
 
-			messages.push(`The \`${npc.type}\` took a swipe at <@${member.id}>'s **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${npcDamage.total}** damage dealt.\n`)
+			messages.push(`The \`${npc.type}\` took a swipe at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
 		}
 
-		if (bodyPartHit.result === 'head' && userEquips.helmet) {
-			messages.push(`**${member.displayName}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${npcDamage.reduced}**.`)
+		for (const result of limbsHit) {
+			if (result.limb === 'head' && userEquips.helmet) {
+				messages.push(`**${member.displayName}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${result.damage.reduced}**.`)
 
-			// only lower helmet durability if npcs weapon penetrates at least 50% of
-			// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
-			// against someone who had level 3 armor, the armor would NOT lose durability)
-			if (npcAttackPenetration >= userEquips.helmet.item.level / 2) {
-				if (userEquips.helmet.row.durability - 1 <= 0) {
-					messages.push(`**${member.displayName}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
+				// only lower helmet durability if npcs weapon penetrates at least 50% of
+				// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
+				// against someone who had level 3 armor, the armor would NOT lose durability)
+				if (npcAttackPenetration >= userEquips.helmet.item.level / 2) {
+					if (userEquips.helmet.row.durability - 1 <= 0) {
+						messages.push(`**${member.displayName}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
 
-					await deleteItem(transactionQuery, userEquips.helmet.row.id)
-					removedItems.push(userEquips.helmet.row.id)
+						await deleteItem(transactionQuery, userEquips.helmet.row.id)
+						removedItems.push(userEquips.helmet.row.id)
+					}
+					else {
+						await lowerItemDurability(transactionQuery, userEquips.helmet.row.id, 1)
+					}
 				}
-				else {
-					await lowerItemDurability(transactionQuery, userEquips.helmet.row.id, 1)
+			}
+			else if (result.limb === 'chest' && userEquips.armor) {
+				messages.push(`**${member.displayName}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${result.damage.reduced}**.`)
+
+				if (npcAttackPenetration >= userEquips.armor.item.level / 2) {
+					if (userEquips.armor.row.durability - 1 <= 0) {
+						messages.push(`**${member.displayName}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
+
+						await deleteItem(transactionQuery, userEquips.armor.row.id)
+						removedItems.push(userEquips.armor.row.id)
+					}
+					else {
+						await lowerItemDurability(transactionQuery, userEquips.armor.row.id, 1)
+					}
 				}
 			}
 		}
-		else if (bodyPartHit.result === 'chest' && userEquips.armor) {
-			messages.push(`**${member.displayName}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${npcDamage.reduced}**.`)
 
-			if (npcAttackPenetration >= userEquips.armor.item.level / 2) {
-				if (userEquips.armor.row.durability - 1 <= 0) {
-					messages.push(`**${member.displayName}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
-
-					await deleteItem(transactionQuery, userEquips.armor.row.id)
-					removedItems.push(userEquips.armor.row.id)
-				}
-				else {
-					await lowerItemDurability(transactionQuery, userEquips.armor.row.id, 1)
-				}
-			}
-		}
-
-		if (userRow.health - npcDamage.total <= 0) {
+		if (userRow.health - totalDamage <= 0) {
 			for (const victimItem of userBackpackData.items) {
 				if (!removedItems.includes(victimItem.row.id)) {
 					await removeItemFromBackpack(transactionQuery, victimItem.row.id)
@@ -285,14 +325,14 @@ class NPCHandler {
 			messages.push(`☠️ **${member.displayName}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
 		}
 		else {
-			await lowerHealth(transactionQuery, member.id, npcDamage.total)
+			await lowerHealth(transactionQuery, member.id, totalDamage)
 
-			messages.push(`**${member.displayName}** is left with ${formatHealth(userRow.health - npcDamage.total, userRow.maxHealth)} **${userRow.health - npcDamage.total}** health.`)
+			messages.push(`**${member.displayName}** is left with ${formatHealth(userRow.health - totalDamage, userRow.maxHealth)} **${userRow.health - totalDamage}** health.`)
 		}
 
 		return {
 			messages,
-			damage: npcDamage.total,
+			damage: totalDamage,
 			removedItems: removedItems.length
 		}
 	}

@@ -1,4 +1,13 @@
 import { icons } from '../config'
+import { BodyPart } from './raidUtils'
+
+export function formatNumber (number: number, noIcon = false): string {
+	if (noIcon) {
+		return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+	}
+
+	return `${icons.money} ${number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
+}
 
 /**
  * Format health and max health into an emote health bar
@@ -6,7 +15,7 @@ import { icons } from '../config'
  * @param maxHP Max health
  * @returns A health bar
  */
-export default function formatHealth (curentHP: number, maxHP: number): string {
+export function formatHealth (curentHP: number, maxHP: number): string {
 	const hpPerBar = maxHP / 5
 	let hpStr = ''
 
@@ -68,3 +77,33 @@ export default function formatHealth (curentHP: number, maxHP: number): string {
 
 	return hpStr
 }
+
+/**
+ * Combines an array of strings with "and"
+ * @param array Array to combine
+ */
+export function combineArrayWithAnd (array: string[]): string {
+	if (array.length === 1) {
+		return array[0]
+	}
+	else if (array.length === 2) {
+		return `${array[0]} and ${array[1]}`
+	}
+
+	const last = array.pop()
+	return `${array.join(', ')}, and ${last}`
+}
+
+/**
+ * @param bodyPart Body part to get emoji for
+ * @returns The emoji that represents that body part
+ */
+export function getBodyPartEmoji (bodyPart: BodyPart): string {
+	switch (bodyPart) {
+		case 'head': return '😵'
+		case 'chest': return '👕'
+		case 'leg': return '🦵'
+		case 'arm': return '💪'
+	}
+}
+

@@ -123,6 +123,10 @@ export function getBodyPartHit (weaponAccuracy: number, choice?: BodyPart): { re
  * @returns The damage after taking account the victims armor
  */
 export function getAttackDamage (damage: number, penetration: number, bodyPartHit: BodyPart, victimArmor?: Armor, victimHelmet?: Helmet): { total: number, reduced: number } {
+	if (damage < 1 || !Number.isInteger(damage)) {
+		damage = Math.max(1, Math.round(damage))
+	}
+
 	if (bodyPartHit === 'chest') {
 		// user penetrated armor, deal full damage
 		if (!victimArmor || penetration >= victimArmor.level) {

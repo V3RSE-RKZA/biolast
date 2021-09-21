@@ -8,7 +8,7 @@ import { BackpackItemRow, UserRow } from '../types/mysql'
 import { getUserBackpack } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
-import formatHealth from '../utils/formatHealth'
+import { formatHealth } from '../utils/stringUtils'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
 import { getPlayerXp } from '../utils/playerUtils'
 

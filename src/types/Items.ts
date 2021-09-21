@@ -114,6 +114,11 @@ export interface Ammunition extends BaseItem {
 	 * Weapons this ammo works for
 	 */
 	ammoFor: RangedWeapon[]
+
+	/**
+	 * How many limbs should the damage be spread out to
+	 */
+	spreadsDamageToLimbs?: 2 | 3 | 4
 }
 
 export interface Medical extends BaseItem {

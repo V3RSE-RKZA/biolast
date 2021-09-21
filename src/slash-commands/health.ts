@@ -4,7 +4,7 @@ import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
-import formatHealth from '../utils/formatHealth'
+import { formatHealth } from '../utils/stringUtils'
 
 class HealthCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {

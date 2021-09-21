@@ -11,7 +11,7 @@ import { beginTransaction } from '../utils/db/mysql'
 import { addMoney, addXp, getUserRow } from '../utils/db/players'
 import { createQuest, deleteQuest, getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getUsersRaid } from '../utils/db/raids'
-import formatNumber from '../utils/formatNumber'
+import { combineArrayWithAnd, formatNumber } from '../utils/stringUtils'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 
@@ -337,15 +337,7 @@ class QuestsCommand extends CustomSlashCommand {
 			display.push(`1x ${getItemDisplay(quest.rewards.item, itemRewardRow)}`)
 		}
 
-		if (display.length === 1) {
-			return display[0]
-		}
-		else if (display.length === 2) {
-			return `${display[0]} and ${display[1]}`
-		}
-
-		const last = display.pop()
-		return `${display.join(', ')}, and ${last}`
+		return combineArrayWithAnd(display)
 	}
 
 	getQuestDescription (quest: Quest, questRow: QuestRow): string {

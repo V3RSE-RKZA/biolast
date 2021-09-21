@@ -12,7 +12,7 @@ import { CONFIRM_BUTTONS } from '../utils/constants'
 import { addItemToShop, addItemToStash, getAllShopItems, getShopItem, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromShop, removeItemFromStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addMoney, getUserRow, increaseShopSales, removeMoney } from '../utils/db/players'
-import formatNumber from '../utils/formatNumber'
+import { formatNumber } from '../utils/stringUtils'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 

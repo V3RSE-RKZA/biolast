@@ -8,7 +8,7 @@ import { ItemRow, UserRow } from '../types/mysql'
 import { addItemToBackpack, addItemToStash, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
-import formatNumber from '../utils/formatNumber'
+import { formatNumber } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
 
 const ITEMS_PER_PAGE = 10
