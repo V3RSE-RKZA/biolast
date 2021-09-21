@@ -28,6 +28,32 @@ export const medical = medicalObject({
 		itemLevel: 3,
 		durability: 2
 	},
+	compression_bandage: {
+		type: 'Medical',
+		name: 'compression_bandage',
+		icon: '<:U_usable:601366669259964418>',
+		description: 'Elastic bandage designed to reduce the flow of blood to an area in order to restrict swelling.',
+		aliases: ['compress_bandage', 'compress'],
+		sellPrice: 52,
+		healsFor: 17,
+		slotsUsed: 1,
+		healRate: 19,
+		itemLevel: 3,
+		durability: 1
+	},
+	hyfin_chest_seal: {
+		type: 'Medical',
+		name: 'hyfin_chest_seal',
+		icon: '<:U_usable:601366669259964418>',
+		aliases: ['chest_seal', 'hyfin', 'hyfin_seal', 'seal'],
+		description: 'Compact chest seal designed to seal penetrative wounds to the chest.',
+		sellPrice: 202,
+		healsFor: 42,
+		slotsUsed: 1,
+		healRate: 55,
+		itemLevel: 6,
+		durability: 1
+	},
 	paracetamol: {
 		type: 'Medical',
 		name: 'paracetamol',
