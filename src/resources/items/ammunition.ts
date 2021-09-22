@@ -44,6 +44,20 @@ export const ammunition = ammoObject({
 		itemLevel: 8,
 		spreadsDamageToLimbs: 2
 	},
+	'9mm_RIP_bullet': {
+		type: 'Ammunition',
+		name: '9mm_RIP_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['9x19_rip', '9mm_rip', 'rip_bullet'],
+		description: 'Radically invasive projectile ammunition for 9mm weapons. These bullets split into multiple pieces on impact, causing damage to spread further than a hollow point bullet.',
+		damage: 52,
+		penetration: 1.8,
+		ammoFor: [ranged['glock-17']],
+		sellPrice: 521,
+		slotsUsed: 1,
+		itemLevel: 12,
+		spreadsDamageToLimbs: 4
+	},
 	'.22LR_bullet': {
 		type: 'Ammunition',
 		name: '.22LR_bullet',
