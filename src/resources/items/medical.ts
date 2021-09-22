@@ -6,7 +6,7 @@ export const medical = medicalObject({
 	bandage: {
 		type: 'Medical',
 		name: 'bandage',
-		icon: '<:U_usable:601366669259964418>',
+		icon: '<:medical:886561670745452554>',
 		aliases: ['bandage'],
 		sellPrice: 37,
 		healsFor: 20,
@@ -18,7 +18,7 @@ export const medical = medicalObject({
 	ifak_medkit: {
 		type: 'Medical',
 		name: 'ifak_medkit',
-		icon: '<:U_usable:601366669259964418>',
+		icon: '<:medical:886561670745452554>',
 		aliases: ['ifak', 'medkit'],
 		description: 'An individual first aid kit which contains supplies for immediate minor injuries.',
 		sellPrice: 102,
@@ -31,7 +31,7 @@ export const medical = medicalObject({
 	compression_bandage: {
 		type: 'Medical',
 		name: 'compression_bandage',
-		icon: '<:U_usable:601366669259964418>',
+		icon: '<:medical:886561670745452554>',
 		description: 'Elastic bandage designed to reduce the flow of blood to an area in order to restrict swelling.',
 		aliases: ['compress_bandage', 'compress'],
 		sellPrice: 52,
@@ -44,7 +44,7 @@ export const medical = medicalObject({
 	hyfin_chest_seal: {
 		type: 'Medical',
 		name: 'hyfin_chest_seal',
-		icon: '<:U_usable:601366669259964418>',
+		icon: '<:medical:886561670745452554>',
 		aliases: ['chest_seal', 'hyfin', 'hyfin_seal', 'seal'],
 		description: 'Compact chest seal designed to seal penetrative wounds to the chest.',
 		sellPrice: 202,
@@ -69,7 +69,7 @@ export const medical = medicalObject({
 	corn: {
 		type: 'Medical',
 		name: 'corn',
-		icon: '<:U_usable:601366669259964418>',
+		icon: '<:food:886561670447652886>',
 		aliases: [],
 		sellPrice: 8,
 		healsFor: 6,
@@ -81,7 +81,7 @@ export const medical = medicalObject({
 	apple: {
 		type: 'Medical',
 		name: 'apple',
-		icon: '<:U_usable:601366669259964418>',
+		icon: '<:food:886561670447652886>',
 		aliases: [],
 		sellPrice: 9,
 		healsFor: 7,
