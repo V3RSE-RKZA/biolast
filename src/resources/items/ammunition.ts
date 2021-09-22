@@ -58,6 +58,19 @@ export const ammunition = ammoObject({
 		itemLevel: 12,
 		spreadsDamageToLimbs: 4
 	},
+	'9mm_AP_bullet': {
+		type: 'Ammunition',
+		name: '9mm_AP_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['9x19_ap', '9mm_ap', 'ap_bullet'],
+		description: 'Armor-piercing ammunition for 9mm weapons.',
+		damage: 36,
+		penetration: 2.9,
+		ammoFor: [ranged['glock-17']],
+		sellPrice: 831,
+		slotsUsed: 1,
+		itemLevel: 15
+	},
 	'.22LR_bullet': {
 		type: 'Ammunition',
 		name: '.22LR_bullet',
