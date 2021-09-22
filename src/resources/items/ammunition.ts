@@ -35,13 +35,14 @@ export const ammunition = ammoObject({
 		name: '9mm_HP_bullet',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['9x19_hp', '9mm_hp'],
-		description: 'Hollow point ammunition for 9mm weapons. Hollow point bullets expand when they hit their target, causing more damage.',
+		description: 'Hollow point ammunition for 9mm weapons. Hollow point bullets expand when they hit their target, causing the damage to spread.',
 		damage: 30,
 		penetration: 1.9,
 		ammoFor: [ranged['glock-17']],
 		sellPrice: 302,
 		slotsUsed: 1,
-		itemLevel: 8
+		itemLevel: 8,
+		spreadsDamageToLimbs: 2
 	},
 	'.22LR_bullet': {
 		type: 'Ammunition',
