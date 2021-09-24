@@ -60,7 +60,7 @@ class TutorialHandler {
 				}
 				catch (err) {
 					await botMessage.edit({
-						content: 'If you ever get confused, you can start a tutorial with the `/help` command.',
+						content: 'If you ever get confused, check out the `/help` command.',
 						components: []
 					})
 				}
