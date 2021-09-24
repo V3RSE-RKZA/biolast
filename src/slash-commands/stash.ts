@@ -9,7 +9,8 @@ import { addItemToBackpack, addItemToStash, getUserBackpack, getUserStash, remov
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { formatNumber } from '../utils/stringUtils'
-import { getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
+import { backpackHasSpace, getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
+import { addStatusEffects, getActiveStimulants } from '../utils/playerUtils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -163,9 +164,13 @@ class StashCommand extends CustomSlashCommand {
 			}
 
 			const transaction = await beginTransaction()
+			const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
 			const stashRows = await getUserStash(transaction.query, ctx.user.id, true)
+			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['weight'], true)
+			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
 			const userStashData = getItems(stashRows)
 			const itemsToWithdraw = []
+			let spaceNeeded = 0
 
 			for (const i of items) {
 				const foundItem = userStashData.items.find(itm => itm.row.id === i)
@@ -173,6 +178,7 @@ class StashCommand extends CustomSlashCommand {
 				// make sure user has item
 				if (foundItem) {
 					itemsToWithdraw.push(foundItem)
+					spaceNeeded += foundItem.item.slotsUsed
 				}
 				else {
 					await transaction.commit()
@@ -184,6 +190,14 @@ class StashCommand extends CustomSlashCommand {
 				}
 			}
 
+			if (!backpackHasSpace(backpackRows, spaceNeeded, stimulantEffects.weightBonus)) {
+				await transaction.commit()
+
+				await ctx.send({
+					content: `${icons.danger} You don't have enough space in your inventory. You need **${spaceNeeded}** open slots in your inventory. Sell items to clear up some space.`
+				})
+				return
+			}
 
 			for (const i of itemsToWithdraw) {
 				await removeItemFromStash(transaction.query, i.row.id)

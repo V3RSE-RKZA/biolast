@@ -121,8 +121,9 @@ export interface Ammunition extends BaseItem {
 	spreadsDamageToLimbs?: 2 | 3 | 4
 }
 
-export interface Medical extends BaseItem {
+interface HealingMedical extends BaseItem {
 	type: 'Medical'
+	subtype: 'Healing'
 
 	/**
 	 * How many times this item can be used to heal before it breaks
@@ -139,6 +140,40 @@ export interface Medical extends BaseItem {
 	 */
 	healRate: number
 }
+
+export interface StimulantMedical extends BaseItem {
+	type: 'Medical'
+	subtype: 'Stimulant'
+
+	/**
+	 * The effects this item gives when used
+	 */
+	effects: {
+		/**
+		 * Percent damage bonus (10 would be 10% damage bonus)
+		 */
+		damageBonus: number
+		/**
+		 * Percent accuracy bonus (10 would be 10% accuracy bonus)
+		 */
+		accuracyBonus: number
+		/**
+		 * Slots bonus (10 would be 10 slots bonus)
+		 */
+		weightBonus: number
+		/**
+		 * Length in seconds this stimulant lasts
+		 */
+		length: number
+	}
+
+	/**
+	 * How many times this item can be used to heal before it breaks
+	 */
+	durability: number
+}
+
+export type Medical = HealingMedical | StimulantMedical
 
 export interface Backpack extends BaseItem {
 	type: 'Backpack'

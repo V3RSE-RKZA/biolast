@@ -15,6 +15,7 @@ import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
+import { addStatusEffects, getActiveStimulants } from '../utils/playerUtils'
 import { getRaidType, getRandomItem } from '../utils/raidUtils'
 
 class ScavengeCommand extends CustomSlashCommand {
@@ -68,13 +69,15 @@ class ScavengeCommand extends CustomSlashCommand {
 		try {
 			const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
 			const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
+			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['weight'], true)
+			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
 			const backpackData = getItems(backpackRows)
 			const userEquips = getEquips(backpackRows)
 			const keyRequired = raidChannel.scavange.requiresKey
 			const hasRequiredKey = sortItemsByDurability(backpackData.items, true).reverse().find(i => i.item.name === keyRequired?.name)
 			const scavengeCD = await getCooldown(transaction.query, ctx.user.id, 'scavenge')
 			const channelCD = await getCooldown(transaction.query, ctx.channelID, 'looted')
-			const backpackLimit = getBackpackLimit(userEquips.backpack?.item)
+			const backpackLimit = getBackpackLimit(userEquips.backpack?.item, stimulantEffects.weightBonus)
 			const npcRow = await getNPC(transaction.query, ctx.channelID, true)
 			const npc = allNPCs.find(n => n.id === npcRow?.id)
 

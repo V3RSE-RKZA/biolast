@@ -10,7 +10,7 @@ import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { formatHealth } from '../utils/stringUtils'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
-import { getPlayerXp } from '../utils/playerUtils'
+import { addStatusEffects, getActiveStimulants, getPlayerXp } from '../utils/playerUtils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -54,7 +54,9 @@ class InventoryCommand extends CustomSlashCommand {
 			}
 
 			const userBackpack = await getUserBackpack(query, member.id)
-			const pages = this.generatePages(member, userBackpack, userData)
+			const activeStimulants = await getActiveStimulants(query, member.id, ['weight'])
+			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
+			const pages = this.generatePages(member, userBackpack, userData, stimulantEffects.weightBonus)
 
 			if (pages.length === 1) {
 				await ctx.send({
@@ -69,7 +71,9 @@ class InventoryCommand extends CustomSlashCommand {
 
 		const userData = (await getUserRow(query, ctx.user.id))!
 		const userBackpack = await getUserBackpack(query, ctx.user.id)
-		const pages = this.generatePages(ctx.member || ctx.user, userBackpack, userData)
+		const activeStimulants = await getActiveStimulants(query, ctx.user.id, ['weight'])
+		const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
+		const pages = this.generatePages(ctx.member || ctx.user, userBackpack, userData, stimulantEffects.weightBonus)
 
 		if (pages.length === 1) {
 			await ctx.send({
@@ -81,7 +85,7 @@ class InventoryCommand extends CustomSlashCommand {
 		}
 	}
 
-	generatePages (member: ResolvedMember | User, rows: BackpackItemRow[], userData: UserRow): Embed[] {
+	generatePages (member: ResolvedMember | User, rows: BackpackItemRow[], userData: UserRow, weightBonus: number): Embed[] {
 		const user = 'user' in member ? member.user : member
 		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
 		const itemData = getItems(rows)
@@ -105,7 +109,7 @@ class InventoryCommand extends CustomSlashCommand {
 					`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Body Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Weapon**: ${equips.weapon ? getItemDisplay(equips.weapon.item, equips.weapon.row, { showEquipped: false, showID: false }) : 'None'}`)
-				.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})`, filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || 'No items found. Move items from your stash to your inventory with `/stash take <item id>`.')
+				.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item, weightBonus)})`, filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || 'No items found. Move items from your stash to your inventory with `/stash take <item id>`.')
 			pages.push(embed)
 		}
 

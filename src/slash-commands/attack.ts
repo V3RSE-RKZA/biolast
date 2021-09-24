@@ -19,6 +19,7 @@ import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
 import { BodyPart, getAttackDamage, getBodyPartHit, getRaidType } from '../utils/raidUtils'
 import getRandomInt from '../utils/randomInt'
+import { addStatusEffects, getActiveStimulants } from '../utils/playerUtils'
 
 class AttackCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -166,6 +167,8 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			const userBackpack = await getUserBackpack(transaction.query, ctx.user.id, true)
+			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'accuracy'], true)
+			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
 
 			// in case npc dies and need to update ground items
 			await getGroundItems(transaction.query, ctx.channelID, true)
@@ -182,7 +185,7 @@ class AttackCommand extends CustomSlashCommand {
 				return
 			}
 
-			const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy, partChoice)
+			const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy + stimulantEffects.accuracyBonus, partChoice)
 			const missedPartChoice = partChoice && (partChoice !== bodyPartHit.result || !bodyPartHit.accurate)
 			const messages = []
 			const removedItems = []
@@ -211,7 +214,7 @@ class AttackCommand extends CustomSlashCommand {
 
 				if (ammoItem.spreadsDamageToLimbs) {
 					limbsHit.push({
-						damage: getAttackDamage(ammoItem.damage / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, bodyPartHit.result, npc.armor, npc.helmet),
+						damage: getAttackDamage((ammoItem.damage * (1 + (stimulantEffects.damageBonus / 100))) / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, bodyPartHit.result, npc.armor, npc.helmet),
 						limb: bodyPartHit.result
 					})
 
@@ -224,14 +227,14 @@ class AttackCommand extends CustomSlashCommand {
 						}
 
 						limbsHit.push({
-							damage: getAttackDamage(ammoItem.damage / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, limb.result, npc.armor, npc.helmet),
+							damage: getAttackDamage((ammoItem.damage * (1 + (stimulantEffects.damageBonus / 100))) / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, limb.result, npc.armor, npc.helmet),
 							limb: limb.result
 						})
 					}
 				}
 				else {
 					limbsHit.push({
-						damage: getAttackDamage(ammoItem.damage, ammoItem.penetration, bodyPartHit.result, npc.armor, npc.helmet),
+						damage: getAttackDamage((ammoItem.damage * (1 + (stimulantEffects.damageBonus / 100))), ammoItem.penetration, bodyPartHit.result, npc.armor, npc.helmet),
 						limb: bodyPartHit.result
 					})
 				}
@@ -256,7 +259,7 @@ class AttackCommand extends CustomSlashCommand {
 			}
 			else {
 				limbsHit.push({
-					damage: getAttackDamage(userEquips.weapon.item.damage, userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
+					damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))), userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
 					limb: bodyPartHit.result
 				})
 				totalDamage = limbsHit[0].damage.total
@@ -522,6 +525,8 @@ class AttackCommand extends CustomSlashCommand {
 
 			const userBackpack = await getUserBackpack(transaction.query, ctx.user.id, true)
 			const victimBackpack = await getUserBackpack(transaction.query, member.id, true)
+			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'accuracy'], true)
+			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
 
 			// in case victim dies and need to update ground items
 			await getGroundItems(transaction.query, ctx.channelID, true)
@@ -540,7 +545,7 @@ class AttackCommand extends CustomSlashCommand {
 				return
 			}
 
-			const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy, partChoice)
+			const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy + stimulantEffects.accuracyBonus, partChoice)
 			const missedPartChoice = partChoice && (partChoice !== bodyPartHit.result || !bodyPartHit.accurate)
 			const messages = []
 			const limbsHit = []
@@ -569,7 +574,7 @@ class AttackCommand extends CustomSlashCommand {
 
 				if (ammoItem.spreadsDamageToLimbs) {
 					limbsHit.push({
-						damage: getAttackDamage(ammoItem.damage / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+						damage: getAttackDamage((ammoItem.damage * (1 + (stimulantEffects.damageBonus / 100))) / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
 						limb: bodyPartHit.result
 					})
 
@@ -582,14 +587,14 @@ class AttackCommand extends CustomSlashCommand {
 						}
 
 						limbsHit.push({
-							damage: getAttackDamage(ammoItem.damage / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, limb.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+							damage: getAttackDamage((ammoItem.damage * (1 + (stimulantEffects.damageBonus / 100))) / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, limb.result, victimEquips.armor?.item, victimEquips.helmet?.item),
 							limb: limb.result
 						})
 					}
 				}
 				else {
 					limbsHit.push({
-						damage: getAttackDamage(ammoItem.damage, ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+						damage: getAttackDamage((ammoItem.damage * (1 + (stimulantEffects.damageBonus / 100))), ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
 						limb: bodyPartHit.result
 					})
 				}
@@ -615,7 +620,7 @@ class AttackCommand extends CustomSlashCommand {
 			else {
 				attackPenetration = userEquips.weapon.item.penetration
 				limbsHit.push({
-					damage: getAttackDamage(userEquips.weapon.item.damage, userEquips.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+					damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))), userEquips.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
 					limb: bodyPartHit.result
 				})
 				totalDamage = limbsHit[0].damage.total

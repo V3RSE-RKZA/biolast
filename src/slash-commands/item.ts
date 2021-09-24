@@ -13,6 +13,7 @@ import { formatNumber } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { isRaidGuild } from '../utils/raidUtils'
+import { formatTime } from '../utils/db/cooldowns'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
@@ -156,8 +157,25 @@ class ItemCommand extends CustomSlashCommand {
 				break
 			}
 			case 'Medical': {
-				itemEmbed.addField('Heals For', `${item.healsFor} health`, true)
-				itemEmbed.addField('Healing Rate', `${item.healRate} seconds`, true)
+				if (item.subtype === 'Stimulant') {
+					const effectsDisplay = []
+					if (item.effects.accuracyBonus) {
+						effectsDisplay.push(`Increases accuracy by ${item.effects.accuracyBonus}%.`)
+					}
+					if (item.effects.damageBonus) {
+						effectsDisplay.push(`Increases damage by ${item.effects.damageBonus}%.`)
+					}
+					if (item.effects.weightBonus) {
+						effectsDisplay.push(`Increases inventory slots by ${item.effects.weightBonus}.`)
+					}
+
+					itemEmbed.addField('Gives Effects', effectsDisplay.join('\n'), true)
+					itemEmbed.addField('Effects Last', formatTime(item.effects.length * 1000), true)
+				}
+				else {
+					itemEmbed.addField('Heals For', `${item.healsFor} health`, true)
+					itemEmbed.addField('Healing Rate', formatTime(item.healRate * 1000), true)
+				}
 			}
 		}
 

@@ -79,10 +79,10 @@ export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<
 		}
 
 		if (showID) {
-			return `[\`${itemRow.id}\`] ${display} ${attributes.length ? `(${attributes.join(', ')})` : ''}`
+			return `[\`${itemRow.id}\`] ${display}${attributes.length ? ` (${attributes.join(', ')})` : ''}`
 		}
 
-		return `${display} ${attributes.length ? `(${attributes.join(', ')})` : ''}`
+		return `${display}${attributes.length ? ` (${attributes.join(', ')})` : ''}`
 	}
 
 	return `${item.icon}\`${itemDisplayName}\``
@@ -129,17 +129,23 @@ export function getEquips (backpackRows: BackpackItemRow[]): {
 /**
  * @param backpackRows The users backpack inventory
  * @param slotsNeeded How many slots are needed
+ * @param slotsBonus Bonus slots to be counted towards inventory space (for things like stimulants that add temporary slot increase)
  * @returns Whether or not the backpack has room for the slots
  */
-export function backpackHasSpace (backpackRows: BackpackItemRow[], slotsNeeded: number): boolean {
+export function backpackHasSpace (backpackRows: BackpackItemRow[], slotsNeeded: number, slotsBonus?: number): boolean {
 	const userBackpackData = getItems(backpackRows)
 	const equips = getEquips(backpackRows)
 
-	return userBackpackData.slotsUsed + slotsNeeded <= getBackpackLimit(equips.backpack?.item)
+	return userBackpackData.slotsUsed + slotsNeeded <= getBackpackLimit(equips.backpack?.item, slotsBonus)
 }
 
-export function getBackpackLimit (backpack?: Backpack): number {
-	return backpack ? backpack.slots + baseBackpackLimit : baseBackpackLimit
+/**
+ * @param backpack The backpack item user has equipped
+ * @param slotsBonus Bonus slots to be counted towards inventory space (for things like stimulants that add temporary slot increase)
+ * @returns Number of inventory slots
+ */
+export function getBackpackLimit (backpack?: Backpack, slotsBonus?: number): number {
+	return (backpack ? backpack.slots + baseBackpackLimit : baseBackpackLimit) + (slotsBonus || 0)
 }
 
 /**

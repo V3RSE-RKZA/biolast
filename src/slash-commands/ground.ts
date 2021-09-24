@@ -7,6 +7,7 @@ import { formatTime } from '../utils/db/cooldowns'
 import { addItemToBackpack, dropItemToGround, getGroundItems, getUserBackpack, removeItemFromBackpack, removeItemFromGround } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { backpackHasSpace, getItemDisplay, getItems } from '../utils/itemUtils'
+import { addStatusEffects, getActiveStimulants } from '../utils/playerUtils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -146,6 +147,8 @@ class GroundCommand extends CustomSlashCommand {
 			const transaction = await beginTransaction()
 			const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
 			const groundRows = await getGroundItems(transaction.query, ctx.channelID, true)
+			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['weight'], true)
+			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
 			const groundItems = getItems(groundRows)
 			const itemsToGrab = []
 			let spaceNeeded = 0
@@ -168,7 +171,7 @@ class GroundCommand extends CustomSlashCommand {
 				}
 			}
 
-			if (!backpackHasSpace(backpackRows, spaceNeeded)) {
+			if (!backpackHasSpace(backpackRows, spaceNeeded, stimulantEffects.weightBonus)) {
 				await transaction.commit()
 
 				await ctx.send({

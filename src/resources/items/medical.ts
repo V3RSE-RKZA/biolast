@@ -5,6 +5,7 @@ const medicalObject = <T>(et: { [K in keyof T]: Medical & { name: K } }) => et
 export const medical = medicalObject({
 	bandage: {
 		type: 'Medical',
+		subtype: 'Healing',
 		name: 'bandage',
 		icon: '<:medical:886561670745452554>',
 		aliases: ['bandage'],
@@ -17,6 +18,7 @@ export const medical = medicalObject({
 	},
 	ifak_medkit: {
 		type: 'Medical',
+		subtype: 'Healing',
 		name: 'ifak_medkit',
 		icon: '<:medical:886561670745452554>',
 		aliases: ['ifak', 'medkit'],
@@ -30,6 +32,7 @@ export const medical = medicalObject({
 	},
 	compression_bandage: {
 		type: 'Medical',
+		subtype: 'Healing',
 		name: 'compression_bandage',
 		icon: '<:medical:886561670745452554>',
 		description: 'Elastic bandage designed to reduce the flow of blood to an area in order to restrict swelling.',
@@ -41,8 +44,26 @@ export const medical = medicalObject({
 		itemLevel: 3,
 		durability: 1
 	},
+	adrenaline_stimulant: {
+		type: 'Medical',
+		subtype: 'Stimulant',
+		name: 'adrenaline_stimulant',
+		icon: '<:syringe:886561670812549130>',
+		aliases: ['adrenaline', 'adrena_stim'],
+		sellPrice: 52,
+		slotsUsed: 1,
+		itemLevel: 10,
+		durability: 1,
+		effects: {
+			damageBonus: 15,
+			accuracyBonus: 0,
+			weightBonus: 0,
+			length: 300
+		}
+	},
 	hyfin_chest_seal: {
 		type: 'Medical',
+		subtype: 'Healing',
 		name: 'hyfin_chest_seal',
 		icon: '<:medical:886561670745452554>',
 		aliases: ['chest_seal', 'hyfin', 'hyfin_seal', 'seal'],
@@ -56,6 +77,7 @@ export const medical = medicalObject({
 	},
 	paracetamol: {
 		type: 'Medical',
+		subtype: 'Healing',
 		name: 'paracetamol',
 		icon: '<:U_usable:601366669259964418>',
 		aliases: ['paracet'],
@@ -68,6 +90,7 @@ export const medical = medicalObject({
 	},
 	corn: {
 		type: 'Medical',
+		subtype: 'Healing',
 		name: 'corn',
 		icon: '<:food:886561670447652886>',
 		aliases: [],
@@ -80,6 +103,7 @@ export const medical = medicalObject({
 	},
 	apple: {
 		type: 'Medical',
+		subtype: 'Healing',
 		name: 'apple',
 		icon: '<:food:886561670447652886>',
 		aliases: [],

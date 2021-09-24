@@ -2,8 +2,11 @@ import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
+import { StimulantMedical } from '../types/Items'
 import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
+import { getItemDisplay } from '../utils/itemUtils'
+import { getActiveStimulants } from '../utils/playerUtils'
 import { formatHealth } from '../utils/stringUtils'
 
 class HealthCommand extends CustomSlashCommand {
@@ -42,17 +45,44 @@ class HealthCommand extends CustomSlashCommand {
 				return
 			}
 
+			const activeStimulants = await getActiveStimulants(query, member.id)
+			const effectsDisplay = this.getStimulantsDisplay(activeStimulants)
+
 			await ctx.send({
-				content: `**${member.displayName}** currently has ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP`
+				content: `**${member.displayName}** currently has ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP\n\n__**Stimulants**__\n${effectsDisplay || 'None active'}`
 			})
 			return
 		}
 
 		const userData = (await getUserRow(query, ctx.user.id))!
+		const activeStimulants = await getActiveStimulants(query, ctx.user.id)
+		const effectsDisplay = this.getStimulantsDisplay(activeStimulants)
 
 		await ctx.send({
-			content: `You currently have ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP`
+			content: `You currently have ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP\n\n__**Stimulants**__\n${effectsDisplay || 'None active'}`
 		})
+	}
+
+	getStimulantsDisplay (activeStimulants: { cooldown: string, stimulant: StimulantMedical }[]): string {
+		const effectsDisplay = []
+
+		for (const stim of activeStimulants) {
+			const effects = []
+
+			if (stim.stimulant.effects.accuracyBonus) {
+				effects.push(`${stim.stimulant.effects.accuracyBonus > 0 ? '+' : ''}${stim.stimulant.effects.accuracyBonus}% accuracy`)
+			}
+			if (stim.stimulant.effects.damageBonus) {
+				effects.push(`${stim.stimulant.effects.damageBonus > 0 ? '+' : ''}${stim.stimulant.effects.damageBonus}% damage`)
+			}
+			if (stim.stimulant.effects.weightBonus) {
+				effects.push(`${stim.stimulant.effects.weightBonus > 0 ? '+' : ''}${stim.stimulant.effects.weightBonus} inventory slots`)
+			}
+
+			effectsDisplay.push(`${getItemDisplay(stim.stimulant)} (${effects.join(', ')}) **${stim.cooldown}** left`)
+		}
+
+		return effectsDisplay.join('\n')
 	}
 }
 
