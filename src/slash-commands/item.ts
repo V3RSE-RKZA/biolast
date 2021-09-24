@@ -160,13 +160,16 @@ class ItemCommand extends CustomSlashCommand {
 				if (item.subtype === 'Stimulant') {
 					const effectsDisplay = []
 					if (item.effects.accuracyBonus) {
-						effectsDisplay.push(`Increases accuracy by ${item.effects.accuracyBonus}%.`)
+						effectsDisplay.push(`${item.effects.damageBonus > 0 ? 'Increases' : 'Decreases'} accuracy by ${item.effects.accuracyBonus}%.`)
 					}
 					if (item.effects.damageBonus) {
-						effectsDisplay.push(`Increases damage by ${item.effects.damageBonus}%.`)
+						effectsDisplay.push(`${item.effects.damageBonus > 0 ? 'Increases' : 'Decreases'} damage by ${item.effects.damageBonus}%.`)
 					}
 					if (item.effects.weightBonus) {
-						effectsDisplay.push(`Increases inventory slots by ${item.effects.weightBonus}.`)
+						effectsDisplay.push(`${item.effects.weightBonus > 0 ? 'Increases' : 'Decreases'} inventory slots by ${item.effects.weightBonus}.`)
+					}
+					if (item.effects.fireRate) {
+						effectsDisplay.push(`${item.effects.fireRate > 0 ? 'Decreases' : 'Increases'} attack cooldown by ${item.effects.fireRate}%.`)
 					}
 
 					itemEmbed.addField('Gives Effects', effectsDisplay.join('\n'), true)

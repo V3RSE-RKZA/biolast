@@ -167,7 +167,7 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			const userBackpack = await getUserBackpack(transaction.query, ctx.user.id, true)
-			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'accuracy'], true)
+			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'fireRate', 'accuracy'], true)
 			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
 
 			// in case npc dies and need to update ground items
@@ -187,6 +187,7 @@ class AttackCommand extends CustomSlashCommand {
 
 			const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy + stimulantEffects.accuracyBonus, partChoice)
 			const missedPartChoice = partChoice && (partChoice !== bodyPartHit.result || !bodyPartHit.accurate)
+			const attackCooldown = Math.max(1, Math.round(userEquips.weapon.item.fireRate * (1 - (stimulantEffects.fireRate / 100))))
 			const messages = []
 			const removedItems = []
 			const limbsHit = []
@@ -273,7 +274,7 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			// add attack cooldown based on weapon attack rate
-			await createCooldown(transaction.query, ctx.user.id, 'attack', userEquips.weapon.item.fireRate)
+			await createCooldown(transaction.query, ctx.user.id, 'attack', attackCooldown)
 
 			// add message if users weapon accuracy allowed them to hit their targeted body part
 			if (bodyPartHit.accurate) {
@@ -304,7 +305,7 @@ class AttackCommand extends CustomSlashCommand {
 				}
 			}
 
-			messages.push(`${icons.timer} Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
+			messages.push(`${icons.timer} Your attack is on cooldown for **${formatTime(attackCooldown * 1000)}**.`)
 
 			if (!missedPartChoice && npcRow.health - totalDamage <= 0) {
 				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'NPC Kills' || q.questType === 'Any Kills' || q.questType === 'Boss Kills')
@@ -525,7 +526,7 @@ class AttackCommand extends CustomSlashCommand {
 
 			const userBackpack = await getUserBackpack(transaction.query, ctx.user.id, true)
 			const victimBackpack = await getUserBackpack(transaction.query, member.id, true)
-			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'accuracy'], true)
+			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'fireRate', 'accuracy'], true)
 			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
 
 			// in case victim dies and need to update ground items
@@ -547,6 +548,7 @@ class AttackCommand extends CustomSlashCommand {
 
 			const bodyPartHit = getBodyPartHit(userEquips.weapon.item.accuracy + stimulantEffects.accuracyBonus, partChoice)
 			const missedPartChoice = partChoice && (partChoice !== bodyPartHit.result || !bodyPartHit.accurate)
+			const attackCooldown = Math.max(1, Math.round(userEquips.weapon.item.fireRate * (1 - (stimulantEffects.fireRate / 100))))
 			const messages = []
 			const limbsHit = []
 			let totalDamage
@@ -634,7 +636,7 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			// add attack cooldown based on weapon attack rate
-			await createCooldown(transaction.query, ctx.user.id, 'attack', userEquips.weapon.item.fireRate)
+			await createCooldown(transaction.query, ctx.user.id, 'attack', attackCooldown)
 
 			// add message if users weapon accuracy allowed them to hit their targeted body part
 			if (bodyPartHit.accurate) {
@@ -692,7 +694,7 @@ class AttackCommand extends CustomSlashCommand {
 				}
 			}
 
-			messages.push(`${icons.timer} Your attack is on cooldown for **${formatTime(userEquips.weapon.item.fireRate * 1000)}**.`)
+			messages.push(`${icons.timer} Your attack is on cooldown for **${formatTime(attackCooldown * 1000)}**.`)
 
 			if (!missedPartChoice && victimData.health - totalDamage <= 0) {
 				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'Player Kills' || q.questType === 'Any Kills')

@@ -13,8 +13,8 @@ class HealthCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'health',
-			description: 'View your current health.',
-			longDescription: 'View your current health.',
+			description: 'View your current health and status effects.',
+			longDescription: 'View your current health and status effects.',
 			options: [{
 				type: CommandOptionType.USER,
 				name: 'user',
@@ -77,6 +77,9 @@ class HealthCommand extends CustomSlashCommand {
 			}
 			if (stim.stimulant.effects.weightBonus) {
 				effects.push(`${stim.stimulant.effects.weightBonus > 0 ? '+' : ''}${stim.stimulant.effects.weightBonus} inventory slots`)
+			}
+			if (stim.stimulant.effects.fireRate) {
+				effects.push(`${stim.stimulant.effects.fireRate > 0 ? '-' : '+'}${Math.abs(stim.stimulant.effects.fireRate)}% attack cooldown`)
 			}
 
 			effectsDisplay.push(`${getItemDisplay(stim.stimulant)} (${effects.join(', ')}) **${stim.cooldown}** left`)

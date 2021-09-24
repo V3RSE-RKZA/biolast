@@ -43,7 +43,7 @@ export function getPlayerXp (playerXp: number, level: number): { relativeLevelXp
  * @param forUpdate Whether this is part of an sql transaction or not
  * @returns Stimulants active and their time until expiration
  */
-export async function getActiveStimulants (query: Query, userID: string, types?: ('maxHealth' | 'damage' | 'accuracy' | 'weight')[], forUpdate = false): Promise<{ cooldown: string, stimulant: StimulantMedical }[]> {
+export async function getActiveStimulants (query: Query, userID: string, types?: ('damage' | 'accuracy' | 'weight' | 'fireRate')[], forUpdate = false): Promise<{ cooldown: string, stimulant: StimulantMedical }[]> {
 	const stimulantItems = allItems.filter(itm => itm.type === 'Medical' && itm.subtype === 'Stimulant') as StimulantMedical[]
 	const activeStimulants: { cooldown: string, stimulant: StimulantMedical }[] = []
 
@@ -52,6 +52,7 @@ export async function getActiveStimulants (query: Query, userID: string, types?:
 			!types ||
 			(item.effects.accuracyBonus && types.includes('accuracy')) ||
 			(item.effects.damageBonus && types.includes('damage')) ||
+			(item.effects.fireRate && types.includes('fireRate')) ||
 			(item.effects.weightBonus && types.includes('weight'))
 		) {
 			const active = await getCooldown(query, userID, item.name, forUpdate)
@@ -86,17 +87,23 @@ export function addStatusEffects (activeStimulants: StimulantMedical[]): {
 	 * Weight added (10 would be 10 extra slots)
 	 */
 	weightBonus: number
+	/**
+	 * Percent firerate cooldown reduction (10 would be 10% time reduction)
+	 */
+	fireRate: number
 } {
 	const effects = {
 		damageBonus: 0,
 		accuracyBonus: 0,
-		weightBonus: 0
+		weightBonus: 0,
+		fireRate: 0
 	}
 
 	for (const item of activeStimulants) {
 		effects.accuracyBonus += item.effects.accuracyBonus
 		effects.damageBonus += item.effects.damageBonus
 		effects.weightBonus += item.effects.weightBonus
+		effects.fireRate += item.effects.fireRate
 	}
 
 	return effects

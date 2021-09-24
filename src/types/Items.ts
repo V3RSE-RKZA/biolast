@@ -162,6 +162,10 @@ export interface StimulantMedical extends BaseItem {
 		 */
 		weightBonus: number
 		/**
+		 * Percent firerate cooldown reduction (10 would be 10% time reduction)
+		 */
+		fireRate: number
+		/**
 		 * Length in seconds this stimulant lasts
 		 */
 		length: number

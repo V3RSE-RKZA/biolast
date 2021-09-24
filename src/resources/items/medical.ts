@@ -58,6 +58,7 @@ export const medical = medicalObject({
 			damageBonus: 15,
 			accuracyBonus: 0,
 			weightBonus: 0,
+			fireRate: 0,
 			length: 300
 		}
 	},
