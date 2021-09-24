@@ -215,6 +215,26 @@ export const npcs = npcsObject({
 		armor: items.cloth_armor,
 		helmet: items.sauce_pan,
 		xp: 75
+	},
+	feral_animal: {
+		type: 'walker',
+		id: 'feral_animal',
+		display: 'Feral Animal',
+		icon: '🐕',
+		health: 35,
+		damage: 45,
+		drops: {
+			common: [items.apple, items.corn],
+			uncommon: [items.apple],
+			rare: [items.corn],
+			rolls: 1
+		},
+		quotes: [
+			'~*You hear hiss nearby*~',
+			'~*You hear a deep growl close by*~'
+		],
+		xp: 35,
+		chanceToBite: 20
 	}
 })
 
