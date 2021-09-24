@@ -41,6 +41,11 @@ export const farm: Location = {
 					items: [items.apple],
 					xp: 12
 				}
+			},
+			npcSpawns: {
+				cooldownMin: 3 * 60,
+				cooldownMax: 5 * 60,
+				npcs: [npcs.feral_animal]
 			}
 		},
 		{
