@@ -3,7 +3,7 @@ import { Medical } from '../../types/Items'
 const medicalObject = <T>(et: { [K in keyof T]: Medical & { name: K } }) => et
 
 export const medical = medicalObject({
-	bandage: {
+	'bandage': {
 		type: 'Medical',
 		subtype: 'Healing',
 		name: 'bandage',
@@ -18,7 +18,7 @@ export const medical = medicalObject({
 		curesBitten: false,
 		curesBrokenArm: false
 	},
-	ifak_medkit: {
+	'ifak_medkit': {
 		type: 'Medical',
 		subtype: 'Healing',
 		name: 'ifak_medkit',
@@ -34,7 +34,7 @@ export const medical = medicalObject({
 		curesBitten: false,
 		curesBrokenArm: false
 	},
-	compression_bandage: {
+	'compression_bandage': {
 		type: 'Medical',
 		subtype: 'Healing',
 		name: 'compression_bandage',
@@ -50,7 +50,7 @@ export const medical = medicalObject({
 		curesBitten: false,
 		curesBrokenArm: false
 	},
-	adrenaline_stimulant: {
+	'adrenaline_stimulant': {
 		type: 'Medical',
 		subtype: 'Stimulant',
 		name: 'adrenaline_stimulant',
@@ -68,7 +68,7 @@ export const medical = medicalObject({
 			length: 300
 		}
 	},
-	hyfin_chest_seal: {
+	'hyfin_chest_seal': {
 		type: 'Medical',
 		subtype: 'Healing',
 		name: 'hyfin_chest_seal',
@@ -84,7 +84,7 @@ export const medical = medicalObject({
 		curesBitten: false,
 		curesBrokenArm: false
 	},
-	paracetamol: {
+	'paracetamol': {
 		type: 'Medical',
 		subtype: 'Healing',
 		name: 'paracetamol',
@@ -96,10 +96,42 @@ export const medical = medicalObject({
 		healRate: 25,
 		itemLevel: 1,
 		durability: 1,
-		curesBitten: true,
+		curesBitten: false,
+		curesBrokenArm: false
+	},
+	'splint': {
+		type: 'Medical',
+		subtype: 'Healing',
+		name: 'splint',
+		icon: '<:U_usable:601366669259964418>',
+		description: 'Use this to fix broken limbs.',
+		aliases: [],
+		sellPrice: 46,
+		healsFor: 10,
+		slotsUsed: 1,
+		healRate: 25,
+		itemLevel: 1,
+		durability: 1,
+		curesBitten: false,
 		curesBrokenArm: true
 	},
-	corn: {
+	'anti-biotics': {
+		type: 'Medical',
+		subtype: 'Healing',
+		name: 'anti-biotics',
+		icon: '<:U_usable:601366669259964418>',
+		description: 'Cures various infections, such as those from walker bites.',
+		aliases: ['antibiotics'],
+		sellPrice: 137,
+		healsFor: 20,
+		slotsUsed: 1,
+		healRate: 30,
+		itemLevel: 3,
+		durability: 1,
+		curesBitten: true,
+		curesBrokenArm: false
+	},
+	'corn': {
 		type: 'Medical',
 		subtype: 'Healing',
 		name: 'corn',
@@ -114,7 +146,7 @@ export const medical = medicalObject({
 		curesBitten: false,
 		curesBrokenArm: false
 	},
-	apple: {
+	'apple': {
 		type: 'Medical',
 		subtype: 'Healing',
 		name: 'apple',
