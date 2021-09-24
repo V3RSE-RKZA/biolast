@@ -275,7 +275,7 @@ class NPCHandler {
 			messages.push(`The \`${npc.type}\` took a swipe at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
 
 			if (Math.random() <= (npc.chanceToBite / 100)) {
-				messages.push(`**${member.displayName}** was ${icons.biohazard} Bitten! (-15% damage for 4 minutes)`)
+				messages.push(`**${member.displayName}** was ${icons.biohazard} Bitten! (-20% damage for 4 minutes)`)
 				await createCooldown(transactionQuery, member.id, 'bitten', 4 * 60)
 			}
 		}
