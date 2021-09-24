@@ -45,6 +45,10 @@ interface NPCBase {
 
 interface Walker extends NPCBase {
 	type: 'walker'
+	/**
+	 * Percent chance this walker will bite the user and apply the "Bitten" debuff (0 - 100%)
+	 */
+	chanceToBite: number
 }
 
 interface RangedRaider extends NPCBase {
@@ -120,7 +124,8 @@ export const npcs = npcsObject({
 			'~*You hear footsteps nearby*~',
 			'~*You hear a deep growl close by*~'
 		],
-		xp: 20
+		xp: 20,
+		chanceToBite: 20
 	},
 	cain: {
 		type: 'boss',
@@ -185,7 +190,8 @@ export const npcs = npcsObject({
 			'~*You hear footsteps nearby*~',
 			'~*You hear a deep growl close by*~'
 		],
-		xp: 50
+		xp: 50,
+		chanceToBite: 25
 	},
 	dave: {
 		type: 'boss',

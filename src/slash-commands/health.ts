@@ -6,7 +6,7 @@ import { StimulantMedical } from '../types/Items'
 import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { getItemDisplay } from '../utils/itemUtils'
-import { getActiveStimulants } from '../utils/playerUtils'
+import { getActiveStimulants, getAfflictions } from '../utils/playerUtils'
 import { formatHealth } from '../utils/stringUtils'
 
 class HealthCommand extends CustomSlashCommand {
@@ -46,20 +46,28 @@ class HealthCommand extends CustomSlashCommand {
 			}
 
 			const activeStimulants = await getActiveStimulants(query, member.id)
+			const activeAfflictions = await getAfflictions(query, member.id)
 			const effectsDisplay = this.getStimulantsDisplay(activeStimulants)
+			const afflictionsDisplay = this.getAfflictionsDisplay(activeAfflictions)
 
 			await ctx.send({
-				content: `**${member.displayName}** currently has ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP\n\n__**Stimulants**__\n${effectsDisplay || 'None active'}`
+				content: `**${member.displayName}** currently has ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP` +
+					`\n\n__**Stimulants**__\n${effectsDisplay || 'None active'}` +
+					`\n\n__**Afflictions**__\n${afflictionsDisplay || 'No afflictions'}`
 			})
 			return
 		}
 
 		const userData = (await getUserRow(query, ctx.user.id))!
 		const activeStimulants = await getActiveStimulants(query, ctx.user.id)
+		const activeAfflictions = await getAfflictions(query, ctx.user.id)
 		const effectsDisplay = this.getStimulantsDisplay(activeStimulants)
+		const afflictionsDisplay = this.getAfflictionsDisplay(activeAfflictions)
 
 		await ctx.send({
-			content: `You currently have ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP\n\n__**Stimulants**__\n${effectsDisplay || 'None active'}`
+			content: `You currently have ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP` +
+				`\n\n__**Stimulants**__\n${effectsDisplay || 'None active'}` +
+				`\n\n__**Afflictions**__\n${afflictionsDisplay || 'No afflictions'}`
 		})
 	}
 
@@ -83,6 +91,21 @@ class HealthCommand extends CustomSlashCommand {
 			}
 
 			effectsDisplay.push(`${getItemDisplay(stim.stimulant)} (${effects.join(', ')}) **${stim.cooldown}** left`)
+		}
+
+		return effectsDisplay.join('\n')
+	}
+
+	getAfflictionsDisplay (activeAfflictions: { cooldown: string, type: 'Bitten' | 'Broken Arm' }[]): string {
+		const effectsDisplay = []
+
+		for (const affliction of activeAfflictions) {
+			if (affliction.type === 'Bitten') {
+				effectsDisplay.push(`${icons.biohazard} Bitten (-20% damage) **${affliction.cooldown}** left`)
+			}
+			if (affliction.type === 'Broken Arm') {
+				effectsDisplay.push(`🦴 Broken Arm (+15% attack cooldown) **${affliction.cooldown}** left`)
+			}
 		}
 
 		return effectsDisplay.join('\n')

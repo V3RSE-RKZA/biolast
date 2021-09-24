@@ -9,6 +9,7 @@ import { getPlayerXp } from '../utils/playerUtils'
 import { createQuest } from '../utils/db/quests'
 import { quests } from '../resources/quests'
 import { addItemToBackpack, createItem } from '../utils/db/items'
+import { createCooldown } from '../utils/db/cooldowns'
 
 
 export const command: TextCommand = {
@@ -24,7 +25,8 @@ export const command: TextCommand = {
 			createQuest,
 			quests,
 			createItem,
-			addItemToBackpack
+			addItemToBackpack,
+			createCooldown
 		}
 		let commandInput = message.content.substring(5 + prefix.length)
 

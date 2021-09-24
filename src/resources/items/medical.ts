@@ -14,7 +14,9 @@ export const medical = medicalObject({
 		slotsUsed: 1,
 		healRate: 25,
 		itemLevel: 1,
-		durability: 1
+		durability: 1,
+		curesBitten: false,
+		curesBrokenArm: false
 	},
 	ifak_medkit: {
 		type: 'Medical',
@@ -28,7 +30,9 @@ export const medical = medicalObject({
 		slotsUsed: 2,
 		healRate: 30,
 		itemLevel: 3,
-		durability: 2
+		durability: 2,
+		curesBitten: false,
+		curesBrokenArm: false
 	},
 	compression_bandage: {
 		type: 'Medical',
@@ -42,7 +46,9 @@ export const medical = medicalObject({
 		slotsUsed: 1,
 		healRate: 19,
 		itemLevel: 3,
-		durability: 1
+		durability: 1,
+		curesBitten: false,
+		curesBrokenArm: false
 	},
 	adrenaline_stimulant: {
 		type: 'Medical',
@@ -74,7 +80,9 @@ export const medical = medicalObject({
 		slotsUsed: 1,
 		healRate: 55,
 		itemLevel: 6,
-		durability: 1
+		durability: 1,
+		curesBitten: false,
+		curesBrokenArm: false
 	},
 	paracetamol: {
 		type: 'Medical',
@@ -87,7 +95,9 @@ export const medical = medicalObject({
 		slotsUsed: 1,
 		healRate: 25,
 		itemLevel: 1,
-		durability: 1
+		durability: 1,
+		curesBitten: true,
+		curesBrokenArm: true
 	},
 	corn: {
 		type: 'Medical',
@@ -100,7 +110,9 @@ export const medical = medicalObject({
 		slotsUsed: 1,
 		healRate: 16,
 		itemLevel: 1,
-		durability: 3
+		durability: 3,
+		curesBitten: false,
+		curesBrokenArm: false
 	},
 	apple: {
 		type: 'Medical',
@@ -113,6 +125,8 @@ export const medical = medicalObject({
 		slotsUsed: 1,
 		healRate: 15,
 		itemLevel: 1,
-		durability: 2
+		durability: 2,
+		curesBitten: false,
+		curesBrokenArm: false
 	}
 })

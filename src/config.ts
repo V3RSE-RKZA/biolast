@@ -29,7 +29,8 @@ export const icons = {
 	information: '<:information:886737255148957767>',
 	danger: '<:danger:886836924558491648>',
 	crosshair: '<:crosshair:886854038161874954>',
-	timer: '<:cooldown:886855254568747028>'
+	timer: '<:cooldown:886855254568747028>',
+	biohazard: '<:biohazard:886561850622345216>'
 }
 
 // How many items a single user can buy from the shop each day

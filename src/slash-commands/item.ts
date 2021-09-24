@@ -176,8 +176,20 @@ class ItemCommand extends CustomSlashCommand {
 					itemEmbed.addField('Effects Last', formatTime(item.effects.length * 1000), true)
 				}
 				else {
+					const curesAfflictions = []
+
 					itemEmbed.addField('Heals For', `${item.healsFor} health`, true)
 					itemEmbed.addField('Healing Rate', formatTime(item.healRate * 1000), true)
+
+					if (item.curesBitten) {
+						curesAfflictions.push(`${icons.biohazard} Bitten`)
+					}
+					if (item.curesBrokenArm) {
+						curesAfflictions.push('🦴 Broken Arm')
+					}
+					if (curesAfflictions.length) {
+						itemEmbed.addField('Cures Afflictions', curesAfflictions.join('\n'), true)
+					}
 				}
 			}
 		}

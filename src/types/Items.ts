@@ -139,6 +139,16 @@ interface HealingMedical extends BaseItem {
 	 * How long will this prevent user from healing again (cooldown in seconds)
 	 */
 	healRate: number
+
+	/**
+	 * Whether or not this medical item cures the "Bitten" debuff
+	 */
+	curesBitten: boolean
+
+	/**
+	 * Whether or not this medical item cures the "Broken Arm" debuff
+	 */
+	curesBrokenArm: boolean
 }
 
 export interface StimulantMedical extends BaseItem {

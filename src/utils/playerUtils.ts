@@ -70,11 +70,39 @@ export async function getActiveStimulants (query: Query, userID: string, types?:
 }
 
 /**
+ * Get the afflictions (debuffs) a user has active (and their time until expiration)
+ * @param query The query to use
+ * @param userID The ID of user to get afflictions for
+ * @param forUpdate Whether this is part of an sql transaction or not
+ * @returns Stimulants active and their time until expiration
+ */
+export async function getAfflictions (query: Query, userID: string, forUpdate = false): Promise<{ cooldown: string, type: 'Bitten' | 'Broken Arm' }[]> {
+	const afflictions: { cooldown: string, type: 'Bitten' | 'Broken Arm' }[] = []
+	const bitten = await getCooldown(query, userID, 'bitten', forUpdate)
+	const broken = await getCooldown(query, userID, 'broken-arm', forUpdate)
+
+	if (bitten) {
+		afflictions.push({
+			cooldown: bitten,
+			type: 'Bitten'
+		})
+	}
+	if (broken) {
+		afflictions.push({
+			cooldown: broken,
+			type: 'Broken Arm'
+		})
+	}
+
+	return afflictions
+}
+
+/**
  * Adds the effects a user has active
  * @param activeStimulants The users active stimulants
  * @returns Users active effects
  */
-export function addStatusEffects (activeStimulants: StimulantMedical[]): {
+export function addStatusEffects (activeStimulants: StimulantMedical[], afflictions?: ('Bitten' | 'Broken Arm')[]): {
 	/**
 	 * Damage percent bonus (10 would be 10% bonus damage)
 	 */
@@ -104,6 +132,15 @@ export function addStatusEffects (activeStimulants: StimulantMedical[]): {
 		effects.damageBonus += item.effects.damageBonus
 		effects.weightBonus += item.effects.weightBonus
 		effects.fireRate += item.effects.fireRate
+	}
+
+	for (const type of afflictions || []) {
+		if (type === 'Bitten') {
+			effects.damageBonus += -15
+		}
+		else if (type === 'Broken Arm') {
+			effects.fireRate += -15
+		}
 	}
 
 	return effects

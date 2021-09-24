@@ -1,6 +1,6 @@
 import { Member } from 'slash-create'
 import App from '../app'
-import { raidCooldown } from '../config'
+import { icons, raidCooldown } from '../config'
 import { allNPCs, NPC } from '../resources/npcs'
 import { allLocations } from '../resources/raids'
 import { Item } from '../types/Items'
@@ -273,6 +273,11 @@ class NPCHandler {
 			totalDamage = limbsHit[0].damage.total
 
 			messages.push(`The \`${npc.type}\` took a swipe at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
+
+			if (Math.random() <= (npc.chanceToBite / 100)) {
+				messages.push(`**${member.displayName}** was ${icons.biohazard} Bitten! (-15% damage for 4 minutes)`)
+				await createCooldown(transactionQuery, member.id, 'bitten', 4 * 60)
+			}
 		}
 
 		for (const result of limbsHit) {
@@ -308,6 +313,10 @@ class NPCHandler {
 						await lowerItemDurability(transactionQuery, userEquips.armor.row.id, 1)
 					}
 				}
+			}
+			else if (result.limb === 'arm' && Math.random() <= 0.1) {
+				messages.push(`**${member.displayName}**'s arm was broken! (+15% attack cooldown for 4 minutes)`)
+				await createCooldown(transactionQuery, member.id, 'broken-arm', 4 * 60)
 			}
 		}
 

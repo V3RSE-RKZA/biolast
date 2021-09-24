@@ -19,7 +19,7 @@ import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
 import { BodyPart, getAttackDamage, getBodyPartHit, getRaidType } from '../utils/raidUtils'
 import getRandomInt from '../utils/randomInt'
-import { addStatusEffects, getActiveStimulants } from '../utils/playerUtils'
+import { addStatusEffects, getActiveStimulants, getAfflictions } from '../utils/playerUtils'
 
 class AttackCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -168,7 +168,8 @@ class AttackCommand extends CustomSlashCommand {
 
 			const userBackpack = await getUserBackpack(transaction.query, ctx.user.id, true)
 			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'fireRate', 'accuracy'], true)
-			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
+			const activeAfflictions = await getAfflictions(transaction.query, ctx.user.id, true)
+			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant), activeAfflictions.map(aff => aff.type))
 
 			// in case npc dies and need to update ground items
 			await getGroundItems(transaction.query, ctx.channelID, true)
@@ -527,7 +528,8 @@ class AttackCommand extends CustomSlashCommand {
 			const userBackpack = await getUserBackpack(transaction.query, ctx.user.id, true)
 			const victimBackpack = await getUserBackpack(transaction.query, member.id, true)
 			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'fireRate', 'accuracy'], true)
-			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
+			const activeAfflictions = await getAfflictions(transaction.query, ctx.user.id, true)
+			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant), activeAfflictions.map(aff => aff.type))
 
 			// in case victim dies and need to update ground items
 			await getGroundItems(transaction.query, ctx.channelID, true)
@@ -690,6 +692,10 @@ class AttackCommand extends CustomSlashCommand {
 								await lowerItemDurability(transaction.query, victimEquips.armor.row.id, 1)
 							}
 						}
+					}
+					else if (result.limb === 'arm' && Math.random() <= 0.1) {
+						messages.push(`**${member.displayName}**'s arm was broken! (+15% attack cooldown for 4 minutes)`)
+						await createCooldown(transaction.query, member.id, 'broken-arm', 4 * 60)
 					}
 				}
 			}
