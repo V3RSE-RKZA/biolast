@@ -136,7 +136,7 @@ export function addStatusEffects (activeStimulants: StimulantMedical[], afflicti
 
 	for (const type of afflictions || []) {
 		if (type === 'Bitten') {
-			effects.damageBonus += -15
+			effects.damageBonus += -20
 		}
 		else if (type === 'Broken Arm') {
 			effects.fireRate += -15
