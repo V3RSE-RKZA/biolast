@@ -88,9 +88,9 @@ export const ranged = rangedObject({
 		sellPrice: 756,
 		durability: 9,
 		slotsUsed: 3,
-		fireRate: 120,
+		fireRate: 70,
 		accuracy: 94,
-		itemLevel: 6
+		itemLevel: 10
 	},
 	'bobwhite_g2': {
 		type: 'Ranged Weapon',
@@ -102,7 +102,7 @@ export const ranged = rangedObject({
 		durability: 8,
 		slotsUsed: 3,
 		fireRate: 80,
-		accuracy: 81,
+		accuracy: 68,
 		itemLevel: 6
 	}
 })

@@ -70,6 +70,8 @@ export const command: TextCommand = {
 			}
 		}
 
+		console.log(`Unobtainable items:\n\n${sortItemsByType(allItems.filter(itm => !obtainable.includes(itm))).map(itm => `${getItemDisplay(itm)} (item level **${itm.itemLevel}**)`).join('\n')}`.length)
+
 		await reply(message, {
 			content: `Unobtainable items:\n\n${sortItemsByType(allItems.filter(itm => !obtainable.includes(itm))).map(itm => `${getItemDisplay(itm)} (item level **${itm.itemLevel}**)`).join('\n')}`
 		})

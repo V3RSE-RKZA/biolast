@@ -528,8 +528,11 @@ class AttackCommand extends CustomSlashCommand {
 			const userBackpack = await getUserBackpack(transaction.query, ctx.user.id, true)
 			const victimBackpack = await getUserBackpack(transaction.query, member.id, true)
 			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'fireRate', 'accuracy'], true)
+			const victimStimulants = await getActiveStimulants(transaction.query, member.id, ['damage'], true)
 			const activeAfflictions = await getAfflictions(transaction.query, ctx.user.id, true)
 			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant), activeAfflictions.map(aff => aff.type))
+			const victimEffects = addStatusEffects(victimStimulants.map(stim => stim.stimulant))
+			const stimulantDamageMulti = (1 + (stimulantEffects.damageBonus / 100) - (victimEffects.damageReduction / 100))
 
 			// in case victim dies and need to update ground items
 			await getGroundItems(transaction.query, ctx.channelID, true)
@@ -578,7 +581,7 @@ class AttackCommand extends CustomSlashCommand {
 
 				if (ammoItem.spreadsDamageToLimbs) {
 					limbsHit.push({
-						damage: getAttackDamage((ammoItem.damage * (1 + (stimulantEffects.damageBonus / 100))) / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+						damage: getAttackDamage((ammoItem.damage * stimulantDamageMulti) / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
 						limb: bodyPartHit.result
 					})
 
@@ -591,14 +594,14 @@ class AttackCommand extends CustomSlashCommand {
 						}
 
 						limbsHit.push({
-							damage: getAttackDamage((ammoItem.damage * (1 + (stimulantEffects.damageBonus / 100))) / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, limb.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+							damage: getAttackDamage((ammoItem.damage * stimulantDamageMulti) / ammoItem.spreadsDamageToLimbs, ammoItem.penetration, limb.result, victimEquips.armor?.item, victimEquips.helmet?.item),
 							limb: limb.result
 						})
 					}
 				}
 				else {
 					limbsHit.push({
-						damage: getAttackDamage((ammoItem.damage * (1 + (stimulantEffects.damageBonus / 100))), ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+						damage: getAttackDamage((ammoItem.damage * stimulantDamageMulti), ammoItem.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
 						limb: bodyPartHit.result
 					})
 				}
@@ -624,7 +627,7 @@ class AttackCommand extends CustomSlashCommand {
 			else {
 				attackPenetration = userEquips.weapon.item.penetration
 				limbsHit.push({
-					damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))), userEquips.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+					damage: getAttackDamage((userEquips.weapon.item.damage * stimulantDamageMulti), userEquips.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
 					limb: bodyPartHit.result
 				})
 				totalDamage = limbsHit[0].damage.total

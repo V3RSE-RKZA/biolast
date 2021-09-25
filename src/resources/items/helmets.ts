@@ -12,7 +12,7 @@ export const helmets = helmetObject({
 		durability: 3,
 		level: 3,
 		slotsUsed: 2,
-		itemLevel: 5
+		itemLevel: 9
 	},
 	cloth_helmet: {
 		type: 'Helmet',

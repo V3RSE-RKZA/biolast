@@ -12,7 +12,7 @@ export const armor = armorObject({
 		durability: 5,
 		level: 3,
 		slotsUsed: 2,
-		itemLevel: 5
+		itemLevel: 9
 	},
 	cloth_armor: {
 		type: 'Body Armor',

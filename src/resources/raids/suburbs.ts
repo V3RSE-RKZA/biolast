@@ -24,7 +24,7 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.bandage, items.makeshift_pistol_bullet],
+					items: [items.bandage, items.splint, items.makeshift_pistol_bullet],
 					xp: 10
 				},
 				rare: {
@@ -69,11 +69,11 @@ export const suburbs: Location = {
 			topic: 'Who knows what lies down these dark halls.',
 			scavange: {
 				common: {
-					items: [items.shed_key, items.wooden_bat],
+					items: [items.shed_key, items.wooden_bat, items.bandage],
 					xp: 5
 				},
 				uncommon: {
-					items: [items.bandage, items.metal_bat],
+					items: [items.metal_bat],
 					xp: 15
 				},
 				rare: {
@@ -81,7 +81,7 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 10
+				cooldown: 1 * 30
 			},
 			npcSpawns: {
 				npcs: [npcs.raider_weak],
@@ -96,8 +96,12 @@ export const suburbs: Location = {
 			display: 'Woods',
 			topic: 'Not much noise coming from these woods. This could be a good place to escape the area.',
 			evac: {
-				time: 15,
-				requiresKey: items.shed_key
+				time: 15
+			},
+			npcSpawns: {
+				cooldownMin: 5 * 60,
+				cooldownMax: 10 * 60,
+				npcs: [npcs.raider_weak]
 			}
 		},
 		{
@@ -110,7 +114,7 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.knife, items.wooden_helmet],
+					items: [items.small_pouch, items.wooden_helmet],
 					xp: 10
 				},
 				rare: {
@@ -137,13 +141,11 @@ export const suburbs: Location = {
 					xp: 10
 				},
 				rare: {
-					items: [items.wooden_helmet, items.cloth_backpack, items.metal_bat],
+					items: [items.wooden_helmet, items.metal_bat],
 					xp: 20
 				},
-				rolls: 2,
-				cooldown: 1 * 10,
-				requiresKey: items.shed_key,
-				keyIsOptional: false
+				rolls: 1,
+				cooldown: 1 * 30
 			}
 		},
 		{
@@ -156,7 +158,7 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.bandage, items['9mm_FMJ_bullet']],
+					items: [items['anti-biotics'], items.splint, items['9mm_FMJ_bullet']],
 					xp: 10
 				},
 				rare: {
@@ -164,9 +166,12 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 10,
-				requiresKey: items.shed_key,
-				keyIsOptional: false
+				cooldown: 1 * 30
+			},
+			npcSpawns: {
+				cooldownMin: 1 * 60,
+				cooldownMax: 2 * 60,
+				npcs: [npcs.crawler_weak]
 			}
 		},
 		{

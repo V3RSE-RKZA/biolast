@@ -39,7 +39,7 @@ export const shopDailyBuyLimit = 10
 export const baseBackpackLimit = 15
 
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
-export const adminUsers = ['168958344361541633', '319897342415470592']
+export const adminUsers = ['168958344361541633', '319897342415470592', '622437218744664120']
 
 // IDs of guilds where raids can take place. They will be automatically set up by the bot on
 // start-up (make sure you invite the bot with admin perms to these guilds)

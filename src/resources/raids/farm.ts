@@ -32,15 +32,7 @@ export const farm: Location = {
 					xp: 20
 				},
 				rolls: 1,
-				cooldown: 1 * 10,
-				requiresKey: items.truck_key,
-				keyIsOptional: true,
-
-				// this is the special loot user will receive if they have a key:
-				special: {
-					items: [items.apple],
-					xp: 12
-				}
+				cooldown: 1 * 10
 			},
 			npcSpawns: {
 				cooldownMin: 3 * 60,
@@ -58,7 +50,7 @@ export const farm: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.ifak_medkit, items.metal_bat],
+					items: [items.ifak_medkit, items.metal_bat, items.splint],
 					xp: 15
 				},
 				rare: {
@@ -66,9 +58,7 @@ export const farm: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 10,
-				requiresKey: items.shed_key,
-				keyIsOptional: false
+				cooldown: 1 * 10
 			},
 			npcSpawns: {
 				npcs: [npcs.raider_weak],
@@ -82,7 +72,7 @@ export const farm: Location = {
 			display: 'Barn',
 			scavange: {
 				common: {
-					items: [items.scythe, items.corn],
+					items: [items.scythe, items.corn, items.splint],
 					xp: 5
 				},
 				uncommon: {
@@ -120,11 +110,11 @@ export const farm: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.wooden_armor, items.knife],
+					items: [items.wooden_armor, items.knife, items.cloth_backpack],
 					xp: 10
 				},
 				rare: {
-					items: [items.chainsaw, items.ifak_medkit, items.truck_key],
+					items: [items.chainsaw, items.compression_bandage, items.truck_key],
 					xp: 20
 				},
 				rolls: 2,
@@ -158,20 +148,44 @@ export const farm: Location = {
 			display: 'bedroom',
 			scavange: {
 				common: {
-					items: [items.truck_key, items.warehouse_key, items['.22LR_bullet']],
-					xp: 10
+					items: [items.truck_key, items.warehouse_key, items.compression_bandage, items['.22LR_bullet']],
+					xp: 8
 				},
 				uncommon: {
-					items: [items.ifak_medkit, items['glock-17']],
-					xp: 15
+					items: [items['glock-17'], items['9mm_HP_bullet'], items['20_gauge_buckshot']],
+					xp: 10
 				},
 				rare: {
-					items: [items.bobwhite_g2, items['20_gauge_buckshot']],
-					xp: 25
+					items: [items.bobwhite_g2, items['20_gauge_slug']],
+					xp: 15
 				},
 				rolls: 4,
-				cooldown: 1 * 10,
+				cooldown: 10 * 60,
 				requiresKey: items.gunsafe_code,
+				keyIsOptional: false
+			}
+		},
+		{
+			type: 'LootChannel',
+			name: 'drug-room',
+			display: 'Drug Room',
+			topic: 'Dave might have had an addiction.',
+			scavange: {
+				common: {
+					items: [items.compression_bandage, items.bandage],
+					xp: 8
+				},
+				uncommon: {
+					items: [items.adrenaline_stimulant, items.morphine],
+					xp: 10
+				},
+				rare: {
+					items: [items.daves_concoction, items.adderall],
+					xp: 15
+				},
+				rolls: 2,
+				cooldown: 2 * 60,
+				requiresKey: items.daves_drug_key,
 				keyIsOptional: false
 			}
 		}

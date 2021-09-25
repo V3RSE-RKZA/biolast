@@ -176,6 +176,10 @@ export interface StimulantMedical extends BaseItem {
 		 */
 		fireRate: number
 		/**
+		 * Percent damage reduction from attacks (10 would be 10% reduction)
+		 */
+		damageReduction: number
+		/**
 		 * Length in seconds this stimulant lasts
 		 */
 		length: number

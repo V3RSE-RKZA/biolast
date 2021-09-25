@@ -12,9 +12,9 @@ export const melee = meleeObject({
 		durability: 2,
 		slotsUsed: 1,
 		fireRate: 8,
-		accuracy: 65,
+		accuracy: 80,
 		damage: 8,
-		penetration: 1.0,
+		penetration: 0.95,
 		itemLevel: 2
 	},
 	wooden_bat: {
@@ -53,11 +53,11 @@ export const melee = meleeObject({
 		sellPrice: 218,
 		durability: 7,
 		slotsUsed: 1,
-		fireRate: 15,
+		fireRate: 10,
 		accuracy: 25,
 		damage: 65,
-		penetration: 2.0,
-		itemLevel: 5
+		penetration: 1.9,
+		itemLevel: 10
 	},
 	sledgehammer: {
 		type: 'Melee Weapon',
@@ -71,20 +71,6 @@ export const melee = meleeObject({
 		accuracy: 65,
 		damage: 30,
 		penetration: 0.75,
-		itemLevel: 3
-	},
-	claymore: {
-		type: 'Melee Weapon',
-		name: 'claymore',
-		icon: '<:U_melee:601366669251575857>',
-		aliases: [],
-		sellPrice: 208,
-		durability: 6,
-		slotsUsed: 3,
-		fireRate: 20,
-		accuracy: 75,
-		damage: 30,
-		penetration: 0.7,
 		itemLevel: 3
 	},
 	scythe: {
@@ -120,7 +106,7 @@ export const melee = meleeObject({
 		name: 'fire_axe',
 		icon: '<:U_melee:601366669251575857>',
 		aliases: ['axe'],
-		sellPrice: 227,
+		sellPrice: 177,
 		durability: 4,
 		slotsUsed: 2,
 		fireRate: 20,

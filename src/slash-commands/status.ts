@@ -12,13 +12,13 @@ import { formatHealth } from '../utils/stringUtils'
 class HealthCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
-			name: 'health',
+			name: 'status',
 			description: 'View your current health and status effects.',
 			longDescription: 'View your current health and status effects.',
 			options: [{
 				type: CommandOptionType.USER,
 				name: 'user',
-				description: 'User to check health of.',
+				description: 'User to check status of.',
 				required: false
 			}],
 			category: 'info',
@@ -81,13 +81,16 @@ class HealthCommand extends CustomSlashCommand {
 				effects.push(`${stim.stimulant.effects.accuracyBonus > 0 ? '+' : ''}${stim.stimulant.effects.accuracyBonus}% accuracy`)
 			}
 			if (stim.stimulant.effects.damageBonus) {
-				effects.push(`${stim.stimulant.effects.damageBonus > 0 ? '+' : ''}${stim.stimulant.effects.damageBonus}% damage`)
+				effects.push(`${stim.stimulant.effects.damageBonus > 0 ? '+' : ''}${stim.stimulant.effects.damageBonus}% damage dealt`)
 			}
 			if (stim.stimulant.effects.weightBonus) {
 				effects.push(`${stim.stimulant.effects.weightBonus > 0 ? '+' : ''}${stim.stimulant.effects.weightBonus} inventory slots`)
 			}
 			if (stim.stimulant.effects.fireRate) {
 				effects.push(`${stim.stimulant.effects.fireRate > 0 ? '-' : '+'}${Math.abs(stim.stimulant.effects.fireRate)}% attack cooldown`)
+			}
+			if (stim.stimulant.effects.damageReduction) {
+				effects.push(`${stim.stimulant.effects.damageReduction > 0 ? '-' : '+'}${Math.abs(stim.stimulant.effects.damageReduction)}% damage taken from attacks`)
 			}
 
 			effectsDisplay.push(`${getItemDisplay(stim.stimulant)} (${effects.join(', ')}) **${stim.cooldown}** left`)

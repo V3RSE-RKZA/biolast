@@ -53,7 +53,8 @@ export async function getActiveStimulants (query: Query, userID: string, types?:
 			(item.effects.accuracyBonus && types.includes('accuracy')) ||
 			(item.effects.damageBonus && types.includes('damage')) ||
 			(item.effects.fireRate && types.includes('fireRate')) ||
-			(item.effects.weightBonus && types.includes('weight'))
+			(item.effects.weightBonus && types.includes('weight')) ||
+			(item.effects.damageReduction && types.includes('damage'))
 		) {
 			const active = await getCooldown(query, userID, item.name, forUpdate)
 
@@ -119,12 +120,17 @@ export function addStatusEffects (activeStimulants: StimulantMedical[], afflicti
 	 * Percent firerate cooldown reduction (10 would be 10% time reduction)
 	 */
 	fireRate: number
+	/**
+	 * Percent damage reduction from attacks (10 would be 10% reduction)
+	 */
+	damageReduction: number
 } {
 	const effects = {
 		damageBonus: 0,
 		accuracyBonus: 0,
 		weightBonus: 0,
-		fireRate: 0
+		fireRate: 0,
+		damageReduction: 0
 	}
 
 	for (const item of activeStimulants) {
@@ -132,6 +138,7 @@ export function addStatusEffects (activeStimulants: StimulantMedical[], afflicti
 		effects.damageBonus += item.effects.damageBonus
 		effects.weightBonus += item.effects.weightBonus
 		effects.fireRate += item.effects.fireRate
+		effects.damageReduction += item.effects.damageReduction
 	}
 
 	for (const type of afflictions || []) {

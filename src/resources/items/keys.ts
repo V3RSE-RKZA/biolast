@@ -6,10 +6,10 @@ export const keys = keysObject({
 	shed_key: {
 		type: 'Key',
 		name: 'shed_key',
-		durability: 3,
+		durability: 2,
 		aliases: [],
 		icon: '<:U_key:870786870852874260>',
-		slotsUsed: 3,
+		slotsUsed: 2,
 		itemLevel: 1
 	},
 	warehouse_key: {
@@ -35,6 +35,15 @@ export const keys = keysObject({
 		name: 'gunsafe_code',
 		durability: 1,
 		aliases: ['gunsafe'],
+		icon: '<:U_key:870786870852874260>',
+		slotsUsed: 1,
+		itemLevel: 8
+	},
+	daves_drug_key: {
+		type: 'Key',
+		name: 'daves_drug_key',
+		durability: 1,
+		aliases: ['drug_key', 'daves_key'],
 		icon: '<:U_key:870786870852874260>',
 		slotsUsed: 1,
 		itemLevel: 8

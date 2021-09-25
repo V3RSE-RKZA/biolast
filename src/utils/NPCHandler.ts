@@ -17,6 +17,7 @@ import { getEquips, getItemDisplay, getItems } from './itemUtils'
 import { logger } from './logger'
 import { getAttackDamage, getBodyPartHit } from './raidUtils'
 import getRandomInt from './randomInt'
+import { addStatusEffects, getActiveStimulants } from './playerUtils'
 
 class NPCHandler {
 	private app: App
@@ -197,6 +198,9 @@ class NPCHandler {
 		const messages = []
 		const userBackpackData = getItems(userBackpack)
 		const userEquips = getEquips(userBackpack)
+		const victimStimulants = await getActiveStimulants(transactionQuery, member.id, ['damage'], true)
+		const victimEffects = addStatusEffects(victimStimulants.map(stim => stim.stimulant))
+		const stimulantDamageMulti = (1 - (victimEffects.damageReduction / 100))
 		const limbsHit = []
 		let totalDamage
 		let bodyPartHit
@@ -211,7 +215,7 @@ class NPCHandler {
 
 				if (npc.ammo.spreadsDamageToLimbs) {
 					limbsHit.push({
-						damage: getAttackDamage(npc.damage / npc.ammo.spreadsDamageToLimbs, npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+						damage: getAttackDamage((npc.damage * stimulantDamageMulti) / npc.ammo.spreadsDamageToLimbs, npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
 						limb: bodyPartHit.result
 					})
 
@@ -224,14 +228,14 @@ class NPCHandler {
 						}
 
 						limbsHit.push({
-							damage: getAttackDamage(npc.damage / npc.ammo.spreadsDamageToLimbs, npc.ammo.penetration, limb.result, userEquips.armor?.item, userEquips.helmet?.item),
+							damage: getAttackDamage((npc.damage * stimulantDamageMulti) / npc.ammo.spreadsDamageToLimbs, npc.ammo.penetration, limb.result, userEquips.armor?.item, userEquips.helmet?.item),
 							limb: limb.result
 						})
 					}
 				}
 				else {
 					limbsHit.push({
-						damage: getAttackDamage(npc.damage, npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+						damage: getAttackDamage((npc.damage * stimulantDamageMulti), npc.ammo.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
 						limb: bodyPartHit.result
 					})
 				}
@@ -254,7 +258,7 @@ class NPCHandler {
 			else {
 				npcAttackPenetration = npc.weapon.penetration
 				limbsHit.push({
-					damage: getAttackDamage(npc.damage, npc.weapon.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+					damage: getAttackDamage((npc.damage * stimulantDamageMulti), npc.weapon.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
 					limb: bodyPartHit.result
 				})
 				totalDamage = limbsHit[0].damage.total
@@ -267,7 +271,7 @@ class NPCHandler {
 			bodyPartHit = getBodyPartHit(50)
 			npcAttackPenetration = 0.75
 			limbsHit.push({
-				damage: getAttackDamage(npc.damage, npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+				damage: getAttackDamage((npc.damage * stimulantDamageMulti), npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
 				limb: bodyPartHit.result
 			})
 			totalDamage = limbsHit[0].damage.total

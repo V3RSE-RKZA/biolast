@@ -127,13 +127,19 @@ class HealCommand extends CustomSlashCommand {
 			const effectsDisplay = []
 
 			if (itemToUse.item.effects.accuracyBonus) {
-				effectsDisplay.push(`You now have **${itemToUse.item.effects.accuracyBonus}%** better accuracy with your weapons.`)
+				effectsDisplay.push(`You now have **${itemToUse.item.effects.accuracyBonus > 0 ? '+' : ''}${itemToUse.item.effects.accuracyBonus}%** accuracy with your weapons.`)
 			}
 			if (itemToUse.item.effects.damageBonus) {
-				effectsDisplay.push(`You now deal **${itemToUse.item.effects.damageBonus}%** more damage with your weapons.`)
+				effectsDisplay.push(`You now deal **${itemToUse.item.effects.damageBonus > 0 ? '+' : ''}${itemToUse.item.effects.damageBonus}%** damage with your weapons.`)
 			}
 			if (itemToUse.item.effects.weightBonus) {
-				effectsDisplay.push(`Your inventory slots has been increased by **${itemToUse.item.effects.weightBonus}** (${getBackpackLimit(equips.backpack?.item)} → ${getBackpackLimit(equips.backpack?.item) + itemToUse.item.effects.weightBonus}).`)
+				effectsDisplay.push(`Your inventory slots has been ${itemToUse.item.effects.weightBonus > 0 ? 'increased' : 'decreased'} by **${itemToUse.item.effects.weightBonus}** (${getBackpackLimit(equips.backpack?.item)} → ${getBackpackLimit(equips.backpack?.item) + itemToUse.item.effects.weightBonus}).`)
+			}
+			if (itemToUse.item.effects.fireRate) {
+				effectsDisplay.push(`Your attack cooldown is now ${itemToUse.item.effects.fireRate > 0 ? 'decreased' : 'increased'} by **${itemToUse.item.effects.fireRate}%**.`)
+			}
+			if (itemToUse.item.effects.damageReduction) {
+				effectsDisplay.push(`Your damage taken from attacks is now ${itemToUse.item.effects.damageReduction > 0 ? 'decreased' : 'increased'} by **${itemToUse.item.effects.damageReduction}%**.`)
 			}
 
 			await ctx.send({

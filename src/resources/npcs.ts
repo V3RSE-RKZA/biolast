@@ -127,6 +127,25 @@ export const npcs = npcsObject({
 		xp: 20,
 		chanceToBite: 20
 	},
+	crawler_weak: {
+		type: 'walker',
+		id: 'crawler_weak',
+		display: 'Crawler',
+		icon: '🧟‍♂️',
+		health: 20,
+		damage: 40,
+		drops: {
+			common: [items.bandage],
+			uncommon: [items.makeshift_pistol_bullet],
+			rare: [items.walker_goop],
+			rolls: 1
+		},
+		quotes: [
+			'~*You hear a deep growl close by*~'
+		],
+		xp: 20,
+		chanceToBite: 20
+	},
 	cain: {
 		type: 'boss',
 		subtype: 'ranged',
@@ -144,7 +163,11 @@ export const npcs = npcsObject({
 		weapon: items['glock-17'],
 		ammo: items['9mm_FMJ_bullet'],
 		quotes: [
-			'~*You hear footsteps nearby*~'
+			'~*You hear footsteps nearby*~',
+			'~*Cain: Life is suffering.*~',
+			'~*Cain: I have a plot specifically made for you.*~',
+			'~*Cain: Do not be afraid of death. Welcome it.*~',
+			'~*Cain: The dead shall not be disturbed.*~'
 		],
 		armor: items.wooden_armor,
 		helmet: items.wooden_helmet,
@@ -160,8 +183,8 @@ export const npcs = npcsObject({
 		damage: 25,
 		drops: {
 			common: [items.bandage],
-			uncommon: [items.ifak_medkit],
-			rare: [items['5.45x39_FMJ_bullet'], items['9mm_FMJ_bullet']],
+			uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
+			rare: [items['5.45x39_FMJ_bullet'], items['9mm_FMJ_bullet'], items.small_pouch],
 			rolls: 1
 		},
 		weapon: items.luger,
@@ -202,15 +225,19 @@ export const npcs = npcsObject({
 		health: 185,
 		damage: 20,
 		drops: {
-			common: [items.pitchfork],
-			uncommon: [items.sauce_pan, items.ifak_medkit],
+			common: [items.pitchfork, items.daves_drug_key],
+			uncommon: [items.sauce_pan, items.paracetamol],
 			rare: [items.sledgehammer, items.gunsafe_code],
-			rolls: 1
+			rolls: 2
 		},
 		weapon: items['aks-74u'],
 		ammo: items['5.45x39_FMJ_bullet'],
 		quotes: [
-			'~*You hear the giggles and crackles of a man...*~'
+			'~*You hear the giggles and crackles of a man...*~',
+			'~*Dave: Did I hear somebody?*~',
+			'~*Dave: buUUUUuUrP*~',
+			'~*Dave: What do you mean, zombies?*~',
+			'~*Dave: Damn pterodactyls eating my crops again.*~'
 		],
 		armor: items.cloth_armor,
 		helmet: items.sauce_pan,
