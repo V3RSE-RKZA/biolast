@@ -1,4 +1,4 @@
-import { CommandOptionType, SlashCreator, CommandContext, Message } from 'slash-create'
+import { CommandOptionType, SlashCreator, CommandContext, Message, AutocompleteContext } from 'slash-create'
 import App from '../app'
 import { icons, shopDailyBuyLimit } from '../config'
 import { allItems } from '../resources/items'
@@ -73,7 +73,8 @@ class ShopCommand extends CustomSlashCommand {
 							type: CommandOptionType.STRING,
 							name: 'item',
 							description: 'Name of item to search for.',
-							required: false
+							required: false,
+							autocomplete: true
 						}
 					]
 				}
@@ -392,6 +393,26 @@ class ShopCommand extends CustomSlashCommand {
 		}
 
 		return pages
+	}
+
+	async autocomplete (ctx: AutocompleteContext): Promise<void> {
+		const search = ctx.options.view[ctx.focused].replace(/ +/g, '_')
+		const items = allItems.filter(itm => itm.name.toLowerCase().includes(search) || itm.type.toLowerCase().includes(search))
+
+		if (items.length) {
+			await ctx.sendResults(items.slice(0, 25).map(itm => ({ name: `${itm.type} - ${itm.name.replace(/_/g, ' ')}`, value: itm.name })))
+		}
+		else {
+			const related = itemCorrector.getWord(search, 5)
+			const relatedItem = related && allItems.find(i => i.name.toLowerCase() === related || i.aliases.map(a => a.toLowerCase()).includes(related))
+
+			if (relatedItem) {
+				await ctx.sendResults([{ name: `${relatedItem.type} - ${relatedItem.name.replace(/_/g, ' ')}`, value: relatedItem.name }])
+			}
+			else {
+				await ctx.sendResults([])
+			}
+		}
 	}
 }
 
