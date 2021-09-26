@@ -3,9 +3,9 @@ import { Helmet } from '../../types/Items'
 const helmetObject = <T>(et: { [K in keyof T]: (Helmet) & { name: K } }) => et
 
 export const helmets = helmetObject({
-	paca_helmet: {
+	aramid_helmet: {
 		type: 'Helmet',
-		name: 'paca_helmet',
+		name: 'aramid_helmet',
 		icon: '<:U_helmet:874671013181415434>',
 		aliases: [],
 		sellPrice: 129,
