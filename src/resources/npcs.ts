@@ -113,7 +113,7 @@ export const npcs = npcsObject({
 		display: 'Walker',
 		icon: '🧟‍♂️',
 		health: 30,
-		damage: 25,
+		damage: 20,
 		drops: {
 			common: [items.bandage],
 			uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.walker_goop],
@@ -133,7 +133,7 @@ export const npcs = npcsObject({
 		display: 'Crawler',
 		icon: '🧟‍♂️',
 		health: 20,
-		damage: 40,
+		damage: 35,
 		drops: {
 			common: [items.bandage],
 			uncommon: [items.makeshift_pistol_bullet],
