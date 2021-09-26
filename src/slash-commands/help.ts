@@ -114,7 +114,7 @@ class HelpCommand extends CustomSlashCommand {
 				'\n\nIf however you are trying to check how much damage a ranged weapon will deal, you\'ll need to instead check how much damage the **ammo** your using deals. This is because **damage with ranged weapons' +
 				' is entirely dependent on the ammo used**.\n\nArmor may also affect how much damage you deal, **if the ammo your using has a lower penetration level than the armor level the target is wearing, your damage will' +
 				' be reduced**. If your ammo has a higher penetration level than the armor level your target is wearing, you will deal full damage.\n\nHitting certain body parts will also determine your damage. A hit to the target\'s head' +
-				' will deal double the damage (assuming they aren\'t wearing a helmet) but is obviously harder to hit. A hit to the chest will deal normal damage and is the easiest body part to hit.' +
+				' will deal 1.5x damage (assuming they aren\'t wearing a helmet) but is obviously harder to hit. A hit to the chest will deal normal damage and is the easiest body part to hit.' +
 				' A hit to the arms or legs deals half damage but you also avoid hitting any armor the target is wearing. **Your ability to successfully hit a targeted limb when using the `attack` command is dependent on your' +
 				' weapon\'s accuracy.**')
 
