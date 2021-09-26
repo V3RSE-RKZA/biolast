@@ -128,5 +128,19 @@ export const melee = meleeObject({
 		damage: 30,
 		penetration: 1.45,
 		itemLevel: 7
+	},
+	replica_katana: {
+		type: 'Melee Weapon',
+		name: 'replica_katana',
+		icon: '<:U_melee:601366669251575857>',
+		aliases: ['katana'],
+		sellPrice: 88,
+		durability: 2,
+		slotsUsed: 1,
+		fireRate: 25,
+		accuracy: 70,
+		damage: 25,
+		penetration: 0.95,
+		itemLevel: 8
 	}
 })
