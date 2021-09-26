@@ -7,6 +7,10 @@ interface NPCBase {
 	type: NPCType
 	id: string
 	display: string
+	/**
+	 * The avatar for this npc
+	 */
+	avatarURL: string
 	health: number
 	damage: number
 	icon: string
@@ -111,6 +115,7 @@ export const npcs = npcsObject({
 		type: 'walker',
 		id: 'walker_weak',
 		display: 'Walker',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563461253935114/walker_temp.png',
 		icon: '🧟‍♂️',
 		health: 30,
 		damage: 20,
@@ -131,6 +136,7 @@ export const npcs = npcsObject({
 		type: 'walker',
 		id: 'crawler_weak',
 		display: 'Crawler',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563461253935114/walker_temp.png',
 		icon: '🧟‍♂️',
 		health: 20,
 		damage: 35,
@@ -151,6 +157,7 @@ export const npcs = npcsObject({
 		subtype: 'ranged',
 		id: 'cain',
 		display: 'Cain, The Gravekeeper',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562973208915978/R_12.jpg',
 		icon: '',
 		health: 125,
 		damage: 30,
@@ -178,6 +185,7 @@ export const npcs = npcsObject({
 		subtype: 'ranged',
 		id: 'raider_weak',
 		display: 'Raider',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562992142012416/raider_temp.png',
 		icon: '',
 		health: 30,
 		damage: 25,
@@ -200,6 +208,7 @@ export const npcs = npcsObject({
 		type: 'walker',
 		id: 'bloated_walker',
 		display: 'Bloated Walker',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563461253935114/walker_temp.png',
 		icon: '🧟‍♂️',
 		health: 50,
 		damage: 35,
@@ -221,6 +230,7 @@ export const npcs = npcsObject({
 		subtype: 'ranged',
 		id: 'dave',
 		display: 'Dave, The Redneck',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563193929986068/R_13.jpg',
 		icon: '👨‍🌾',
 		health: 185,
 		damage: 20,
@@ -247,6 +257,7 @@ export const npcs = npcsObject({
 		type: 'walker',
 		id: 'feral_animal',
 		display: 'Feral Animal',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563461253935114/walker_temp.png',
 		icon: '🐕',
 		health: 35,
 		damage: 45,

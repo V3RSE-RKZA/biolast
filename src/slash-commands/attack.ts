@@ -122,6 +122,9 @@ class AttackCommand extends CustomSlashCommand {
 		if (!channel) {
 			throw new Error('Could not find channel in Eris cache')
 		}
+		else if (channel.type !== 0) {
+			throw new Error(`Raid channel (${channel.name} ID: ${channel.id}) is not of type: Text Channel`)
+		}
 		const raidType = getRaidType(guild.id)
 		if (!raidType) {
 			throw new Error(`Could not find raid location for guild (${guild.name} ID: ${guild.id})`)
@@ -391,7 +394,7 @@ class AttackCommand extends CustomSlashCommand {
 				// stop sending messages saying that an NPC is in the channel
 				this.app.npcHandler.clearNPCInterval(ctx.channelID)
 				// start timer to spawn a new NPC
-				await this.app.npcHandler.spawnNPC(ctx.channelID, channel.name)
+				await this.app.npcHandler.spawnNPC(channel)
 
 				// check if user had any npc kill quests
 				for (const quest of userQuests) {

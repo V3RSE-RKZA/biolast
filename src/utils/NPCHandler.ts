@@ -18,6 +18,7 @@ import { logger } from './logger'
 import { getAttackDamage, getBodyPartHit } from './raidUtils'
 import getRandomInt from './randomInt'
 import { addStatusEffects, getActiveStimulants } from './playerUtils'
+import { TextChannel, Webhook } from 'eris'
 
 class NPCHandler {
 	private app: App
@@ -40,7 +41,7 @@ class NPCHandler {
 				// make sure guild is cached on this shard
 				if (guild) {
 					for (const raidChannel of location.channels) {
-						const channel = guild.channels.find(ch => ch.name === raidChannel.name)
+						const channel = guild.channels.find(ch => ch.name === raidChannel.name) as TextChannel
 
 						if (channel) {
 							const spawn = spawns.find(row => row.channelId === channel.id)
@@ -58,10 +59,13 @@ class NPCHandler {
 									const maxInterval = location.raidLength / 3
 									const minInterval = location.raidLength / 5
 									const timer = getRandomInt(minInterval, maxInterval)
+									const webhook = await this.getNPCWebhook(channel)
 
 									const interval = setInterval(async () => {
 										try {
-											await this.app.bot.createMessage(channel.id, {
+											await this.app.bot.executeWebhook(webhook.id, webhook.token, {
+												username: mob.display,
+												avatarURL: mob.avatarURL,
 												content: mob.quotes[Math.floor(Math.random() * mob.quotes.length)]
 											})
 										}
@@ -75,7 +79,7 @@ class NPCHandler {
 							}
 							else if (raidChannel.npcSpawns) {
 								// mob not spawned, spawn here
-								await this.spawnNPC(channel.id, channel.name)
+								await this.spawnNPC(channel)
 							}
 						}
 						else {
@@ -88,20 +92,35 @@ class NPCHandler {
 		}
 	}
 
+	async getNPCWebhook (channel: TextChannel): Promise<Webhook> {
+		const webhooks = await channel.getWebhooks()
+		let webhook: Webhook
+
+		if (webhooks.length) {
+			webhook = webhooks[0]
+		}
+		else {
+			webhook = await channel.createWebhook({
+				name: 'NPC'
+			}, 'Creating NPC webhook for quotes')
+		}
+
+		return webhook
+	}
+
 	/**
 	 * Spawns an NPC in a raid channel after some time
-	 * @param channelID ID of channel to spawn npc in
-	 * @param channelName Name of channel to spawn npc in
+	 * @param channel Channel to spawn npc in
 	 */
-	async spawnNPC (channelID: string, channelName: string): Promise<void> {
-		const location = allLocations.find(loc => loc.channels.some(ch => ch.name === channelName))
-		const raidChannel = location?.channels.find(ch => ch.name === channelName)
+	async spawnNPC (channel: TextChannel): Promise<void> {
+		const location = allLocations.find(loc => loc.channels.some(ch => ch.name === channel.name))
+		const raidChannel = location?.channels.find(ch => ch.name === channel.name)
 
 		if (location && raidChannel && raidChannel.npcSpawns) {
 			const timer = getRandomInt(raidChannel.npcSpawns.cooldownMin, raidChannel.npcSpawns.cooldownMax)
 			const possibleSpawns = raidChannel.npcSpawns.npcs
 
-			logger.info(`Spawning NPC at channel: ${channelName} in ${timer} seconds`)
+			logger.info(`Spawning NPC at channel: ${channel.name} in ${timer} seconds`)
 
 			setTimeout(async () => {
 				try {
@@ -109,16 +128,21 @@ class NPCHandler {
 					const maxInterval = location.raidLength / 3
 					const minInterval = location.raidLength / 5
 					const intervalTimer = getRandomInt(minInterval, maxInterval)
+					const webhook = await this.getNPCWebhook(channel)
 
-					await createNPC(query, channelID, npc)
+					await createNPC(query, channel.id, npc)
 
-					await this.app.bot.createMessage(channelID, {
+					await this.app.bot.executeWebhook(webhook.id, webhook.token, {
+						username: npc.display,
+						avatarURL: npc.avatarURL,
 						content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
 					})
 
 					const interval = setInterval(async () => {
 						try {
-							await this.app.bot.createMessage(channelID, {
+							await this.app.bot.executeWebhook(webhook.id, webhook.token, {
+								username: npc.display,
+								avatarURL: npc.avatarURL,
 								content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
 							})
 						}
@@ -127,7 +151,7 @@ class NPCHandler {
 						}
 					}, intervalTimer * 1000)
 
-					this.intervals.set(channelID, interval)
+					this.intervals.set(channel.id, interval)
 				}
 				catch (err) {
 					logger.error(err)
@@ -135,7 +159,7 @@ class NPCHandler {
 			}, timer * 1000)
 		}
 		else {
-			logger.error(`Channel: ${channelName} (${channelID}) is not a raid channel that spawns NPCs`)
+			logger.error(`Channel: ${channel.name} (${channel.id}) is not a raid channel that spawns NPCs`)
 		}
 	}
 
