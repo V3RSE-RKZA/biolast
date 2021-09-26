@@ -120,7 +120,7 @@ class HelpCommand extends CustomSlashCommand {
 
 		const healEmbed = new Embed()
 			.setTitle('How do I heal?')
-			.setDescription('If you find that you\'ve been attacked and need to replenish some health, you can use a **Medical** item to heal: `/heal <item id>`' +
+			.setDescription('If you find that you\'ve been attacked and need to replenish some health, you can use a **Medical** item to heal: `/use <item id>`' +
 				'\n\nIf you don\'t have any medical items on you, you can check the shop (`/shop view`) to see if any medical items are for sale. If all else fails, you ' +
 				' will heal passively for **5 health** every **5 minutes** when out of raid.')
 
