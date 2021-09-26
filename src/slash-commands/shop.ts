@@ -16,7 +16,7 @@ import { formatNumber } from '../utils/stringUtils'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 
-const ITEMS_PER_PAGE = 10
+const ITEMS_PER_PAGE = 8
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
 class ShopCommand extends CustomSlashCommand {
