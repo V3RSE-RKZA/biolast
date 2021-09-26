@@ -82,6 +82,8 @@ class SearchCommand extends CustomSlashCommand {
 			}
 		}
 
+		npcDescription.push(`**Damage**: ${npc.damage}`)
+
 		await ctx.send({
 			content: `Enemy spotted: ${npc.icon}__**${npcNameDisplay}**__\n\n${npcDescription.join('\n')}\n\n` +
 				`Attack this ${npc.type} with \`/attack npc\`.`
