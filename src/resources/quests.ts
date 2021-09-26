@@ -75,7 +75,7 @@ export const quests: Quest[] = [
 		progressGoal: 1,
 		rewards: {
 			item: items.bandage,
-			xp: 25
+			xp: 50
 		}
 	},
 	{
@@ -86,7 +86,7 @@ export const quests: Quest[] = [
 		progressGoal: 1,
 		rewards: {
 			money: 40,
-			xp: 25
+			xp: 50
 		}
 	},
 	{
@@ -97,7 +97,7 @@ export const quests: Quest[] = [
 		progressGoal: 3,
 		rewards: {
 			item: items['.22LR_bullet'],
-			xp: 25
+			xp: 50
 		}
 	},
 	{
@@ -108,7 +108,7 @@ export const quests: Quest[] = [
 		progressGoal: 3,
 		rewards: {
 			money: 50,
-			xp: 25
+			xp: 50
 		}
 	},
 	{
@@ -119,7 +119,7 @@ export const quests: Quest[] = [
 		progressGoal: 2,
 		rewards: {
 			item: items.ifak_medkit,
-			xp: 40
+			xp: 80
 		}
 	},
 	{
@@ -130,7 +130,7 @@ export const quests: Quest[] = [
 		progressGoal: 2,
 		rewards: {
 			money: 100,
-			xp: 40
+			xp: 80
 		}
 	},
 	{
@@ -141,7 +141,7 @@ export const quests: Quest[] = [
 		progressGoal: 2,
 		rewards: {
 			item: items['9mm_FMJ_bullet'],
-			xp: 40
+			xp: 80
 		}
 	},
 	{
@@ -152,7 +152,7 @@ export const quests: Quest[] = [
 		progressGoal: 2,
 		rewards: {
 			money: 150,
-			xp: 40
+			xp: 80
 		}
 	},
 	{
@@ -164,7 +164,7 @@ export const quests: Quest[] = [
 		key: items.shed_key,
 		rewards: {
 			money: 200,
-			xp: 40
+			xp: 80
 		}
 	},
 	{
@@ -175,7 +175,7 @@ export const quests: Quest[] = [
 		progressGoal: 1,
 		rewards: {
 			money: 325,
-			xp: 50
+			xp: 100
 		},
 		item: items['glock-17']
 	},
@@ -187,7 +187,7 @@ export const quests: Quest[] = [
 		progressGoal: 2,
 		rewards: {
 			money: 300,
-			xp: 50
+			xp: 100
 		},
 		item: items.walker_goop
 	}
