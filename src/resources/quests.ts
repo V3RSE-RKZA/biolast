@@ -94,7 +94,7 @@ export const quests: Quest[] = [
 		questType: 'Evacs',
 		minLevel: 1,
 		maxLevel: 4,
-		progressGoal: 3,
+		progressGoal: 2,
 		rewards: {
 			item: items['.22LR_bullet'],
 			xp: 50
@@ -105,7 +105,7 @@ export const quests: Quest[] = [
 		questType: 'Evacs',
 		minLevel: 1,
 		maxLevel: 4,
-		progressGoal: 3,
+		progressGoal: 2,
 		rewards: {
 			money: 50,
 			xp: 50
