@@ -48,30 +48,10 @@ export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<
 
 	if (itemRow) {
 		const attributes = []
-		let display
+		const display = `${item.icon}\`${itemDisplayName}\``
 
-		if (showDurability && (item.type === 'Melee Weapon' || item.type === 'Ranged Weapon') && itemRow.durability) {
-			const currentDura = itemRow.durability / item.durability
-
-			if (currentDura >= 0.8) {
-				display = `*Pristine* ${item.icon}\`${itemDisplayName}\``
-			}
-			else if (currentDura >= 0.6) {
-				display = `*Used* ${item.icon}\`${itemDisplayName}\``
-			}
-			else if (currentDura >= 0.4) {
-				display = `*Shoddy* ${item.icon}\`${itemDisplayName}\``
-			}
-			else {
-				display = `*Damaged* ${item.icon}\`${itemDisplayName}\``
-			}
-		}
-		else {
-			display = `${item.icon}\`${itemDisplayName}\``
-
-			if (showDurability && itemRow.durability) {
-				attributes.push(`**${itemRow.durability}** uses left`)
-			}
+		if (showDurability && itemRow.durability) {
+			attributes.push(`**${itemRow.durability}** uses left`)
 		}
 
 		if (showEquipped && instanceOfBackpackRow(itemRow) && itemRow.equipped) {
