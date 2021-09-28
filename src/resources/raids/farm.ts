@@ -152,11 +152,11 @@ export const farm: Location = {
 					xp: 8
 				},
 				uncommon: {
-					items: [items['glock-17'], items['9mm_HP_bullet'], items['20_gauge_buckshot']],
+					items: [items['glock-17'], items['9mm_HP_bullet'], items['20-gauge_buckshot']],
 					xp: 10
 				},
 				rare: {
-					items: [items.bobwhite_g2, items['20_gauge_slug']],
+					items: [items.bobwhite_g2, items['20-gauge_slug']],
 					xp: 15
 				},
 				rolls: 4,

@@ -8,7 +8,7 @@ export const ammunition = ammoObject({
 		type: 'Ammunition',
 		name: '5.45x39mm_FMJ_bullet',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['545mm', '5.45x39_fmj', '545', '545_rifle', '545x39', '545_fmj', '545_bullet', '5.45x39_fmj'],
+		aliases: ['545mm', '5.45x39_fmj', '545', '545_rifle', '545x39', '545_fmj', '545_bullet'],
 		description: 'Full metal jacket 5.45x39mm ammunition for Kalashnikov rifles.',
 		damage: 31,
 		penetration: 2.2,
@@ -47,11 +47,11 @@ export const ammunition = ammoObject({
 		type: 'Ammunition',
 		name: 'SS195LF_bullet',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['ss195', 'ss195lf', 'five-seven_bullet', 'five-seven_bullet'],
+		aliases: ['5.7', '5.7mm', '5.7x28', '5.7x28mm', 'ss195', 'ss195lf', 'five-seven_bullet'],
 		description: 'Lead free 5.7x28mm cartridge.',
 		damage: 34,
 		penetration: 2.3,
-		ammoFor: [ranged['Five-seveN']],
+		ammoFor: [ranged['FN_Five-seveN'], ranged.FN_P90],
 		sellPrice: 372,
 		slotsUsed: 1,
 		itemLevel: 9
@@ -64,7 +64,7 @@ export const ammunition = ammoObject({
 		description: 'Armor-piercing 5.7x28mm cartridge.',
 		damage: 43,
 		penetration: 3.2,
-		ammoFor: [ranged['Five-seveN']],
+		ammoFor: [ranged['FN_Five-seveN'], ranged.FN_P90],
 		sellPrice: 624,
 		slotsUsed: 1,
 		itemLevel: 12
@@ -77,7 +77,7 @@ export const ammunition = ammoObject({
 		description: 'Full metal jacket ammunition for 9mm weapons.',
 		damage: 20,
 		penetration: 1.7,
-		ammoFor: [ranged['glock-17']],
+		ammoFor: [ranged['glock-17'], ranged.P320],
 		sellPrice: 158,
 		slotsUsed: 1,
 		itemLevel: 5
@@ -90,7 +90,7 @@ export const ammunition = ammoObject({
 		description: 'Hollow point ammunition for 9mm weapons. Hollow point bullets expand when they hit their target, causing more damage.',
 		damage: 40,
 		penetration: 1,
-		ammoFor: [ranged['glock-17']],
+		ammoFor: [ranged['glock-17'], ranged.P320],
 		sellPrice: 302,
 		slotsUsed: 1,
 		itemLevel: 8
@@ -103,7 +103,7 @@ export const ammunition = ammoObject({
 		description: 'Radically invasive projectile ammunition for 9mm weapons. These bullets split into multiple pieces on impact, causing damage to spread further than a hollow point bullet.',
 		damage: 52,
 		penetration: 1.8,
-		ammoFor: [ranged['glock-17']],
+		ammoFor: [ranged['glock-17'], ranged.P320],
 		sellPrice: 521,
 		slotsUsed: 1,
 		itemLevel: 12,
@@ -117,7 +117,7 @@ export const ammunition = ammoObject({
 		description: 'Armor-piercing ammunition for 9mm weapons.',
 		damage: 36,
 		penetration: 2.9,
-		ammoFor: [ranged['glock-17']],
+		ammoFor: [ranged['glock-17'], ranged.P320],
 		sellPrice: 831,
 		slotsUsed: 1,
 		itemLevel: 15
@@ -187,9 +187,9 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 6
 	},
-	'20_gauge_buckshot': {
+	'20-gauge_buckshot': {
 		type: 'Ammunition',
-		name: '20_gauge_buckshot',
+		name: '20-gauge_buckshot',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['buckshot', '20_guage', '20g_buckshot', '20g_shell', '20g_shotgun', '20g', 'buck'],
 		description: '20-gauge buckshot is a shell that is smaller in caliber than a 12-gauge and fires many small pellets at a target.',
@@ -201,9 +201,9 @@ export const ammunition = ammoObject({
 		itemLevel: 8,
 		spreadsDamageToLimbs: 2
 	},
-	'20_gauge_slug': {
+	'20-gauge_slug': {
 		type: 'Ammunition',
-		name: '20_gauge_slug',
+		name: '20-gauge_slug',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['slug', '20g_slug', 'slug_shell', 'shotgun_slug'],
 		description: 'A 20-gauge slug shell that fires a single, large projectile.',
@@ -213,5 +213,45 @@ export const ammunition = ammoObject({
 		sellPrice: 615,
 		slotsUsed: 1,
 		itemLevel: 12
+	},
+	'12-gauge_buckshot': {
+		type: 'Ammunition',
+		name: '12-gauge_buckshot',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['12_guage', '12g_buckshot', '12g_shell', '12g_shotgun', '12g'],
+		description: '20-gauge buckshot shell. Fires many small pellets at a target.',
+		damage: 64,
+		penetration: 2.9,
+		ammoFor: [ranged.mossberg_500, ranged.benelli_M4],
+		sellPrice: 707,
+		slotsUsed: 1,
+		itemLevel: 12,
+		spreadsDamageToLimbs: 2
+	},
+	'12-gauge_slug': {
+		type: 'Ammunition',
+		name: '12-gauge_slug',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['12g_slug'],
+		description: 'A 12-gauge slug shell that fires a single, large projectile.',
+		damage: 78,
+		penetration: 3.12,
+		ammoFor: [ranged.mossberg_500, ranged.benelli_M4],
+		sellPrice: 1054,
+		slotsUsed: 1,
+		itemLevel: 12
+	},
+	'12-gauge_AP_slug': {
+		type: 'Ammunition',
+		name: '12-gauge_AP_slug',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['12g_ap_slug', '12g_ap', 'ap_slug', 'ap_shell', '12_ap_slug', '12_guage_ap'],
+		description: 'A 12-gauge armor-piercing slug shell.',
+		damage: 75,
+		penetration: 4.05,
+		ammoFor: [ranged.mossberg_500, ranged.benelli_M4],
+		sellPrice: 1575,
+		slotsUsed: 1,
+		itemLevel: 17
 	}
 })
