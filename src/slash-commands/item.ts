@@ -146,7 +146,7 @@ class ItemCommand extends CustomSlashCommand {
 
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 				itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
-				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (${itm.spreadsDamageToLimbs ? `**${Math.round(itm.damage / itm.spreadsDamageToLimbs)} x ${itm.spreadsDamageToLimbs}** damage` : `**${itm.damage}** damage`})`).join('\n'), true)
+				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (${itm.spreadsDamageToLimbs ? `**${Math.round(itm.damage / itm.spreadsDamageToLimbs)} x ${itm.spreadsDamageToLimbs}** damage` : `**${itm.damage}** damage`})`).join('\n'))
 				break
 			}
 			case 'Body Armor': {

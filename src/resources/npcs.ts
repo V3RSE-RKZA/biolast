@@ -192,7 +192,7 @@ export const npcs = npcsObject({
 		drops: {
 			common: [items.bandage],
 			uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
-			rare: [items['5.45x39_FMJ_bullet'], items['9mm_FMJ_bullet'], items.small_pouch],
+			rare: [items['5.45x39mm_FMJ_bullet'], items['9mm_FMJ_bullet'], items.small_pouch],
 			rolls: 1
 		},
 		weapon: items.luger,
@@ -240,8 +240,8 @@ export const npcs = npcsObject({
 			rare: [items.sledgehammer, items.gunsafe_code],
 			rolls: 2
 		},
-		weapon: items['aks-74u'],
-		ammo: items['5.45x39_FMJ_bullet'],
+		weapon: items.saiga_MK,
+		ammo: items['5.45x39mm_FMJ_bullet'],
 		quotes: [
 			'~*You hear the giggles and crackles of a man...*~',
 			'~*Dave: Did I hear somebody?*~',

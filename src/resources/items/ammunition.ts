@@ -4,18 +4,70 @@ import { ranged } from './ranged'
 const ammoObject = <T>(et: { [K in keyof T]: Ammunition & { name: K } }) => et
 
 export const ammunition = ammoObject({
-	'5.45x39_FMJ_bullet': {
+	'5.45x39mm_FMJ_bullet': {
 		type: 'Ammunition',
-		name: '5.45x39_FMJ_bullet',
+		name: '5.45x39mm_FMJ_bullet',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['545', '545_rifle', '545x39', '545_fmj', '545_bullet', '5.45x39_fmj'],
+		aliases: ['545mm', '5.45x39_fmj', '545', '545_rifle', '545x39', '545_fmj', '545_bullet', '5.45x39_fmj'],
 		description: 'Full metal jacket 5.45x39mm ammunition for Kalashnikov rifles.',
 		damage: 31,
 		penetration: 2.2,
-		ammoFor: [ranged['aks-74u']],
+		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
 		sellPrice: 342,
 		slotsUsed: 1,
 		itemLevel: 7
+	},
+	'5.45x39mm_HP_bullet': {
+		type: 'Ammunition',
+		name: '5.45x39mm_HP_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['5.45x39_hp', '545_hp', '5.45_hp', '545x39_hp'],
+		description: 'Hollow point 5.45x39mm ammunition for Kalashnikov rifles. Hollow point bullets expand when they hit their target, causing more damage.',
+		damage: 43,
+		penetration: 2.1,
+		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
+		sellPrice: 452,
+		slotsUsed: 1,
+		itemLevel: 9
+	},
+	'5.45x39mm_7N24_bullet': {
+		type: 'Ammunition',
+		name: '5.45x39mm_7N24_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['7n24', '5.45x39_7n24', '545_7n24', '5.45_7n24', '545x39_7n24'],
+		description: '7N24 Armor-piercing 5.45x39mm ammunition for Kalashnikov rifles.',
+		damage: 53,
+		penetration: 4.05,
+		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
+		sellPrice: 1132,
+		slotsUsed: 1,
+		itemLevel: 16
+	},
+	'SS195LF_bullet': {
+		type: 'Ammunition',
+		name: 'SS195LF_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['ss195', 'ss195lf', 'five-seven_bullet', 'five-seven_bullet'],
+		description: 'Lead free 5.7x28mm cartridge.',
+		damage: 34,
+		penetration: 2.3,
+		ammoFor: [ranged['Five-seveN']],
+		sellPrice: 372,
+		slotsUsed: 1,
+		itemLevel: 9
+	},
+	'SS190_bullet': {
+		type: 'Ammunition',
+		name: 'SS190_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['ss190', 'ss190_ap'],
+		description: 'Armor-piercing 5.7x28mm cartridge.',
+		damage: 43,
+		penetration: 3.2,
+		ammoFor: [ranged['Five-seveN']],
+		sellPrice: 624,
+		slotsUsed: 1,
+		itemLevel: 12
 	},
 	'9mm_FMJ_bullet': {
 		type: 'Ammunition',
@@ -35,7 +87,7 @@ export const ammunition = ammoObject({
 		name: '9mm_HP_bullet',
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['9x19_hp', '9mm_hp'],
-		description: 'Hollow point ammunition for 9mm weapons. Hollow point bullets expand when they hit their target, causing the damage to spread.',
+		description: 'Hollow point ammunition for 9mm weapons. Hollow point bullets expand when they hit their target, causing more damage.',
 		damage: 40,
 		penetration: 1,
 		ammoFor: [ranged['glock-17']],

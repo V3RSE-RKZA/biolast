@@ -3,17 +3,43 @@ import { RangedWeapon } from '../../types/Items'
 const rangedObject = <T>(et: { [K in keyof T]: RangedWeapon & { name: K } }) => et
 
 export const ranged = rangedObject({
+	'saiga_MK': {
+		type: 'Ranged Weapon',
+		name: 'saiga_MK',
+		description: 'Civilian semi-automatic rifle chambered in 5.45x39mm.',
+		icon: '<:U_rifle:869647344344387624>',
+		aliases: ['saiga', 'saiga_545'],
+		sellPrice: 376,
+		durability: 12,
+		slotsUsed: 4,
+		fireRate: 45,
+		accuracy: 91,
+		itemLevel: 7
+	},
 	'aks-74u': {
 		type: 'Ranged Weapon',
 		name: 'aks-74u',
 		icon: '<:U_rifle:869647344344387624>',
 		aliases: ['aks', 'ak-74'],
-		sellPrice: 376,
-		durability: 12,
+		sellPrice: 588,
+		durability: 10,
 		slotsUsed: 3,
-		fireRate: 45,
-		accuracy: 91,
-		itemLevel: 7
+		fireRate: 25,
+		accuracy: 52,
+		itemLevel: 10
+	},
+	'Five-seveN': {
+		type: 'Ranged Weapon',
+		name: 'Five-seveN',
+		description: 'Semi-automatic pistol produced by FN Herstal.',
+		icon: '<:U_weapon:601366669272678411>',
+		aliases: ['five'],
+		sellPrice: 401,
+		durability: 7,
+		slotsUsed: 2,
+		fireRate: 30,
+		accuracy: 85,
+		itemLevel: 8
 	},
 	'glock-17': {
 		type: 'Ranged Weapon',
