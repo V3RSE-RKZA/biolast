@@ -235,7 +235,7 @@ export const npcs = npcsObject({
 		health: 185,
 		damage: 20,
 		drops: {
-			common: [items.pitchfork, items.daves_drug_key],
+			common: [items.pitchfork, items.daves_drug_key, items.P320],
 			uncommon: [items.sauce_pan, items.paracetamol],
 			rare: [items.sledgehammer, items.gunsafe_code],
 			rolls: 2

@@ -162,7 +162,7 @@ export const suburbs: Location = {
 					xp: 10
 				},
 				rare: {
-					items: [items['glock-17'], items.wooden_helmet, items.wooden_armor],
+					items: [items['glock-17'], items.P320, items.wooden_helmet, items.wooden_armor],
 					xp: 20
 				},
 				rolls: 2,
