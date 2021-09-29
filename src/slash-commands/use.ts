@@ -2,12 +2,13 @@ import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
-import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
+import { clearCooldown, createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { addHealth, getUserRow } from '../utils/db/players'
 import { formatHealth } from '../utils/stringUtils'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems } from '../utils/itemUtils'
+import { getAfflictions } from '../utils/playerUtils'
 
 class HealCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -63,6 +64,7 @@ class HealCommand extends CustomSlashCommand {
 			}
 
 			const maxHeal = Math.min(userData.maxHealth - userData.health, itemToUse.item.healsFor)
+			const curedAfflictions = []
 
 			if (maxHeal === 0) {
 				await transaction.commit()
@@ -80,6 +82,21 @@ class HealCommand extends CustomSlashCommand {
 				await lowerItemDurability(transaction.query, itemToUse.row.id, 1)
 			}
 
+			if (itemToUse.item.curesBitten || itemToUse.item.curesBrokenArm) {
+				const afflictions = await getAfflictions(transaction.query, ctx.user.id, true)
+
+				for (const affliction of afflictions) {
+					if (itemToUse.item.curesBitten && affliction.type === 'Bitten') {
+						await clearCooldown(transaction.query, ctx.user.id, 'bitten')
+						curedAfflictions.push(affliction.type)
+					}
+					else if (itemToUse.item.curesBrokenArm && affliction.type === 'Broken Arm') {
+						await clearCooldown(transaction.query, ctx.user.id, 'broken-arm')
+						curedAfflictions.push(affliction.type)
+					}
+				}
+			}
+
 			await createCooldown(transaction.query, ctx.user.id, 'heal', itemToUse.item.healRate)
 			await addHealth(transaction.query, ctx.user.id, maxHeal)
 			await transaction.commit()
@@ -92,7 +109,9 @@ class HealCommand extends CustomSlashCommand {
 			})
 
 			await ctx.send({
-				content: `${icons.checkmark} You use your ${itemDisplay} to heal for **${maxHeal}** health! You now have ${formatHealth(userData.health + maxHeal, userData.maxHealth)} **${userData.health + maxHeal} / ${userData.maxHealth}** health.`
+				content: `${icons.checkmark} You use your ${itemDisplay} to heal for **${maxHeal}** health!` +
+					`You now have ${formatHealth(userData.health + maxHeal, userData.maxHealth)} **${userData.health + maxHeal} / ${userData.maxHealth}** health.` +
+					`${curedAfflictions.length ? `\n\nAfflictions cured: ${curedAfflictions.join(', ')}` : ''}`
 			})
 		}
 		else if (itemToUse.item.type === 'Medical' && itemToUse.item.subtype === 'Stimulant') {
