@@ -1,5 +1,4 @@
 import { Query, Cooldown } from '../../types/mysql'
-import { logger } from '../logger'
 
 /**
  * Check if user has a cooldown and returns the string formatted version if it exists, undefined if not
@@ -63,17 +62,7 @@ export function getCooldownTimeLeft (length: number, createdAt: number): number 
  * @param length The length of the cooldown in seconds
  */
 export async function createCooldown (query: Query, key: string, type: string, length: number): Promise<void> {
-	try {
-		await query('INSERT INTO cooldowns (id, type, length) VALUES (?, ?, ?)', [key, type, length])
-	}
-	catch (err) {
-		logger.warn('ERROR TRYING TO CREATE COOLDOWN, removing the expired cooldown...')
-		// this really shouldn't error since expired cooldowns are removed by getCooldown but just in case...
-		// remove expired cooldown from database
-		await query('DELETE FROM cooldowns WHERE id = ? AND type = ?', [key, type])
-
-		await query('INSERT INTO cooldowns (id, type, length) VALUES (?, ?, ?)', [key, type, length])
-	}
+	await query('INSERT INTO cooldowns (id, type, length) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE createdAt = NOW(), length = ?', [key, type, length, length])
 }
 
 /**
