@@ -14,6 +14,7 @@ import { getUsersRaid } from '../utils/db/raids'
 import { combineArrayWithAnd, formatNumber } from '../utils/stringUtils'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
+import { allItems } from '../resources/items'
 
 // how long a user should have to complete their quests before they receive a new one
 const questCooldown = 24 * 60 * 60
@@ -73,7 +74,7 @@ class QuestsCommand extends CustomSlashCommand {
 				throw new Error(`No eligible quest found for user (${ctx.user.id}, level ${userData.level})`)
 			}
 
-			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest)
+			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest, this.getQuestXpReward(userData.level))
 			userQuestRows.push(newQuestRow)
 			userQuests.push(newQuest)
 			questCDTimeLeft = questCooldown * 1000
@@ -195,35 +196,36 @@ class QuestsCommand extends CustomSlashCommand {
 						})
 					}
 					else {
+						const rewardItem = allItems.find(i => i.name === completedQuestRow.itemReward)
 						let itemRewardRow
 
-						if (completedQuest.rewards.item) {
+						if (rewardItem) {
 							const stashRows = await getUserStash(completedTransaction.query, ctx.user.id, true)
 							const userStashData = getItems(stashRows)
 
-							if (userStashData.slotsUsed + completedQuest.rewards.item.slotsUsed > userData.stashSlots) {
+							if (userStashData.slotsUsed + rewardItem.slotsUsed > userData.stashSlots) {
 								await completedTransaction.commit()
 
 								await ctx.send({
-									content: `${icons.cancel} You don't have enough space in your stash to complete that quest. You need **${completedQuest.rewards.item.slotsUsed}** open slots in your stash. Sell items to clear up some space.`,
+									content: `${icons.cancel} You don't have enough space in your stash to complete that quest. You need **${rewardItem.slotsUsed}** open slots in your stash. Sell items to clear up some space.`,
 									flags: InteractionResponseFlags.EPHEMERAL
 								})
 								return
 							}
 
 							// user has enough space in stash for reward
-							const itemRow = await createItem(completedTransaction.query, completedQuest.rewards.item.name, completedQuest.rewards.item.durability)
+							const itemRow = await createItem(completedTransaction.query, rewardItem.name, rewardItem.durability)
 							await addItemToStash(completedTransaction.query, ctx.user.id, itemRow.id)
 
 							itemRewardRow = itemRow
 						}
 
-						if (completedQuest.rewards.xp) {
-							await addXp(completedTransaction.query, ctx.user.id, completedQuest.rewards.xp)
+						if (completedQuestRow.xpReward) {
+							await addXp(completedTransaction.query, ctx.user.id, completedQuestRow.xpReward)
 						}
 
-						if (completedQuest.rewards.money) {
-							await addMoney(completedTransaction.query, ctx.user.id, completedQuest.rewards.money)
+						if (completedQuestRow.moneyReward) {
+							await addMoney(completedTransaction.query, ctx.user.id, completedQuestRow.moneyReward)
 						}
 
 						// remove invalid and completed quests
@@ -267,7 +269,7 @@ class QuestsCommand extends CustomSlashCommand {
 						})
 
 						await ctx.send({
-							content: `${icons.checkmark} Quest **#${completedQuestID}** complete! You received ${this.getRewardsString(completedQuest, itemRewardRow)}. Item rewards are added to your **stash**.`,
+							content: `${icons.checkmark} Quest **#${completedQuestID}** complete! You received ${this.getRewardsString(completedQuestRow, itemRewardRow)}. Item rewards are added to your **stash**.`,
 							flags: InteractionResponseFlags.EPHEMERAL
 						})
 					}
@@ -322,19 +324,20 @@ class QuestsCommand extends CustomSlashCommand {
 		}
 	}
 
-	getRewardsString (quest: Quest, itemRewardRow?: ItemRow): string {
+	getRewardsString (questRow: QuestRow, itemRewardRow?: ItemRow): string {
 		const display = []
+		const rewardItem = allItems.find(i => i.name === questRow.itemReward)
 
-		if (quest.rewards.money) {
-			display.push(formatNumber(quest.rewards.money))
+		if (questRow.moneyReward) {
+			display.push(formatNumber(questRow.moneyReward))
 		}
 
-		if (quest.rewards.xp) {
-			display.push(`🌟 ${quest.rewards.xp} XP`)
+		if (questRow.xpReward) {
+			display.push(`🌟 ${questRow.xpReward} XP`)
 		}
 
-		if (quest.rewards.item) {
-			display.push(`1x ${getItemDisplay(quest.rewards.item, itemRewardRow)}`)
+		if (rewardItem) {
+			display.push(`1x ${getItemDisplay(rewardItem, itemRewardRow)}`)
 		}
 
 		return combineArrayWithAnd(display)
@@ -345,37 +348,37 @@ class QuestsCommand extends CustomSlashCommand {
 			case 'Any Kills': {
 				return `**Description**: Kill **${quest.progressGoal}** players or mobs.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}`
+					`**Reward**: ${this.getRewardsString(questRow)}`
 			}
 			case 'Player Kills': {
 				return `**Description**: Kill **${quest.progressGoal}** players.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}`
+					`**Reward**: ${this.getRewardsString(questRow)}`
 			}
 			case 'Boss Kills': {
 				return `**Description**: Kill **${quest.progressGoal}** bosses.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}`
+					`**Reward**: ${this.getRewardsString(questRow)}`
 			}
 			case 'NPC Kills': {
 				return `**Description**: Kill **${quest.progressGoal}** mobs (bosses count).\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}`
+					`**Reward**: ${this.getRewardsString(questRow)}`
 			}
 			case 'Evacs': {
 				return `**Description**: Successfully evac **${quest.progressGoal}** times.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}`
+					`**Reward**: ${this.getRewardsString(questRow)}`
 			}
 			case 'Scavenge With A Key': {
 				return `**Description**: Scavenge an area using a ${getItemDisplay(quest.key)}.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
-					`**Reward**: ${this.getRewardsString(quest)}`
+					`**Reward**: ${this.getRewardsString(questRow)}`
 			}
 			case 'Retrieve Item': {
 				return `**Description**: Find and turn in ${questRow.progressGoal}x ${getItemDisplay(quest.item)}.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal} items\n` +
-					`**Reward**: ${this.getRewardsString(quest)}`
+					`**Reward**: ${this.getRewardsString(questRow)}`
 			}
 		}
 	}
@@ -422,6 +425,26 @@ class QuestsCommand extends CustomSlashCommand {
 		}
 
 		return false
+	}
+
+	/**
+	 * @param playerLevel The players current level
+	 * @returns The amount of XP user should receive for completing quest
+	 */
+	getQuestXpReward (playerLevel: number): number {
+		switch (playerLevel) {
+			case 1: return 100
+			case 2: return 250
+			case 3: return 400
+			case 4: return 500
+			case 5: return 900
+			case 6: return 1000
+			case 7: return 1250
+			case 8: return 2000
+			case 9: return 2500
+			case 10: return 2800
+			default: return 3000
+		}
 	}
 }
 

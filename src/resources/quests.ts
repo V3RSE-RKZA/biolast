@@ -39,7 +39,6 @@ interface BaseQuest {
 	 */
 	rewards: RequireAtLeastOne<{
 		item?: Item
-		xp?: number
 		money?: number
 	}>
 }
@@ -74,8 +73,7 @@ export const quests: Quest[] = [
 		maxLevel: 4,
 		progressGoal: 1,
 		rewards: {
-			item: items.bandage,
-			xp: 100
+			item: items.bandage
 		}
 	},
 	{
@@ -85,8 +83,7 @@ export const quests: Quest[] = [
 		maxLevel: 4,
 		progressGoal: 1,
 		rewards: {
-			money: 40,
-			xp: 100
+			money: 40
 		}
 	},
 	{
@@ -96,8 +93,7 @@ export const quests: Quest[] = [
 		maxLevel: 4,
 		progressGoal: 2,
 		rewards: {
-			item: items['.22LR_bullet'],
-			xp: 75
+			item: items['.22LR_bullet']
 		}
 	},
 	{
@@ -107,8 +103,7 @@ export const quests: Quest[] = [
 		maxLevel: 4,
 		progressGoal: 2,
 		rewards: {
-			money: 50,
-			xp: 75
+			money: 50
 		}
 	},
 	{
@@ -118,8 +113,7 @@ export const quests: Quest[] = [
 		maxLevel: 8,
 		progressGoal: 2,
 		rewards: {
-			item: items.ifak_medkit,
-			xp: 200
+			item: items.ifak_medkit
 		}
 	},
 	{
@@ -129,8 +123,7 @@ export const quests: Quest[] = [
 		maxLevel: 8,
 		progressGoal: 2,
 		rewards: {
-			money: 100,
-			xp: 200
+			money: 100
 		}
 	},
 	{
@@ -140,8 +133,7 @@ export const quests: Quest[] = [
 		maxLevel: 8,
 		progressGoal: 2,
 		rewards: {
-			item: items['9mm_FMJ_bullet'],
-			xp: 200
+			item: items['9mm_FMJ_bullet']
 		}
 	},
 	{
@@ -151,8 +143,7 @@ export const quests: Quest[] = [
 		maxLevel: 8,
 		progressGoal: 2,
 		rewards: {
-			money: 150,
-			xp: 200
+			money: 150
 		}
 	},
 	{
@@ -163,8 +154,7 @@ export const quests: Quest[] = [
 		progressGoal: 1,
 		key: items.shed_key,
 		rewards: {
-			money: 200,
-			xp: 200
+			money: 200
 		}
 	},
 	{
@@ -174,8 +164,7 @@ export const quests: Quest[] = [
 		maxLevel: 10,
 		progressGoal: 1,
 		rewards: {
-			money: 325,
-			xp: 300
+			money: 325
 		},
 		item: items['glock-17']
 	},
@@ -186,8 +175,7 @@ export const quests: Quest[] = [
 		maxLevel: 10,
 		progressGoal: 2,
 		rewards: {
-			money: 300,
-			xp: 250
+			money: 300
 		},
 		item: items.walker_goop
 	}
