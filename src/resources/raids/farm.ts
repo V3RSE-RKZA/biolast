@@ -72,7 +72,7 @@ export const farm: Location = {
 			display: 'Barn',
 			scavange: {
 				common: {
-					items: [items.scythe, items.corn, items.splint],
+					items: [items.scythe, items.corn, items.splint, items.farming_guide],
 					xp: 5
 				},
 				uncommon: {

@@ -10,5 +10,14 @@ export const quest = questObject({
 		icon: '<:quest_item:886561850525896724>',
 		slotsUsed: 2,
 		itemLevel: 1
+	},
+	farming_guide: {
+		type: 'Quest Item',
+		name: 'farming_guide',
+		aliases: ['farming_guide', 'guide'],
+		description: 'Some helpful tips for growing crops. Drop from The Farm.',
+		icon: '<:quest_item:886561850525896724>',
+		slotsUsed: 1,
+		itemLevel: 1
 	}
 })
