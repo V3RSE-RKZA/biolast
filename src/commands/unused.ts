@@ -8,7 +8,7 @@ import { allItems } from '../resources/items'
 import { Item } from '../types/Items'
 
 // yes this command is ugly its only for admins >:(
-const ITEMS_PER_PAGE = 15
+const ITEMS_PER_PAGE = 20
 
 export const command: TextCommand = {
 	name: 'unused',
@@ -91,7 +91,7 @@ function generatePages (items: Item[]): string[] {
 		const indexLast = ITEMS_PER_PAGE * i
 		const filteredItems = items.slice(indexFirst, indexLast)
 
-		pages.push(`Unobtainable items:\n\n${filteredItems.map(itm => `${getItemDisplay(itm)} (item level **${itm.itemLevel}**)`).join('\n')}`)
+		pages.push(filteredItems.map(itm => `${getItemDisplay(itm)} (item level **${itm.itemLevel}**)`).join('\n'))
 	}
 
 	return pages
