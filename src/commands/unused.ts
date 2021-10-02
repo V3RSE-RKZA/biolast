@@ -8,6 +8,7 @@ import { allItems } from '../resources/items'
 import { Item } from '../types/Items'
 
 // yes this command is ugly its only for admins >:(
+const ITEMS_PER_PAGE = 15
 
 export const command: TextCommand = {
 	name: 'unused',
@@ -70,10 +71,28 @@ export const command: TextCommand = {
 			}
 		}
 
-		console.log(`Unobtainable items:\n\n${sortItemsByType(allItems.filter(itm => !obtainable.includes(itm))).map(itm => `${getItemDisplay(itm)} (item level **${itm.itemLevel}**)`).join('\n')}`.length)
+		const unobtainables = sortItemsByType(allItems.filter(itm => !obtainable.includes(itm)))
+		const pages = generatePages(unobtainables)
 
-		await reply(message, {
-			content: `Unobtainable items:\n\n${sortItemsByType(allItems.filter(itm => !obtainable.includes(itm))).map(itm => `${getItemDisplay(itm)} (item level **${itm.itemLevel}**)`).join('\n')}`
-		})
+		for (const page of pages) {
+			await reply(message, {
+				content: page
+			})
+		}
 	}
+}
+
+function generatePages (items: Item[]): string[] {
+	const pages = []
+	const maxPage = Math.ceil(items.length / ITEMS_PER_PAGE) || 1
+
+	for (let i = 1; i < maxPage + 1; i++) {
+		const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
+		const indexLast = ITEMS_PER_PAGE * i
+		const filteredItems = items.slice(indexFirst, indexLast)
+
+		pages.push(`Unobtainable items:\n\n${filteredItems.map(itm => `${getItemDisplay(itm)} (item level **${itm.itemLevel}**)`).join('\n')}`)
+	}
+
+	return pages
 }
