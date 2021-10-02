@@ -4,6 +4,32 @@ import { ranged } from './ranged'
 const ammoObject = <T>(et: { [K in keyof T]: Ammunition & { name: K } }) => et
 
 export const ammunition = ammoObject({
+	'.338_lapua_FMJ': {
+		type: 'Ammunition',
+		name: '.338_lapua_FMJ',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['lapua', 'lapua_magnum', '.338', 'lapua_fmj'],
+		description: 'Full metal jacket .338 Lapua Magnum ammunition for sniper rifles.',
+		damage: 140,
+		penetration: 5.4,
+		ammoFor: [ranged.awm],
+		sellPrice: 5035,
+		slotsUsed: 1,
+		itemLevel: 20
+	},
+	'.338_lapua_AP': {
+		type: 'Ammunition',
+		name: '.338_lapua_AP',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['.338_ap', 'lapua_ap', 'ap_lapua'],
+		description: 'Armor-piercing .338 Lapua Magnum ammunition for sniper rifles.',
+		damage: 133,
+		penetration: 7.2,
+		ammoFor: [ranged.awm],
+		sellPrice: 10283,
+		slotsUsed: 1,
+		itemLevel: 20
+	},
 	'5.56x45mm_FMJ_bullet': {
 		type: 'Ammunition',
 		name: '5.56x45mm_FMJ_bullet',
