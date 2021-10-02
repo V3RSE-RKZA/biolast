@@ -110,7 +110,7 @@ export const quests: Quest[] = [
 		id: 'low_lvl_npc_kills_1',
 		questType: 'NPC Kills',
 		minLevel: 3,
-		maxLevel: 8,
+		maxLevel: 10,
 		progressGoal: 2,
 		rewards: {
 			item: items.ifak_medkit
@@ -120,7 +120,7 @@ export const quests: Quest[] = [
 		id: 'low_lvl_npc_kills_2',
 		questType: 'NPC Kills',
 		minLevel: 3,
-		maxLevel: 8,
+		maxLevel: 10,
 		progressGoal: 2,
 		rewards: {
 			money: 100
@@ -130,7 +130,7 @@ export const quests: Quest[] = [
 		id: 'low_lvl_player_kills_1',
 		questType: 'Player Kills',
 		minLevel: 3,
-		maxLevel: 8,
+		maxLevel: 10,
 		progressGoal: 2,
 		rewards: {
 			item: items['9mm_FMJ_bullet']
@@ -140,7 +140,7 @@ export const quests: Quest[] = [
 		id: 'low_lvl_player_kills_2',
 		questType: 'Player Kills',
 		minLevel: 3,
-		maxLevel: 8,
+		maxLevel: 10,
 		progressGoal: 2,
 		rewards: {
 			money: 150
