@@ -67,6 +67,19 @@ export const ranged = rangedObject({
 		accuracy: 91,
 		itemLevel: 5
 	},
+	'mp5': {
+		type: 'Ranged Weapon',
+		name: 'mp5',
+		icon: '<:U_rifle:869647344344387624>',
+		aliases: [],
+		description: '9mm submachine gun created by Heckler & Koch.',
+		sellPrice: 564,
+		durability: 15,
+		slotsUsed: 3,
+		fireRate: 20,
+		accuracy: 75,
+		itemLevel: 9
+	},
 	'P320': {
 		type: 'Ranged Weapon',
 		name: 'P320',
