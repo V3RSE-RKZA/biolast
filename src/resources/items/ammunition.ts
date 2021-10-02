@@ -4,6 +4,58 @@ import { ranged } from './ranged'
 const ammoObject = <T>(et: { [K in keyof T]: Ammunition & { name: K } }) => et
 
 export const ammunition = ammoObject({
+	'5.56x45mm_FMJ_bullet': {
+		type: 'Ammunition',
+		name: '5.56x45mm_FMJ_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['556mm', '5.56x45_fmj', '556', '556_rifle', '556x45', '556_fmj', '556_bullet'],
+		description: 'Full metal jacket 5.56x45mm NATO ammunition for rifles.',
+		damage: 40,
+		penetration: 3.7,
+		ammoFor: [ranged.m4a1],
+		sellPrice: 467,
+		slotsUsed: 1,
+		itemLevel: 9
+	},
+	'5.56x45mm_HP_bullet': {
+		type: 'Ammunition',
+		name: '5.56x45mm_HP_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['5.56x45_hp', '556_hp', '556x45_hp'],
+		description: 'Hollow point 5.56x45mm NATO ammunition for rifles.',
+		damage: 50,
+		penetration: 3.4,
+		ammoFor: [ranged.m4a1],
+		sellPrice: 523,
+		slotsUsed: 1,
+		itemLevel: 9
+	},
+	'7.62x39mm_FMJ_bullet': {
+		type: 'Ammunition',
+		name: '7.62x39mm_FMJ_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['762mm', '7.62x39_fmj', '762', '762_rifle', '762x39', '762_fmj', '762_bullet'],
+		description: 'Full metal jacket 7.62x39mm ammunition.',
+		damage: 45,
+		penetration: 3.8,
+		ammoFor: [ranged['ak-47']],
+		sellPrice: 502,
+		slotsUsed: 1,
+		itemLevel: 9
+	},
+	'7.62x39mm_HP_bullet': {
+		type: 'Ammunition',
+		name: '7.62x39mm_HP_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['7.62x39_hp', '762_hp', '762x39_hp'],
+		description: 'Hollow point 7.62x39mm ammunition.',
+		damage: 56,
+		penetration: 3.1,
+		ammoFor: [ranged['ak-47']],
+		sellPrice: 510,
+		slotsUsed: 1,
+		itemLevel: 9
+	},
 	'5.45x39mm_FMJ_bullet': {
 		type: 'Ammunition',
 		name: '5.45x39mm_FMJ_bullet',

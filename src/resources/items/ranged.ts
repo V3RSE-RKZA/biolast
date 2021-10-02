@@ -29,6 +29,32 @@ export const ranged = rangedObject({
 		accuracy: 52,
 		itemLevel: 10
 	},
+	'ak-47': {
+		type: 'Ranged Weapon',
+		name: 'ak-47',
+		description: 'Assault rifle chambered for the 7.62×39mm cartridge. Rugged, can fire many rounds without issue.',
+		icon: '<:U_rifle:869647344344387624>',
+		aliases: ['ak', 'ak47'],
+		sellPrice: 942,
+		durability: 12,
+		slotsUsed: 4,
+		fireRate: 28,
+		accuracy: 63,
+		itemLevel: 13
+	},
+	'm4a1': {
+		type: 'Ranged Weapon',
+		name: 'm4a1',
+		description: 'Automatic M4 carbine. Light and deadly accurate.',
+		icon: '<:U_rifle:869647344344387624>',
+		aliases: ['m4'],
+		sellPrice: 982,
+		durability: 9,
+		slotsUsed: 4,
+		fireRate: 30,
+		accuracy: 90,
+		itemLevel: 13
+	},
 	'FN_Five-seveN': {
 		type: 'Ranged Weapon',
 		name: 'FN_Five-seveN',
