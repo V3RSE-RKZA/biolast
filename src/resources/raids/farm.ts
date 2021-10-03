@@ -33,11 +33,6 @@ export const farm: Location = {
 				},
 				rolls: 1,
 				cooldown: 1 * 10
-			},
-			npcSpawns: {
-				cooldownMin: 3 * 60,
-				cooldownMax: 5 * 60,
-				npcs: [npcs.feral_animal]
 			}
 		},
 		{
@@ -61,7 +56,7 @@ export const farm: Location = {
 				cooldown: 1 * 10
 			},
 			npcSpawns: {
-				npcs: [npcs.raider_weak],
+				npcs: [npcs.raider_weak, npcs.feral_animal],
 				cooldownMin: 3 * 60,
 				cooldownMax: 5 * 60
 			}
