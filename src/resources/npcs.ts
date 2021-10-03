@@ -152,6 +152,26 @@ export const npcs = npcsObject({
 		xp: 20,
 		chanceToBite: 20
 	},
+	crawler_medium: {
+		type: 'walker',
+		id: 'crawler_medium',
+		display: 'Crawler',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563461253935114/walker_temp.png',
+		icon: '🧟‍♂️',
+		health: 35,
+		damage: 50,
+		drops: {
+			common: [items.compression_bandage],
+			uncommon: [items['9mm_FMJ_bullet']],
+			rare: [items.walker_goop],
+			rolls: 1
+		},
+		quotes: [
+			'~*You hear a deep growl close by*~'
+		],
+		xp: 60,
+		chanceToBite: 20
+	},
 	cain: {
 		type: 'boss',
 		subtype: 'ranged',
@@ -321,6 +341,28 @@ export const npcs = npcsObject({
 		],
 		xp: 35,
 		chanceToBite: 20
+	},
+	walker_security_officer: {
+		type: 'walker',
+		id: 'walker_security_officer',
+		display: 'Walker Security Officer',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563461253935114/walker_temp.png',
+		icon: '🧟‍♂️',
+		health: 50,
+		damage: 30,
+		drops: {
+			common: [items.metal_bat],
+			uncommon: [items['9mm_FMJ_bullet'], items.duffle_bag, items.walker_goop],
+			rare: [items['glock-17']],
+			rolls: 1
+		},
+		quotes: [
+			'~*You hear footsteps nearby*~',
+			'~*You hear a deep growl close by*~'
+		],
+		armor: items.aramid_armor,
+		xp: 80,
+		chanceToBite: 15
 	}
 })
 
