@@ -104,7 +104,7 @@ class HealthCommand extends CustomSlashCommand {
 
 		for (const affliction of activeAfflictions) {
 			if (affliction.type === 'Bitten') {
-				effectsDisplay.push(`${icons.biohazard} Bitten (-20% damage) **${affliction.cooldown}** left`)
+				effectsDisplay.push(`${icons.biohazard} Bitten (-20% damage dealt, +20% damage taken) **${affliction.cooldown}** left`)
 			}
 			if (affliction.type === 'Broken Arm') {
 				effectsDisplay.push(`🦴 Broken Arm (+15% attack cooldown) **${affliction.cooldown}** left`)
