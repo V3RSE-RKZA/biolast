@@ -3,6 +3,17 @@ import { Armor } from '../../types/Items'
 const armorObject = <T>(et: { [K in keyof T]: (Armor) & { name: K } }) => et
 
 export const armor = armorObject({
+	steel_armor: {
+		type: 'Body Armor',
+		name: 'steel_armor',
+		icon: '<:U_shield:601366669474136074>',
+		aliases: ['steel'],
+		sellPrice: 272,
+		durability: 7,
+		level: 4,
+		slotsUsed: 3,
+		itemLevel: 12
+	},
 	aramid_armor: {
 		type: 'Body Armor',
 		name: 'aramid_armor',
