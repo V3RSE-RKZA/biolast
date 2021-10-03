@@ -699,7 +699,7 @@ class AttackCommand extends CustomSlashCommand {
 							}
 						}
 					}
-					else if (result.limb === 'arm' && Math.random() <= 0.1) {
+					else if (result.limb === 'arm' && Math.random() <= 0.2) {
 						messages.push(`**${member.displayName}**'s arm was broken! (+15% attack cooldown for 4 minutes)`)
 						await createCooldown(transaction.query, member.id, 'broken-arm', 4 * 60)
 					}
