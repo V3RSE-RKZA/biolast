@@ -1,5 +1,5 @@
 interface BaseItem {
-	type: 'Ranged Weapon' | 'Melee Weapon' | 'Helmet' | 'Body Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key' | 'Quest Item'
+	type: 'Ranged Weapon' | 'Melee Weapon' | 'Helmet' | 'Body Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key' | 'Collectible'
 	name: string
 	aliases: string[]
 	icon: string
@@ -211,8 +211,8 @@ export interface Key extends BaseItem {
 	durability: number
 }
 
-export interface QuestItem extends BaseItem {
-	type: 'Quest Item'
+export interface Collectible extends BaseItem {
+	type: 'Collectible'
 }
 
-export type Item = Weapon | Helmet | Armor | Ammunition | Medical | Backpack | Key | QuestItem
+export type Item = Weapon | Helmet | Armor | Ammunition | Medical | Backpack | Key | Collectible

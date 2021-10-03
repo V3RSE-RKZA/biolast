@@ -6,7 +6,7 @@ import { ammunition } from './ammunition'
 import { medical } from './medical'
 import { keys } from './keys'
 import { backpacks } from './backpacks'
-import { quest } from './quest'
+import { collectible } from './collectible'
 
 export const items = {
 	...ranged,
@@ -17,7 +17,7 @@ export const items = {
 	...medical,
 	...keys,
 	...backpacks,
-	...quest
+	...collectible
 }
 
 export const allItems = [
@@ -29,5 +29,5 @@ export const allItems = [
 	...Object.values(medical),
 	...Object.values(keys),
 	...Object.values(backpacks),
-	...Object.values(quest)
+	...Object.values(collectible)
 ]

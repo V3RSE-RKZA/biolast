@@ -143,11 +143,11 @@ export const farm: Location = {
 			display: 'bedroom',
 			scavange: {
 				common: {
-					items: [items.truck_key, items.warehouse_key, items.compression_bandage, items['.22LR_bullet']],
+					items: [items.truck_key, items.warehouse_key, items.compression_bandage, items['9mm_HP_bullet']],
 					xp: 8
 				},
 				uncommon: {
-					items: [items['glock-17'], items['9mm_HP_bullet'], items['20-gauge_buckshot']],
+					items: [items['glock-17'], items['9mm_RIP_bullet'], items['20-gauge_buckshot']],
 					xp: 10
 				},
 				rare: {

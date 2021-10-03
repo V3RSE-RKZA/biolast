@@ -112,11 +112,11 @@ export const ranged = rangedObject({
 		icon: '<:U_rifle:869647344344387624>',
 		aliases: [],
 		description: '9mm submachine gun created by Heckler & Koch.',
-		sellPrice: 564,
-		durability: 15,
+		sellPrice: 464,
+		durability: 10,
 		slotsUsed: 3,
 		fireRate: 20,
-		accuracy: 75,
+		accuracy: 65,
 		itemLevel: 9
 	},
 	'P320': {

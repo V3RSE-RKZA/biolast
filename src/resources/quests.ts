@@ -180,7 +180,7 @@ export const quests: Quest[] = [
 		item: items.walker_goop
 	},
 	{
-		id: 'low_lvl_retrieve_item_2',
+		id: 'low_lvl_retrieve_item_3',
 		questType: 'Retrieve Item',
 		minLevel: 3,
 		maxLevel: 10,
@@ -189,5 +189,16 @@ export const quests: Quest[] = [
 			money: 500
 		},
 		item: items.farming_guide
+	},
+	{
+		id: 'mall_retrieve_vase',
+		questType: 'Retrieve Item',
+		minLevel: 8,
+		maxLevel: 15,
+		progressGoal: 2,
+		rewards: {
+			money: 500
+		},
+		item: items.antique_vase
 	}
 ]

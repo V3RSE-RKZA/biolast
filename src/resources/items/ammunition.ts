@@ -114,12 +114,12 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['7n24', '5.45x39_7n24', '545_7n24', '5.45_7n24', '545x39_7n24'],
 		description: '7N24 Armor-piercing 5.45x39mm ammunition for Kalashnikov rifles.',
-		damage: 53,
-		penetration: 4.05,
+		damage: 48,
+		penetration: 3.05,
 		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
-		sellPrice: 1132,
+		sellPrice: 932,
 		slotsUsed: 1,
-		itemLevel: 16
+		itemLevel: 14
 	},
 	'SS195LF_bullet': {
 		type: 'Ammunition',
@@ -167,8 +167,8 @@ export const ammunition = ammoObject({
 		aliases: ['9x19_hp', '9mm_hp'],
 		description: 'Hollow point ammunition for 9mm weapons. Hollow point bullets expand when they hit their target, causing more damage.',
 		damage: 40,
-		penetration: 1,
-		ammoFor: [ranged['glock-17'], ranged.P320, ranged.mp5],
+		penetration: 1.2,
+		ammoFor: [ranged['glock-17'], ranged.mp5],
 		sellPrice: 302,
 		slotsUsed: 1,
 		itemLevel: 8
@@ -195,7 +195,7 @@ export const ammunition = ammoObject({
 		description: 'Armor-piercing ammunition for 9mm weapons.',
 		damage: 36,
 		penetration: 2.9,
-		ammoFor: [ranged['glock-17'], ranged.P320, ranged.mp5],
+		ammoFor: [ranged.P320, ranged.mp5],
 		sellPrice: 831,
 		slotsUsed: 1,
 		itemLevel: 15

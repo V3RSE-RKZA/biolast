@@ -182,7 +182,7 @@ class ShopCommand extends CustomSlashCommand {
 							await removeItemFromBackpack(transaction.query, i.row.id)
 						}
 
-						if (i.item.sellPrice) {
+						if (i.item.sellPrice && i.item.type !== 'Collectible') {
 							let sellPrice = 0
 
 							if (i.row.durability && i.item.durability) {

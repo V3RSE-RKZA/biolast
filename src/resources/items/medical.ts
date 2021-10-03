@@ -190,6 +190,38 @@ export const medical = medicalObject({
 		curesBitten: true,
 		curesBrokenArm: false
 	},
+	'pizza_slice': {
+		type: 'Medical',
+		subtype: 'Healing',
+		name: 'pizza_slice',
+		description: 'A rotting slice of pizza. Maybe it still tastes good.',
+		icon: '<:food:886561670447652886>',
+		aliases: [],
+		sellPrice: 9,
+		healsFor: 7,
+		slotsUsed: 1,
+		healRate: 15,
+		itemLevel: 1,
+		durability: 2,
+		curesBitten: false,
+		curesBrokenArm: false
+	},
+	'pretzel': {
+		type: 'Medical',
+		subtype: 'Healing',
+		name: 'pretzel',
+		description: 'A delicious pretzel.',
+		icon: '<:food:886561670447652886>',
+		aliases: [],
+		sellPrice: 8,
+		healsFor: 6,
+		slotsUsed: 1,
+		healRate: 10,
+		itemLevel: 1,
+		durability: 1,
+		curesBitten: false,
+		curesBrokenArm: false
+	},
 	'corn': {
 		type: 'Medical',
 		subtype: 'Healing',

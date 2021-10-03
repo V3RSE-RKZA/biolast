@@ -47,5 +47,14 @@ export const keys = keysObject({
 		icon: '<:U_key:870786870852874260>',
 		slotsUsed: 1,
 		itemLevel: 8
+	},
+	dereks_shop_key: {
+		type: 'Key',
+		name: 'dereks_shop_key',
+		durability: 2,
+		aliases: ['dereks_key'],
+		icon: '<:U_key:870786870852874260>',
+		slotsUsed: 1,
+		itemLevel: 10
 	}
 })

@@ -22,5 +22,15 @@ export const backpacks = backpackObject({
 		slots: 7,
 		slotsUsed: 1,
 		itemLevel: 5
+	},
+	duffle_bag: {
+		type: 'Backpack',
+		name: 'duffle_bag',
+		icon: '<:U_backpack:601366669595508736>',
+		aliases: ['duffle', 'bag'],
+		sellPrice: 145,
+		slots: 14,
+		slotsUsed: 2,
+		itemLevel: 8
 	}
 })

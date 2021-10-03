@@ -11,7 +11,7 @@ export const suburbs: Location = {
 		minLevel: 1,
 		maxLevel: 10
 	},
-	raidLength: 20 * 60,
+	raidLength: 10 * 60,
 	playerLimit: 10,
 	channels: [
 		{
