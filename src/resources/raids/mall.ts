@@ -135,6 +135,32 @@ export const mall: Location = {
 				cooldownMin: 20 * 60,
 				cooldownMax: 40 * 60
 			}
+		},
+		{
+			type: 'LootChannel',
+			name: 'florreds-pharmacy',
+			display: 'Florreds Pharmacy',
+			scavange: {
+				common: {
+					items: [items.ifak_medkit, items.pretzel],
+					xp: 10
+				},
+				uncommon: {
+					items: [items['anti-biotics'], items.splint],
+					xp: 15
+				},
+				rare: {
+					items: [items.paracetamol, items.adrenaline_stimulant, items.adderall, items.morphine],
+					xp: 25
+				},
+				rolls: 1,
+				cooldown: 1 * 10
+			},
+			npcSpawns: {
+				npcs: [npcs.raider_medium],
+				cooldownMin: 3 * 60,
+				cooldownMax: 5 * 60
+			}
 		}
 	]
 }
