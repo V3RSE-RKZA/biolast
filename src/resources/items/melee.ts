@@ -156,5 +156,19 @@ export const melee = meleeObject({
 		damage: 25,
 		penetration: 0.95,
 		itemLevel: 8
+	},
+	police_baton: {
+		type: 'Melee Weapon',
+		name: 'police_baton',
+		icon: '<:U_melee:601366669251575857>',
+		aliases: ['baton'],
+		sellPrice: 88,
+		durability: 6,
+		slotsUsed: 1,
+		fireRate: 12,
+		accuracy: 80,
+		damage: 14,
+		penetration: 0.5,
+		itemLevel: 11
 	}
 })
