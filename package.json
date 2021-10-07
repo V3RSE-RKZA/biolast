@@ -34,7 +34,7 @@
     "@types/jest": "^27.0.1",
     "@types/js-levenshtein": "^1.1.0",
     "@types/mysql": "^2.15.19",
-    "@types/node-cron": "^2.0.4",
+    "@types/node-cron": "^3.0.0",
     "@types/node-fetch": "^2.5.10",
     "@types/pino": "^6.3.11",
     "@typescript-eslint/eslint-plugin": "^4.32.0",

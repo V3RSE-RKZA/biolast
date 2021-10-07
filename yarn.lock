@@ -657,12 +657,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node-cron@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@types/node-cron/-/node-cron-2.0.4.tgz#6d467440762e7d3539890d477b33670c020c458f"
-  integrity sha512-vXzgDRWCZpuut5wJVZtluEnkNhzGojYlyMch2c4kMj7H74L8xTLytVlgQzj+/17wfcjs49aJDFBDglFSGt7GeA==
-  dependencies:
-    "@types/tz-offset" "*"
+"@types/node-cron@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/node-cron/-/node-cron-3.0.0.tgz#f946cefb5c05c64f460090f6be97bd50460c8898"
+  integrity sha512-RNBIyVwa/1v2r8/SqK8tadH2sJlFRAo5Ghac/cOcCv4Kp94m0I03UmAh9WVhCqS9ZdB84dF3x47p9aTw8E4c4A==
 
 "@types/node-fetch@^2.5.10":
   version "2.5.12"
@@ -710,11 +708,6 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
-
-"@types/tz-offset@*":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@types/tz-offset/-/tz-offset-0.0.0.tgz#d58f1cebd794148d245420f8f0660305d320e565"
-  integrity sha512-XLD/llTSB6EBe3thkN+/I0L+yCTB6sjrcVovQdx2Cnl6N6bTzHmwe/J8mWnsXFgxLrj/emzdv8IR4evKYG2qxQ==
 
 "@types/yargs-parser@*":
   version "20.2.1"
