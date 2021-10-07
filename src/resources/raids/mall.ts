@@ -157,9 +157,9 @@ export const mall: Location = {
 				cooldown: 1 * 10
 			},
 			npcSpawns: {
-				npcs: [npcs.raider_medium],
-				cooldownMin: 3 * 60,
-				cooldownMax: 5 * 60
+				npcs: [npcs.crawler_medium],
+				cooldownMin: 1 * 60,
+				cooldownMax: 2 * 60
 			}
 		},
 		{
@@ -168,7 +168,7 @@ export const mall: Location = {
 			display: 'Security_Room',
 			scavange: {
 				common: {
-					items: [items.police_baton],
+					items: [items.donut],
 					xp: 10
 				},
 				uncommon: {
@@ -183,9 +183,9 @@ export const mall: Location = {
 				cooldown: 1 * 40
 			},
 			npcSpawns: {
-				npcs: [npcs.raider_medium],
-				cooldownMin: 3 * 60,
-				cooldownMax: 5 * 60
+				npcs: [npcs.walker_security_officer],
+				cooldownMin: 2 * 60,
+				cooldownMax: 3 * 60
 			}
 		}
 	]
