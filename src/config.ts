@@ -49,6 +49,14 @@ export const raidGuilds = {
 	mallGuilds: process.env.MALL_GUILDS ? process.env.MALL_GUILDS.split(',') : []
 }
 
+// webhooks for sending logs to
+export const webhooks = {
+	pvp: {
+		id: process.env.GLOBAL_PVP_KILLFEED_WEBHOOK_ID,
+		token: process.env.GLOBAL_PVP_KILLFEED_WEBHOOK_TOKEN
+	}
+}
+
 // seconds that the user wont be allowed to enter a raid after having just finished a raid
 export const raidCooldown = 10 * 60
 

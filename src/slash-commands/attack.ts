@@ -1,6 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
-import { icons, raidCooldown } from '../config'
+import { icons, raidCooldown, webhooks } from '../config'
 import { allItems } from '../resources/items'
 import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -749,6 +749,12 @@ class AttackCommand extends CustomSlashCommand {
 			// it will cause the transaction to timeout (since the transaction would have to wait on discord to receive our message).
 			if (!missedPartChoice && victimData.health - totalDamage <= 0) {
 				try {
+					if (webhooks.pvp.id && webhooks.pvp.token) {
+						await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
+							content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** hit **${member.user.username}#${member.user.discriminator}** for **${totalDamage}** damage using their ${getItemDisplay(userEquips.weapon.item)}${ammoUsed ? ` (ammo: ${getItemDisplay(ammoUsed.item)})` : ''}.`
+						})
+					}
+
 					const erisMember = await this.app.fetchMember(guild, member.id)
 					this.app.clearRaidTimer(member.id)
 
