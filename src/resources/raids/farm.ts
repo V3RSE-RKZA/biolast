@@ -11,7 +11,7 @@ export const farm: Location = {
 		minLevel: 3,
 		maxLevel: 10
 	},
-	raidLength: 20 * 60,
+	raidLength: 10 * 60,
 	playerLimit: 15,
 	channels: [
 		{
