@@ -252,7 +252,7 @@ export const medical = medicalObject({
 		curesBitten: false,
 		curesBrokenArm: false
 	},
-		'donut': {
+	'donut': {
 		type: 'Medical',
 		subtype: 'Healing',
 		name: 'donut',
