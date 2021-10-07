@@ -201,7 +201,7 @@ export const medical = medicalObject({
 		healsFor: 7,
 		slotsUsed: 1,
 		healRate: 15,
-		itemLevel: 1,
+		itemLevel: 11,
 		durability: 2,
 		curesBitten: false,
 		curesBrokenArm: false
@@ -217,7 +217,7 @@ export const medical = medicalObject({
 		healsFor: 6,
 		slotsUsed: 1,
 		healRate: 10,
-		itemLevel: 1,
+		itemLevel: 12,
 		durability: 1,
 		curesBitten: false,
 		curesBrokenArm: false
@@ -232,7 +232,7 @@ export const medical = medicalObject({
 		healsFor: 6,
 		slotsUsed: 1,
 		healRate: 16,
-		itemLevel: 1,
+		itemLevel: 4,
 		durability: 3,
 		curesBitten: false,
 		curesBrokenArm: false
@@ -247,8 +247,23 @@ export const medical = medicalObject({
 		healsFor: 7,
 		slotsUsed: 1,
 		healRate: 15,
-		itemLevel: 1,
+		itemLevel: 5,
 		durability: 2,
+		curesBitten: false,
+		curesBrokenArm: false
+	},
+		'donut': {
+		type: 'Medical',
+		subtype: 'Healing',
+		name: 'donut',
+		icon: '<:food:886561670447652886>',
+		aliases: [],
+		sellPrice: 9,
+		healsFor: 7,
+		slotsUsed: 1,
+		healRate: 5,
+		itemLevel: 14,
+		durability: 1,
 		curesBitten: false,
 		curesBrokenArm: false
 	}
