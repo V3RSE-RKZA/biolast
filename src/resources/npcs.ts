@@ -351,7 +351,7 @@ export const npcs = npcsObject({
 		health: 50,
 		damage: 30,
 		drops: {
-			common: [items.metal_bat],
+			common: [items.police_baton],
 			uncommon: [items['9mm_FMJ_bullet'], items.duffle_bag, items.walker_goop],
 			rare: [items['glock-17']],
 			rolls: 1
