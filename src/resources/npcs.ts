@@ -363,6 +363,29 @@ export const npcs = npcsObject({
 		armor: items.aramid_armor,
 		xp: 80,
 		chanceToBite: 15
+	},
+	the_many: {
+		type: 'boss',
+		subtype: 'melee',
+		id: 'the_many',
+		display: 'The many',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/896088090962198588/R_14.jpg',
+		icon: '🧟‍',
+		health: 600,
+		damage: 80,
+		weapon: items.wooden_bat,
+		drops: {
+			common: [items['9mm_AP_bullet'], items.paracetamol, items.aramid_armor, items.aramid_helmet, items['12-gauge_buckshot']],
+			uncommon: [items['9mm_RIP_bullet'], items.duffle_bag, items.steel_armor, items.bobwhite_g2],
+			rare: [items.steel_helmet, items['12-gauge_buckshot']],
+			rolls: 6
+		},
+		quotes: [
+			'~*You see what looks to be a horde of zombies*~',
+			'~*The Many: We are many, we are one.*~',
+			'~*You hear the collective screams of many different zombies*~'
+		],
+		xp: 200
 	}
 })
 
