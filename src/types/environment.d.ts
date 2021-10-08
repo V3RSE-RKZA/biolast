@@ -13,5 +13,7 @@ declare namespace NodeJS {
 		MALL_GUILDS?: string
 		TESTING_GUILD_ID?: string
 		LOG_LEVEL?: string
+		GLOBAL_PVP_KILLFEED_WEBHOOK_ID?: string
+		GLOBAL_PVP_KILLFEED_WEBHOOK_TOKEN?: string
 	}
 }
