@@ -25,7 +25,7 @@
     "js-levenshtein": "^1.1.6",
     "mysql": "^2.18.1",
     "node-cron": "^3.0.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.0.0",
     "pino": "^6.13.3",
     "pino-pretty": "^7.0.1",
     "slash-create": "^4.2.0"
