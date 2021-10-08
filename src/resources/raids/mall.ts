@@ -172,15 +172,15 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items['anti-biotics'], items.ifak_medkit],
+					items: [items.ifak_medkit],
 					xp: 15
 				},
 				rare: {
-					items: [items.paracetamol, items.adrenaline_stimulant, items.adderall, items.morphine],
+					items: [items.paracetamol, items.tech_trash, items.morphine],
 					xp: 25
 				},
 				rolls: 1,
-				cooldown: 1 * 40
+				cooldown: 1 * 50
 			},
 			npcSpawns: {
 				npcs: [npcs.walker_security_officer],
