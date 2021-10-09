@@ -11,7 +11,7 @@ export const mall: Location = {
 		minLevel: 8,
 		maxLevel: 15
 	},
-	raidLength: 20 * 60,
+	raidLength: 15 * 60,
 	playerLimit: 15,
 	channels: [
 		{
@@ -85,6 +85,14 @@ export const mall: Location = {
 				npcs: [npcs.raider_medium],
 				cooldownMin: 3 * 60,
 				cooldownMax: 5 * 60
+			}
+		},
+		{
+			type: 'EvacChannel',
+			name: 'parking-lot-evac',
+			display: 'Parking Lot',
+			evac: {
+				time: 30
 			}
 		},
 		{
@@ -164,8 +172,8 @@ export const mall: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'security_room',
-			display: 'Security_Room',
+			name: 'security-room',
+			display: 'Security Room',
 			scavange: {
 				common: {
 					items: [items.donut],
@@ -186,6 +194,24 @@ export const mall: Location = {
 				npcs: [npcs.walker_security_officer],
 				cooldownMin: 2 * 60,
 				cooldownMax: 3 * 60
+			}
+		},
+		{
+			type: 'EvacChannel',
+			name: 'roof-helipad',
+			display: 'Roof Helipad',
+			evac: {
+				time: 15
+			}
+		},
+		{
+			type: 'LootChannel',
+			name: 'mall-fountain',
+			display: 'Mall Fountain',
+			npcSpawns: {
+				npcs: [npcs.the_many],
+				cooldownMin: 60 * 60,
+				cooldownMax: 90 * 60
 			}
 		}
 	]
