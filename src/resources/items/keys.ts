@@ -56,5 +56,14 @@ export const keys = keysObject({
 		icon: '<:U_key:870786870852874260>',
 		slotsUsed: 1,
 		itemLevel: 10
+	},
+	security_key: {
+		type: 'Key',
+		name: 'security_key',
+		durability: 1,
+		aliases: ['security_guard_key'],
+		icon: '<:U_key:870786870852874260>',
+		slotsUsed: 1,
+		itemLevel: 10
 	}
 })
