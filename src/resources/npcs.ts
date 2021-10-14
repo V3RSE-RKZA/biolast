@@ -53,6 +53,10 @@ interface Walker extends NPCBase {
 	 * Percent chance this walker will bite the user and apply the "Bitten" debuff (0 - 100%)
 	 */
 	chanceToBite: number
+	/**
+	 * the penetration this walker has with it's attacks
+	 */
+	attackPenetration: number
 }
 
 interface RangedRaider extends NPCBase {
@@ -102,9 +106,22 @@ interface MeleeBoss extends NPCBase {
 	 */
 	weapon: MeleeWeapon
 }
+interface WalkerBoss extends NPCBase {
+	type: 'boss'
+	subtype: 'walker'
+
+	/**
+	 * Percent chance this walker will bite the user and apply the "Bitten" debuff (0 - 100%)
+	 */
+	chanceToBite: number
+	/**
+	 * the penetration this walker has with it's attacks
+	 */
+	attackPenetration: number
+}
 
 type Raider = RangedRaider | MeleeRaider
-type Boss = RangedBoss | MeleeBoss
+type Boss = RangedBoss | MeleeBoss | WalkerBoss
 
 export type NPC = Raider | Walker | Boss
 
@@ -130,7 +147,8 @@ export const npcs = npcsObject({
 			'~*You hear a deep growl close by*~'
 		],
 		xp: 20,
-		chanceToBite: 20
+		chanceToBite: 20,
+		attackPenetration: 0.75
 	},
 	crawler_weak: {
 		type: 'walker',
@@ -150,7 +168,8 @@ export const npcs = npcsObject({
 			'~*You hear a deep growl close by*~'
 		],
 		xp: 20,
-		chanceToBite: 20
+		chanceToBite: 20,
+		attackPenetration: 0.75
 	},
 	crawler_medium: {
 		type: 'walker',
@@ -170,7 +189,8 @@ export const npcs = npcsObject({
 			'~*You hear a deep growl close by*~'
 		],
 		xp: 60,
-		chanceToBite: 20
+		chanceToBite: 20,
+		attackPenetration: 0.75
 	},
 	cain: {
 		type: 'boss',
@@ -267,7 +287,8 @@ export const npcs = npcsObject({
 			'~*You hear a deep growl close by*~'
 		],
 		xp: 50,
-		chanceToBite: 25
+		chanceToBite: 25,
+		attackPenetration: 0.75
 	},
 	derek: {
 		type: 'boss',
@@ -340,7 +361,8 @@ export const npcs = npcsObject({
 			'~*You hear a deep growl close by*~'
 		],
 		xp: 35,
-		chanceToBite: 20
+		chanceToBite: 20,
+		attackPenetration: 0.75
 	},
 	walker_security_officer: {
 		type: 'walker',
@@ -362,18 +384,18 @@ export const npcs = npcsObject({
 		],
 		armor: items.aramid_armor,
 		xp: 80,
-		chanceToBite: 15
+		chanceToBite: 15,
+		attackPenetration: 0.75
 	},
 	the_many: {
 		type: 'boss',
-		subtype: 'melee',
+		subtype: 'walker',
 		id: 'the_many',
-		display: 'The many',
+		display: 'The Many',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/896088090962198588/R_14.jpg',
 		icon: '🧟‍',
 		health: 600,
-		damage: 80,
-		weapon: items.wooden_bat,
+		damage: 60,
 		drops: {
 			common: [items['9mm_AP_bullet'], items.paracetamol, items.aramid_armor, items.aramid_helmet, items['12-gauge_buckshot']],
 			uncommon: [items['9mm_RIP_bullet'], items.duffle_bag, items.steel_armor, items.bobwhite_g2],
@@ -385,7 +407,9 @@ export const npcs = npcsObject({
 			'~*The Many: We are many, we are one.*~',
 			'~*You hear the collective screams of many different zombies*~'
 		],
-		xp: 200
+		xp: 200,
+		attackPenetration: 2.8,
+		chanceToBite: 15
 	}
 })
 

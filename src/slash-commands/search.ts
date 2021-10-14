@@ -65,7 +65,7 @@ class SearchCommand extends CustomSlashCommand {
 			`**Kill XP**: 🌟 ${formatNumber(npc.xp, true)}`
 		]
 
-		if (npc.type === 'raider' || npc.type === 'boss') {
+		if (npc.type === 'raider' || (npc.type === 'boss' && npc.subtype !== 'walker')) {
 			if (npc.subtype === 'ranged') {
 				npcDescription.push(`**Weapon**: ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)})`)
 			}

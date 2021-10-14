@@ -57,7 +57,7 @@ export const command: TextCommand = {
 			else if (npc.helmet && npc.helmet.name === item.name) {
 				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) wears this as a helmet and will 100% drop it with random durability`)
 			}
-			else if ((npc.type === 'raider' || npc.type === 'boss') && npc.weapon.name === item.name) {
+			else if ((npc.type === 'raider' || (npc.type === 'boss' && npc.subtype !== 'walker')) && npc.weapon.name === item.name) {
 				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) uses this as a weapon and will 100% drop it with random durability`)
 			}
 			else if ((npc.type === 'raider' || npc.type === 'boss') && npc.subtype === 'ranged' && npc.ammo.name === item.name) {

@@ -47,7 +47,7 @@ export const command: TextCommand = {
 				else if (npc.helmet && npc.helmet.name === item.name) {
 					obtainable.push(item)
 				}
-				else if ((npc.type === 'raider' || npc.type === 'boss') && npc.weapon.name === item.name) {
+				else if ((npc.type === 'raider' || (npc.type === 'boss' && npc.subtype !== 'walker')) && npc.weapon.name === item.name) {
 					obtainable.push(item)
 				}
 				else if ((npc.type === 'raider' || npc.type === 'boss') && npc.subtype === 'ranged' && npc.ammo.name === item.name) {

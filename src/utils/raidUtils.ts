@@ -208,7 +208,9 @@ export function getPossibleItems (location: Location): Item[] {
 					items.push(npc.helmet)
 				}
 				else if ((npc.type === 'raider' || npc.type === 'boss')) {
-					items.push(npc.weapon)
+					if (npc.subtype !== 'walker') {
+						items.push(npc.weapon)
+					}
 
 					if (npc.subtype === 'ranged') {
 						items.push(npc.ammo)

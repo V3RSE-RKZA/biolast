@@ -226,13 +226,11 @@ class NPCHandler {
 		const victimEffects = addStatusEffects(victimStimulants.map(stim => stim.stimulant))
 		const stimulantDamageMulti = (1 - (victimEffects.damageReduction / 100))
 		const limbsHit = []
+		const bodyPartHit = getBodyPartHit(50)
 		let totalDamage
-		let bodyPartHit
 		let npcAttackPenetration
 
 		if (npc.type === 'raider' || npc.type === 'boss') {
-			bodyPartHit = getBodyPartHit(npc.weapon.accuracy)
-
 			if (npc.subtype === 'ranged') {
 				// raider is using ranged weapon
 				npcAttackPenetration = npc.ammo.penetration
@@ -279,21 +277,35 @@ class NPCHandler {
 					messages.push(`${npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``} shot <@${member.id}> in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${totalDamage}** damage dealt.\n`)
 				}
 			}
-			else {
+			else if (npc.subtype === 'melee') {
 				npcAttackPenetration = npc.weapon.penetration
 				limbsHit.push({
-					damage: getAttackDamage((npc.damage * stimulantDamageMulti), npc.weapon.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+					damage: getAttackDamage((npc.damage * stimulantDamageMulti), npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
 					limb: bodyPartHit.result
 				})
 				totalDamage = limbsHit[0].damage.total
 
 				messages.push(`${npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``} lunged at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${totalDamage}** damage dealt.\n`)
 			}
+			else {
+				npcAttackPenetration = npc.attackPenetration
+				limbsHit.push({
+					damage: getAttackDamage((npc.damage * stimulantDamageMulti), npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+					limb: bodyPartHit.result
+				})
+				totalDamage = limbsHit[0].damage.total
+
+				messages.push(`**${npc.display}** took a swipe at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
+
+				if (Math.random() <= (npc.chanceToBite / 100)) {
+					messages.push(`**${member.displayName}** was ${icons.biohazard} Bitten! (-20% damage dealt, +20% damage taken for 4 minutes)`)
+					await createCooldown(transactionQuery, member.id, 'bitten', 4 * 60)
+				}
+			}
 		}
 		else {
 			// walker doesn't use a weapon, instead just swipes at user
-			bodyPartHit = getBodyPartHit(50)
-			npcAttackPenetration = 0.75
+			npcAttackPenetration = npc.attackPenetration
 			limbsHit.push({
 				damage: getAttackDamage((npc.damage * stimulantDamageMulti), npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
 				limb: bodyPartHit.result
