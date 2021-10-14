@@ -117,6 +117,32 @@ export const mall: Location = {
 		},
 		{
 			type: 'LootChannel',
+			name: 'game-n-go',
+			display: 'Game N Go',
+			scavange: {
+				common: {
+					items: [items.donut],
+					xp: 10
+				},
+				uncommon: {
+					items: [items.ifak_medkit],
+					xp: 15
+				},
+				rare: {
+					items: [items.paracetamol, items.tech_trash, items.morphine],
+					xp: 25
+				},
+				rolls: 1,
+				cooldown: 1 * 50
+			},
+			npcSpawns: {
+				npcs: [npcs.game_raider],
+				cooldownMin: 3 * 60,
+				cooldownMax: 4 * 60
+			}
+		},
+		{
+			type: 'LootChannel',
 			name: 'staff-break-room',
 			display: 'Staff Break Room',
 			scavange: {

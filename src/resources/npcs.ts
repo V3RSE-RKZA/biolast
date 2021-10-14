@@ -244,10 +244,34 @@ export const npcs = npcsObject({
 		helmet: items.cloth_helmet,
 		xp: 40
 	},
-	raider_medium: {
+	medium_raider: {
 		type: 'raider',
 		subtype: 'ranged',
-		id: 'raider_medium',
+		id: 'medium_raider',
+		display: 'Raider',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562992142012416/raider_temp.png',
+		icon: '',
+		health: 60,
+		damage: 35,
+		drops: {
+			common: [items['9mm_FMJ_bullet']],
+			uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
+			rare: [items['9mm_RIP_bullet'], items.duffle_bag],
+			rolls: 1
+		},
+		weapon: items['glock-17'],
+		ammo: items['9mm_HP_bullet'],
+		quotes: [
+			'~*You hear footsteps nearby*~'
+		],
+		armor: items.wooden_armor,
+		helmet: items.wooden_helmet,
+		xp: 125
+	},
+	game_raider: {
+		type: 'raider',
+		subtype: 'ranged',
+		id: 'game_raider',
 		display: 'Raider',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562992142012416/raider_temp.png',
 		icon: '',
