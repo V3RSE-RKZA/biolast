@@ -79,12 +79,9 @@ export const mall: Location = {
 					xp: 25
 				},
 				rolls: 1,
-				cooldown: 1 * 10
-			},
-			npcSpawns: {
-				npcs: [npcs.raider_medium],
-				cooldownMin: 3 * 60,
-				cooldownMax: 5 * 60
+				cooldown: 1 * 10,
+				requiresKey: [items.dome_depot_key, items.security_key],
+				keyIsOptional: false
 			}
 		},
 		{
@@ -114,7 +111,7 @@ export const mall: Location = {
 				},
 				rolls: 3,
 				cooldown: 2 * 60,
-				requiresKey: [items.dereks_shop_key],
+				requiresKey: [items.dereks_shop_key, items.security_key],
 				keyIsOptional: false
 			}
 		},
@@ -162,12 +159,9 @@ export const mall: Location = {
 					xp: 25
 				},
 				rolls: 1,
-				cooldown: 1 * 10
-			},
-			npcSpawns: {
-				npcs: [npcs.crawler_medium],
-				cooldownMin: 1 * 60,
-				cooldownMax: 2 * 60
+				cooldown: 1 * 10,
+				requiresKey: [items.florreds_pharmacy_key, items.security_key],
+				keyIsOptional: false
 			}
 		},
 		{
