@@ -95,6 +95,22 @@ export function combineArrayWithAnd (array: string[]): string {
 }
 
 /**
+ * Combines an array of strings with "or"
+ * @param array Array to combine
+ */
+export function combineArrayWithOr (array: string[]): string {
+	if (array.length === 1) {
+		return array[0]
+	}
+	else if (array.length === 2) {
+		return `${array[0]} or ${array[1]}`
+	}
+
+	const last = array.pop()
+	return `${array.join(', ')}, or ${last}`
+}
+
+/**
  * @param bodyPart Body part to get emoji for
  * @returns The emoji that represents that body part
  */

@@ -114,7 +114,7 @@ export const farm: Location = {
 				},
 				rolls: 2,
 				cooldown: 1 * 10,
-				requiresKey: items.warehouse_key,
+				requiresKey: [items.warehouse_key],
 				keyIsOptional: false
 			}
 		},
@@ -156,7 +156,7 @@ export const farm: Location = {
 				},
 				rolls: 4,
 				cooldown: 10 * 60,
-				requiresKey: items.gunsafe_code,
+				requiresKey: [items.gunsafe_code],
 				keyIsOptional: false
 			}
 		},
@@ -180,7 +180,7 @@ export const farm: Location = {
 				},
 				rolls: 2,
 				cooldown: 2 * 60,
-				requiresKey: items.daves_drug_key,
+				requiresKey: [items.daves_drug_key],
 				keyIsOptional: false
 			}
 		}

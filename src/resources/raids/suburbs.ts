@@ -54,7 +54,9 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 2,
-				cooldown: 1 * 10
+				cooldown: 1 * 10,
+				keyIsOptional: false,
+				requiresKey: [items.shed_key, items.truck_key]
 			},
 			npcSpawns: {
 				npcs: [npcs.walker_weak],
@@ -123,7 +125,7 @@ export const suburbs: Location = {
 				},
 				rolls: 2,
 				cooldown: 1 * 10,
-				requiresKey: items.shed_key,
+				requiresKey: [items.shed_key],
 				keyIsOptional: false
 			}
 		},

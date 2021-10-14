@@ -62,9 +62,9 @@ interface ScavengeBase {
 	cooldown: number
 
 	/**
-	 * Key/item user must have in order to scavenge this channel
+	 * Key/item's user must have in order to scavenge this channel. If you specify multiple items, the user must have at least 1 of them to scavenge.
 	 */
-	requiresKey?: Item
+	requiresKey?: Item[]
 
 	/**
 	 * Whether or not the required key to scavenge this channel is optional.
@@ -81,17 +81,17 @@ interface FreeScavenge extends ScavengeBase {
 
 interface KeyScavenge extends ScavengeBase {
 	keyIsOptional: boolean
-	requiresKey: Item
+	requiresKey: Item[]
 }
 
 interface RequiredKeyScavenge extends KeyScavenge {
 	keyIsOptional: false
-	requiresKey: Item
+	requiresKey: Item[]
 }
 
 interface OptionalKeyScavenge extends KeyScavenge {
 	keyIsOptional: true
-	requiresKey: Item
+	requiresKey: Item[]
 
 	/**
 	 * Loot pool if user scavenges with the special key

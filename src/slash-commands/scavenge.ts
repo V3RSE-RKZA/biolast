@@ -17,6 +17,7 @@ import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
 import { addStatusEffects, getActiveStimulants } from '../utils/playerUtils'
 import { getRaidType, getRandomItem } from '../utils/raidUtils'
+import { combineArrayWithOr } from '../utils/stringUtils'
 
 class ScavengeCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -73,8 +74,8 @@ class ScavengeCommand extends CustomSlashCommand {
 			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
 			const backpackData = getItems(backpackRows)
 			const userEquips = getEquips(backpackRows)
-			const keyRequired = raidChannel.scavange.requiresKey
-			const hasRequiredKey = sortItemsByDurability(backpackData.items, true).reverse().find(i => i.item.name === keyRequired?.name)
+			const keysRequired = raidChannel.scavange.requiresKey
+			const hasRequiredKey = sortItemsByDurability(backpackData.items, true).reverse().find(i => keysRequired?.some(key => i.item.name === key.name))
 			const scavengeCD = await getCooldown(transaction.query, ctx.user.id, 'scavenge')
 			const channelCD = await getCooldown(transaction.query, ctx.channelID, 'looted')
 			const backpackLimit = getBackpackLimit(userEquips.backpack?.item, stimulantEffects.weightBonus)
@@ -97,11 +98,11 @@ class ScavengeCommand extends CustomSlashCommand {
 				})
 				return
 			}
-			else if (keyRequired && !raidChannel.scavange.keyIsOptional && !hasRequiredKey) {
+			else if (keysRequired && !raidChannel.scavange.keyIsOptional && !hasRequiredKey) {
 				await transaction.commit()
 
 				await ctx.send({
-					content: `${icons.information} You need a ${getItemDisplay(keyRequired)} to scavenge here.`
+					content: `${icons.information} You need a ${combineArrayWithOr(keysRequired.map(key => getItemDisplay(key)))} to scavenge here.`
 				})
 				return
 			}

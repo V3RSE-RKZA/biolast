@@ -6,6 +6,7 @@ import { allNPCs } from '../resources/npcs'
 import { getItemDisplay } from '../utils/itemUtils'
 import { quests } from '../resources/quests'
 import { icons } from '../config'
+import { combineArrayWithOr } from '../utils/stringUtils'
 
 // yes this command is ugly its only for admins >:(
 
@@ -30,20 +31,20 @@ export const command: TextCommand = {
 			for (const chan of loc.channels) {
 				if (chan.scavange) {
 					if (chan.scavange.common.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${getItemDisplay(chan.scavange.requiresKey)} key to scavenge)` : ''} in **${loc.display}** (common 60% drop)`)
+						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${combineArrayWithOr(chan.scavange.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (common 60% drop)`)
 					}
 					else if (chan.scavange.uncommon.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${getItemDisplay(chan.scavange.requiresKey)} key to scavenge)` : ''} in **${loc.display}** (uncommon 25% drop)`)
+						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${combineArrayWithOr(chan.scavange.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (uncommon 25% drop)`)
 					}
 					else if (chan.scavange.rare.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${getItemDisplay(chan.scavange.requiresKey)} key to scavenge)` : ''} in **${loc.display}** (rare 15% drop)`)
+						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${combineArrayWithOr(chan.scavange.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (rare 15% drop)`)
 					}
 					else if (chan.scavange.rarest?.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${getItemDisplay(chan.scavange.requiresKey)} key to scavenge)` : ''} in **${loc.display}** (rarest 5% drop)`)
+						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${combineArrayWithOr(chan.scavange.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (rarest 5% drop)`)
 					}
 
 					if (chan.scavange.requiresKey && chan.scavange.keyIsOptional && chan.scavange.special.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` in **${loc.display}** (special drop, requires ${getItemDisplay(chan.scavange.requiresKey)} key to obtain)`)
+						obtainedFromChannels.push(`\`${chan.name}\` in **${loc.display}** (special drop, requires ${combineArrayWithOr(chan.scavange.requiresKey.map(key => getItemDisplay(key)))} key to obtain)`)
 					}
 				}
 			}

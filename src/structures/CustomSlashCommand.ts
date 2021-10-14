@@ -86,10 +86,10 @@ class CustomSlashCommand extends SlashCommand {
 			logger.debug(`Registering ${slashOptions.name} to testing guild instead of globally: ${testingGuildId}`)
 
 			if (slashOptions.guildIDs) {
-				slashOptions.guildIDs = [...slashOptions.guildIDs, testingGuildId, ...allLocations.map(loc => loc.guilds).flat(1)]
+				slashOptions.guildIDs = [...slashOptions.guildIDs, '497302646521069568', testingGuildId, ...allLocations.map(loc => loc.guilds).flat(1)]
 			}
 			else {
-				slashOptions.guildIDs = [testingGuildId, ...allLocations.map(loc => loc.guilds).flat(1)]
+				slashOptions.guildIDs = ['497302646521069568', testingGuildId, ...allLocations.map(loc => loc.guilds).flat(1)]
 			}
 		}
 

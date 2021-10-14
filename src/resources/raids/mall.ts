@@ -114,7 +114,7 @@ export const mall: Location = {
 				},
 				rolls: 3,
 				cooldown: 2 * 60,
-				requiresKey: items.dereks_shop_key,
+				requiresKey: [items.dereks_shop_key],
 				keyIsOptional: false
 			}
 		},
