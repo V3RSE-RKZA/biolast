@@ -82,7 +82,10 @@ class SearchCommand extends CustomSlashCommand {
 			}
 		}
 
+		const npcPenetration = 'ammo' in npc ? npc.ammo.penetration : 'weapon' in npc ? npc.weapon.penetration : npc.attackPenetration
+
 		npcDescription.push(`**Damage**: ${npc.damage}`)
+		npcDescription.push(`**Armor Penetration**: ${npcPenetration}`)
 
 		await ctx.send({
 			content: `Enemy spotted: ${npc.icon}__**${npcNameDisplay}**__\n\n${npcDescription.join('\n')}\n\n` +
