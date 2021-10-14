@@ -51,10 +51,10 @@ export const keys = keysObject({
 	dereks_shop_key: {
 		type: 'Key',
 		name: 'dereks_shop_key',
-		durability: 2,
+		durability: 3,
 		aliases: ['dereks_key'],
 		icon: '<:U_key:870786870852874260>',
-		slotsUsed: 1,
+		slotsUsed: 2,
 		itemLevel: 10
 	},
 	security_key: {
@@ -63,7 +63,25 @@ export const keys = keysObject({
 		durability: 1,
 		aliases: ['security_guard_key'],
 		icon: '<:U_key:870786870852874260>',
-		slotsUsed: 1,
+		slotsUsed: 2,
+		itemLevel: 10
+	},
+	florreds_pharmacy_key: {
+		type: 'Key',
+		name: 'florreds_pharmacy_key',
+		durability: 2,
+		aliases: ['florreds_key', 'pharmacy_key'],
+		icon: '<:U_key:870786870852874260>',
+		slotsUsed: 2,
+		itemLevel: 10
+	},
+	dome_depot_key: {
+		type: 'Key',
+		name: 'dome_depot_key',
+		durability: 2,
+		aliases: ['depot_key', 'dome_key'],
+		icon: '<:U_key:870786870852874260>',
+		slotsUsed: 2,
 		itemLevel: 10
 	}
 })
