@@ -63,6 +63,32 @@ export const mall: Location = {
 		},
 		{
 			type: 'LootChannel',
+			name: 'pathway-park',
+			display: 'pathway-park',
+			scavange: {
+				common: {
+					items: [items.bandage, items['9mm_FMJ_bullet']],
+					xp: 10
+				},
+				uncommon: {
+					items: [items['glock-17'], items.dome_depot_key],
+					xp: 15
+				},
+				rare: {
+					items: [items['ak-47'], items.aramid_armor, items['7.62x39mm_FMJ_bullet']],
+					xp: 25
+				},
+				rolls: 2,
+				cooldown: 1 * 10
+			},
+			npcSpawns: {
+				npcs: [npcs.medium_raider],
+				cooldownMin: 2 * 60,
+				cooldownMax: 4 * 60
+			}
+		},
+		{
+			type: 'LootChannel',
 			name: 'dome-depot',
 			display: 'Dome Depot',
 			scavange: {
@@ -78,7 +104,7 @@ export const mall: Location = {
 					items: [items.aramid_armor, items.aramid_helmet],
 					xp: 25
 				},
-				rolls: 1,
+				rolls: 2,
 				cooldown: 1 * 10,
 				requiresKey: [items.dome_depot_key, items.security_key],
 				keyIsOptional: false
@@ -90,6 +116,32 @@ export const mall: Location = {
 			display: 'Parking Lot',
 			evac: {
 				time: 30
+			}
+		},
+		{
+			type: 'LootChannel',
+			name: 'plaza',
+			display: 'plaza',
+			scavange: {
+				common: {
+					items: [items.sledgehammer, items.wooden_helmet],
+					xp: 10
+				},
+				uncommon: {
+					items: [items['anti-biotics'], items.florreds_pharmacy_key],
+					xp: 15
+				},
+				rare: {
+					items: [items.m4a1, items['5.56x45mm_FMJ_bullet']],
+					xp: 25
+				},
+				rolls: 2,
+				cooldown: 1 * 10
+			},
+			npcSpawns: {
+				npcs: [npcs.crawler_medium],
+				cooldownMin: 1 * 60,
+				cooldownMax: 2 * 60
 			}
 		},
 		{
@@ -132,7 +184,7 @@ export const mall: Location = {
 					items: [items.paracetamol, items.tech_trash, items.morphine],
 					xp: 25
 				},
-				rolls: 1,
+				rolls: 2,
 				cooldown: 1 * 50
 			},
 			npcSpawns: {
@@ -158,7 +210,7 @@ export const mall: Location = {
 					items: [items.hyfin_chest_seal],
 					xp: 25
 				},
-				rolls: 1,
+				rolls: 2,
 				cooldown: 1 * 10
 			},
 			npcSpawns: {
@@ -184,7 +236,7 @@ export const mall: Location = {
 					items: [items.paracetamol, items.adrenaline_stimulant, items.adderall, items.morphine],
 					xp: 25
 				},
-				rolls: 1,
+				rolls: 2,
 				cooldown: 1 * 10,
 				requiresKey: [items.florreds_pharmacy_key, items.security_key],
 				keyIsOptional: false
@@ -207,7 +259,7 @@ export const mall: Location = {
 					items: [items.paracetamol, items.tech_trash, items.morphine],
 					xp: 25
 				},
-				rolls: 1,
+				rolls: 2,
 				cooldown: 1 * 50
 			},
 			npcSpawns: {
@@ -222,8 +274,14 @@ export const mall: Location = {
 			display: 'Roof Helipad',
 			evac: {
 				time: 15
+			},
+			npcSpawns: {
+				npcs: [npcs.medium_raider],
+				cooldownMin: 5 * 60,
+				cooldownMax: 10 * 60
 			}
 		},
+
 		{
 			type: 'LootChannel',
 			name: 'mall-fountain',
