@@ -6,7 +6,7 @@ import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { Ammunition } from '../types/Items'
-import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
+import { clearCooldown, createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { createItem, deleteItem, dropItemToGround, getGroundItems, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { deleteNPC, getNPC, lowerHealth as lowerNPCHealth } from '../utils/db/npcs'
@@ -500,12 +500,22 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			const attackCD = await getCooldown(transaction.query, ctx.user.id, 'attack')
+			const victimAttackShieldCD = await getCooldown(transaction.query, member.id, 'attack-shield')
 
 			if (attackCD) {
 				await transaction.commit()
 
 				await ctx.send({
 					content: `${icons.timer} Your attack is on cooldown for **${attackCD}**. This is based on the attack rate of your weapon.`
+				})
+				return
+			}
+
+			else if (victimAttackShieldCD) {
+				await transaction.commit()
+
+				await ctx.send({
+					content: `${icons.timer} **${member.displayName}** has PvP protection for **${victimAttackShieldCD}** because they recently killed another player (this helps prevent kill sniping).`
 				})
 				return
 			}
@@ -646,6 +656,11 @@ class AttackCommand extends CustomSlashCommand {
 			// add attack cooldown based on weapon attack rate
 			await createCooldown(transaction.query, ctx.user.id, 'attack', attackCooldown)
 
+			// check if attacker has PvP protection and remove it if they attack another player
+			if (await getCooldown(transaction.query, ctx.user.id, 'attack-shield')) {
+				await clearCooldown(transaction.query, ctx.user.id, 'attack-shield')
+			}
+
 			// add message if users weapon accuracy allowed them to hit their targeted body part
 			if (bodyPartHit.accurate) {
 				messages.push(`${icons.crosshair} You hit the targeted limb (**${bodyPartHit.result}**)`)
@@ -726,6 +741,9 @@ class AttackCommand extends CustomSlashCommand {
 				await removeUserFromRaid(transaction.query, member.id)
 				await createCooldown(transaction.query, member.id, `raid-${raidType.id}`, raidCooldown)
 
+				// add attack shield since user killed another player
+				await createCooldown(transaction.query, ctx.user.id, 'attack-shield', 40)
+
 				// check if user has any kill quests
 				for (const quest of userQuests) {
 					if (quest.progress < quest.progressGoal) {
@@ -733,7 +751,7 @@ class AttackCommand extends CustomSlashCommand {
 					}
 				}
 
-				messages.push(`\n☠️ **${member.displayName}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill.`)
+				messages.push(`\n☠️ **${member.displayName}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill and PvP protection for **40 seconds**.`)
 			}
 			else if (!missedPartChoice) {
 				await lowerHealth(transaction.query, member.id, totalDamage)

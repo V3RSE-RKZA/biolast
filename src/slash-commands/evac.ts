@@ -4,7 +4,7 @@ import { icons, raidCooldown } from '../config'
 import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { CONFIRM_BUTTONS } from '../utils/constants'
-import { createCooldown, formatTime } from '../utils/db/cooldowns'
+import { clearCooldown, createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getNPC } from '../utils/db/npcs'
@@ -133,7 +133,8 @@ class EvacCommand extends CustomSlashCommand {
 		await preTransaction.commit()
 
 		const botMessage = await ctx.send({
-			content: `Are you sure you want to evac here${evacItem ? ` using your ${getItemDisplay(evacItem.item, evacItem.row)}` : ''}? The escape will take **${formatTime(raidChannel.evac.time * 1000)}**.`,
+			content: `Are you sure you want to evac here${evacItem ? ` using your ${getItemDisplay(evacItem.item, evacItem.row)}` : ''}?` +
+				` The escape will take **${formatTime(raidChannel.evac.time * 1000)}**. Using this evac will also remove any PvP protection you have.`,
 			components: CONFIRM_BUTTONS
 		}) as Message
 
@@ -151,8 +152,9 @@ class EvacCommand extends CustomSlashCommand {
 
 				this.app.extractingUsers.add(ctx.user.id)
 
+				const transaction = await beginTransaction()
+
 				if (evacItem) {
-					const transaction = await beginTransaction()
 					const userBackpackVerified = await getUserBackpack(transaction.query, ctx.user.id, true)
 					const userBackpackDataVerified = getItems(userBackpackVerified)
 
@@ -176,9 +178,14 @@ class EvacCommand extends CustomSlashCommand {
 					else {
 						await lowerItemDurability(transaction.query, evacItemVerified.row.id, 1)
 					}
-
-					await transaction.commit()
 				}
+
+				// check if user has PvP protection and remove it if they evac
+				if (await getCooldown(transaction.query, ctx.user.id, 'attack-shield')) {
+					await clearCooldown(transaction.query, ctx.user.id, 'attack-shield')
+				}
+
+				await transaction.commit()
 
 				setTimeout(async () => {
 					try {
