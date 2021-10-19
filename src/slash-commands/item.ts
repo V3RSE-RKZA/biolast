@@ -101,14 +101,15 @@ class ItemCommand extends CustomSlashCommand {
 	getItemEmbed (item: Item): Embed {
 		const itemEmbed = new Embed()
 			.setDescription(getItemDisplay(item))
-			.addField('Item Type', item.type)
+			.addField('Item Type', item.type, true)
+			.addField('Item Level', `Level **${item.itemLevel}**`, true)
+			.addBlankField(true)
 
 		if (item.description) {
 			itemEmbed.addField('Description', item.description)
 		}
 
 		itemEmbed.addField('Item Weight', `Uses **${item.slotsUsed}** slot${item.slotsUsed === 1 ? '' : 's'}`, true)
-		itemEmbed.addField('Level Required to Purchase', `Level **${item.itemLevel}**`, true)
 
 		if (item.buyPrice) {
 			itemEmbed.addField('Buy Price', formatNumber(item.buyPrice), true)
