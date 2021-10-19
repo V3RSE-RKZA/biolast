@@ -14,7 +14,7 @@ import { addXp, getUserRow, increaseDeaths, increaseKills, lowerHealth } from '.
 import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
 import { combineArrayWithAnd, formatHealth, getBodyPartEmoji } from '../utils/stringUtils'
-import { getEquips, getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
+import { getEquips, getItemDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
 import { BodyPart, getAttackDamage, getBodyPartHit, getRaidType } from '../utils/raidUtils'
@@ -414,8 +414,9 @@ class AttackCommand extends CustomSlashCommand {
 
 				const lootEmbed = new Embed()
 					.setTitle('Items Dropped')
-					.setDescription(droppedItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n'))
+					.setDescription(sortItemsByLevel(droppedItems, true).map(itm => getItemDisplay(itm.item, itm.row)).join('\n'))
 					.setFooter('These items were dropped onto the ground.')
+
 
 				await ctx.send({
 					content: messages.join('\n'),
@@ -439,7 +440,8 @@ class AttackCommand extends CustomSlashCommand {
 
 				// npc attacks user message
 				await ctx.send({
-					content: attackResult.messages.join('\n')
+					content: attackResult.messages.join('\n'),
+					embeds: attackResult.lootEmbed ? [attackResult.lootEmbed.embed] : undefined
 				})
 
 				if (userData.health - attackResult.damage <= 0) {
@@ -461,7 +463,8 @@ class AttackCommand extends CustomSlashCommand {
 						await messageUser(erisUser, {
 							content: `${icons.danger} Raid failed!\n\n` +
 								`You were killed by ${npc.type === 'boss' ? npc.display : `a ${npc.type}`} who hit you for **${attackResult.damage}** damage. Next time make sure you're well equipped to attack enemies.\n` +
-								`You lost all the items in your inventory (**${userBackpackData.items.length - attackResult.removedItems}** items).`
+								`You lost all the items in your inventory (**${userBackpackData.items.length - attackResult.removedItems}** items).`,
+							embeds: attackResult.lootEmbed ? [attackResult.lootEmbed.embed] : undefined
 						})
 					}
 				}
@@ -554,6 +557,7 @@ class AttackCommand extends CustomSlashCommand {
 			const victimBackpackData = getItems(victimBackpack)
 			const userEquips = getEquips(userBackpack)
 			const victimEquips = getEquips(victimBackpack)
+			const victimItemsRemoved: number[] = []
 
 			if (!userEquips.weapon) {
 				await transaction.commit()
@@ -691,6 +695,7 @@ class AttackCommand extends CustomSlashCommand {
 								messages.push(`**${member.displayName}**'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
 
 								await deleteItem(transaction.query, victimEquips.helmet.row.id)
+								victimItemsRemoved.push(victimEquips.helmet.row.id)
 							}
 							else {
 								await lowerItemDurability(transaction.query, victimEquips.helmet.row.id, 1)
@@ -708,6 +713,7 @@ class AttackCommand extends CustomSlashCommand {
 								messages.push(`**${member.displayName}**'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
 
 								await deleteItem(transaction.query, victimEquips.armor.row.id)
+								victimItemsRemoved.push(victimEquips.armor.row.id)
 							}
 							else {
 								await lowerItemDurability(transaction.query, victimEquips.armor.row.id, 1)
@@ -721,13 +727,15 @@ class AttackCommand extends CustomSlashCommand {
 				}
 			}
 
+			// have to filter out the removed armor/helmet to prevent sql reference errors
+			const victimLoot = victimBackpackData.items.filter(i => !victimItemsRemoved.includes(i.row.id))
 			messages.push(`${icons.timer} Your attack is on cooldown for **${formatTime(attackCooldown * 1000)}**.`)
 
 			if (!missedPartChoice && victimData.health - totalDamage <= 0) {
 				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'Player Kills' || q.questType === 'Any Kills')
 				let xpEarned = 15
 
-				for (const victimItem of victimBackpackData.items) {
+				for (const victimItem of victimLoot) {
 					// 10 xp per item user had
 					xpEarned += 10
 
@@ -751,7 +759,7 @@ class AttackCommand extends CustomSlashCommand {
 					}
 				}
 
-				messages.push(`\n☠️ **${member.displayName}** DIED! They dropped **${victimBackpackData.items.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill and PvP protection for **40 seconds**.`)
+				messages.push(`\n☠️ **${member.displayName}** DIED! They dropped **${victimLoot.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill and PvP protection for **40 seconds**.`)
 			}
 			else if (!missedPartChoice) {
 				await lowerHealth(transaction.query, member.id, totalDamage)
@@ -762,14 +770,26 @@ class AttackCommand extends CustomSlashCommand {
 			// commit changes
 			await transaction.commit()
 
+			let lootEmbed
+
 			// send message to victim if they were killed.
 			// this has to go after the transaction.commit() because if discord api is laggy,
 			// it will cause the transaction to timeout (since the transaction would have to wait on discord to receive our message).
 			if (!missedPartChoice && victimData.health - totalDamage <= 0) {
 				try {
+					lootEmbed = new Embed()
+						.setTitle('Items Dropped')
+						.setDescription(victimLoot.length ?
+							`${sortItemsByLevel(victimLoot, true).slice(0, 10).map(victimItem => getItemDisplay(victimItem.item)).join('\n')}` +
+								`${victimLoot.length > 10 ? `\n...and **${victimLoot.length - 10}** other item${victimLoot.length - 10 > 1 ? 's' : ''}` : ''}` :
+							'No items were dropped.')
+						.setFooter('These items were dropped onto the ground.')
+
 					if (webhooks.pvp.id && webhooks.pvp.token) {
 						await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-							content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** hit **${member.user.username}#${member.user.discriminator}** for **${totalDamage}** damage using their ${getItemDisplay(userEquips.weapon.item)}${ammoUsed ? ` (ammo: ${getItemDisplay(ammoUsed.item)})` : ''}.`
+							content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** hit **${member.user.username}#${member.user.discriminator}** for **${totalDamage}** damage using their ${getItemDisplay(userEquips.weapon.item)}` +
+								`${ammoUsed ? ` (ammo: ${getItemDisplay(ammoUsed.item)})` : ''}.`,
+							embeds: [lootEmbed.embed]
 						})
 					}
 
@@ -782,7 +802,8 @@ class AttackCommand extends CustomSlashCommand {
 						await messageUser(erisMember.user, {
 							content: `${icons.danger} Raid failed!\n\n` +
 								`You were killed by **${ctx.user.username}#${ctx.user.discriminator}** who hit you for **${totalDamage}** damage using their ${getItemDisplay(userEquips.weapon.item)}${ammoUsed ? ` (ammo: ${getItemDisplay(ammoUsed.item)})` : ''}.\n` +
-								`You lost all the items in your inventory (**${victimBackpackData.items.length}** items).`
+								`You lost all the items in your inventory (**${victimLoot.length}** items).`,
+							embeds: [lootEmbed.embed]
 						})
 					}
 				}
@@ -792,7 +813,8 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			await ctx.send({
-				content: messages.join('\n')
+				content: messages.join('\n'),
+				embeds: lootEmbed ? [lootEmbed.embed] : undefined
 			})
 		}
 	}

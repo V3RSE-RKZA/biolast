@@ -13,12 +13,13 @@ import { createNPC, deleteNPC, getAllNPCs } from './db/npcs'
 import { lowerHealth } from './db/players'
 import { removeUserFromRaid } from './db/raids'
 import { combineArrayWithAnd, formatHealth, getBodyPartEmoji } from './stringUtils'
-import { getEquips, getItemDisplay, getItems } from './itemUtils'
+import { getEquips, getItemDisplay, getItems, sortItemsByLevel } from './itemUtils'
 import { logger } from './logger'
 import { getAttackDamage, getBodyPartHit } from './raidUtils'
 import getRandomInt from './randomInt'
 import { addStatusEffects, getActiveStimulants } from './playerUtils'
 import { TextChannel, Webhook } from 'eris'
+import Embed from '../structures/Embed'
 
 class NPCHandler {
 	private app: App
@@ -218,7 +219,7 @@ class NPCHandler {
 		channelID: string,
 		removedItems: number[],
 		raidType: Location
-	): Promise<{ messages: string[], damage: number, removedItems: number }> {
+	): Promise<{ messages: string[], damage: number, removedItems: number, lootEmbed: Embed | undefined }> {
 		const messages = []
 		const userBackpackData = getItems(userBackpack)
 		const userEquips = getEquips(userBackpack)
@@ -360,18 +361,29 @@ class NPCHandler {
 			}
 		}
 
+		let lootEmbed
+
 		if (userRow.health - totalDamage <= 0) {
-			for (const victimItem of userBackpackData.items) {
-				if (!removedItems.includes(victimItem.row.id)) {
-					await removeItemFromBackpack(transactionQuery, victimItem.row.id)
-					await dropItemToGround(transactionQuery, channelID, victimItem.row.id)
-				}
+			// have to filter out the removed armor/helmet to prevent sql reference errors
+			const victimLoot = userBackpackData.items.filter(i => !removedItems.includes(i.row.id))
+
+			for (const victimItem of victimLoot) {
+				await removeItemFromBackpack(transactionQuery, victimItem.row.id)
+				await dropItemToGround(transactionQuery, channelID, victimItem.row.id)
 			}
 
 			await removeUserFromRaid(transactionQuery, member.id)
 			await createCooldown(transactionQuery, member.id, `raid-${raidType.id}`, raidCooldown)
 
-			messages.push(`☠️ **${member.displayName}** DIED! They dropped **${userBackpackData.items.length - removedItems.length}** items on the ground.`)
+			messages.push(`☠️ **${member.displayName}** DIED! They dropped **${victimLoot.length}** items on the ground.`)
+
+			lootEmbed = new Embed()
+				.setTitle('Items Dropped')
+				.setDescription(victimLoot.length ?
+					`${sortItemsByLevel(victimLoot, true).slice(0, 10).map(victimItem => getItemDisplay(victimItem.item)).join('\n')}` +
+						`${victimLoot.length > 10 ? `\n...and **${victimLoot.length - 10}** other item${victimLoot.length - 10 > 1 ? 's' : ''}` : ''}` :
+					'No items were dropped.')
+				.setFooter('These items were dropped onto the ground.')
 		}
 		else {
 			await lowerHealth(transactionQuery, member.id, totalDamage)
@@ -382,6 +394,7 @@ class NPCHandler {
 		return {
 			messages,
 			damage: totalDamage,
+			lootEmbed,
 			removedItems: removedItems.length
 		}
 	}
