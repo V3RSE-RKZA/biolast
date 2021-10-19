@@ -14,6 +14,7 @@ import { getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { isRaidGuild } from '../utils/raidUtils'
 import { formatTime } from '../utils/db/cooldowns'
+import { allLocations } from '../resources/raids'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
@@ -195,6 +196,20 @@ class ItemCommand extends CustomSlashCommand {
 						itemEmbed.addField('Cures Afflictions', curesAfflictions.join('\n'), true)
 					}
 				}
+				break
+			}
+			case 'Key': {
+				const usableChannels = []
+
+				for (const location of allLocations) {
+					for (const channel of location.channels) {
+						if (channel.scavange && channel.scavange.requiresKey?.includes(item)) {
+							usableChannels.push(channel)
+						}
+					}
+				}
+
+				itemEmbed.addField('Used to Scavenge', usableChannels.map(chan => chan.display).join('\n'), true)
 			}
 		}
 
