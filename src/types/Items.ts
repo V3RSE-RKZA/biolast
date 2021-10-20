@@ -1,5 +1,5 @@
 interface BaseItem {
-	type: 'Ranged Weapon' | 'Melee Weapon' | 'Helmet' | 'Body Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key' | 'Collectible'
+	type: 'Ranged Weapon' | 'Melee Weapon' | 'Helmet' | 'Body Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key' | 'Collectible' | 'Explosive Weapon'
 	name: string
 	aliases: string[]
 	icon: string
@@ -66,7 +66,37 @@ export interface MeleeWeapon extends BaseItem {
 	penetration: number
 }
 
-export type Weapon = RangedWeapon | MeleeWeapon
+export interface ExplosiveWeapon extends BaseItem {
+	type: 'Explosive Weapon'
+
+	/**
+	 * How often can this weapon be used (cooldown in seconds)
+	 */
+	fireRate: number
+
+	/**
+	 * The amount of damage this melee weapon deals when used
+	 */
+	damage: number
+
+	/**
+	 * The percent chance for this weapon to hit target (0% - 100%)
+	 */
+	accuracy: number
+
+	/**
+	 * How many limbs should the damage be spread out to
+	 */
+	spreadsDamageToLimbs?: 2 | 3 | 4
+
+	/**
+	 * The armor penetration this explosive has, can be a float between 0 - whatever. If this number is greater than the victims armor level, this will deal full damage.
+	 * Otherwise, the damage will be reduced based on the difference between this number and the victims armor level.
+	 */
+	penetration: number
+}
+
+export type Weapon = RangedWeapon | MeleeWeapon | ExplosiveWeapon
 
 export interface Armor extends BaseItem {
 	type: 'Body Armor'

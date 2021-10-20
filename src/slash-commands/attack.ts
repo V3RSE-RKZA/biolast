@@ -313,10 +313,56 @@ class AttackCommand extends CustomSlashCommand {
 					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
 				}
 
-				messages.push(`You shot ${npcDisplayName} in the ${combineArrayWithAnd(limbsHitStrings)} with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}). **${totalDamage}** damage dealt.\n`)
+				messages.push(`You shot ${npcDisplayName} in the ${combineArrayWithAnd(limbsHitStrings)} with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}). **${totalDamage}** total damage dealt.\n`)
 			}
 			else {
 				messages.push(`You shot ${npcDisplayName} in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}). **${totalDamage}** damage dealt.\n`)
+			}
+		}
+		else if (userEquips.weapon.item.type === 'Explosive Weapon') {
+			if (userEquips.weapon.item.spreadsDamageToLimbs) {
+				limbsHit.push({
+					damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))) / userEquips.weapon.item.spreadsDamageToLimbs, userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
+					limb: bodyPartHit.result
+				})
+
+				for (let i = 0; i < userEquips.weapon.item.spreadsDamageToLimbs - 1; i++) {
+					let limb = getBodyPartHit(userEquips.weapon.item.accuracy)
+
+					// make sure no duplicate limbs are hit
+					while (limbsHit.find(l => l.limb === limb.result)) {
+						limb = getBodyPartHit(userEquips.weapon.item.accuracy)
+					}
+
+					limbsHit.push({
+						damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))) / userEquips.weapon.item.spreadsDamageToLimbs, userEquips.weapon.item.penetration, limb.result, npc.armor, npc.helmet),
+						limb: limb.result
+					})
+				}
+			}
+			else {
+				limbsHit.push({
+					damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))), userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
+					limb: bodyPartHit.result
+				})
+			}
+
+			totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
+
+			if (missedPartChoice) {
+				messages.push(`${icons.danger} You try to throw your ${getItemDisplay(userEquips.weapon.item)} at ${npcDisplayName}'s ${getBodyPartEmoji(partChoice!)} **${partChoice}** **BUT YOU MISS DUE TO LOW ACCURACY!**\n`)
+			}
+			else if (userEquips.weapon.item.spreadsDamageToLimbs) {
+				const limbsHitStrings = []
+
+				for (const limbHit of limbsHit) {
+					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+				}
+
+				messages.push(`Your ${getItemDisplay(userEquips.weapon.item)} explodes and hits ${npcDisplayName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`)
+			}
+			else {
+				messages.push(`Your ${getItemDisplay(userEquips.weapon.item)} explodes and hits ${npcDisplayName} in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
 			}
 		}
 		else {
@@ -751,10 +797,58 @@ class AttackCommand extends CustomSlashCommand {
 					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
 				}
 
-				messages.push(`You shot <@${member.id}> in the ${combineArrayWithAnd(limbsHitStrings)} with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}). **${totalDamage}** damage dealt.\n`)
+				messages.push(`You shot <@${member.id}> in the ${combineArrayWithAnd(limbsHitStrings)} with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}). **${totalDamage}** total damage dealt.\n`)
 			}
 			else {
 				messages.push(`You shot <@${member.id}> in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}). **${totalDamage}** damage dealt.\n`)
+			}
+		}
+		else if (userEquips.weapon.item.type === 'Explosive Weapon') {
+			attackPenetration = userEquips.weapon.item.penetration
+
+			if (userEquips.weapon.item.spreadsDamageToLimbs) {
+				limbsHit.push({
+					damage: getAttackDamage((userEquips.weapon.item.damage * stimulantDamageMulti) / userEquips.weapon.item.spreadsDamageToLimbs, userEquips.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+					limb: bodyPartHit.result
+				})
+
+				for (let i = 0; i < userEquips.weapon.item.spreadsDamageToLimbs - 1; i++) {
+					let limb = getBodyPartHit(userEquips.weapon.item.accuracy)
+
+					// make sure no duplicate limbs are hit
+					while (limbsHit.find(l => l.limb === limb.result)) {
+						limb = getBodyPartHit(userEquips.weapon.item.accuracy)
+					}
+
+					limbsHit.push({
+						damage: getAttackDamage((userEquips.weapon.item.damage * stimulantDamageMulti) / userEquips.weapon.item.spreadsDamageToLimbs, userEquips.weapon.item.penetration, limb.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+						limb: limb.result
+					})
+				}
+			}
+			else {
+				limbsHit.push({
+					damage: getAttackDamage((userEquips.weapon.item.damage * stimulantDamageMulti), userEquips.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
+					limb: bodyPartHit.result
+				})
+			}
+
+			totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
+
+			if (missedPartChoice) {
+				messages.push(`${icons.danger} You try to throw your ${getItemDisplay(userEquips.weapon.item)} at <@${member.id}>'s ${getBodyPartEmoji(partChoice!)} **${partChoice}** **BUT YOU MISS DUE TO LOW ACCURACY!**\n`)
+			}
+			else if (userEquips.weapon.item.spreadsDamageToLimbs) {
+				const limbsHitStrings = []
+
+				for (const limbHit of limbsHit) {
+					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+				}
+
+				messages.push(`Your ${getItemDisplay(userEquips.weapon.item)} explodes and hits <@${member.id}> in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`)
+			}
+			else {
+				messages.push(`Your ${getItemDisplay(userEquips.weapon.item)} explodes and hits <@${member.id}> in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
 			}
 		}
 		else {

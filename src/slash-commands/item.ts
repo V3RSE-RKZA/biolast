@@ -143,6 +143,19 @@ class ItemCommand extends CustomSlashCommand {
 				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
 				break
 			}
+			case 'Explosive Weapon': {
+				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
+				itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
+				if (item.spreadsDamageToLimbs) {
+					itemEmbed.addField('Damage', `${item.damage} (${Math.round(item.damage / item.spreadsDamageToLimbs)} x ${item.spreadsDamageToLimbs} limbs)`, true)
+					itemEmbed.addField('Special', `Spreads damage across **${item.spreadsDamageToLimbs}** limbs.`, true)
+				}
+				else {
+					itemEmbed.addField('Damage', item.damage.toString(), true)
+				}
+				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
+				break
+			}
 			case 'Ranged Weapon': {
 				const ammunition = sortItemsByAmmo(allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item))) as Ammunition[]
 
