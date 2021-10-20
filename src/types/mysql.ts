@@ -32,6 +32,7 @@ export interface UserRow {
 	npcKills: number
 	bossKills: number
 	deaths: number
+	questsCompleted: number
 }
 
 export interface Cooldown {
@@ -88,5 +89,6 @@ export interface QuestRow {
 	itemReward?: string
 	xpReward?: number
 	moneyReward?: number
+	sideQuest: 0 | 1
 	createdAt: Date
 }

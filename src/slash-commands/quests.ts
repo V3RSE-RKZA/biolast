@@ -8,7 +8,7 @@ import { BackpackItemRow, ItemRow, QuestRow } from '../types/mysql'
 import { createCooldown, formatTime, getCooldownRow, getCooldownTimeLeft } from '../utils/db/cooldowns'
 import { addItemToStash, createItem, deleteItem, getUserBackpack, getUserStash } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
-import { addMoney, addXp, getUserRow } from '../utils/db/players'
+import { addMoney, addXp, getUserRow, increaseQuestsCompleted } from '../utils/db/players'
 import { createQuest, deleteQuest, getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getUsersRaid } from '../utils/db/raids'
 import { combineArrayWithAnd, formatNumber } from '../utils/stringUtils'
@@ -17,7 +17,8 @@ import { logger } from '../utils/logger'
 import { allItems } from '../resources/items'
 
 // how long a user should have to complete their quests before they receive a new one
-const questCooldown = 24 * 60 * 60
+const dailyQuestCooldown = 24 * 60 * 60
+const hourlyQuestCooldown = 60 * 60
 
 class QuestsCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -41,19 +42,25 @@ class QuestsCommand extends CustomSlashCommand {
 	async run (ctx: CommandContext): Promise<void> {
 		const transaction = await beginTransaction()
 		const isInRaid = await getUsersRaid(transaction.query, ctx.user.id)
-		const questCDRow = await getCooldownRow(transaction.query, ctx.user.id, 'quest', true)
+		const dailyQuestCDRow = await getCooldownRow(transaction.query, ctx.user.id, 'daily-quest', true)
+		const hourlyQuestCDRow = await getCooldownRow(transaction.query, ctx.user.id, 'hourly-quest', true)
 		const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
 		const userQuestRows = await getUserQuests(transaction.query, ctx.user.id, true)
 		const userBackpackRows = await getUserBackpack(transaction.query, ctx.user.id)
 		const userStashRows = await getUserStash(transaction.query, ctx.user.id)
 		const userQuests = []
-		let questCDTimeLeft
+		let dailyQuestCDTimeLeft
+		let hourlyQuestCDTimeLeft
 
 		// remove invalid quests
 		for (let i = userQuestRows.length - 1; i >= 0; i--) {
 			const quest = quests.find(q => q.id === userQuestRows[i].questId)
 
-			if (!questCDRow || !quest || userData.level > quest.maxLevel) {
+			if (
+				(!dailyQuestCDRow && !userQuestRows[i].sideQuest) ||
+				(!hourlyQuestCDRow && userQuestRows[i].sideQuest) ||
+				!quest ||
+				userData.level > quest.maxLevel) {
 				await deleteQuest(transaction.query, userQuestRows[i].id)
 
 				userQuestRows.splice(i, 1)
@@ -64,8 +71,8 @@ class QuestsCommand extends CustomSlashCommand {
 			}
 		}
 
-		// users quest cooldown has expired, assign a new random quest
-		if (!questCDRow) {
+		// users daily quest cooldown has expired, assign a new random quest
+		if (!dailyQuestCDRow) {
 			const newQuest = this.fetchRandomQuest(userData.level)
 
 			if (!newQuest) {
@@ -74,14 +81,34 @@ class QuestsCommand extends CustomSlashCommand {
 				throw new Error(`No eligible quest found for user (${ctx.user.id}, level ${userData.level})`)
 			}
 
-			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest, this.getQuestXpReward(userData.level))
+			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest, this.getQuestXpReward(userData.level), false)
 			userQuestRows.push(newQuestRow)
 			userQuests.push(newQuest)
-			questCDTimeLeft = questCooldown * 1000
-			await createCooldown(transaction.query, ctx.user.id, 'quest', questCooldown)
+			dailyQuestCDTimeLeft = dailyQuestCooldown * 1000
+			await createCooldown(transaction.query, ctx.user.id, 'daily-quest', dailyQuestCooldown)
 		}
 		else {
-			questCDTimeLeft = getCooldownTimeLeft(questCDRow.length, questCDRow.createdAt.getTime())
+			dailyQuestCDTimeLeft = getCooldownTimeLeft(dailyQuestCDRow.length, dailyQuestCDRow.createdAt.getTime())
+		}
+
+		// users hourly quest cooldown has expired, assign a new random quest
+		if (!hourlyQuestCDRow) {
+			const newQuest = this.fetchRandomQuest(userData.level)
+
+			if (!newQuest) {
+				// this should not happen, there should always be a quest available for a user
+				await transaction.commit()
+				throw new Error(`No eligible quest found for user (${ctx.user.id}, level ${userData.level})`)
+			}
+
+			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest, Math.floor(this.getQuestXpReward(userData.level) / 10), true)
+			userQuestRows.push(newQuestRow)
+			userQuests.push(newQuest)
+			hourlyQuestCDTimeLeft = hourlyQuestCooldown * 1000
+			await createCooldown(transaction.query, ctx.user.id, 'hourly-quest', hourlyQuestCooldown)
+		}
+		else {
+			hourlyQuestCDTimeLeft = getCooldownTimeLeft(hourlyQuestCDRow.length, hourlyQuestCDRow.createdAt.getTime())
 		}
 
 		await transaction.commit()
@@ -89,16 +116,20 @@ class QuestsCommand extends CustomSlashCommand {
 		const questButtons: ComponentButton[] = []
 		let questsEmbed = new Embed()
 			.setAuthor('Your Quests', ctx.user.avatarURL)
-			.setDescription(isInRaid ? `${icons.danger} You cannot complete quests while in a raid!` : `${icons.warning} You have **${formatTime(questCDTimeLeft)}** to complete this quest.`)
+			.setDescription(isInRaid ?
+				`${icons.danger} You cannot complete quests while in a raid!` :
+				`${userQuestRows.filter(q => !q.sideQuest).length ? `${icons.warning} You have **${formatTime(dailyQuestCDTimeLeft)}** to complete daily quests.` : `${icons.information} You will receive a new daily quest in **${formatTime(dailyQuestCDTimeLeft)}**.`}` +
+					`\n${userQuestRows.filter(q => q.sideQuest).length ? `${icons.warning} You have **${formatTime(hourlyQuestCDTimeLeft)}** to complete hourly quests.` : `${icons.information} You will receive a new hourly quest in **${formatTime(hourlyQuestCDTimeLeft)}**.`}`)
 
 		for (let i = 0; i < userQuestRows.length; i++) {
-			questsEmbed.addField(`__Quest #${userQuestRows[i].id}__`, this.getQuestDescription(userQuests[i], userQuestRows[i]))
+			questsEmbed.addField(`__${userQuestRows[i].sideQuest ? 'Hourly' : 'Daily'} Quest #${userQuestRows[i].id}__`, this.getQuestDescription(userQuests[i], userQuestRows[i]))
 
 			questButtons.push(this.getQuestButton(userQuests[i], userQuestRows[i], isInRaid ? true : !this.questCanBeCompleted(userQuests[i], userQuestRows[i], userBackpackRows, userStashRows)))
 		}
 
 		if (!userQuestRows.length) {
-			questsEmbed.setDescription(`${icons.information} You've completed all of your quests! You will receive a new one in **${formatTime(questCDTimeLeft)}**.`)
+			questsEmbed.setDescription(`${icons.information} You've completed all of your quests! You will receive a new quest in` +
+				` **${dailyQuestCDTimeLeft < hourlyQuestCDTimeLeft ? formatTime(dailyQuestCDTimeLeft) : formatTime(hourlyQuestCDTimeLeft)}**.`)
 		}
 
 		const botMessage = await ctx.send({
@@ -115,7 +146,8 @@ class QuestsCommand extends CustomSlashCommand {
 			try {
 				const completedQuestID = parseInt(buttonCtx.customID)
 				const completedTransaction = await beginTransaction()
-				const completedQuestCDRow = await getCooldownRow(completedTransaction.query, ctx.user.id, 'quest', true)
+				const completedDailyQuestCDRow = await getCooldownRow(completedTransaction.query, ctx.user.id, 'daily-quest', true)
+				const completedHourlyQuestCDRow = await getCooldownRow(completedTransaction.query, ctx.user.id, 'hourly-quest', true)
 				const completedUserData = (await getUserRow(completedTransaction.query, ctx.user.id, true))!
 				const completedUserQuestRows = await getUserQuests(completedTransaction.query, ctx.user.id, true)
 				const completedQuestRow = completedUserQuestRows.find(row => row.id === completedQuestID)
@@ -126,19 +158,23 @@ class QuestsCommand extends CustomSlashCommand {
 
 				if (
 					!isInRaid &&
-					completedQuestCDRow &&
+					completedQuestRow &&
+					(
+						(completedQuestRow.sideQuest && completedHourlyQuestCDRow) ||
+						(!completedQuestRow.sideQuest && completedDailyQuestCDRow)
+					) &&
 					completedQuest &&
 					completedUserData.level <= completedQuest.maxLevel &&
 					completedQuestRow &&
 					this.questCanBeCompleted(completedQuest, completedQuestRow, completedUserBackpackRows, completedUserStashRows)
 				) {
 					const newQuestButtons: ComponentButton[] = []
-					const completedQuestCDTimeLeft = getCooldownTimeLeft(completedQuestCDRow.length, completedQuestCDRow.createdAt.getTime())
+					const completedDailyQuestCDTimeLeft = completedDailyQuestCDRow ? getCooldownTimeLeft(completedDailyQuestCDRow.length, completedDailyQuestCDRow.createdAt.getTime()) : 0
+					const completedHourlyQuestCDTimeLeft = completedHourlyQuestCDRow ? getCooldownTimeLeft(completedHourlyQuestCDRow.length, completedHourlyQuestCDRow.createdAt.getTime()) : 0
 
 					if (
 						completedQuest.questType === 'Retrieve Item' &&
-						completedQuestRow.progress < completedQuestRow.progressGoal &&
-						completedQuestCDRow
+						completedQuestRow.progress < completedQuestRow.progressGoal
 					) {
 						const userBackpack = getItems(completedUserBackpackRows)
 						const userStash = getItems(completedUserStashRows)
@@ -172,7 +208,8 @@ class QuestsCommand extends CustomSlashCommand {
 
 						questsEmbed = new Embed()
 							.setAuthor('Your Quests', ctx.user.avatarURL)
-							.setDescription(`${icons.warning} You have **${formatTime(completedQuestCDTimeLeft)}** to complete this quest.`)
+							.setDescription(`${completedUserQuestRows.filter(q => !q.sideQuest).length ? `${icons.warning} You have **${formatTime(completedDailyQuestCDTimeLeft)}** to complete daily quests.` : `${icons.information} You will receive a new daily quest in **${formatTime(completedDailyQuestCDTimeLeft)}**.`}` +
+								`\n${completedUserQuestRows.filter(q => q.sideQuest).length ? `${icons.warning} You have **${formatTime(completedHourlyQuestCDTimeLeft)}** to complete hourly quests.` : `${icons.information} You will receive a new hourly quest in **${formatTime(completedHourlyQuestCDTimeLeft)}**.`}`)
 
 						await completedTransaction.commit()
 
@@ -228,6 +265,8 @@ class QuestsCommand extends CustomSlashCommand {
 							await addMoney(completedTransaction.query, ctx.user.id, completedQuestRow.moneyReward)
 						}
 
+						await increaseQuestsCompleted(completedTransaction.query, ctx.user.id, 1)
+
 						// remove invalid and completed quests
 						for (let i = completedUserQuestRows.length - 1; i >= 0; i--) {
 							const quest = quests.find(q => q.id === completedUserQuestRows[i].questId)
@@ -244,13 +283,15 @@ class QuestsCommand extends CustomSlashCommand {
 
 						questsEmbed = new Embed()
 							.setAuthor('Your Quests', ctx.user.avatarURL)
-							.setDescription(`${icons.warning} You have **${formatTime(completedQuestCDTimeLeft)}** to complete this quest.`)
+							.setDescription(`${completedUserQuestRows.filter(q => !q.sideQuest).length ? `${icons.warning} You have **${formatTime(completedDailyQuestCDTimeLeft)}** to complete daily quests.` : `${icons.information} You will receive a new daily quest in **${formatTime(completedDailyQuestCDTimeLeft)}**.`}` +
+								`\n${completedUserQuestRows.filter(q => q.sideQuest).length ? `${icons.warning} You have **${formatTime(completedHourlyQuestCDTimeLeft)}** to complete hourly quests.` : `${icons.information} You will receive a new hourly quest in **${formatTime(completedHourlyQuestCDTimeLeft)}**.`}`)
 							.addField(`__Quest #${completedQuestID}__`, 'Complete!')
 
 						await completedTransaction.commit()
 
 						if (!completedUserQuestRows.length) {
-							questsEmbed.setDescription(`${icons.information} You've completed all of your quests! You will receive a new one in **${formatTime(completedQuestCDTimeLeft)}**.`)
+							questsEmbed.setDescription(`${icons.information} You've completed all of your quests! You will receive a new quest in` +
+								` **${completedDailyQuestCDTimeLeft < completedHourlyQuestCDTimeLeft ? formatTime(completedDailyQuestCDTimeLeft) : formatTime(completedHourlyQuestCDTimeLeft)}**.`)
 						}
 
 						for (let i = 0; i < completedUserQuestRows.length; i++) {

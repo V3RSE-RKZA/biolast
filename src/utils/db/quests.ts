@@ -39,15 +39,16 @@ export async function deleteQuest (query: Query, questID: number): Promise<void>
  * @param quest The quest being added
  * @param xpReward The xp rewarded for completing this quest
  */
-export async function createQuest (query: Query, userID: string, quest: Quest, xpReward: number): Promise<QuestRow> {
-	const packet: OkPacket = await query('INSERT INTO quests (userId, questId, questType, progressGoal, itemReward, xpReward, moneyReward) VALUES (?, ?, ?, ?, ?, ?, ?)', [
+export async function createQuest (query: Query, userID: string, quest: Quest, xpReward: number, isSideQuest: boolean): Promise<QuestRow> {
+	const packet: OkPacket = await query('INSERT INTO quests (userId, questId, questType, progressGoal, itemReward, xpReward, moneyReward, sideQuest) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
 		userID,
 		quest.id,
 		quest.questType,
 		quest.progressGoal,
-		quest.rewards.item?.name,
+		isSideQuest ? undefined : quest.rewards.item?.name,
 		xpReward,
-		quest.rewards.money
+		isSideQuest ? undefined : quest.rewards.money,
+		isSideQuest
 	])
 
 	return {
@@ -60,6 +61,7 @@ export async function createQuest (query: Query, userID: string, quest: Quest, x
 		createdAt: new Date(),
 		itemReward: quest.rewards.item?.name,
 		xpReward,
-		moneyReward: quest.rewards.money
+		moneyReward: quest.rewards.money,
+		sideQuest: isSideQuest ? 1 : 0
 	}
 }

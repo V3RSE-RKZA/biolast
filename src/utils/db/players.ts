@@ -62,6 +62,16 @@ export async function increaseLevel (query: Query, userID: string, amount: numbe
 }
 
 /**
+ * Increases a users questsCompleted stat
+ * @param query Query to use
+ * @param userID ID of user to increase stat of
+ * @param amount Amount to increase stat by
+ */
+export async function increaseQuestsCompleted (query: Query, userID: string, amount: number): Promise<void> {
+	await query('UPDATE users SET questsCompleted = questsCompleted + ? WHERE userId = ?', [amount, userID])
+}
+
+/**
  * Increases a users shop sales (how many items user has bought from shop)
  * @param query Query to use
  * @param userID ID of user to increase shop sales of
