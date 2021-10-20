@@ -62,4 +62,4 @@ export const raidCooldown = 10 * 60
 
 // Slash commands will be registered here while debug is true. Registering commands to a guild is faster than registering globally.
 // If you leave this unset, commands will be registered globally regardless if debug is true.
-export const testingGuildId = process.env.TESTING_GUILD_ID
+export const testingGuildIDs = process.env.TESTING_GUILD_ID ? process.env.TESTING_GUILD_ID.split(',') : []
