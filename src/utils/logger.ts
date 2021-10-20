@@ -10,5 +10,8 @@ const pinoPrettyOpts: PrettyOptions = {
 
 export const logger = pino({
 	level: process.env.LOG_LEVEL || 'info',
-	prettyPrint: debug ? pinoPrettyOpts : false
+	transport: debug ? {
+		target: 'pino-pretty',
+		options: pinoPrettyOpts
+	} : undefined
 })
