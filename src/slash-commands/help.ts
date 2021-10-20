@@ -82,21 +82,21 @@ class HelpCommand extends CustomSlashCommand {
 				'Commands that ONLY work in a raid:',
 				this.app.slashCreator.commands
 					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && (cmd as CustomSlashCommand).customOptions.onlyWorksInRaidGuild)
-					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/25UsfHO5JwI '${cmd.description}')`)
+					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/0lvPMdMtsGU '${cmd.description}')`)
 					.join(', ')
 			)
 			.addField(
 				'Commands that can be used in AND out of a raid:',
 				this.app.slashCreator.commands
 					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && (cmd as CustomSlashCommand).customOptions.canBeUsedInRaid && !(cmd as CustomSlashCommand).customOptions.onlyWorksInRaidGuild)
-					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/25UsfHO5JwI '${cmd.description}')`)
+					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/0lvPMdMtsGU '${cmd.description}')`)
 					.join(', ')
 			)
 			.addField(
 				'The following CAN\'T be used in raid:',
 				this.app.slashCreator.commands
 					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && !(cmd as CustomSlashCommand).customOptions.canBeUsedInRaid)
-					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/25UsfHO5JwI '${cmd.description}')`)
+					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/0lvPMdMtsGU '${cmd.description}')`)
 					.join(', ')
 			)
 
@@ -123,6 +123,12 @@ class HelpCommand extends CustomSlashCommand {
 			.setDescription('If you find that you\'ve been attacked and need to replenish some health, you can use a **Medical** item to heal: `/use <item id>`' +
 				'\n\nIf you don\'t have any medical items on you, you can check the shop (`/shop view`) to see if any medical items are for sale. If all else fails, you ' +
 				' will heal passively for **5 health** every **5 minutes** when out of raid.')
+
+		const storageEmbed = new Embed()
+			.setTitle('How do I increase storage space?')
+			.setDescription('You can equip a backpack to increase your inventory space. Backpacks of varying levels can be found in raid or bought from the shop.' +
+				' Once you have one, simply do `/equip <item id>` to equip the backpack. Your stash space cannot be altered with backpacks, instead stash space will increase as you level up.')
+
 
 		const botMessage = await ctx.send({
 			content: 'What do you need help with?',
@@ -152,6 +158,11 @@ class HelpCommand extends CustomSlashCommand {
 								{
 									label: 'How do I heal?',
 									value: 'healing',
+									description: ''
+								},
+								{
+									label: 'How do I increase storage space?',
+									value: 'storage',
 									description: ''
 								}
 							]
@@ -187,6 +198,12 @@ class HelpCommand extends CustomSlashCommand {
 					await c.editParent({
 						content: '',
 						embeds: [healEmbed.embed]
+					})
+				}
+				else if (c.values.includes('storage')) {
+					await c.editParent({
+						content: '',
+						embeds: [storageEmbed.embed]
 					})
 				}
 			}
