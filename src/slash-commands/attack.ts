@@ -376,7 +376,7 @@ class AttackCommand extends CustomSlashCommand {
 
 			if (npc.armor) {
 				const armorDura = getRandomInt(Math.max(1, npc.armor.durability / 4), npc.armor.durability)
-				const armorRow = await createItem(transaction.query, npc.armor.name, armorDura)
+				const armorRow = await createItem(transaction.query, npc.armor.name, { durability: armorDura })
 				await dropItemToGround(transaction.query, ctx.channelID, armorRow.id)
 
 				droppedItems.push({
@@ -387,7 +387,7 @@ class AttackCommand extends CustomSlashCommand {
 
 			if (npc.helmet) {
 				const helmDura = getRandomInt(Math.max(1, npc.helmet.durability / 4), npc.helmet.durability)
-				const helmRow = await createItem(transaction.query, npc.helmet.name, helmDura)
+				const helmRow = await createItem(transaction.query, npc.helmet.name, { durability: helmDura })
 				await dropItemToGround(transaction.query, ctx.channelID, helmRow.id)
 
 				droppedItems.push({
@@ -404,7 +404,7 @@ class AttackCommand extends CustomSlashCommand {
 					const ammoToDrop = getRandomInt(1, 3)
 
 					for (let i = 0; i < ammoToDrop; i++) {
-						const ammoRow = await createItem(transaction.query, npc.ammo.name, npc.ammo.durability)
+						const ammoRow = await createItem(transaction.query, npc.ammo.name, { durability: npc.ammo.durability })
 						await dropItemToGround(transaction.query, ctx.channelID, ammoRow.id)
 
 						droppedItems.push({
@@ -416,7 +416,7 @@ class AttackCommand extends CustomSlashCommand {
 
 				// weapon durability is random
 				const weapDurability = getRandomInt(Math.max(1, npc.weapon.durability / 4), npc.weapon.durability)
-				const weapRow = await createItem(transaction.query, npc.weapon.name, weapDurability)
+				const weapRow = await createItem(transaction.query, npc.weapon.name, { durability: weapDurability })
 				await dropItemToGround(transaction.query, ctx.channelID, weapRow.id)
 
 				droppedItems.push({
@@ -437,7 +437,7 @@ class AttackCommand extends CustomSlashCommand {
 						itemDurability = getRandomInt(Math.max(1, lootDrop.durability / 4), lootDrop.durability)
 					}
 
-					const lootDropRow = await createItem(transaction.query, lootDrop.name, itemDurability)
+					const lootDropRow = await createItem(transaction.query, lootDrop.name, { durability: itemDurability })
 					await dropItemToGround(transaction.query, ctx.channelID, lootDropRow.id)
 
 					droppedItems.push({

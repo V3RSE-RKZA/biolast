@@ -214,7 +214,7 @@ class QuestsCommand extends CustomSlashCommand {
 							}
 
 							// user has enough space in stash for reward
-							const itemRow = await createItem(completedTransaction.query, rewardItem.name, rewardItem.durability)
+							const itemRow = await createItem(completedTransaction.query, rewardItem.name, { durability: rewardItem.durability })
 							await addItemToStash(completedTransaction.query, ctx.user.id, itemRow.id)
 
 							itemRewardRow = itemRow

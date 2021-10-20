@@ -53,6 +53,7 @@ export interface ItemRow {
 	id: number
 	item: string
 	durability?: number
+	displayName?: string
 }
 
 export interface BackpackItemRow extends ItemRow {

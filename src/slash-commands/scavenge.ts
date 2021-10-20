@@ -176,7 +176,7 @@ class ScavengeCommand extends CustomSlashCommand {
 					getRandomItem(raidChannel)
 
 				if (randomLoot) {
-					const itemRow = await createItem(transaction.query, randomLoot.item.name, randomLoot.item.durability)
+					const itemRow = await createItem(transaction.query, randomLoot.item.name, { durability: randomLoot.item.durability })
 
 					xpEarned += randomLoot.xp
 

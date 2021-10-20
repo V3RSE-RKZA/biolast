@@ -1,0 +1,1 @@
+ALTER TABLE items ADD COLUMN displayName VARCHAR(255) DEFAULT NULL AFTER durability;

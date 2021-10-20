@@ -39,14 +39,15 @@ export function getItems<T extends ItemRow> (itemRows: T[]): { items: ItemWithRo
  * @param options.showEquipped Show whether or not this item is equipped, defaults true
  * @param options.showID Show the ID of this item, defaults true
  * @param options.showDurability Show the durability of this item, defaults true
+ * @param options.showDisplayName Shows the custom display name of this item, defaults true
  */
-export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<{ showEquipped: boolean, showID: boolean, showDurability: boolean }> = {}): string {
-	const { showEquipped = true, showID = true, showDurability = true } = options
+export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<{ showEquipped: boolean, showID: boolean, showDurability: boolean, showDisplayName: boolean }> = {}): string {
+	const { showEquipped = true, showID = true, showDurability = true, showDisplayName = true } = options
 	const itemDisplayName = item.name.replace(/_/g, ' ')
 
 	if (itemRow) {
 		const attributes = []
-		const display = `${item.icon}\`${itemDisplayName}\``
+		const display = `${item.icon}\`${showDisplayName && itemRow.displayName ? itemRow.displayName : itemDisplayName}\``
 
 		if (showDurability && itemRow.durability) {
 			attributes.push(`**${itemRow.durability}** uses left`)

@@ -8,7 +8,7 @@ import { OkPacket } from 'mysql'
  * @returns Users items
  */
 export async function getUserBackpack (query: Query, userID: string, forUpdate = false): Promise<BackpackItemRow[]> {
-	return query(`SELECT items.id, items.item, backpack_items.equipped, items.durability FROM backpack_items INNER JOIN items ON items.id = backpack_items.itemId WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID])
+	return query(`SELECT items.id, items.item, backpack_items.equipped, items.durability, items.displayName FROM backpack_items INNER JOIN items ON items.id = backpack_items.itemId WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID])
 }
 
 /**
@@ -18,7 +18,7 @@ export async function getUserBackpack (query: Query, userID: string, forUpdate =
  * @returns Users items
  */
 export async function getUserStash (query: Query, userID: string, forUpdate = false): Promise<ItemRow[]> {
-	return query(`SELECT items.id, items.item, items.durability FROM stash_items INNER JOIN items ON items.id = stash_items.itemId WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID])
+	return query(`SELECT items.id, items.item, items.durability, items.displayName FROM stash_items INNER JOIN items ON items.id = stash_items.itemId WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID])
 }
 
 /**
@@ -28,7 +28,7 @@ export async function getUserStash (query: Query, userID: string, forUpdate = fa
  * @returns Items dropped on ground in channel
  */
 export async function getGroundItems (query: Query, channelID: string, forUpdate = false): Promise<GroundItemRow[]> {
-	return query(`SELECT items.id, items.item, items.durability, ground_items.createdAt FROM ground_items INNER JOIN items ON items.id = ground_items.itemId WHERE channelId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [channelID])
+	return query(`SELECT items.id, items.item, items.durability, items.displayName, ground_items.createdAt FROM ground_items INNER JOIN items ON items.id = ground_items.itemId WHERE channelId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [channelID])
 }
 
 /**
@@ -37,7 +37,7 @@ export async function getGroundItems (query: Query, channelID: string, forUpdate
  * @returns Available shop items
  */
 export async function getAllShopItems (query: Query): Promise<ShopItemRow[]> {
-	return query('SELECT items.id, items.item, items.durability, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId ORDER BY shop_items.createdAt DESC LIMIT 50')
+	return query('SELECT items.id, items.item, items.durability, items.displayName, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId ORDER BY shop_items.createdAt DESC LIMIT 50')
 }
 
 /**
@@ -48,7 +48,7 @@ export async function getAllShopItems (query: Query): Promise<ShopItemRow[]> {
  * @returns A shop item
  */
 export async function getShopItem (query: Query, itemID: number, forUpdate = false): Promise<ShopItemRow | undefined> {
-	return (await query(`SELECT items.id, items.item, items.durability, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId WHERE items.id = ?${forUpdate ? ' FOR UPDATE' : ''}`, [itemID]))[0]
+	return (await query(`SELECT items.id, items.item, items.durability, items.displayName, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId WHERE items.id = ?${forUpdate ? ' FOR UPDATE' : ''}`, [itemID]))[0]
 }
 
 /**
@@ -158,13 +158,23 @@ export async function lowerItemDurability (query: Query, itemID: number, amount 
 	await query('UPDATE items SET durability = durability - ? WHERE id = ?', [amount, itemID])
 }
 
-export async function createItem (query: Query, name: string, durability?: number): Promise<ItemRow> {
-	const packet: OkPacket = await query('INSERT INTO items (item, durability) VALUES (?, ?)', [name, durability])
+/**
+ * Create an item and returns the SQL row of it
+ * @param query Query to use
+ * @param name name of the item
+ * @param options Options for the item
+ * @param options.durability The number of uses item has (ie. if its a weapon it could only be used to attack this many times)
+ * @param options.displayName Display name of item when shown on bot (shows this instead of the item name)
+ * @returns Item SQL row
+ */
+export async function createItem (query: Query, name: string, options: Partial<{ durability: number, displayName: string }> = {}): Promise<ItemRow> {
+	const packet: OkPacket = await query('INSERT INTO items (item, durability, displayName) VALUES (?, ?, ?)', [name, options.durability, options.displayName])
 
 	return {
 		id: packet.insertId,
 		item: name,
-		durability
+		durability: options.durability,
+		displayName: options.displayName
 	}
 }
 

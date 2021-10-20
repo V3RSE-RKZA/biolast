@@ -5,9 +5,7 @@ import { logger } from '../utils/logger'
 import { isRaidGuild } from '../utils/raidUtils'
 
 export async function run (this: App, message: Message): Promise<void> {
-	// Deletes message sent by users in raid guilds,
-	// TODO move this to a separate bot in the future so this bot can function without
-	// the message intent.
+	// deletes messages sent by users in raid guilds
 	if (!message.author.bot && isRaidGuild(message.guildID)) {
 		await message.delete()
 	}
