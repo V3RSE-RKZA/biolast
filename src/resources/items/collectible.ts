@@ -51,5 +51,15 @@ export const collectible = questObject({
 		sellPrice: 180,
 		slotsUsed: 2,
 		itemLevel: 1
+	},
+	dog_tags: {
+		type: 'Collectible',
+		name: 'dog_tags',
+		aliases: ['tags'],
+		description: 'Identification tags worn by scavengers. You can obtain dog tags of a specific user by killing them in raid.',
+		icon: '🏷️',
+		sellPrice: 25,
+		slotsUsed: 0.1,
+		itemLevel: 1
 	}
 })

@@ -1,7 +1,7 @@
 import { CommandOptionType, SlashCreator, CommandContext, ComponentType, ButtonStyle, Message } from 'slash-create'
 import App from '../app'
 import { icons, raidCooldown, webhooks } from '../config'
-import { allItems } from '../resources/items'
+import { allItems, items } from '../resources/items'
 import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
@@ -858,6 +858,14 @@ class AttackCommand extends CustomSlashCommand {
 				await removeItemFromBackpack(transaction.query, victimItem.row.id)
 				await dropItemToGround(transaction.query, ctx.channelID, victimItem.row.id)
 			}
+
+			// create dog tags for victim
+			const dogTagsRow = await createItem(transaction.query, items.dog_tags.name, { displayName: `${member.user.username.replace(/`/g, '')}#${member.user.discriminator}'s dog tags` })
+			await dropItemToGround(transaction.query, ctx.channelID, dogTagsRow.id)
+			victimLoot.push({
+				item: items.dog_tags,
+				row: { ...dogTagsRow, equipped: 0 }
+			})
 
 			await increaseKills(transaction.query, ctx.user.id, 'player', 1)
 			await increaseDeaths(transaction.query, member.id, 1)
