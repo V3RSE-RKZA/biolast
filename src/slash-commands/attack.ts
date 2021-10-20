@@ -529,7 +529,7 @@ class AttackCommand extends CustomSlashCommand {
 
 			if (webhooks.pvp.id && webhooks.pvp.token) {
 				await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-					content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed **${npcDisplayName}** using their ${getItemDisplay(userEquips.weapon.item)}.` +
+					content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed ${npc.type === 'boss' ? `**${npc.display}**` : `a **${npc.type}**`} using their ${getItemDisplay(userEquips.weapon.item)}.` +
 						`${ammoPicked ? ` (ammo: ${getItemDisplay(ammoPicked.item)})` : ''}.`,
 					embeds: [lootEmbed.embed]
 				})
@@ -574,7 +574,7 @@ class AttackCommand extends CustomSlashCommand {
 				if (erisUser) {
 					await messageUser(erisUser, {
 						content: `${icons.danger} Raid failed!\n\n` +
-							`You were killed by ${npc.type === 'boss' ? npc.display : `a ${npc.type}`} who hit you for **${attackResult.damage}** damage. Next time make sure you're well equipped to attack enemies.\n` +
+							`You were killed by ${npc.type === 'boss' ? `**${npc.display}**` : `a **${npc.type}**`} who hit you for **${attackResult.damage}** damage. Next time make sure you're well equipped to attack enemies.\n` +
 							`You lost all the items in your inventory (**${userBackpackData.items.length - attackResult.removedItems}** items).`,
 						embeds: attackResult.lootEmbed ? [attackResult.lootEmbed.embed] : undefined
 					})
@@ -582,7 +582,7 @@ class AttackCommand extends CustomSlashCommand {
 
 				if (webhooks.pvp.id && webhooks.pvp.token) {
 					await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-						content: `☠️ **${npcDisplayName}** killed **${ctx.user.username}#${ctx.user.discriminator}**!`,
+						content: `☠️ ${npc.type === 'boss' ? `**${npc.display}**` : `A **${npc.type}**`} killed **${ctx.user.username}#${ctx.user.discriminator}**!`,
 						embeds: attackResult.lootEmbed ? [attackResult.lootEmbed.embed] : undefined
 					})
 				}
