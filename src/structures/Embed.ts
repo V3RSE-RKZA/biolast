@@ -6,7 +6,7 @@ class Embed {
 	constructor () {
 		this.embed = {
 			// default embed color here
-			color: 7099568
+			color: 11746366
 		}
 	}
 
