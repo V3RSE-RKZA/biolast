@@ -6,14 +6,14 @@ import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { Item } from '../types/Items'
-import { ShopItemRow } from '../types/mysql'
+import { ItemRow, ShopItemRow } from '../types/mysql'
 import { getItem } from '../utils/argParsers'
 import { CONFIRM_BUTTONS } from '../utils/constants'
 import { addItemToShop, addItemToStash, getAllShopItems, getShopItem, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromShop, removeItemFromStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addMoney, getUserRow, increaseShopSales, removeMoney } from '../utils/db/players'
 import { formatNumber } from '../utils/stringUtils'
-import { getItemDisplay, getItems } from '../utils/itemUtils'
+import { getItemDisplay, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 
 const ITEMS_PER_PAGE = 8
@@ -48,6 +48,23 @@ class ShopCommand extends CustomSlashCommand {
 							name: 'item-3',
 							description: 'ID of another item to sell.',
 							required: false
+						}
+					]
+				},
+				{
+					type: CommandOptionType.SUB_COMMAND_GROUP,
+					name: 'sellall',
+					description: 'Sell everything in your inventory.',
+					options: [
+						{
+							type: CommandOptionType.SUB_COMMAND,
+							name: 'inventory',
+							description: 'Sell everything in your inventory.'
+						},
+						{
+							type: CommandOptionType.SUB_COMMAND,
+							name: 'stash',
+							description: 'Sell everything in your stash.'
 						}
 					]
 				},
@@ -130,18 +147,13 @@ class ShopCommand extends CustomSlashCommand {
 				}
 				else {
 					itemsToSell.push(foundItem)
-
-					if (foundItem.row.durability && foundItem.item.durability) {
-						price += Math.floor((foundItem.row.durability / foundItem.item.durability) * (foundItem.item.sellPrice * this.app.shopSellMultiplier))
-					}
-					else {
-						price += Math.floor(foundItem.item.sellPrice * this.app.shopSellMultiplier)
-					}
+					price += this.getItemPrice(foundItem.item, foundItem.row)
 				}
 			}
 
 			const botMessage = await ctx.send({
-				content: `Sell **${itemsToSell.length}x** items for **${formatNumber(price)}**?\n\n${itemsToSell.map(i => getItemDisplay(i.item, i.row)).join('\n')}`,
+				content: `Sell **${itemsToSell.length}x** items for **${formatNumber(price)}**?\n\n` +
+					`${itemsToSell.map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatNumber(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}`,
 				components: CONFIRM_BUTTONS
 			}) as Message
 
@@ -335,6 +347,196 @@ class ShopCommand extends CustomSlashCommand {
 				})
 			}
 		}
+		else if (ctx.options.sellall && ctx.options.sellall.inventory) {
+			const backpackRows = await getUserBackpack(query, ctx.user.id)
+			const userBackpackData = getItems(backpackRows)
+			const itemsToSell = []
+			let price = 0
+
+			if (userBackpackData.items.length <= 0) {
+				await ctx.send({
+					content: `${icons.danger} You don't have any sellable items in your inventory!`
+				})
+				return
+			}
+
+			for (const itm of userBackpackData.items) {
+				if (!itm.item.sellPrice) {
+					itemsToSell.push(itm)
+					price += 0
+				}
+				else {
+					itemsToSell.push(itm)
+					price += this.getItemPrice(itm.item, itm.row)
+				}
+			}
+
+			const botMessage = await ctx.send({
+				content: `Sell **EVERYTHING IN YOUR INVENTORY** (**${itemsToSell.length}x** items) for **${formatNumber(price)}**?\n\n` +
+					`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatNumber(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}` +
+					`${itemsToSell.length > 5 ? `\n...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}` : ''}`,
+				components: CONFIRM_BUTTONS
+			}) as Message
+
+			try {
+				const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id))[0]
+
+				if (confirmed.customID === 'confirmed') {
+					// using transaction because users data will be updated
+					const transaction = await beginTransaction()
+					const userDataV = (await getUserRow(transaction.query, ctx.user.id, true))!
+					const backpackRowsV = await getUserBackpack(transaction.query, ctx.user.id, true)
+					const userBackpackDataV = getItems(backpackRowsV)
+
+					for (const i of itemsToSell) {
+						const foundItem = userBackpackDataV.items.find(itm => itm.row.id === i.row.id)
+
+						if (!foundItem) {
+							await transaction.commit()
+
+							await confirmed.editParent({
+								content: `${icons.warning} You don't have an item with the ID **${i.row.id}** in your inventory.`,
+								components: []
+							})
+							return
+						}
+					}
+
+					// verified user has items, continue selling
+					for (const i of itemsToSell) {
+						await removeItemFromBackpack(transaction.query, i.row.id)
+
+						if (i.item.sellPrice && i.item.type !== 'Collectible') {
+							let sellPrice = 0
+
+							if (i.row.durability && i.item.durability) {
+								sellPrice += Math.floor((i.row.durability / i.item.durability) * (i.item.sellPrice * this.app.shopSellMultiplier))
+							}
+							else {
+								sellPrice += Math.floor(i.item.sellPrice * this.app.shopSellMultiplier)
+							}
+
+							await addItemToShop(transaction.query, i.row.id, getRandomInt(sellPrice * 2, sellPrice * 3))
+						}
+					}
+
+					await addMoney(transaction.query, ctx.user.id, price)
+					await transaction.commit()
+
+					await confirmed.editParent({
+						content: `${icons.checkmark} Sold everything in your inventory (**${itemsToSell.length}x** items) for **${formatNumber(price)}**.\n\n` +
+							`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `~~${getItemDisplay(i.item, i.row)} for **${formatNumber(this.getItemPrice(i.item, i.row))}**~~` : `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}` +
+							`${itemsToSell.length > 5 ? `\n~~...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}~~` : ''}\n\n` +
+							`${icons.information} You now have **${formatNumber(userDataV.money + price)}** bullets.`,
+						components: []
+					})
+				}
+				else {
+					await botMessage.delete()
+				}
+			}
+			catch (err) {
+				await botMessage.edit({
+					content: `${icons.danger} Command timed out.`,
+					components: []
+				})
+			}
+		}
+		else if (ctx.options.sellall && ctx.options.sellall.stash) {
+			const stashRows = await getUserStash(query, ctx.user.id)
+			const userStashData = getItems(stashRows)
+			const itemsToSell = []
+			let price = 0
+
+			if (userStashData.items.length <= 0) {
+				await ctx.send({
+					content: `${icons.danger} You don't have any sellable items in your stash!`
+				})
+				return
+			}
+
+			for (const itm of userStashData.items) {
+				if (!itm.item.sellPrice) {
+					itemsToSell.push(itm)
+					price += 0
+				}
+				else {
+					itemsToSell.push(itm)
+					price += this.getItemPrice(itm.item, itm.row)
+				}
+			}
+
+			const botMessage = await ctx.send({
+				content: `Sell **EVERYTHING IN YOUR STASH** (**${itemsToSell.length}x** items) for **${formatNumber(price)}**?\n\n` +
+					`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatNumber(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}` +
+					`${itemsToSell.length > 5 ? `\n~~...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}~~` : ''}`,
+				components: CONFIRM_BUTTONS
+			}) as Message
+
+			try {
+				const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id))[0]
+
+				if (confirmed.customID === 'confirmed') {
+					// using transaction because users data will be updated
+					const transaction = await beginTransaction()
+					const userDataV = (await getUserRow(transaction.query, ctx.user.id, true))!
+					const stashRowsV = await getUserStash(transaction.query, ctx.user.id, true)
+					const userStashDataV = getItems(stashRowsV)
+
+					for (const i of itemsToSell) {
+						const foundItem = userStashDataV.items.find(itm => itm.row.id === i.row.id)
+
+						if (!foundItem) {
+							await transaction.commit()
+
+							await confirmed.editParent({
+								content: `${icons.warning} You don't have an item with the ID **${i.row.id}** in your stash.`,
+								components: []
+							})
+							return
+						}
+					}
+
+					// verified user has items, continue selling
+					for (const i of itemsToSell) {
+						await removeItemFromStash(transaction.query, i.row.id)
+
+						if (i.item.sellPrice && i.item.type !== 'Collectible') {
+							let sellPrice = 0
+
+							if (i.row.durability && i.item.durability) {
+								sellPrice += Math.floor((i.row.durability / i.item.durability) * (i.item.sellPrice * this.app.shopSellMultiplier))
+							}
+							else {
+								sellPrice += Math.floor(i.item.sellPrice * this.app.shopSellMultiplier)
+							}
+
+							await addItemToShop(transaction.query, i.row.id, getRandomInt(sellPrice * 2, sellPrice * 3))
+						}
+					}
+
+					await addMoney(transaction.query, ctx.user.id, price)
+					await transaction.commit()
+
+					await confirmed.editParent({
+						content: `${icons.checkmark} Sold everything in your stash (**${itemsToSell.length}x** items) for **${formatNumber(price)}**.\n\n` +
+							`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `~~${getItemDisplay(i.item, i.row)} for **${formatNumber(this.getItemPrice(i.item, i.row))}**~~` : `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}` +
+							`${itemsToSell.length > 5 ? `\n...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}` : ''}\n\n` +
+							`${icons.information} You now have **${formatNumber(userDataV.money + price)}** bullets.`,
+						components: []
+					})
+				}
+				else {
+					await botMessage.delete()
+				}
+			}
+			catch (err) {
+				await botMessage.edit({
+					content: `${icons.danger} Command timed out.`,
+					components: []
+				})
+			}
+		}
 		else {
 			const searchedItem = getItem([ctx.options.view.item])
 			let pages
@@ -370,6 +572,17 @@ class ShopCommand extends CustomSlashCommand {
 				await this.app.componentCollector.paginateEmbeds(ctx, pages)
 			}
 		}
+	}
+
+	getItemPrice (item: Item, itemRow: ItemRow): number {
+		if (!item.sellPrice) {
+			return 0
+		}
+		else if (item.durability && itemRow.durability) {
+			return Math.floor((itemRow.durability / item.durability) * (item.sellPrice * this.app.shopSellMultiplier))
+		}
+
+		return Math.floor(item.sellPrice * this.app.shopSellMultiplier)
 	}
 
 	generatePages (rows: ShopItemRow[], searchedItem?: Item): Embed[] {
