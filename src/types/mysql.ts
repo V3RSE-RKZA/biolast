@@ -1,5 +1,6 @@
 import { QueryOptions } from 'mysql'
 import { QuestType } from '../resources/quests'
+import { Item } from './Items'
 
 export type Query = (sql: string | QueryOptions, args?: any[]) => Promise<any>
 
@@ -66,6 +67,8 @@ export interface ShopItemRow extends ItemRow {
 	createdAt: Date
 	price: number
 }
+
+export type ItemWithRow<T extends ItemRow> = { item: Item, row: T }
 
 export interface NPCRow {
 	channelId: string

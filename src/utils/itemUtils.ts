@@ -1,9 +1,7 @@
-import { ItemRow, BackpackItemRow } from '../types/mysql'
+import { ItemRow, BackpackItemRow, ItemWithRow } from '../types/mysql'
 import { allItems } from '../resources/items'
 import { baseBackpackLimit } from '../config'
 import { Ammunition, Armor, Backpack, Helmet, Item, Weapon } from '../types/Items'
-
-type ItemWithRow<T extends ItemRow> = { item: Item, row: T }
 
 function instanceOfBackpackRow (itemRow: ItemRow | BackpackItemRow): itemRow is BackpackItemRow {
 	return 'equipped' in itemRow
