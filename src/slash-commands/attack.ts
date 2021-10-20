@@ -529,7 +529,7 @@ class AttackCommand extends CustomSlashCommand {
 
 			if (webhooks.pvp.id && webhooks.pvp.token) {
 				await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-					content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed ${npc.type === 'boss' ? `**${npc.display}**` : `a **${npc.type}**`} using their ${getItemDisplay(userEquips.weapon.item)}.` +
+					content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed ${npc.type === 'boss' ? `**${npc.display}**` : `a **${npc.type}**`} using their ${getItemDisplay(userEquips.weapon.item)}` +
 						`${ammoPicked ? ` (ammo: ${getItemDisplay(ammoPicked.item)})` : ''}.`,
 					embeds: [lootEmbed.embed]
 				})
@@ -1016,7 +1016,7 @@ class AttackCommand extends CustomSlashCommand {
 
 				if (webhooks.pvp.id && webhooks.pvp.token) {
 					await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-						content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed **${member.user.username}#${member.user.discriminator}** using their ${getItemDisplay(userEquips.weapon.item)}.` +
+						content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed **${member.user.username}#${member.user.discriminator}** using their ${getItemDisplay(userEquips.weapon.item)}` +
 							`${ammoPicked ? ` (ammo: ${getItemDisplay(ammoPicked.item)})` : ''}.`,
 						embeds: lootEmbed ? [lootEmbed.embed] : undefined
 					})
@@ -1050,7 +1050,8 @@ class AttackCommand extends CustomSlashCommand {
 						custom_id: ammo.item.name,
 						style: ButtonStyle.SECONDARY,
 						emoji: iconID ? {
-							id: iconID[1]
+							id: iconID[1],
+							name: 'item'
 						} : undefined
 					}
 				})
@@ -1074,7 +1075,8 @@ class AttackCommand extends CustomSlashCommand {
 							custom_id: ammo.item.name,
 							style: ammoPicked?.item.name === ammo.item.name ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY,
 							emoji: iconID ? {
-								id: iconID[1]
+								id: iconID[1],
+								name: 'item'
 							} : undefined,
 							disabled: true
 						}
@@ -1098,7 +1100,8 @@ class AttackCommand extends CustomSlashCommand {
 							custom_id: ammo.item.name,
 							style: index === 0 ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY,
 							emoji: iconID ? {
-								id: iconID[1]
+								id: iconID[1],
+								name: 'item'
 							} : undefined,
 							disabled: true
 						}

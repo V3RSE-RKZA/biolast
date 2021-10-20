@@ -432,7 +432,8 @@ class QuestsCommand extends CustomSlashCommand {
 				type: ComponentType.BUTTON,
 				label: `Quest #${questRow.id} - Turn in 1x ${quest.item.name}`,
 				emoji: iconID ? {
-					id: iconID[1]
+					id: iconID[1],
+					name: 'item'
 				} : undefined,
 				style: ButtonStyle.SECONDARY,
 				custom_id: questRow.id.toString(),
