@@ -4,7 +4,7 @@ import { Query } from '../types/mysql'
 import { getCooldown } from './db/cooldowns'
 
 /**
- * Calculates the XP required to level up given a level
+ * Calculates the XP required to level up given a level. IF YOU PLAN ON CHANGING THIS YOU SHOULD ALSO CHANGE THE AMOUNT OF XP QUESTS GIVE (src/slash-commands/quests)
  * @param level The level to get XP required for
  * @returns The XP required for specified level
  */

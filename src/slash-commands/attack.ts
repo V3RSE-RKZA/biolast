@@ -476,11 +476,18 @@ class AttackCommand extends CustomSlashCommand {
 				.setDescription(sortItemsByLevel(droppedItems, true).map(itm => getItemDisplay(itm.item, itm.row)).join('\n'))
 				.setFooter('These items were dropped onto the ground.')
 
-
 			await ctx.send({
 				content: messages.join('\n'),
 				embeds: [lootEmbed.embed]
 			})
+
+			if (webhooks.pvp.id && webhooks.pvp.token) {
+				await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
+					content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed **${npcDisplayName}** using their ${getItemDisplay(userEquips.weapon.item)}.` +
+						`${ammoPicked ? ` (ammo: ${getItemDisplay(ammoPicked.item)})` : ''}.`,
+					embeds: [lootEmbed.embed]
+				})
+			}
 		}
 		else {
 			if (!missedPartChoice) {
@@ -523,6 +530,13 @@ class AttackCommand extends CustomSlashCommand {
 						content: `${icons.danger} Raid failed!\n\n` +
 							`You were killed by ${npc.type === 'boss' ? npc.display : `a ${npc.type}`} who hit you for **${attackResult.damage}** damage. Next time make sure you're well equipped to attack enemies.\n` +
 							`You lost all the items in your inventory (**${userBackpackData.items.length - attackResult.removedItems}** items).`,
+						embeds: attackResult.lootEmbed ? [attackResult.lootEmbed.embed] : undefined
+					})
+				}
+
+				if (webhooks.pvp.id && webhooks.pvp.token) {
+					await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
+						content: `☠️ **${npcDisplayName}** killed **${ctx.user.username}#${ctx.user.discriminator}**!`,
 						embeds: attackResult.lootEmbed ? [attackResult.lootEmbed.embed] : undefined
 					})
 				}
@@ -862,6 +876,13 @@ class AttackCommand extends CustomSlashCommand {
 			}
 
 			messages.push(`\n☠️ **${member.displayName}** DIED! They dropped **${victimLoot.length}** items on the ground. Check the items they dropped with \`/ground view\`.`, `You earned 🌟 ***+${xpEarned}*** xp for this kill and PvP protection for **40 seconds**.`)
+			lootEmbed = new Embed()
+				.setTitle('Items Dropped')
+				.setDescription(victimLoot.length ?
+					`${sortItemsByLevel(victimLoot, true).slice(0, 10).map(victimItem => getItemDisplay(victimItem.item)).join('\n')}` +
+						`${victimLoot.length > 10 ? `\n...and **${victimLoot.length - 10}** other item${victimLoot.length - 10 > 1 ? 's' : ''}` : ''}` :
+					'No items were dropped.')
+				.setFooter('These items were dropped onto the ground.')
 		}
 		else if (!missedPartChoice) {
 			await lowerHealth(transaction.query, member.id, totalDamage)
@@ -877,22 +898,6 @@ class AttackCommand extends CustomSlashCommand {
 		// it will cause the transaction to timeout (since the transaction would have to wait on discord to receive our message).
 		if (!missedPartChoice && victimData.health - totalDamage <= 0) {
 			try {
-				lootEmbed = new Embed()
-					.setTitle('Items Dropped')
-					.setDescription(victimLoot.length ?
-						`${sortItemsByLevel(victimLoot, true).slice(0, 10).map(victimItem => getItemDisplay(victimItem.item)).join('\n')}` +
-							`${victimLoot.length > 10 ? `\n...and **${victimLoot.length - 10}** other item${victimLoot.length - 10 > 1 ? 's' : ''}` : ''}` :
-						'No items were dropped.')
-					.setFooter('These items were dropped onto the ground.')
-
-				if (webhooks.pvp.id && webhooks.pvp.token) {
-					await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-						content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** hit **${member.user.username}#${member.user.discriminator}** for **${totalDamage}** damage using their ${getItemDisplay(userEquips.weapon.item)}` +
-							`${ammoPicked ? ` (ammo: ${getItemDisplay(ammoPicked.item)})` : ''}.`,
-						embeds: [lootEmbed.embed]
-					})
-				}
-
 				const erisMember = await this.app.fetchMember(guild, member.id)
 				this.app.clearRaidTimer(member.id)
 
@@ -903,7 +908,15 @@ class AttackCommand extends CustomSlashCommand {
 						content: `${icons.danger} Raid failed!\n\n` +
 							`You were killed by **${ctx.user.username}#${ctx.user.discriminator}** who hit you for **${totalDamage}** damage using their ${getItemDisplay(userEquips.weapon.item)}${ammoPicked ? ` (ammo: ${getItemDisplay(ammoPicked.item)})` : ''}.\n` +
 							`You lost all the items in your inventory (**${victimLoot.length}** items).`,
-						embeds: [lootEmbed.embed]
+						embeds: lootEmbed ? [lootEmbed.embed] : undefined
+					})
+				}
+
+				if (webhooks.pvp.id && webhooks.pvp.token) {
+					await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
+						content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed **${member.user.username}#${member.user.discriminator}** using their ${getItemDisplay(userEquips.weapon.item)}.` +
+							`${ammoPicked ? ` (ammo: ${getItemDisplay(ammoPicked.item)})` : ''}.`,
+						embeds: lootEmbed ? [lootEmbed.embed] : undefined
 					})
 				}
 			}
