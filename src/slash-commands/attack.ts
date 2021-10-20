@@ -838,8 +838,8 @@ class AttackCommand extends CustomSlashCommand {
 			let xpEarned = 15
 
 			for (const victimItem of victimLoot) {
-				// 10 xp per item user had
-				xpEarned += 10
+				// 3 xp per level of the item
+				xpEarned += victimItem.item.itemLevel * 3
 
 				await removeItemFromBackpack(transaction.query, victimItem.row.id)
 				await dropItemToGround(transaction.query, ctx.channelID, victimItem.row.id)
