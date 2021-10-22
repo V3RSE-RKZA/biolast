@@ -12,6 +12,15 @@ export const collectible = questObject({
 		slotsUsed: 2,
 		itemLevel: 1
 	},
+	walker_sludge: {
+		type: 'Collectible',
+		name: 'walker_sludge',
+		aliases: ['sludge'],
+		icon: '<:quest_item:886561850525896724>',
+		sellPrice: 122,
+		slotsUsed: 2,
+		itemLevel: 11
+	},
 	farming_guide: {
 		type: 'Collectible',
 		name: 'farming_guide',
