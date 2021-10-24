@@ -45,11 +45,11 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items.knife, items.aramid_armor],
+					items: [items.knife],
 					xp: 15
 				},
 				rare: {
-					items: [items.metal_shank],
+					items: [items.metal_shank, items.aramid_armor],
 					xp: 25
 				},
 				rolls: 1,
@@ -71,11 +71,11 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items['glock-17'], items.dome_depot_key],
+					items: [items['glock-17'], items.dome_depot_key, items.aramid_armor],
 					xp: 15
 				},
 				rare: {
-					items: [items['ak-47'], items.aramid_armor, items['7.62x39mm_FMJ_bullet']],
+					items: [items['ak-47'], items['7.62x39mm_FMJ_bullet']],
 					xp: 25
 				},
 				rolls: 2,
@@ -97,11 +97,11 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items.chainsaw, items.metal_shank],
+					items: [items.chainsaw, items.metal_shank, items.aramid_armor],
 					xp: 15
 				},
 				rare: {
-					items: [items.aramid_armor, items.aramid_helmet],
+					items: [items.duffle_bag, items.aramid_helmet],
 					xp: 25
 				},
 				rolls: 2,
@@ -225,15 +225,15 @@ export const mall: Location = {
 			display: 'Florreds Pharmacy',
 			scavange: {
 				common: {
-					items: [items.ifak_medkit, items.pretzel],
+					items: [items.ifak_medkit, items.compression_bandage],
 					xp: 10
 				},
 				uncommon: {
-					items: [items['anti-biotics'], items.splint],
+					items: [items['anti-biotics'], items.splint, items.adrenaline_stimulant, items.adderall],
 					xp: 15
 				},
 				rare: {
-					items: [items.paracetamol, items.adrenaline_stimulant, items.adderall, items.morphine],
+					items: [items.paracetamol, items.morphine, items.duffle_bag],
 					xp: 25
 				},
 				rolls: 2,
@@ -256,7 +256,7 @@ export const mall: Location = {
 					xp: 15
 				},
 				rare: {
-					items: [items.paracetamol, items.tech_trash, items.morphine],
+					items: [items.paracetamol, items.tech_trash, items.security_key],
 					xp: 25
 				},
 				rolls: 2,
