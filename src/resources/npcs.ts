@@ -147,8 +147,8 @@ export const npcs = npcsObject({
 			'~*You hear a deep growl close by*~'
 		],
 		xp: 20,
-		chanceToBite: 20,
-		attackPenetration: 0.75
+		chanceToBite: 15,
+		attackPenetration: 0.6
 	},
 	crawler_weak: {
 		type: 'walker',
@@ -169,7 +169,7 @@ export const npcs = npcsObject({
 		],
 		xp: 20,
 		chanceToBite: 20,
-		attackPenetration: 0.75
+		attackPenetration: 0.9
 	},
 	crawler_medium: {
 		type: 'walker',
@@ -189,8 +189,8 @@ export const npcs = npcsObject({
 			'~*You hear a deep growl close by*~'
 		],
 		xp: 60,
-		chanceToBite: 20,
-		attackPenetration: 0.75
+		chanceToBite: 25,
+		attackPenetration: 1.45
 	},
 	cain: {
 		type: 'boss',
@@ -311,8 +311,8 @@ export const npcs = npcsObject({
 			'~*You hear a deep growl close by*~'
 		],
 		xp: 50,
-		chanceToBite: 25,
-		attackPenetration: 0.75
+		chanceToBite: 15,
+		attackPenetration: 1.3
 	},
 	derek: {
 		type: 'boss',
@@ -385,8 +385,8 @@ export const npcs = npcsObject({
 			'~*You hear a deep growl close by*~'
 		],
 		xp: 35,
-		chanceToBite: 20,
-		attackPenetration: 0.75
+		chanceToBite: 30,
+		attackPenetration: 1.1
 	},
 	walker_security_officer: {
 		type: 'walker',
@@ -408,8 +408,8 @@ export const npcs = npcsObject({
 		],
 		armor: items.aramid_armor,
 		xp: 80,
-		chanceToBite: 15,
-		attackPenetration: 0.75
+		chanceToBite: 10,
+		attackPenetration: 1.3
 	},
 	the_many: {
 		type: 'boss',
