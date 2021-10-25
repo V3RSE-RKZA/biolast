@@ -9,7 +9,7 @@ export const suburbs: Location = {
 	guilds: raidGuilds.suburbsGuilds,
 	requirements: {
 		minLevel: 1,
-		maxLevel: 10
+		maxLevel: 7
 	},
 	raidLength: 10 * 60,
 	playerLimit: 10,
