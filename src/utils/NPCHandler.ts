@@ -169,21 +169,28 @@ class NPCHandler {
 	 * @param npc The NPC to get item drop from
 	 * @returns A random item from possible item drops of NPC
 	 */
-	getDrop (npc: NPC): Item | undefined {
+	getDrop (npc: NPC): { item: Item, rarityDisplay: string } | undefined {
 		const rand = Math.random()
 		let randomItem
+		let rarityDisplay
 
 		if (rand < 0.60) {
 			randomItem = npc.drops.common[Math.floor(Math.random() * npc.drops.common.length)]
+			rarityDisplay = 'Common'
 		}
 		else if (rand < 0.85) {
 			randomItem = npc.drops.uncommon[Math.floor(Math.random() * npc.drops.uncommon.length)]
+			rarityDisplay = 'Uncommon'
 		}
 		else {
 			randomItem = npc.drops.rare[Math.floor(Math.random() * npc.drops.rare.length)]
+			rarityDisplay = '**Rare**'
 		}
 
-		return randomItem
+		return {
+			item: randomItem,
+			rarityDisplay
+		}
 	}
 
 	/**

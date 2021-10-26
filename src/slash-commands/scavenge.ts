@@ -16,7 +16,7 @@ import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurab
 import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
 import { addStatusEffects, getActiveStimulants } from '../utils/playerUtils'
-import { getRaidType, getRandomItem } from '../utils/raidUtils'
+import { getRaidType } from '../utils/raidUtils'
 import { combineArrayWithOr } from '../utils/stringUtils'
 
 class ScavengeCommand extends CustomSlashCommand {
@@ -172,8 +172,8 @@ class ScavengeCommand extends CustomSlashCommand {
 
 			for (let i = 0; i < raidChannel.scavange.rolls; i++) {
 				const randomLoot = hasRequiredKey && raidChannel.scavange.keyIsOptional ?
-					this.getRandomSpecialItem(raidChannel) :
-					getRandomItem(raidChannel)
+					{ ...this.getRandomSpecialItem(raidChannel), rarityDisplay: '**Rare**' } :
+					this.getRandomItem(raidChannel)
 
 				if (randomLoot) {
 					const itemRow = await createItem(transaction.query, randomLoot.item.name, { durability: randomLoot.item.durability })
@@ -182,7 +182,8 @@ class ScavengeCommand extends CustomSlashCommand {
 
 					scavengedLoot.push({
 						item: randomLoot.item,
-						row: itemRow
+						row: itemRow,
+						rarity: randomLoot.rarityDisplay
 					})
 
 					// check if users backpack has space for the item, otherwise throw it on ground
@@ -243,7 +244,7 @@ class ScavengeCommand extends CustomSlashCommand {
 
 			const finalMessage = `You ${hasRequiredKey ?
 				`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
-				''}scavenge **${raidChannel.display}** and find:\n\n${scavengedLoot.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || '**nothing**!'}\n🌟 ***+${xpEarned}** xp!*`
+				''}scavenge **${raidChannel.display}** and find:\n\n${scavengedLoot.map(itm => `***${itm.rarity}*** ${getItemDisplay(itm.item, itm.row)}`).join('\n') || '**nothing**!'}\n🌟 ***+${xpEarned}** xp!*`
 
 			if (!scavengedLoot.length || (!itemsAddedToBackpack.length && !itemsAddedToGround.length)) {
 				await ctx.send({
@@ -291,6 +292,49 @@ class ScavengeCommand extends CustomSlashCommand {
 		return {
 			item: raidChannel.scavange.special.items[Math.floor(Math.random() * raidChannel.scavange.special.items.length)],
 			xp: raidChannel.scavange.special.xp
+		}
+	}
+
+	/**
+	 * Gets a random scavenged item from a raid channel
+	 * @param raidChannel The channel to get scavenge loot for
+	 * @returns An item
+	 */
+	getRandomItem (raidChannel: RaidChannel): { item: Item, xp: number, rarityDisplay: string } {
+		if (!raidChannel.scavange) {
+			throw new Error(`Raid channel (${raidChannel.name}) cannot be scavenged`)
+		}
+
+		const rand = Math.random()
+		let randomItem
+		let xpEarned
+		let rarityDisplay
+
+		if (raidChannel.scavange.rarest && rand < 0.05) {
+			xpEarned = raidChannel.scavange.rarest.xp
+			randomItem = raidChannel.scavange.rarest.items[Math.floor(Math.random() * raidChannel.scavange.rarest.items.length)]
+			rarityDisplay = '***Insanely Rare***'
+		}
+		else if (rand < 0.60) {
+			xpEarned = raidChannel.scavange.common.xp
+			randomItem = raidChannel.scavange.common.items[Math.floor(Math.random() * raidChannel.scavange.common.items.length)]
+			rarityDisplay = 'Common'
+		}
+		else if (rand < 0.85) {
+			xpEarned = raidChannel.scavange.uncommon.xp
+			randomItem = raidChannel.scavange.uncommon.items[Math.floor(Math.random() * raidChannel.scavange.uncommon.items.length)]
+			rarityDisplay = 'Uncommon'
+		}
+		else {
+			xpEarned = raidChannel.scavange.rare.xp
+			randomItem = raidChannel.scavange.rare.items[Math.floor(Math.random() * raidChannel.scavange.rare.items.length)]
+			rarityDisplay = '**Rare**'
+		}
+
+		return {
+			item: randomItem,
+			xp: xpEarned,
+			rarityDisplay
 		}
 	}
 }

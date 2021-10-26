@@ -20,7 +20,7 @@ import { messageUser } from '../utils/messageUtils'
 import { BodyPart, getAttackDamage, getBodyPartHit, getRaidType } from '../utils/raidUtils'
 import getRandomInt from '../utils/randomInt'
 import { addStatusEffects, getActiveStimulants, getAfflictions } from '../utils/playerUtils'
-import { BackpackItemRow, ItemWithRow } from '../types/mysql'
+import { BackpackItemRow, ItemRow, ItemWithRow } from '../types/mysql'
 import Eris from 'eris'
 import { Location } from '../types/Raids'
 
@@ -479,16 +479,17 @@ class AttackCommand extends CustomSlashCommand {
 					let itemDurability
 
 					// item durability is random when dropped by npc
-					if (lootDrop.durability) {
-						itemDurability = getRandomInt(Math.max(1, lootDrop.durability / 4), lootDrop.durability)
+					if (lootDrop.item.durability) {
+						itemDurability = getRandomInt(Math.max(1, lootDrop.item.durability / 4), lootDrop.item.durability)
 					}
 
-					const lootDropRow = await createItem(transaction.query, lootDrop.name, { durability: itemDurability })
+					const lootDropRow = await createItem(transaction.query, lootDrop.item.name, { durability: itemDurability })
 					await dropItemToGround(transaction.query, ctx.channelID, lootDropRow.id)
 
 					droppedItems.push({
-						item: lootDrop,
-						row: lootDropRow
+						item: lootDrop.item,
+						row: lootDropRow,
+						rarityDisplay: lootDrop.rarityDisplay
 					})
 				}
 			}
@@ -519,7 +520,10 @@ class AttackCommand extends CustomSlashCommand {
 
 			const lootEmbed = new Embed()
 				.setTitle('Items Dropped')
-				.setDescription(sortItemsByLevel(droppedItems, true).map(itm => getItemDisplay(itm.item, itm.row)).join('\n'))
+				.setDescription(
+					(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
+						.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : getItemDisplay(itm.item, itm.row)).join('\n')
+				)
 				.setFooter('These items were dropped onto the ground.')
 
 			await ctx.send({

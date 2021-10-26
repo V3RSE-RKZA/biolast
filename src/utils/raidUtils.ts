@@ -1,6 +1,6 @@
 import { allLocations } from '../resources/raids'
 import { Armor, Helmet, Item } from '../types/Items'
-import { Location, RaidChannel } from '../types/Raids'
+import { Location } from '../types/Raids'
 
 export type BodyPart = 'arm' | 'leg' | 'chest' | 'head'
 
@@ -18,43 +18,6 @@ export function getRaidType (guildID: string): Location | undefined {
 		if (location.guilds.includes(guildID)) {
 			return location
 		}
-	}
-}
-
-/**
- * Gets a random scavenged item from a raid channel
- * @param raidChannel The channel to get scavenge loot for
- * @returns An item
- */
-export function getRandomItem (raidChannel: RaidChannel): { item: Item, xp: number } {
-	if (!raidChannel.scavange) {
-		throw new Error(`Raid channel (${raidChannel.name}) cannot be scavenged`)
-	}
-
-	const rand = Math.random()
-	let randomItem
-	let xpEarned
-
-	if (raidChannel.scavange.rarest && rand < 0.05) {
-		xpEarned = raidChannel.scavange.rarest.xp
-		randomItem = raidChannel.scavange.rarest.items[Math.floor(Math.random() * raidChannel.scavange.rarest.items.length)]
-	}
-	else if (rand < 0.60) {
-		xpEarned = raidChannel.scavange.common.xp
-		randomItem = raidChannel.scavange.common.items[Math.floor(Math.random() * raidChannel.scavange.common.items.length)]
-	}
-	else if (rand < 0.85) {
-		xpEarned = raidChannel.scavange.uncommon.xp
-		randomItem = raidChannel.scavange.uncommon.items[Math.floor(Math.random() * raidChannel.scavange.uncommon.items.length)]
-	}
-	else {
-		xpEarned = raidChannel.scavange.rare.xp
-		randomItem = raidChannel.scavange.rare.items[Math.floor(Math.random() * raidChannel.scavange.rare.items.length)]
-	}
-
-	return {
-		item: randomItem,
-		xp: xpEarned
 	}
 }
 
