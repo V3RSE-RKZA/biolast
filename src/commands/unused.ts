@@ -3,7 +3,7 @@ import { reply } from '../utils/messageUtils'
 import { allLocations } from '../resources/raids'
 import { allNPCs } from '../resources/npcs'
 import { getItemDisplay, sortItemsByType } from '../utils/itemUtils'
-import { quests } from '../resources/quests'
+import { dailyQuests } from '../resources/quests'
 import { allItems } from '../resources/items'
 import { Item } from '../types/Items'
 
@@ -64,7 +64,7 @@ export const command: TextCommand = {
 				}
 			}
 
-			for (const quest of quests) {
+			for (const quest of dailyQuests) {
 				if (quest.rewards.item && quest.rewards.item.name === item.name) {
 					obtainable.push(item)
 				}

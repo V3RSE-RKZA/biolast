@@ -7,7 +7,7 @@ import { query } from '../utils/db/mysql'
 import { allItems } from '../resources/items'
 import { getPlayerXp } from '../utils/playerUtils'
 import { createQuest } from '../utils/db/quests'
-import { quests } from '../resources/quests'
+import { dailyQuests } from '../resources/quests'
 import { addItemToBackpack, createItem } from '../utils/db/items'
 import { createCooldown } from '../utils/db/cooldowns'
 
@@ -23,7 +23,7 @@ export const command: TextCommand = {
 			query,
 			getPlayerXp,
 			createQuest,
-			quests,
+			dailyQuests,
 			createItem,
 			addItemToBackpack,
 			createCooldown

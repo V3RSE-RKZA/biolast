@@ -1,7 +1,7 @@
 import { SlashCreator, CommandContext, Message, ComponentButton, ComponentType, ButtonStyle, InteractionResponseFlags } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
-import { Quest, quests } from '../resources/quests'
+import { dailyQuests, sideQuests } from '../resources/quests'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { BackpackItemRow, ItemRow, QuestRow } from '../types/mysql'
@@ -15,6 +15,7 @@ import { combineArrayWithAnd, formatNumber } from '../utils/stringUtils'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { allItems } from '../resources/items'
+import { DailyQuest, SideQuest } from '../types/Quests'
 
 // how long a user should have to complete their quests before they receive a new one
 const dailyQuestCooldown = 24 * 60 * 60
@@ -54,7 +55,7 @@ class QuestsCommand extends CustomSlashCommand {
 
 		// remove invalid quests
 		for (let i = userQuestRows.length - 1; i >= 0; i--) {
-			const quest = quests.find(q => q.id === userQuestRows[i].questId)
+			const quest = dailyQuests.find(q => q.id === userQuestRows[i].questId)
 
 			if (
 				(!dailyQuestCDRow && !userQuestRows[i].sideQuest) ||
@@ -73,7 +74,7 @@ class QuestsCommand extends CustomSlashCommand {
 
 		// users daily quest cooldown has expired, assign a new random quest
 		if (!dailyQuestCDRow) {
-			const newQuest = this.fetchRandomQuest(userData.level)
+			const newQuest = this.fetchRandomDailyQuest(userData.level)
 
 			if (!newQuest) {
 				// this should not happen, there should always be a quest available for a user
@@ -81,7 +82,7 @@ class QuestsCommand extends CustomSlashCommand {
 				throw new Error(`No eligible quest found for user (${ctx.user.id}, level ${userData.level})`)
 			}
 
-			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest, this.getQuestXpReward(userData.level), false)
+			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest, this.getQuestXpReward(userData.level))
 			userQuestRows.push(newQuestRow)
 			userQuests.push(newQuest)
 			dailyQuestCDTimeLeft = dailyQuestCooldown * 1000
@@ -93,15 +94,8 @@ class QuestsCommand extends CustomSlashCommand {
 
 		// users hourly quest cooldown has expired, assign a new random quest
 		if (!hourlyQuestCDRow) {
-			const newQuest = this.fetchRandomQuest(userData.level)
-
-			if (!newQuest) {
-				// this should not happen, there should always be a quest available for a user
-				await transaction.commit()
-				throw new Error(`No eligible quest found for user (${ctx.user.id}, level ${userData.level})`)
-			}
-
-			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest, Math.floor(this.getQuestXpReward(userData.level) / 10), true)
+			const newQuest = this.fetchRandomSideQuest()
+			const newQuestRow = await createQuest(transaction.query, ctx.user.id, newQuest, Math.floor(this.getQuestXpReward(userData.level) / 10))
 			userQuestRows.push(newQuestRow)
 			userQuests.push(newQuest)
 			hourlyQuestCDTimeLeft = hourlyQuestCooldown * 1000
@@ -151,7 +145,7 @@ class QuestsCommand extends CustomSlashCommand {
 				const completedUserData = (await getUserRow(completedTransaction.query, ctx.user.id, true))!
 				const completedUserQuestRows = await getUserQuests(completedTransaction.query, ctx.user.id, true)
 				const completedQuestRow = completedUserQuestRows.find(row => row.id === completedQuestID)
-				const completedQuest = quests.find(q => q.id === completedQuestRow?.questId)
+				const completedQuest = dailyQuests.find(q => q.id === completedQuestRow?.questId)
 				const completedUserBackpackRows = await getUserBackpack(completedTransaction.query, ctx.user.id, true)
 				const completedUserStashRows = await getUserStash(completedTransaction.query, ctx.user.id, true)
 				const validUserQuests = []
@@ -190,7 +184,7 @@ class QuestsCommand extends CustomSlashCommand {
 
 						// remove invalid quests and add progress to retrieve item quest
 						for (let i = completedUserQuestRows.length - 1; i >= 0; i--) {
-							const quest = quests.find(q => q.id === completedUserQuestRows[i].questId)
+							const quest = dailyQuests.find(q => q.id === completedUserQuestRows[i].questId)
 
 							if (!quest || completedUserData.level > quest.maxLevel) {
 								await deleteQuest(completedTransaction.query, completedUserQuestRows[i].id)
@@ -269,7 +263,7 @@ class QuestsCommand extends CustomSlashCommand {
 
 						// remove invalid and completed quests
 						for (let i = completedUserQuestRows.length - 1; i >= 0; i--) {
-							const quest = quests.find(q => q.id === completedUserQuestRows[i].questId)
+							const quest = dailyQuests.find(q => q.id === completedUserQuestRows[i].questId)
 
 							if (!quest || completedUserData.level > quest.maxLevel || completedUserQuestRows[i].id === completedQuestID) {
 								await deleteQuest(completedTransaction.query, completedUserQuestRows[i].id)
@@ -353,8 +347,8 @@ class QuestsCommand extends CustomSlashCommand {
 	 * @param exceptQuestID An optional quest ID to ignore IF POSSIBLE (if this quest is the only quest user is eligible for, they will still receive it)
 	 * @returns A quest object
 	 */
-	fetchRandomQuest (userLevel: number, exceptQuestID?: string): Quest | undefined {
-		const possibleQuests = quests.filter(q => userLevel >= q.minLevel && userLevel <= q.maxLevel)
+	fetchRandomDailyQuest (userLevel: number, exceptQuestID?: string): DailyQuest | undefined {
+		const possibleQuests = dailyQuests.filter(q => userLevel >= q.minLevel && userLevel <= q.maxLevel)
 		const filteredQuests = possibleQuests.filter(q => q.id !== exceptQuestID)
 
 		if (exceptQuestID && filteredQuests.length) {
@@ -363,6 +357,20 @@ class QuestsCommand extends CustomSlashCommand {
 		else if (possibleQuests.length) {
 			return possibleQuests[Math.floor(Math.random() * possibleQuests.length)]
 		}
+	}
+
+	/**
+	 * @param exceptQuestID An optional quest ID to ignore IF POSSIBLE (if this quest is the only quest user is eligible for, they will still receive it)
+	 * @returns A quest object
+	 */
+	fetchRandomSideQuest (exceptQuestID?: string): SideQuest {
+		const filteredQuests = sideQuests.filter(q => q.id !== exceptQuestID)
+
+		if (exceptQuestID && filteredQuests.length) {
+			return filteredQuests[Math.floor(Math.random() * filteredQuests.length)]
+		}
+
+		return sideQuests[Math.floor(Math.random() * sideQuests.length)]
 	}
 
 	getRewardsString (questRow: QuestRow, itemRewardRow?: ItemRow): string {
@@ -384,7 +392,7 @@ class QuestsCommand extends CustomSlashCommand {
 		return combineArrayWithAnd(display)
 	}
 
-	getQuestDescription (quest: Quest, questRow: QuestRow): string {
+	getQuestDescription (quest: DailyQuest | SideQuest, questRow: QuestRow): string {
 		switch (quest.questType) {
 			case 'Any Kills': {
 				return `**Description**: Kill **${quest.progressGoal}** players or mobs.\n` +
@@ -424,7 +432,7 @@ class QuestsCommand extends CustomSlashCommand {
 		}
 	}
 
-	getQuestButton (quest: Quest, questRow: QuestRow, disabled: boolean): ComponentButton {
+	getQuestButton (quest: DailyQuest | SideQuest, questRow: QuestRow, disabled: boolean): ComponentButton {
 		if (quest.questType === 'Retrieve Item' && questRow.progress < questRow.progressGoal) {
 			const iconID = quest.item.icon.match(/:([0-9]*)>/)
 
@@ -450,7 +458,7 @@ class QuestsCommand extends CustomSlashCommand {
 		}
 	}
 
-	questCanBeCompleted (quest: Quest, questRow: QuestRow, backpackRows: BackpackItemRow[], stashRows: ItemRow[]): boolean {
+	questCanBeCompleted (quest: DailyQuest | SideQuest, questRow: QuestRow, backpackRows: BackpackItemRow[], stashRows: ItemRow[]): boolean {
 		if (questRow.progress >= questRow.progressGoal) {
 			return true
 		}

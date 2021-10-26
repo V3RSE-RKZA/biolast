@@ -2,7 +2,7 @@ import { SlashCreator, CommandContext } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
 import { allNPCs } from '../resources/npcs'
-import { quests } from '../resources/quests'
+import { dailyQuests } from '../resources/quests'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { Item } from '../types/Items'
 import { RaidChannel } from '../types/Raids'
@@ -220,7 +220,7 @@ class ScavengeCommand extends CustomSlashCommand {
 
 				// check if user had a quest to scavenge with a key
 				for (const questRow of userQuests) {
-					const quest = quests.find(q => q.id === questRow.questId)
+					const quest = dailyQuests.find(q => q.id === questRow.questId)
 
 					if (
 						quest &&

@@ -1,5 +1,5 @@
 import { OkPacket } from 'mysql'
-import { Quest } from '../../resources/quests'
+import { DailyQuest, SideQuest } from '../../types/Quests'
 import { Query, QuestRow } from '../../types/mysql'
 
 /**
@@ -39,16 +39,16 @@ export async function deleteQuest (query: Query, questID: number): Promise<void>
  * @param quest The quest being added
  * @param xpReward The xp rewarded for completing this quest
  */
-export async function createQuest (query: Query, userID: string, quest: Quest, xpReward: number, isSideQuest: boolean): Promise<QuestRow> {
+export async function createQuest (query: Query, userID: string, quest: DailyQuest | SideQuest, xpReward: number): Promise<QuestRow> {
 	const packet: OkPacket = await query('INSERT INTO quests (userId, questId, questType, progressGoal, itemReward, xpReward, moneyReward, sideQuest) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
 		userID,
 		quest.id,
 		quest.questType,
 		quest.progressGoal,
-		isSideQuest ? undefined : quest.rewards.item?.name,
+		quest.type === 'Side' ? undefined : quest.rewards.item?.name,
 		xpReward,
-		isSideQuest ? undefined : quest.rewards.money,
-		isSideQuest
+		quest.type === 'Side' ? undefined : quest.rewards.money,
+		quest.type === 'Side'
 	])
 
 	return {
@@ -59,9 +59,9 @@ export async function createQuest (query: Query, userID: string, quest: Quest, x
 		progressGoal: quest.progressGoal,
 		questType: quest.questType,
 		createdAt: new Date(),
-		itemReward: quest.rewards.item?.name,
+		itemReward: quest.type === 'Side' ? undefined : quest.rewards.item?.name,
 		xpReward,
-		moneyReward: quest.rewards.money,
-		sideQuest: isSideQuest ? 1 : 0
+		moneyReward: quest.type === 'Side' ? undefined : quest.rewards.money,
+		sideQuest: quest.type === 'Side' ? 1 : 0
 	}
 }

@@ -4,7 +4,7 @@ import { allLocations } from '../resources/raids'
 import { getItem } from '../utils/argParsers'
 import { allNPCs } from '../resources/npcs'
 import { getItemDisplay } from '../utils/itemUtils'
-import { quests } from '../resources/quests'
+import { dailyQuests } from '../resources/quests'
 import { icons } from '../config'
 import { combineArrayWithOr } from '../utils/stringUtils'
 
@@ -74,7 +74,7 @@ export const command: TextCommand = {
 			}
 		}
 
-		for (const quest of quests) {
+		for (const quest of dailyQuests) {
 			if (quest.rewards.item && quest.rewards.item.name === item.name) {
 				obtainedFromQuests.push(`\`${quest.id}\` (quest type: ${quest.questType}) gives this as a reward. Quest eligible for players level **${quest.minLevel}** - **${quest.maxLevel}**`)
 			}
@@ -84,7 +84,7 @@ export const command: TextCommand = {
 			content: `${getItemDisplay(item)} can be obtained from:\n\n` +
 				`**NPCS**:\n${obtainedFromNpcs.join('\n') || '❌ none'}\n\n` +
 				`**Channels**:\n${obtainedFromChannels.join('\n') || '❌ none'}\n\n` +
-				`**Quests**:\n${obtainedFromQuests.join('\n') || '❌ none'}`
+				`**Daily Quests**:\n${obtainedFromQuests.join('\n') || '❌ none'}`
 		})
 	}
 }

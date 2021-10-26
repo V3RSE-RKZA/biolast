@@ -1,5 +1,5 @@
 import { QueryOptions } from 'mysql'
-import { QuestType } from '../resources/quests'
+import { QuestType } from './Quests'
 import { Item } from './Items'
 
 export type Query = (sql: string | QueryOptions, args?: any[]) => Promise<any>
