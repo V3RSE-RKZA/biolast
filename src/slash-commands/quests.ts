@@ -47,21 +47,22 @@ class QuestsCommand extends CustomSlashCommand {
 		const hourlyQuestCDRow = await getCooldownRow(transaction.query, ctx.user.id, 'hourly-quest', true)
 		const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
 		const userQuestRows = await getUserQuests(transaction.query, ctx.user.id, true)
-		const userBackpackRows = await getUserBackpack(transaction.query, ctx.user.id)
-		const userStashRows = await getUserStash(transaction.query, ctx.user.id)
+		const userBackpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
+		const userStashRows = await getUserStash(transaction.query, ctx.user.id, true)
 		const userQuests = []
 		let dailyQuestCDTimeLeft
 		let hourlyQuestCDTimeLeft
 
 		// remove invalid quests
 		for (let i = userQuestRows.length - 1; i >= 0; i--) {
-			const quest = dailyQuests.find(q => q.id === userQuestRows[i].questId)
+			const quest = userQuestRows[i].sideQuest ? sideQuests.find(q => q.id === userQuestRows[i].questId) : dailyQuests.find(q => q.id === userQuestRows[i].questId)
 
 			if (
 				(!dailyQuestCDRow && !userQuestRows[i].sideQuest) ||
 				(!hourlyQuestCDRow && userQuestRows[i].sideQuest) ||
 				!quest ||
-				userData.level > quest.maxLevel) {
+				('maxLevel' in quest && userData.level > quest.maxLevel)
+			) {
 				await deleteQuest(transaction.query, userQuestRows[i].id)
 
 				userQuestRows.splice(i, 1)
@@ -145,7 +146,7 @@ class QuestsCommand extends CustomSlashCommand {
 				const completedUserData = (await getUserRow(completedTransaction.query, ctx.user.id, true))!
 				const completedUserQuestRows = await getUserQuests(completedTransaction.query, ctx.user.id, true)
 				const completedQuestRow = completedUserQuestRows.find(row => row.id === completedQuestID)
-				const completedQuest = dailyQuests.find(q => q.id === completedQuestRow?.questId)
+				const completedQuest = completedQuestRow?.sideQuest ? sideQuests.find(q => q.id === completedQuestRow.questId) : dailyQuests.find(q => q.id === completedQuestRow?.questId)
 				const completedUserBackpackRows = await getUserBackpack(completedTransaction.query, ctx.user.id, true)
 				const completedUserStashRows = await getUserStash(completedTransaction.query, ctx.user.id, true)
 				const validUserQuests = []
@@ -153,12 +154,11 @@ class QuestsCommand extends CustomSlashCommand {
 				if (
 					!isInRaid &&
 					completedQuestRow &&
+					completedQuest &&
 					(
 						(completedQuestRow.sideQuest && completedHourlyQuestCDRow) ||
-						(!completedQuestRow.sideQuest && completedDailyQuestCDRow)
+						(!completedQuestRow.sideQuest && completedDailyQuestCDRow && 'maxLevel' in completedQuest && completedUserData.level <= completedQuest.maxLevel)
 					) &&
-					completedQuest &&
-					completedUserData.level <= completedQuest.maxLevel &&
 					completedQuestRow &&
 					this.questCanBeCompleted(completedQuest, completedQuestRow, completedUserBackpackRows, completedUserStashRows)
 				) {
@@ -184,9 +184,14 @@ class QuestsCommand extends CustomSlashCommand {
 
 						// remove invalid quests and add progress to retrieve item quest
 						for (let i = completedUserQuestRows.length - 1; i >= 0; i--) {
-							const quest = dailyQuests.find(q => q.id === completedUserQuestRows[i].questId)
+							const quest = completedUserQuestRows[i].sideQuest ?
+								sideQuests.find(q => q.id === completedUserQuestRows[i].questId) :
+								dailyQuests.find(q => q.id === completedUserQuestRows[i].questId)
 
-							if (!quest || completedUserData.level > quest.maxLevel) {
+							if (
+								!quest ||
+								('maxLevel' in quest && completedUserData.level > quest.maxLevel)
+							) {
 								await deleteQuest(completedTransaction.query, completedUserQuestRows[i].id)
 
 								completedUserQuestRows.splice(i, 1)
@@ -263,9 +268,15 @@ class QuestsCommand extends CustomSlashCommand {
 
 						// remove invalid and completed quests
 						for (let i = completedUserQuestRows.length - 1; i >= 0; i--) {
-							const quest = dailyQuests.find(q => q.id === completedUserQuestRows[i].questId)
+							const quest = completedUserQuestRows[i].sideQuest ?
+								sideQuests.find(q => q.id === completedUserQuestRows[i].questId) :
+								dailyQuests.find(q => q.id === completedUserQuestRows[i].questId)
 
-							if (!quest || completedUserData.level > quest.maxLevel || completedUserQuestRows[i].id === completedQuestID) {
+							if (
+								!quest ||
+								('maxLevel' in quest && completedUserData.level > quest.maxLevel) ||
+								completedUserQuestRows[i].id === completedQuestID
+							) {
 								await deleteQuest(completedTransaction.query, completedUserQuestRows[i].id)
 
 								completedUserQuestRows.splice(i, 1)
