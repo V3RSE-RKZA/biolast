@@ -1,12 +1,31 @@
 import { icons } from '../config'
 import { BodyPart } from './raidUtils'
 
-export function formatNumber (number: number, noIcon = false): string {
-	if (noIcon) {
-		return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+export function formatNumber (number: number): string {
+	return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+/**
+ * @param number Number to convert into money string
+ * @param showAll Whether to show icons for gold and silver even if there is 0
+ * @returns A string showing the currency with icons
+ */
+export function formatMoney (number: number, showAll = false): string {
+	const copper = number % 100
+	const silver = ((number - copper) % 1000) / 10
+	const gold = (number - copper - ((number - copper) % 1000)) / 1000
+	const display = []
+
+	if (showAll || gold > 0) {
+		display.push(`${icons.tier3_currency} ${formatNumber(gold)}`)
+	}
+	if (showAll || silver > 0) {
+		display.push(`${icons.tier2_currency} ${formatNumber(silver)}`)
 	}
 
-	return `${icons.money} ${number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
+	display.push(`${icons.tier1_currency} ${formatNumber(copper)}`)
+
+	return display.join(' ')
 }
 
 /**

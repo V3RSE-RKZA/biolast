@@ -12,11 +12,11 @@ import { CONFIRM_BUTTONS } from '../utils/constants'
 import { addItemToShop, addItemToStash, getAllShopItems, getShopItem, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromShop, removeItemFromStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addMoney, getUserRow, increaseShopSales, removeMoney } from '../utils/db/players'
-import { formatNumber } from '../utils/stringUtils'
+import { formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 
-const ITEMS_PER_PAGE = 8
+const ITEMS_PER_PAGE = 7
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
 class ShopCommand extends CustomSlashCommand {
@@ -152,8 +152,8 @@ class ShopCommand extends CustomSlashCommand {
 			}
 
 			const botMessage = await ctx.send({
-				content: `Sell **${itemsToSell.length}x** items for **${formatNumber(price)}**?\n\n` +
-					`${itemsToSell.map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatNumber(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}`,
+				content: `Sell **${itemsToSell.length}x** items for **${formatMoney(price)}**?\n\n` +
+					`${itemsToSell.map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}`,
 				components: CONFIRM_BUTTONS
 			}) as Message
 
@@ -212,8 +212,8 @@ class ShopCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `${icons.checkmark} Sold **${itemsToSell.length}x** items for **${formatNumber(price)}**.\n\n${itemsToSell.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
-							`${icons.information} You now have **${formatNumber(userDataV.money + price)}** bullets.`,
+						content: `${icons.checkmark} Sold **${itemsToSell.length}x** items for **${formatMoney(price)}**.\n\n${itemsToSell.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
+							`${icons.information} You now have **${formatMoney(userDataV.money + price)}**.`,
 						components: []
 					})
 				}
@@ -266,13 +266,13 @@ class ShopCommand extends CustomSlashCommand {
 			}
 			else if (userData.money < shopItemRow.price) {
 				await ctx.send({
-					content: `${icons.danger} You don't have enough bullets. You need **${formatNumber(shopItemRow.price)}** but you only have **${formatNumber(userData.money)}**.`
+					content: `${icons.danger} You don't have enough money. You need **${formatMoney(shopItemRow.price)}** but you only have **${formatMoney(userData.money)}**.`
 				})
 				return
 			}
 
 			const botMessage = await ctx.send({
-				content: `Purchase ${getItemDisplay(shopItem, shopItemRow)} for **${formatNumber(shopItemRow.price)}**?`,
+				content: `Purchase ${getItemDisplay(shopItem, shopItemRow)} for **${formatMoney(shopItemRow.price)}**?`,
 				components: CONFIRM_BUTTONS
 			}) as Message
 
@@ -318,7 +318,7 @@ class ShopCommand extends CustomSlashCommand {
 					}
 					else if (userDataV.money < shopItemRowV.price) {
 						await confirmed.editParent({
-							content: `${icons.danger} You don't have enough bullets. You need **${formatNumber(shopItemRowV.price)}** but you only have **${formatNumber(userDataV.money)}**.`,
+							content: `${icons.danger} You don't have enough money. You need **${formatMoney(shopItemRowV.price)}** but you only have **${formatMoney(userDataV.money)}**.`,
 							components: []
 						})
 						return
@@ -331,8 +331,8 @@ class ShopCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `${icons.checkmark} Purchased ${getItemDisplay(shopItem, shopItemRowV)} for **${formatNumber(shopItemRowV.price)}**. You can find this item in your stash.\n\n` +
-							`${icons.information} You now have **${formatNumber(userDataV.money - shopItemRowV.price)}** bullets.`,
+						content: `${icons.checkmark} Purchased ${getItemDisplay(shopItem, shopItemRowV)} for **${formatMoney(shopItemRowV.price)}**. You can find this item in your stash.\n\n` +
+							`${icons.information} You now have **${formatMoney(userDataV.money - shopItemRowV.price)}**.`,
 						components: []
 					})
 				}
@@ -372,8 +372,8 @@ class ShopCommand extends CustomSlashCommand {
 			}
 
 			const botMessage = await ctx.send({
-				content: `Sell **EVERYTHING IN YOUR INVENTORY** (**${itemsToSell.length}x** items) for **${formatNumber(price)}**?\n\n` +
-					`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatNumber(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}` +
+				content: `Sell **EVERYTHING IN YOUR INVENTORY** (**${itemsToSell.length}x** items) for **${formatMoney(price)}**?\n\n` +
+					`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}` +
 					`${itemsToSell.length > 5 ? `\n...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}` : ''}`,
 				components: CONFIRM_BUTTONS
 			}) as Message
@@ -424,10 +424,10 @@ class ShopCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `${icons.checkmark} Sold everything in your inventory (**${itemsToSell.length}x** items) for **${formatNumber(price)}**.\n\n` +
-							`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `~~${getItemDisplay(i.item, i.row)} for **${formatNumber(this.getItemPrice(i.item, i.row))}**~~` : `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}` +
+						content: `${icons.checkmark} Sold everything in your inventory (**${itemsToSell.length}x** items) for **${formatMoney(price)}**.\n\n` +
+							`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `~~${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemPrice(i.item, i.row))}**~~` : `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}` +
 							`${itemsToSell.length > 5 ? `\n~~...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}~~` : ''}\n\n` +
-							`${icons.information} You now have **${formatNumber(userDataV.money + price)}** bullets.`,
+							`${icons.information} You now have **${formatMoney(userDataV.money + price)}**.`,
 						components: []
 					})
 				}
@@ -467,8 +467,8 @@ class ShopCommand extends CustomSlashCommand {
 			}
 
 			const botMessage = await ctx.send({
-				content: `Sell **EVERYTHING IN YOUR STASH** (**${itemsToSell.length}x** items) for **${formatNumber(price)}**?\n\n` +
-					`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatNumber(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}` +
+				content: `Sell **EVERYTHING IN YOUR STASH** (**${itemsToSell.length}x** items) for **${formatMoney(price)}**?\n\n` +
+					`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}` +
 					`${itemsToSell.length > 5 ? `\n~~...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}~~` : ''}`,
 				components: CONFIRM_BUTTONS
 			}) as Message
@@ -519,10 +519,10 @@ class ShopCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `${icons.checkmark} Sold everything in your stash (**${itemsToSell.length}x** items) for **${formatNumber(price)}**.\n\n` +
-							`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `~~${getItemDisplay(i.item, i.row)} for **${formatNumber(this.getItemPrice(i.item, i.row))}**~~` : `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}` +
+						content: `${icons.checkmark} Sold everything in your stash (**${itemsToSell.length}x** items) for **${formatMoney(price)}**.\n\n` +
+							`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `~~${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemPrice(i.item, i.row))}**~~` : `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}` +
 							`${itemsToSell.length > 5 ? `\n...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}` : ''}\n\n` +
-							`${icons.information} You now have **${formatNumber(userDataV.money + price)}** bullets.`,
+							`${icons.information} You now have **${formatMoney(userDataV.money + price)}**.`,
 						components: []
 					})
 				}
@@ -599,7 +599,7 @@ class ShopCommand extends CustomSlashCommand {
 				.setDescription(`**${searchedItem ? `Market Results For: ${getItemDisplay(searchedItem)}` : 'Market'}**\n\n${icons.information} Use \`/shop buy <item id>\` to purchase an item.\n${icons.warning} These deals will expire after 1 day.`)
 
 			embed.addField('__Items Available__ (Sorted newest to oldest)',
-				filteredItems.map(itm => `<t:${itm.row.createdAt.getTime() / 1000}:R> ${getItemDisplay(itm.item, itm.row)} - ${formatNumber(itm.row.price)}`).join('\n') ||
+				filteredItems.map(itm => `<t:${itm.row.createdAt.getTime() / 1000}:R> ${getItemDisplay(itm.item, itm.row)} - ${formatMoney(itm.row.price)}`).join('\n') ||
 				`There no ${searchedItem ? `${getItemDisplay(searchedItem)}'s` : 'items'} available right now. When a player sells an item, you will see it for sale here.`)
 
 			pages.push(embed)

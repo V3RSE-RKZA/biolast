@@ -244,7 +244,7 @@ class ScavengeCommand extends CustomSlashCommand {
 
 			const finalMessage = `You ${hasRequiredKey ?
 				`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
-				''}scavenge **${raidChannel.display}** and find:\n\n${scavengedLoot.map(itm => `***${itm.rarity}*** ${getItemDisplay(itm.item, itm.row)}`).join('\n') || '**nothing**!'}\n🌟 ***+${xpEarned}** xp!*`
+				''}scavenge **${raidChannel.display}** and find:\n\n${scavengedLoot.map(itm => `${itm.rarity} ${getItemDisplay(itm.item, itm.row)}`).join('\n') || '**nothing**!'}\n🌟 ***+${xpEarned}** xp!*`
 
 			if (!scavengedLoot.length || (!itemsAddedToBackpack.length && !itemsAddedToGround.length)) {
 				await ctx.send({

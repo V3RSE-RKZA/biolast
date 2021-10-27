@@ -9,7 +9,7 @@ import { Ammunition, Item } from '../types/Items'
 import { getItem, getNumber } from '../utils/argParsers'
 import { getUserBackpack } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
-import { formatNumber } from '../utils/stringUtils'
+import { formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { isRaidGuild } from '../utils/raidUtils'
@@ -112,11 +112,15 @@ class ItemCommand extends CustomSlashCommand {
 		itemEmbed.addField('Item Weight', `Uses **${item.slotsUsed}** slot${item.slotsUsed === 1 ? '' : 's'}`, true)
 
 		if (item.buyPrice) {
-			itemEmbed.addField('Buy Price', formatNumber(item.buyPrice), true)
+			itemEmbed.addField('Buy Price', formatMoney(item.buyPrice), true)
 		}
 
 		if (item.sellPrice) {
-			itemEmbed.addField('Sell Price', formatNumber(Math.floor(item.sellPrice * this.app.shopSellMultiplier)), true)
+			itemEmbed.addField('Sell Price', formatMoney(Math.floor(item.sellPrice * this.app.shopSellMultiplier)), true)
+		}
+
+		if (item.durability) {
+			itemEmbed.addField('Max Durability', `${item.durability} uses`, true)
 		}
 
 		switch (item.type) {

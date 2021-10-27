@@ -62,7 +62,7 @@ class SearchCommand extends CustomSlashCommand {
 
 		const npcDescription = [
 			`**Health**: ${formatHealth(npcRow.health, npc.health)} **${npcHealthDisplay}** HP`,
-			`**Kill XP**: 🌟 ${formatNumber(npc.xp, true)}`
+			`**Kill XP**: 🌟 ${formatNumber(npc.xp)}`
 		]
 
 		if (npc.type === 'raider' || (npc.type === 'boss' && npc.subtype !== 'walker')) {

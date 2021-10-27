@@ -11,7 +11,7 @@ import { beginTransaction } from '../utils/db/mysql'
 import { addMoney, addXp, getUserRow, increaseQuestsCompleted } from '../utils/db/players'
 import { createQuest, deleteQuest, getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getUsersRaid } from '../utils/db/raids'
-import { combineArrayWithAnd, formatNumber } from '../utils/stringUtils'
+import { combineArrayWithAnd, formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { allItems } from '../resources/items'
@@ -389,7 +389,7 @@ class QuestsCommand extends CustomSlashCommand {
 		const rewardItem = allItems.find(i => i.name === questRow.itemReward)
 
 		if (questRow.moneyReward) {
-			display.push(formatNumber(questRow.moneyReward))
+			display.push(formatMoney(questRow.moneyReward))
 		}
 
 		if (questRow.xpReward) {

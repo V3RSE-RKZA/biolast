@@ -8,7 +8,7 @@ import { ItemRow, UserRow } from '../types/mysql'
 import { addItemToBackpack, addItemToStash, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
-import { formatNumber } from '../utils/stringUtils'
+import { formatMoney } from '../utils/stringUtils'
 import { backpackHasSpace, getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
 import { addStatusEffects, getActiveStimulants } from '../utils/playerUtils'
 
@@ -268,7 +268,7 @@ class StashCommand extends CustomSlashCommand {
 
 			const embed = new Embed()
 				.setAuthor(`${userDisplay}'s Stash`, user.avatarURL)
-				.addField('__Stash Info__', `**Bullets**: ${formatNumber(userData.money)}\n` +
+				.addField('__Stash Info__', `**Coins**: ${formatMoney(userData.money)}\n` +
 				`**Number of Items**: ${itemData.items.length}`)
 				.addField(`__Items in Stash__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})`,
 					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your inventory to your stash with \`/stash put <item id>\`.`)
