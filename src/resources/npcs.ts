@@ -177,7 +177,7 @@ export const npcs = npcsObject({
 		display: 'Crawler',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563461253935114/walker_temp.png',
 		icon: '🧟‍♂️',
-		health: 35,
+		health: 40,
 		damage: 50,
 		drops: {
 			common: [items.compression_bandage],
@@ -190,7 +190,7 @@ export const npcs = npcsObject({
 		],
 		xp: 60,
 		chanceToBite: 25,
-		attackPenetration: 1.45
+		attackPenetration: 1.9
 	},
 	cain: {
 		type: 'boss',
@@ -255,7 +255,7 @@ export const npcs = npcsObject({
 		damage: 35,
 		drops: {
 			common: [items['9mm_FMJ_bullet']],
-			uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
+			uncommon: [items.ifak_medkit, items['anti-biotics']],
 			rare: [items['9mm_RIP_bullet'], items.duffle_bag],
 			rolls: 1
 		},
@@ -266,6 +266,29 @@ export const npcs = npcsObject({
 		],
 		armor: items.wooden_armor,
 		helmet: items.wooden_helmet,
+		xp: 125
+	},
+	psycho_raider: {
+		type: 'raider',
+		subtype: 'melee',
+		id: 'psycho_raider',
+		display: 'Psycho',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562992142012416/raider_temp.png',
+		icon: '',
+		health: 50,
+		damage: 30,
+		drops: {
+			common: [items.knife],
+			uncommon: [items.fire_axe, items.splint],
+			rare: [items.hypo_stim, items.duffle_bag],
+			rolls: 1
+		},
+		weapon: items.chainsaw,
+		quotes: [
+			'~*You hear footsteps nearby*~',
+			'~*You hear someone cackling maniacally*~'
+		],
+		helmet: items.aramid_helmet,
 		xp: 125
 	},
 	game_raider: {
@@ -386,7 +409,7 @@ export const npcs = npcsObject({
 		],
 		xp: 35,
 		chanceToBite: 30,
-		attackPenetration: 1.1
+		attackPenetration: 1.6
 	},
 	walker_security_officer: {
 		type: 'walker',
@@ -394,7 +417,7 @@ export const npcs = npcsObject({
 		display: 'Walker Security Officer',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563461253935114/walker_temp.png',
 		icon: '🧟‍♂️',
-		health: 50,
+		health: 60,
 		damage: 30,
 		drops: {
 			common: [items.police_baton],
@@ -409,7 +432,7 @@ export const npcs = npcsObject({
 		armor: items.aramid_armor,
 		xp: 80,
 		chanceToBite: 10,
-		attackPenetration: 1.3
+		attackPenetration: 1.5
 	},
 	the_many: {
 		type: 'boss',
