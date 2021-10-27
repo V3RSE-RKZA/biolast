@@ -82,7 +82,7 @@ export const mall: Location = {
 				cooldown: 1 * 10
 			},
 			npcSpawns: {
-				npcs: [npcs.medium_raider],
+				npcs: [npcs.medium_raider, npcs.psycho_raider],
 				cooldownMin: 2 * 60,
 				cooldownMax: 4 * 60
 			}
@@ -132,8 +132,12 @@ export const mall: Location = {
 					xp: 15
 				},
 				rare: {
-					items: [items.m4a1, items['5.56x45mm_FMJ_bullet']],
+					items: [items.mp5, items.aramid_armor],
 					xp: 25
+				},
+				rarest: {
+					items: [items.aramid_helmet],
+					xp: 35
 				},
 				rolls: 2,
 				cooldown: 1 * 10
@@ -188,7 +192,7 @@ export const mall: Location = {
 				cooldown: 1 * 50
 			},
 			npcSpawns: {
-				npcs: [npcs.game_raider],
+				npcs: [npcs.game_raider, npcs.psycho_raider],
 				cooldownMin: 3 * 60,
 				cooldownMax: 4 * 60
 			}
