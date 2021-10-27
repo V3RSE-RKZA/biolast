@@ -901,10 +901,10 @@ class AttackCommand extends CustomSlashCommand {
 				if (result.limb === 'head' && victimEquips.helmet) {
 					messages.push(`**${member.displayName}**'s helmet (${getItemDisplay(victimEquips.helmet.item)}) reduced the damage by **${result.damage.reduced}**.`)
 
-					// only lower helmet durability if attackers weapon penetrates at least 50% of
+					// only lower helmet durability if attackers weapon is within 1 penetration (exclusive) of
 					// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
 					// against someone who had level 3 armor, the armor would NOT lose durability)
-					if (attackPenetration >= victimEquips.helmet.item.level / 2) {
+					if (attackPenetration > victimEquips.helmet.item.level - 1) {
 						if (victimEquips.helmet.row.durability - 1 <= 0) {
 							messages.push(`**${member.displayName}**'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
 
@@ -919,10 +919,10 @@ class AttackCommand extends CustomSlashCommand {
 				else if (result.limb === 'chest' && victimEquips.armor) {
 					messages.push(`**${member.displayName}**'s armor (${getItemDisplay(victimEquips.armor.item)}) reduced the damage by **${result.damage.reduced}**.`)
 
-					// only lower armor durability if attackers weapon penetrates at least 50% of
+					// only lower armor durability if attackers weapon is within 1 penetration (exclusive) of
 					// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
 					// against someone who had level 3 armor, the armor would NOT lose durability)
-					if (attackPenetration >= victimEquips.armor.item.level / 2) {
+					if (attackPenetration > victimEquips.armor.item.level - 1) {
 						if (victimEquips.armor.row.durability - 1 <= 0) {
 							messages.push(`**${member.displayName}**'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
 
@@ -935,7 +935,7 @@ class AttackCommand extends CustomSlashCommand {
 					}
 				}
 				else if (result.limb === 'arm' && Math.random() <= 0.2) {
-					messages.push(`**${member.displayName}**'s arm was broken! (+15% attack cooldown for 4 minutes)`)
+					messages.push(`${icons.debuff} **${member.displayName}**'s arm was broken! (+15% attack cooldown for 4 minutes)`)
 					await createCooldown(transaction.query, member.id, 'broken-arm', 4 * 60)
 				}
 			}

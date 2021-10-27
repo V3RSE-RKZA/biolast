@@ -306,7 +306,7 @@ class NPCHandler {
 				messages.push(`**${npc.display}** took a swipe at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
 
 				if (Math.random() <= (npc.chanceToBite / 100)) {
-					messages.push(`**${member.displayName}** was ${icons.biohazard} Bitten! (-20% damage dealt, +20% damage taken for 4 minutes)`)
+					messages.push(`${icons.debuff} **${member.displayName}** was ${icons.biohazard} Bitten! (-20% damage dealt, +20% damage taken for 4 minutes)`)
 					await createCooldown(transactionQuery, member.id, 'bitten', 4 * 60)
 				}
 			}
@@ -323,7 +323,7 @@ class NPCHandler {
 			messages.push(`The \`${npc.type}\` took a swipe at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
 
 			if (Math.random() <= (npc.chanceToBite / 100)) {
-				messages.push(`**${member.displayName}** was ${icons.biohazard} Bitten! (-20% damage dealt, +20% damage taken for 4 minutes)`)
+				messages.push(`${icons.debuff} **${member.displayName}** was ${icons.biohazard} Bitten! (-20% damage dealt, +20% damage taken for 4 minutes)`)
 				await createCooldown(transactionQuery, member.id, 'bitten', 4 * 60)
 			}
 		}
@@ -332,10 +332,10 @@ class NPCHandler {
 			if (result.limb === 'head' && userEquips.helmet) {
 				messages.push(`**${member.displayName}**'s helmet (${getItemDisplay(userEquips.helmet.item)}) reduced the damage by **${result.damage.reduced}**.`)
 
-				// only lower helmet durability if npcs weapon penetrates at least 50% of
+				// only lower helmet durability if npcs weapon penetration is within 1 penetration (exclusive) of
 				// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
 				// against someone who had level 3 armor, the armor would NOT lose durability)
-				if (npcAttackPenetration >= userEquips.helmet.item.level / 2) {
+				if (npcAttackPenetration > userEquips.helmet.item.level - 1) {
 					if (userEquips.helmet.row.durability - 1 <= 0) {
 						messages.push(`**${member.displayName}**'s ${getItemDisplay(userEquips.helmet.item)} broke from this attack!`)
 
@@ -350,7 +350,7 @@ class NPCHandler {
 			else if (result.limb === 'chest' && userEquips.armor) {
 				messages.push(`**${member.displayName}**'s armor (${getItemDisplay(userEquips.armor.item)}) reduced the damage by **${result.damage.reduced}**.`)
 
-				if (npcAttackPenetration >= userEquips.armor.item.level / 2) {
+				if (npcAttackPenetration > userEquips.armor.item.level - 1) {
 					if (userEquips.armor.row.durability - 1 <= 0) {
 						messages.push(`**${member.displayName}**'s ${getItemDisplay(userEquips.armor.item)} broke from this attack!`)
 
@@ -363,7 +363,7 @@ class NPCHandler {
 				}
 			}
 			else if (result.limb === 'arm' && Math.random() <= 0.2) {
-				messages.push(`**${member.displayName}**'s arm was broken! (+15% attack cooldown for 4 minutes)`)
+				messages.push(`${icons.debuff} **${member.displayName}**'s arm was broken! (+15% attack cooldown for 4 minutes)`)
 				await createCooldown(transactionQuery, member.id, 'broken-arm', 4 * 60)
 			}
 		}
