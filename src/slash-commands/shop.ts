@@ -16,7 +16,7 @@ import { formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 
-const ITEMS_PER_PAGE = 7
+const ITEMS_PER_PAGE = 15
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
 class ShopCommand extends CustomSlashCommand {
@@ -596,11 +596,11 @@ class ShopCommand extends CustomSlashCommand {
 			const filteredItems = itemData.items.slice(indexFirst, indexLast)
 
 			const embed = new Embed()
-				.setDescription(`**${searchedItem ? `Market Results For: ${getItemDisplay(searchedItem)}` : 'Market'}**\n\n${icons.information} Use \`/shop buy <item id>\` to purchase an item.\n${icons.warning} These deals will expire after 1 day.`)
-
-			embed.addField('__Items Available__ (Sorted newest to oldest)',
-				filteredItems.map(itm => `<t:${itm.row.createdAt.getTime() / 1000}:R> ${getItemDisplay(itm.item, itm.row)} - ${formatMoney(itm.row.price)}`).join('\n') ||
-				`There no ${searchedItem ? `${getItemDisplay(searchedItem)}'s` : 'items'} available right now. When a player sells an item, you will see it for sale here.`)
+				.setDescription(`**${searchedItem ? `Market Results For: ${getItemDisplay(searchedItem)}` : 'Market'}**` +
+					`\n\n${icons.information} Use \`/shop buy <item id>\` to purchase an item.\n${icons.warning} These deals will expire after 1 day.` +
+					'\n\n__**Items Available**__ (Sorted newest to oldest)' +
+					`\n${filteredItems.map(itm => `<t:${itm.row.createdAt.getTime() / 1000}:R> ${getItemDisplay(itm.item, itm.row)} - ${formatMoney(itm.row.price)}`).join('\n') ||
+					`There no ${searchedItem ? `${getItemDisplay(searchedItem)}'s` : 'items'} available right now. When a player sells an item, you will see it for sale here.`}`)
 
 			pages.push(embed)
 		}
