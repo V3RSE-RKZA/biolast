@@ -69,6 +69,25 @@ export const medical = medicalObject({
 			length: 300
 		}
 	},
+	'hypo_stim': {
+		type: 'Medical',
+		subtype: 'Stimulant',
+		name: 'hypo_stim',
+		icon: '<:syringe:886561670812549130>',
+		aliases: ['hypo'],
+		sellPrice: 171,
+		slotsUsed: 1,
+		itemLevel: 8,
+		durability: 1,
+		effects: {
+			damageBonus: 0,
+			accuracyBonus: -15,
+			weightBonus: 0,
+			fireRate: 20,
+			damageReduction: 0,
+			length: 300
+		}
+	},
 	'adderall': {
 		type: 'Medical',
 		subtype: 'Stimulant',
