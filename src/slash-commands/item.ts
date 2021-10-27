@@ -180,19 +180,19 @@ class ItemCommand extends CustomSlashCommand {
 				if (item.subtype === 'Stimulant') {
 					const effectsDisplay = []
 					if (item.effects.accuracyBonus) {
-						effectsDisplay.push(`${item.effects.accuracyBonus > 0 ? 'Increases' : 'Decreases'} accuracy by ${Math.abs(item.effects.accuracyBonus)}%.`)
+						effectsDisplay.push(`${item.effects.accuracyBonus > 0 ? `${icons.buff} Increases` : `${icons.debuff} Decreases`} accuracy by ${Math.abs(item.effects.accuracyBonus)}%.`)
 					}
 					if (item.effects.damageBonus) {
-						effectsDisplay.push(`${item.effects.damageBonus > 0 ? 'Increases' : 'Decreases'} damage dealt by ${Math.abs(item.effects.damageBonus)}%.`)
+						effectsDisplay.push(`${item.effects.damageBonus > 0 ? `${icons.buff} Increases` : `${icons.debuff} Decreases`} damage dealt by ${Math.abs(item.effects.damageBonus)}%.`)
 					}
 					if (item.effects.weightBonus) {
-						effectsDisplay.push(`${item.effects.weightBonus > 0 ? 'Increases' : 'Decreases'} inventory slots by ${Math.abs(item.effects.weightBonus)}.`)
+						effectsDisplay.push(`${item.effects.weightBonus > 0 ? `${icons.buff} Increases` : `${icons.debuff} Decreases`} inventory slots by ${Math.abs(item.effects.weightBonus)}.`)
 					}
 					if (item.effects.fireRate) {
-						effectsDisplay.push(`${item.effects.fireRate > 0 ? 'Decreases' : 'Increases'} attack cooldown by ${Math.abs(item.effects.fireRate)}%.`)
+						effectsDisplay.push(`${item.effects.fireRate > 0 ? `${icons.buff} Decreases` : `${icons.debuff} Increases`} attack cooldown by ${Math.abs(item.effects.fireRate)}%.`)
 					}
 					if (item.effects.damageReduction) {
-						effectsDisplay.push(`${item.effects.damageReduction > 0 ? 'Decreases' : 'Increases'} damage taken from attacks by ${Math.abs(item.effects.damageReduction)}%.`)
+						effectsDisplay.push(`${item.effects.damageReduction > 0 ? `${icons.buff} Decreases` : `${icons.debuff} Increases`} damage taken from attacks by ${Math.abs(item.effects.damageReduction)}%.`)
 					}
 
 					itemEmbed.addField('Gives Effects', effectsDisplay.join('\n'), true)
