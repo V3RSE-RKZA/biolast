@@ -985,7 +985,7 @@ class AttackCommand extends CustomSlashCommand {
 			lootEmbed = new Embed()
 				.setTitle('Items Dropped')
 				.setDescription(victimLoot.length ?
-					`${sortItemsByLevel(victimLoot, true).slice(0, 10).map(victimItem => getItemDisplay(victimItem.item)).join('\n')}` +
+					`${sortItemsByLevel(victimLoot, true).slice(0, 10).map(victimItem => getItemDisplay(victimItem.item, victimItem.row, { showEquipped: false })).join('\n')}` +
 						`${victimLoot.length > 10 ? `\n...and **${victimLoot.length - 10}** other item${victimLoot.length - 10 > 1 ? 's' : ''}` : ''}` :
 					'No items were dropped.')
 				.setFooter('These items were dropped onto the ground.')
