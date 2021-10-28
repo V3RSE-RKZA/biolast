@@ -172,7 +172,7 @@ class ScavengeCommand extends CustomSlashCommand {
 
 			for (let i = 0; i < raidChannel.scavange.rolls; i++) {
 				const randomLoot = hasRequiredKey && raidChannel.scavange.keyIsOptional ?
-					{ ...this.getRandomSpecialItem(raidChannel), rarityDisplay: '**Rare**' } :
+					{ ...this.getRandomSpecialItem(raidChannel), rarityDisplay: getRarityDisplay('Rare') } :
 					this.getRandomItem(raidChannel)
 
 				if (randomLoot) {
