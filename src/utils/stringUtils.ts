@@ -23,7 +23,9 @@ export function formatMoney (number: number, showAll = false): string {
 		display.push(`${icons.tier2_currency} ${formatNumber(silver)}`)
 	}
 
-	display.push(`${icons.tier1_currency} ${formatNumber(copper)}`)
+	if (showAll || copper > 0 || !display.length) {
+		display.push(`${icons.tier1_currency} ${formatNumber(copper)}`)
+	}
 
 	return display.join(' ')
 }

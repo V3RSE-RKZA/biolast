@@ -19,7 +19,7 @@ export const collectible = questObject({
 		icon: '<:quest_item:886561850525896724>',
 		sellPrice: 122,
 		slotsUsed: 2,
-		itemLevel: 11
+		itemLevel: 1
 	},
 	farming_guide: {
 		type: 'Collectible',
@@ -35,7 +35,7 @@ export const collectible = questObject({
 		type: 'Collectible',
 		name: 'antique_vase',
 		aliases: ['vase'],
-		sellPrice: 180,
+		sellPrice: 1080,
 		description: 'An old vase.',
 		icon: '<:quest_item:886561850525896724>',
 		slotsUsed: 2,
@@ -47,7 +47,7 @@ export const collectible = questObject({
 		aliases: ['tech', 'trash'],
 		description: 'Some technology junk salvaged from the computers and other technology in the room.',
 		icon: '<:quest_item:886561850525896724>',
-		sellPrice: 180,
+		sellPrice: 1020,
 		slotsUsed: 2,
 		itemLevel: 1
 	},
@@ -57,7 +57,7 @@ export const collectible = questObject({
 		aliases: ['fristoe'],
 		description: 'The most popular first-person shooter game of the pre-apocalyptic world!',
 		icon: '<:quest_item:886561850525896724>',
-		sellPrice: 180,
+		sellPrice: 1000,
 		slotsUsed: 2,
 		itemLevel: 1
 	},
@@ -67,7 +67,7 @@ export const collectible = questObject({
 		aliases: ['tags'],
 		description: 'Identification tags worn by scavengers. You can obtain dog tags of a specific user by killing them in raid.',
 		icon: '🏷️',
-		sellPrice: 25,
+		sellPrice: 50,
 		slotsUsed: 0.1,
 		itemLevel: 1
 	}

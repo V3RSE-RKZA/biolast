@@ -115,9 +115,9 @@ export const ammunition = ammoObject({
 		aliases: ['7n24', '5.45x39_7n24', '545_7n24', '5.45_7n24', '545x39_7n24'],
 		description: '7N24 Armor-piercing 5.45x39mm ammunition for Kalashnikov rifles.',
 		damage: 48,
-		penetration: 3.05,
+		penetration: 3.35,
 		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
-		sellPrice: 932,
+		sellPrice: 2032,
 		slotsUsed: 1,
 		itemLevel: 14
 	},
@@ -130,9 +130,9 @@ export const ammunition = ammoObject({
 		damage: 34,
 		penetration: 2.3,
 		ammoFor: [ranged['FN_Five-seveN'], ranged.FN_P90],
-		sellPrice: 372,
+		sellPrice: 672,
 		slotsUsed: 1,
-		itemLevel: 9
+		itemLevel: 7
 	},
 	'SS190_bullet': {
 		type: 'Ammunition',
@@ -143,7 +143,7 @@ export const ammunition = ammoObject({
 		damage: 43,
 		penetration: 3.2,
 		ammoFor: [ranged['FN_Five-seveN'], ranged.FN_P90],
-		sellPrice: 624,
+		sellPrice: 1624,
 		slotsUsed: 1,
 		itemLevel: 12
 	},
@@ -171,7 +171,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged['glock-17'], ranged.mp5],
 		sellPrice: 302,
 		slotsUsed: 1,
-		itemLevel: 8
+		itemLevel: 6
 	},
 	'9mm_RIP_bullet': {
 		type: 'Ammunition',
@@ -182,7 +182,7 @@ export const ammunition = ammoObject({
 		damage: 52,
 		penetration: 1.8,
 		ammoFor: [ranged['glock-17'], ranged.P320, ranged.mp5],
-		sellPrice: 521,
+		sellPrice: 1221,
 		slotsUsed: 1,
 		itemLevel: 12,
 		spreadsDamageToLimbs: 4
@@ -196,9 +196,9 @@ export const ammunition = ammoObject({
 		damage: 36,
 		penetration: 2.9,
 		ammoFor: [ranged.P320, ranged.mp5],
-		sellPrice: 831,
+		sellPrice: 1531,
 		slotsUsed: 1,
-		itemLevel: 15
+		itemLevel: 12
 	},
 	'.22LR_bullet': {
 		type: 'Ammunition',
@@ -211,7 +211,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.luger],
 		sellPrice: 51,
 		slotsUsed: 1,
-		itemLevel: 3
+		itemLevel: 2
 	},
 	'makeshift_pistol_bullet': {
 		type: 'Ammunition',
@@ -237,7 +237,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.makeshift_rifle],
 		sellPrice: 32,
 		slotsUsed: 1,
-		itemLevel: 3
+		itemLevel: 2
 	},
 	'makeshift_shell': {
 		type: 'Ammunition',
@@ -245,12 +245,13 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['shell'],
 		description: 'A handmade shotgun shell filled with cheap gunpowder and pellets.',
-		damage: 13,
+		damage: 24,
 		penetration: 1.5,
 		ammoFor: [ranged.makeshift_shotgun],
 		sellPrice: 34,
 		slotsUsed: 1,
-		itemLevel: 3
+		itemLevel: 3,
+		spreadsDamageToLimbs: 2
 	},
 	'.303_FMJ_bullet': {
 		type: 'Ammunition',
@@ -258,12 +259,12 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['.303', '.303_fmj', '.303_bullet'],
 		description: 'Full metal jacket ammo for a lee-enfield.',
-		damage: 55,
-		penetration: 2.9,
+		damage: 75,
+		penetration: 4.0,
 		ammoFor: [ranged['lee-enfield']],
-		sellPrice: 502,
+		sellPrice: 2502,
 		slotsUsed: 1,
-		itemLevel: 6
+		itemLevel: 15
 	},
 	'20-gauge_buckshot': {
 		type: 'Ammunition',
@@ -276,7 +277,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.bobwhite_g2],
 		sellPrice: 415,
 		slotsUsed: 1,
-		itemLevel: 8,
+		itemLevel: 9,
 		spreadsDamageToLimbs: 2
 	},
 	'20-gauge_slug': {
@@ -290,7 +291,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.bobwhite_g2],
 		sellPrice: 615,
 		slotsUsed: 1,
-		itemLevel: 12
+		itemLevel: 11
 	},
 	'12-gauge_buckshot': {
 		type: 'Ammunition',
@@ -301,7 +302,7 @@ export const ammunition = ammoObject({
 		damage: 64,
 		penetration: 2.9,
 		ammoFor: [ranged.mossberg_500, ranged.benelli_M4],
-		sellPrice: 707,
+		sellPrice: 1707,
 		slotsUsed: 1,
 		itemLevel: 12,
 		spreadsDamageToLimbs: 2
@@ -315,7 +316,7 @@ export const ammunition = ammoObject({
 		damage: 78,
 		penetration: 3.12,
 		ammoFor: [ranged.mossberg_500, ranged.benelli_M4],
-		sellPrice: 1054,
+		sellPrice: 2654,
 		slotsUsed: 1,
 		itemLevel: 12
 	},
@@ -328,7 +329,7 @@ export const ammunition = ammoObject({
 		damage: 75,
 		penetration: 4.05,
 		ammoFor: [ranged.mossberg_500, ranged.benelli_M4],
-		sellPrice: 1575,
+		sellPrice: 5575,
 		slotsUsed: 1,
 		itemLevel: 17
 	}

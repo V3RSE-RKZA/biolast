@@ -8,7 +8,7 @@ export const backpacks = backpackObject({
 		name: 'small_pouch',
 		icon: '<:U_backpack:601366669595508736>',
 		aliases: ['pouch'],
-		sellPrice: 21,
+		sellPrice: 47,
 		slots: 4,
 		slotsUsed: 1,
 		itemLevel: 5
@@ -18,7 +18,7 @@ export const backpacks = backpackObject({
 		name: 'cloth_backpack',
 		icon: '<:U_backpack:601366669595508736>',
 		aliases: ['backpack'],
-		sellPrice: 62,
+		sellPrice: 262,
 		slots: 7,
 		slotsUsed: 1,
 		itemLevel: 5
@@ -28,7 +28,7 @@ export const backpacks = backpackObject({
 		name: 'duffle_bag',
 		icon: '<:U_backpack:601366669595508736>',
 		aliases: ['duffle', 'bag'],
-		sellPrice: 145,
+		sellPrice: 945,
 		slots: 14,
 		slotsUsed: 2,
 		itemLevel: 8
