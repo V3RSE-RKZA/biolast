@@ -84,7 +84,7 @@ export const dailyQuests: DailyQuest[] = [
 		id: 'low_lvl_player_kills_2',
 		questType: 'Player Kills',
 		minLevel: 3,
-		maxLevel: 10,
+		maxLevel: 30,
 		progressGoal: 2,
 		rewards: {
 			money: 150
@@ -137,17 +137,5 @@ export const dailyQuests: DailyQuest[] = [
 			money: 500
 		},
 		item: items.farming_guide
-	},
-	{
-		type: 'Daily',
-		id: 'mall_retrieve_vase',
-		questType: 'Retrieve Item',
-		minLevel: 8,
-		maxLevel: 15,
-		progressGoal: 2,
-		rewards: {
-			money: 500
-		},
-		item: items.antique_vase
 	}
 ]

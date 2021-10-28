@@ -35,7 +35,7 @@ export const collectible = questObject({
 		type: 'Collectible',
 		name: 'antique_vase',
 		aliases: ['vase'],
-		sellPrice: 150,
+		sellPrice: 180,
 		description: 'An old vase.',
 		icon: '<:quest_item:886561850525896724>',
 		slotsUsed: 2,
