@@ -13,7 +13,7 @@ import { deleteNPC, getNPC, lowerHealth as lowerNPCHealth } from '../utils/db/np
 import { addXp, getUserRow, increaseDeaths, increaseKills, lowerHealth } from '../utils/db/players'
 import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getUsersRaid, removeUserFromRaid } from '../utils/db/raids'
-import { combineArrayWithAnd, formatHealth, getBodyPartEmoji } from '../utils/stringUtils'
+import { combineArrayWithAnd, formatHealth, getBodyPartEmoji, getRarityDisplay } from '../utils/stringUtils'
 import { getEquips, getItemDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
@@ -522,7 +522,7 @@ class AttackCommand extends CustomSlashCommand {
 				.setTitle('Items Dropped')
 				.setDescription(
 					(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
-						.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : getItemDisplay(itm.item, itm.row)).join('\n')
+						.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : `${getRarityDisplay('Common')} ${getItemDisplay(itm.item, itm.row)}`).join('\n')
 				)
 				.setFooter('These items were dropped onto the ground.')
 

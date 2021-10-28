@@ -17,7 +17,7 @@ import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
 import { addStatusEffects, getActiveStimulants } from '../utils/playerUtils'
 import { getRaidType } from '../utils/raidUtils'
-import { combineArrayWithOr } from '../utils/stringUtils'
+import { combineArrayWithOr, getRarityDisplay } from '../utils/stringUtils'
 
 class ScavengeCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -313,22 +313,22 @@ class ScavengeCommand extends CustomSlashCommand {
 		if (raidChannel.scavange.rarest && rand < 0.05) {
 			xpEarned = raidChannel.scavange.rarest.xp
 			randomItem = raidChannel.scavange.rarest.items[Math.floor(Math.random() * raidChannel.scavange.rarest.items.length)]
-			rarityDisplay = '***Insanely Rare***'
+			rarityDisplay = getRarityDisplay('Insanely Rare')
 		}
 		else if (rand < 0.60) {
 			xpEarned = raidChannel.scavange.common.xp
 			randomItem = raidChannel.scavange.common.items[Math.floor(Math.random() * raidChannel.scavange.common.items.length)]
-			rarityDisplay = 'Common'
+			rarityDisplay = getRarityDisplay('Common')
 		}
 		else if (rand < 0.85) {
 			xpEarned = raidChannel.scavange.uncommon.xp
 			randomItem = raidChannel.scavange.uncommon.items[Math.floor(Math.random() * raidChannel.scavange.uncommon.items.length)]
-			rarityDisplay = 'Uncommon'
+			rarityDisplay = getRarityDisplay('Uncommon')
 		}
 		else {
 			xpEarned = raidChannel.scavange.rare.xp
 			randomItem = raidChannel.scavange.rare.items[Math.floor(Math.random() * raidChannel.scavange.rare.items.length)]
-			rarityDisplay = '**Rare**'
+			rarityDisplay = getRarityDisplay('Rare')
 		}
 
 		return {

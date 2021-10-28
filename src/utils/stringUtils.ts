@@ -144,3 +144,12 @@ export function getBodyPartEmoji (bodyPart: BodyPart): string {
 	}
 }
 
+export function getRarityDisplay (rarity: 'Common' | 'Uncommon' | 'Rare' | 'Insanely Rare'): string {
+	switch (rarity) {
+		case 'Common': return icons.rarities.common.join('')
+		case 'Uncommon': return icons.rarities.uncommon.join('')
+		case 'Rare': return icons.rarities.rare.join('')
+		case 'Insanely Rare': return `${icons.rarities.insanely.join('')} ${icons.rarities.rare.join('')}`
+	}
+}
+

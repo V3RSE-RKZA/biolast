@@ -12,7 +12,7 @@ import { query } from './db/mysql'
 import { createNPC, deleteNPC, getAllNPCs } from './db/npcs'
 import { lowerHealth } from './db/players'
 import { removeUserFromRaid } from './db/raids'
-import { combineArrayWithAnd, formatHealth, getBodyPartEmoji } from './stringUtils'
+import { combineArrayWithAnd, formatHealth, getBodyPartEmoji, getRarityDisplay } from './stringUtils'
 import { getEquips, getItemDisplay, getItems, sortItemsByLevel } from './itemUtils'
 import { logger } from './logger'
 import { getAttackDamage, getBodyPartHit } from './raidUtils'
@@ -176,15 +176,15 @@ class NPCHandler {
 
 		if (rand < 0.60) {
 			randomItem = npc.drops.common[Math.floor(Math.random() * npc.drops.common.length)]
-			rarityDisplay = 'Common'
+			rarityDisplay = getRarityDisplay('Common')
 		}
 		else if (rand < 0.85) {
 			randomItem = npc.drops.uncommon[Math.floor(Math.random() * npc.drops.uncommon.length)]
-			rarityDisplay = 'Uncommon'
+			rarityDisplay = getRarityDisplay('Uncommon')
 		}
 		else {
 			randomItem = npc.drops.rare[Math.floor(Math.random() * npc.drops.rare.length)]
-			rarityDisplay = '**Rare**'
+			rarityDisplay = getRarityDisplay('Rare')
 		}
 
 		return {
