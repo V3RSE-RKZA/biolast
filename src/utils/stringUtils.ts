@@ -149,7 +149,7 @@ export function getRarityDisplay (rarity: 'Common' | 'Uncommon' | 'Rare' | 'Insa
 		case 'Common': return icons.rarities.common.join('')
 		case 'Uncommon': return icons.rarities.uncommon.join('')
 		case 'Rare': return icons.rarities.rare.join('')
-		case 'Insanely Rare': return `${icons.rarities.insanely.join('')} ${icons.rarities.rare.join('')}`
+		case 'Insanely Rare': return `${icons.rarities.insanely.join('')}${icons.rarities.rare.join('')}`
 	}
 }
 
