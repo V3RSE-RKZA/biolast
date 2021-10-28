@@ -12,8 +12,8 @@ export function formatNumber (number: number): string {
  */
 export function formatMoney (number: number, showAll = false): string {
 	const copper = number % 100
-	const silver = ((number - copper) % 1000) / 10
-	const gold = (number - copper - ((number - copper) % 1000)) / 1000
+	const silver = ((number - copper) / 100) % 100
+	const gold = (number - copper - (silver * 100)) / 10000
 	const display = []
 
 	if (showAll || gold > 0) {
