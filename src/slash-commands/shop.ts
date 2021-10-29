@@ -78,6 +78,18 @@ class ShopCommand extends CustomSlashCommand {
 							name: 'item',
 							description: 'ID of item to purchase.',
 							required: true
+						},
+						{
+							type: CommandOptionType.INTEGER,
+							name: 'item-2',
+							description: 'ID of another item to purchase.',
+							required: false
+						},
+						{
+							type: CommandOptionType.INTEGER,
+							name: 'item-3',
+							description: 'ID of another item to purchase.',
+							required: false
 						}
 					]
 				},
@@ -229,50 +241,74 @@ class ShopCommand extends CustomSlashCommand {
 			}
 		}
 		else if (ctx.options.buy) {
+			const items: number[] = [ctx.options.buy.item, ctx.options.buy['item-2'], ctx.options.buy['item-3']].filter(Boolean)
+
+			if ((new Set(items)).size !== items.length) {
+				await ctx.send({
+					content: `${icons.danger} You specified the same item multiple times! Are you trying to break me?? >:(`
+				})
+				return
+			}
+
 			const itemID = ctx.options.buy.item as number
-			const shopItemRow = await getShopItem(query, itemID)
-			const shopItem = allItems.find(i => i.name === shopItemRow?.item)
-
-			if (!shopItemRow || !shopItem) {
-				await ctx.send({
-					content: `${icons.warning} Could not find an item available in the shop with the ID **${itemID}**. You view the shop with \`/shop view\`.`
-				})
-				return
-			}
-
 			const userData = (await getUserRow(query, ctx.user.id))!
+			const stashRows = await getUserStash(query, ctx.user.id)
+			const userStashData = getItems(stashRows)
+			const itemsToBuy = []
+			let price = 0
 
-			if (userData.level < shopItem.itemLevel) {
-				await ctx.send({
-					content: `${icons.warning} You must be at least level **${shopItem.itemLevel}** to purchase ${getItemDisplay(shopItem, shopItemRow, { showDurability: false })}.`
-				})
-				return
-			}
-			else if (userData.shopSales >= shopDailyBuyLimit) {
+			if (userData.shopSales >= shopDailyBuyLimit) {
 				await ctx.send({
 					content: `${icons.danger} You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`
 				})
 				return
 			}
 
-			const stashRows = await getUserStash(query, ctx.user.id)
-			const userStashData = getItems(stashRows)
+			for (const i of items) {
+				const shopItemRow = await getShopItem(query, i)
+				const shopItem = allItems.find(itm => itm.name === shopItemRow?.item)
 
-			if (userStashData.slotsUsed + shopItem.slotsUsed > userData.stashSlots) {
+				if (!shopItemRow || !shopItem) {
+					await ctx.send({
+						content: `${icons.warning} Could not find an item available in the shop with the ID **${itemID}**. You view the shop with \`/shop view\`.`
+					})
+					return
+				}
+				else if (userData.level < shopItem.itemLevel) {
+					await ctx.send({
+						content: `${icons.warning} You must be at least level **${shopItem.itemLevel}** to purchase ${getItemDisplay(shopItem, shopItemRow, { showDurability: false })}.`
+					})
+					return
+				}
+
+				itemsToBuy.push({ item: shopItem, row: shopItemRow })
+				price += shopItemRow.price
+			}
+
+			if (userData.money < price) {
 				await ctx.send({
-					content: `${icons.danger} You don't have enough space in your stash. You need **${shopItem.slotsUsed}** open slots in your stash. Sell items to clear up some space.`
+					content: `${icons.danger} You don't have enough money. You need **${formatMoney(price)}** but you only have **${formatMoney(userData.money)}**.`
 				})
 				return
 			}
-			else if (userData.money < shopItemRow.price) {
+			else if (userData.shopSales + itemsToBuy.length > shopDailyBuyLimit) {
 				await ctx.send({
-					content: `${icons.danger} You don't have enough money. You need **${formatMoney(shopItemRow.price)}** but you only have **${formatMoney(userData.money)}**.`
+					content: `${icons.danger} You have already purchased **${userData.shopSales}** items from the shop and can only purchase **${shopDailyBuyLimit - userData.shopSales}** more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`
+				})
+				return
+			}
+
+			const slotsNeeded = itemsToBuy.reduce((prev, curr) => prev + curr.item.slotsUsed, 0)
+			if (userStashData.slotsUsed + slotsNeeded > userData.stashSlots) {
+				await ctx.send({
+					content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`
 				})
 				return
 			}
 
 			const botMessage = await ctx.send({
-				content: `Purchase ${getItemDisplay(shopItem, shopItemRow)} for **${formatMoney(shopItemRow.price)}**?`,
+				content: `Purchase **${itemsToBuy.length}x** items for **${formatMoney(price)}**?\n\n` +
+					`${itemsToBuy.map(i => itemsToBuy.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(i.row.price)}**` : getItemDisplay(i.item, i.row)).join('\n')}`,
 				components: CONFIRM_BUTTONS
 			}) as Message
 
@@ -282,57 +318,61 @@ class ShopCommand extends CustomSlashCommand {
 				if (confirmed.customID === 'confirmed') {
 					// using transaction because users data will be updated
 					const transaction = await beginTransaction()
-					const shopItemRowV = await getShopItem(transaction.query, itemID, true)
-
-					if (!shopItemRowV) {
-						await transaction.commit()
-
-						await confirmed.editParent({
-							content: `${icons.warning} Could not find an item available in the shop with the ID **${itemID}**. You view the shop with \`/shop view\`.`,
-							components: []
-						})
-						return
-					}
-
 					const userDataV = (await getUserRow(transaction.query, ctx.user.id, true))!
 					const stashRowsV = await getUserStash(transaction.query, ctx.user.id, true)
 					const userStashDataV = getItems(stashRowsV)
 
-					if (userDataV.shopSales >= shopDailyBuyLimit) {
+					for (const i of itemsToBuy) {
+						const shopItemRow = await getShopItem(transaction.query, i.row.id, true)
+
+						if (!shopItemRow || i.row.price !== shopItemRow.price) {
+							await transaction.commit()
+
+							await ctx.send({
+								content: `${icons.warning} Could not find an item available in the shop with the ID **${itemID}**. You view the shop with \`/shop view\`.`
+							})
+							return
+						}
+					}
+
+					if (userDataV.money < price) {
 						await transaction.commit()
 
-						await confirmed.editParent({
-							content: `${icons.danger} You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`,
-							components: []
+						await ctx.send({
+							content: `${icons.danger} You don't have enough money. You need **${formatMoney(price)}** but you only have **${formatMoney(userDataV.money)}**.`
 						})
 						return
 					}
-					else if (userStashDataV.slotsUsed + shopItem.slotsUsed > userDataV.stashSlots) {
+					else if (userDataV.shopSales + itemsToBuy.length > shopDailyBuyLimit) {
 						await transaction.commit()
 
-						await confirmed.editParent({
-							content: `${icons.danger} You don't have enough space in your stash. You need **${shopItem.slotsUsed}** open slots in your stash. Sell items to clear up some space.`,
-							components: []
+						await ctx.send({
+							content: `${icons.danger} You have already purchased **${userDataV.shopSales}** items from the shop and can only purchase **${shopDailyBuyLimit - userDataV.shopSales}** more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`
 						})
 						return
 					}
-					else if (userDataV.money < shopItemRowV.price) {
-						await confirmed.editParent({
-							content: `${icons.danger} You don't have enough money. You need **${formatMoney(shopItemRowV.price)}** but you only have **${formatMoney(userDataV.money)}**.`,
-							components: []
+					else if (userStashDataV.slotsUsed + slotsNeeded > userDataV.stashSlots) {
+						await transaction.commit()
+
+						await ctx.send({
+							content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`
 						})
 						return
 					}
 
-					await increaseShopSales(transaction.query, ctx.user.id, 1)
-					await removeMoney(transaction.query, ctx.user.id, shopItemRowV.price)
-					await removeItemFromShop(transaction.query, shopItemRowV.id)
-					await addItemToStash(transaction.query, ctx.user.id, shopItemRowV.id)
+					// verified shop has items, continue buy
+					for (const i of itemsToBuy) {
+						await removeItemFromShop(transaction.query, i.row.id)
+						await addItemToStash(transaction.query, ctx.user.id, i.row.id)
+					}
+
+					await increaseShopSales(transaction.query, ctx.user.id, itemsToBuy.length)
+					await removeMoney(transaction.query, ctx.user.id, price)
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `${icons.checkmark} Purchased ${getItemDisplay(shopItem, shopItemRowV)} for **${formatMoney(shopItemRowV.price)}**. You can find this item in your stash.\n\n` +
-							`${icons.information} You now have **${formatMoney(userDataV.money - shopItemRowV.price)}**.`,
+						content: `${icons.checkmark} Purchased **${itemsToBuy.length}x** items for **${formatMoney(price)}**. You can find purchased items in your stash.\n\n${itemsToBuy.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
+							`${icons.information} You now have **${formatMoney(userDataV.money - price)}**.`,
 						components: []
 					})
 				}
