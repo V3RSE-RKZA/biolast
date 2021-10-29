@@ -14,7 +14,7 @@ export const melee = meleeObject({
 		fireRate: 8,
 		accuracy: 80,
 		damage: 8,
-		penetration: 0.95,
+		penetration: 1.0,
 		itemLevel: 2
 	},
 	wooden_bat: {
@@ -27,7 +27,7 @@ export const melee = meleeObject({
 		slotsUsed: 1,
 		fireRate: 15,
 		accuracy: 75,
-		damage: 13,
+		damage: 10,
 		penetration: 0.5,
 		itemLevel: 1
 	},
@@ -41,7 +41,7 @@ export const melee = meleeObject({
 		slotsUsed: 1,
 		fireRate: 15,
 		accuracy: 75,
-		damage: 13,
+		damage: 10,
 		penetration: 0.8,
 		itemLevel: 3
 	},
@@ -56,7 +56,7 @@ export const melee = meleeObject({
 		fireRate: 12,
 		accuracy: 80,
 		damage: 16,
-		penetration: 1.45,
+		penetration: 1.6,
 		itemLevel: 10
 	},
 	fork: {
@@ -97,7 +97,7 @@ export const melee = meleeObject({
 		slotsUsed: 2,
 		fireRate: 30,
 		accuracy: 70,
-		damage: 20,
+		damage: 15,
 		penetration: 0.5,
 		itemLevel: 2
 	},
@@ -126,7 +126,7 @@ export const melee = meleeObject({
 		fireRate: 20,
 		accuracy: 75,
 		damage: 20,
-		penetration: 1.2,
+		penetration: 1.4,
 		itemLevel: 4
 	},
 	chainsaw: {
@@ -140,8 +140,8 @@ export const melee = meleeObject({
 		fireRate: 30,
 		accuracy: 70,
 		damage: 30,
-		penetration: 1.45,
-		itemLevel: 7
+		penetration: 1.8,
+		itemLevel: 8
 	},
 	replica_katana: {
 		type: 'Melee Weapon',
@@ -153,7 +153,7 @@ export const melee = meleeObject({
 		slotsUsed: 1,
 		fireRate: 25,
 		accuracy: 70,
-		damage: 25,
+		damage: 20,
 		penetration: 0.95,
 		itemLevel: 6
 	},
@@ -169,6 +169,6 @@ export const melee = meleeObject({
 		accuracy: 80,
 		damage: 14,
 		penetration: 0.5,
-		itemLevel: 7
+		itemLevel: 10
 	}
 })
