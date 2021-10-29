@@ -32,7 +32,7 @@ export const armor = armorObject({
 		icon: '<:U_shield:601366669474136074>',
 		aliases: ['aramid'],
 		sellPrice: 336,
-		durability: 5,
+		durability: 4,
 		level: 3,
 		slotsUsed: 2,
 		itemLevel: 9
