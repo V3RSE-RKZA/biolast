@@ -201,22 +201,6 @@ export const mall: Location = {
 			type: 'LootChannel',
 			name: 'staff-break-room',
 			display: 'Staff Break Room',
-			scavange: {
-				common: {
-					items: [items.splint, items.compression_bandage, items.ifak_medkit],
-					xp: 10
-				},
-				uncommon: {
-					items: [items.duffle_bag],
-					xp: 15
-				},
-				rare: {
-					items: [items.hyfin_chest_seal],
-					xp: 25
-				},
-				rolls: 2,
-				cooldown: 1 * 10
-			},
 			npcSpawns: {
 				npcs: [npcs.derek],
 				cooldownMin: 20 * 60,
@@ -274,13 +258,13 @@ export const mall: Location = {
 		},
 		{
 			type: 'EvacChannel',
-			name: 'roof-helipad',
+			name: 'roof-helipad-evac',
 			display: 'Roof Helipad',
 			evac: {
 				time: 15
 			},
 			npcSpawns: {
-				npcs: [npcs.medium_raider],
+				npcs: [npcs.medium_raider, npcs.psycho_raider],
 				cooldownMin: 5 * 60,
 				cooldownMax: 10 * 60
 			}
