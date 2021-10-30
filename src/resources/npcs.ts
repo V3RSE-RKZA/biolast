@@ -236,7 +236,7 @@ export const npcs = npcsObject({
 		],
 		armor: items.wooden_armor,
 		helmet: items.wooden_helmet,
-		xp: 50
+		xp: 100
 	},
 	raider_weak: {
 		type: 'raider',
@@ -377,7 +377,7 @@ export const npcs = npcsObject({
 			'~*Derek: I fear no man. But that thing, it scares me.*~'
 		],
 		armor: items.aramid_armor,
-		xp: 150
+		xp: 550
 	},
 	dave: {
 		type: 'boss',
@@ -405,7 +405,7 @@ export const npcs = npcsObject({
 		],
 		armor: items.cloth_armor,
 		helmet: items.sauce_pan,
-		xp: 75
+		xp: 500
 	},
 	feral_animal: {
 		type: 'walker',
@@ -472,7 +472,7 @@ export const npcs = npcsObject({
 			'~*The Many: We are many, we are one.*~',
 			'~*You hear the collective screams of many different zombies*~'
 		],
-		xp: 200,
+		xp: 1000,
 		attackPenetration: 2.8,
 		chanceToBite: 15
 	}
