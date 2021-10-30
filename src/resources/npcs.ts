@@ -1,4 +1,4 @@
-import { Ammunition, Armor, Helmet, Item, MeleeWeapon, RangedWeapon } from '../types/Items'
+import { Ammunition, Armor, ThrowableWeapon, Helmet, Item, MeleeWeapon, RangedWeapon } from '../types/Items'
 import { items } from './items'
 
 type NPCType = 'walker' | 'raider' | 'boss'
@@ -82,6 +82,15 @@ interface MeleeRaider extends NPCBase {
 	 */
 	weapon: MeleeWeapon
 }
+interface ThrowerRaider extends NPCBase {
+	type: 'raider'
+	subtype: 'thrower'
+
+	/**
+	 * The weapon item this raider uses
+	 */
+	weapon: ThrowableWeapon
+}
 
 interface RangedBoss extends NPCBase {
 	type: 'boss'
@@ -106,6 +115,15 @@ interface MeleeBoss extends NPCBase {
 	 */
 	weapon: MeleeWeapon
 }
+interface ThrowerBoss extends NPCBase {
+	type: 'boss'
+	subtype: 'thrower'
+
+	/**
+	 * The weapon item this raider uses
+	 */
+	weapon: MeleeWeapon
+}
 interface WalkerBoss extends NPCBase {
 	type: 'boss'
 	subtype: 'walker'
@@ -120,8 +138,8 @@ interface WalkerBoss extends NPCBase {
 	attackPenetration: number
 }
 
-type Raider = RangedRaider | MeleeRaider
-type Boss = RangedBoss | MeleeBoss | WalkerBoss
+type Raider = RangedRaider | MeleeRaider | ThrowerRaider
+type Boss = RangedBoss | MeleeBoss | WalkerBoss | ThrowerBoss
 
 export type NPC = Raider | Walker | Boss
 

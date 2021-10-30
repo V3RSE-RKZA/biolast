@@ -101,9 +101,8 @@ class ItemCommand extends CustomSlashCommand {
 	getItemEmbed (item: Item): Embed {
 		const itemEmbed = new Embed()
 			.setDescription(getItemDisplay(item))
-			.addField('Item Type', item.type, true)
-			.addField('Item Level', `Level **${item.itemLevel}**`, true)
-			.addBlankField(true)
+			.addField('Item Type', item.type === 'Throwable Weapon' ? `${item.type} (${item.subtype})` : item.type)
+			.addField('Item Level', `Level **${item.itemLevel}**`)
 
 		if (item.description) {
 			itemEmbed.addField('Description', item.description)
@@ -147,7 +146,7 @@ class ItemCommand extends CustomSlashCommand {
 				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
 				break
 			}
-			case 'Explosive Weapon': {
+			case 'Throwable Weapon': {
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 				itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
 				if (item.spreadsDamageToLimbs) {

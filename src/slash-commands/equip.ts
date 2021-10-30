@@ -48,7 +48,7 @@ class EquipCommand extends CustomSlashCommand {
 			})
 			return
 		}
-		else if (!['Ranged Weapon', 'Melee Weapon', 'Explosive Weapon', 'Helmet', 'Body Armor', 'Backpack'].includes(itemToEquip.item.type)) {
+		else if (!['Ranged Weapon', 'Melee Weapon', 'Throwable Weapon', 'Helmet', 'Body Armor', 'Backpack'].includes(itemToEquip.item.type)) {
 			await transaction.commit()
 
 			await ctx.send({
@@ -64,7 +64,7 @@ class EquipCommand extends CustomSlashCommand {
 			unequippedItem = equips.backpack
 			await unequipItem(transaction.query, equips.backpack.row.id)
 		}
-		else if (equips.weapon && (itemToEquip.item.type === 'Melee Weapon' || itemToEquip.item.type === 'Ranged Weapon' || itemToEquip.item.type === 'Explosive Weapon')) {
+		else if (equips.weapon && (itemToEquip.item.type === 'Melee Weapon' || itemToEquip.item.type === 'Ranged Weapon' || itemToEquip.item.type === 'Throwable Weapon')) {
 			unequippedItem = equips.weapon
 			await unequipItem(transaction.query, equips.weapon.row.id)
 		}

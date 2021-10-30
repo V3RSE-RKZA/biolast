@@ -3,7 +3,7 @@ import App from '../app'
 import { icons, raidCooldown } from '../config'
 import { allNPCs, NPC } from '../resources/npcs'
 import { allLocations } from '../resources/raids'
-import { Item } from '../types/Items'
+import { Ammunition, Item, MeleeWeapon, RangedWeapon, ThrowableWeapon, Weapon } from '../types/Items'
 import { BackpackItemRow, Query, UserRow } from '../types/mysql'
 import { Location } from '../types/Raids'
 import { createCooldown } from './db/cooldowns'
@@ -15,7 +15,7 @@ import { removeUserFromRaid } from './db/raids'
 import { combineArrayWithAnd, formatHealth, getBodyPartEmoji, getRarityDisplay } from './stringUtils'
 import { getEquips, getItemDisplay, getItems, sortItemsByLevel } from './itemUtils'
 import { logger } from './logger'
-import { getAttackDamage, getBodyPartHit } from './raidUtils'
+import { BodyPart, getAttackDamage, getBodyPartHit } from './raidUtils'
 import getRandomInt from './randomInt'
 import { addStatusEffects, getActiveStimulants } from './playerUtils'
 import { TextChannel, Webhook } from 'eris'
@@ -272,28 +272,41 @@ class NPCHandler {
 
 				totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
-				if (npc.ammo.spreadsDamageToLimbs) {
-					const limbsHitStrings = []
+				messages.push(this.getAttackString(npc, `<@${member.id}>`, limbsHit, totalDamage, npc.weapon, npc.ammo))
+			}
+			else if (npc.subtype === 'melee' || npc.subtype === 'thrower') {
+				npcAttackPenetration = npc.weapon.penetration
 
-					for (const limbHit of limbsHit) {
-						limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+				if (npc.weapon.type === 'Throwable Weapon' && npc.weapon.spreadsDamageToLimbs) {
+					limbsHit.push({
+						damage: getAttackDamage((npc.damage * stimulantDamageMulti) / npc.weapon.spreadsDamageToLimbs, npc.weapon.penetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+						limb: bodyPartHit.result
+					})
+
+					for (let i = 0; i < npc.weapon.spreadsDamageToLimbs - 1; i++) {
+						let limb = getBodyPartHit(npc.weapon.accuracy)
+
+						// make sure no duplicate limbs are hit
+						while (limbsHit.find(l => l.limb === limb.result)) {
+							limb = getBodyPartHit(npc.weapon.accuracy)
+						}
+
+						limbsHit.push({
+							damage: getAttackDamage((npc.damage * stimulantDamageMulti) / npc.weapon.spreadsDamageToLimbs, npc.weapon.penetration, limb.result, userEquips.armor?.item, userEquips.helmet?.item),
+							limb: limb.result
+						})
 					}
-
-					messages.push(`${npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``} shot <@${member.id}> in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${totalDamage}** damage dealt.\n`)
 				}
 				else {
-					messages.push(`${npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``} shot <@${member.id}> in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)} (ammo: ${getItemDisplay(npc.ammo)}). **${totalDamage}** damage dealt.\n`)
+					limbsHit.push({
+						damage: getAttackDamage((npc.damage * stimulantDamageMulti), npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
+						limb: bodyPartHit.result
+					})
 				}
-			}
-			else if (npc.subtype === 'melee') {
-				npcAttackPenetration = npc.weapon.penetration
-				limbsHit.push({
-					damage: getAttackDamage((npc.damage * stimulantDamageMulti), npcAttackPenetration, bodyPartHit.result, userEquips.armor?.item, userEquips.helmet?.item),
-					limb: bodyPartHit.result
-				})
-				totalDamage = limbsHit[0].damage.total
 
-				messages.push(`${npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``} lunged at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with their ${getItemDisplay(npc.weapon)}. **${totalDamage}** damage dealt.\n`)
+				totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
+
+				messages.push(this.getAttackString(npc, `<@${member.id}>`, limbsHit, totalDamage, npc.weapon))
 			}
 			else {
 				npcAttackPenetration = npc.attackPenetration
@@ -303,7 +316,7 @@ class NPCHandler {
 				})
 				totalDamage = limbsHit[0].damage.total
 
-				messages.push(`**${npc.display}** took a swipe at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
+				messages.push(this.getAttackString(npc, `<@${member.id}>`, limbsHit, totalDamage))
 
 				if (Math.random() <= (npc.chanceToBite / 100)) {
 					messages.push(`${icons.debuff} **${member.displayName}** was ${icons.biohazard} Bitten! (-20% damage dealt, +20% damage taken for 4 minutes)`)
@@ -320,7 +333,7 @@ class NPCHandler {
 			})
 			totalDamage = limbsHit[0].damage.total
 
-			messages.push(`The \`${npc.type}\` took a swipe at <@${member.id}>'s ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
+			messages.push(this.getAttackString(npc, `<@${member.id}>`, limbsHit, totalDamage))
 
 			if (Math.random() <= (npc.chanceToBite / 100)) {
 				messages.push(`${icons.debuff} **${member.displayName}** was ${icons.biohazard} Bitten! (-20% damage dealt, +20% damage taken for 4 minutes)`)
@@ -404,6 +417,78 @@ class NPCHandler {
 			lootEmbed,
 			removedItems: removedItems.length
 		}
+	}
+
+	private getAttackString (npc: NPC, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number): string
+	private getAttackString (npc: NPC, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, weapon: MeleeWeapon | ThrowableWeapon): string
+	private getAttackString (npc: NPC, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, weapon: RangedWeapon, ammo: Ammunition): string
+	private getAttackString (npc: NPC, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, weapon?: Weapon, ammo?: Ammunition): string {
+		if (weapon) {
+			if (weapon.type === 'Ranged Weapon') {
+				if (limbsHit.length > 1) {
+					const limbsHitStrings = []
+
+					for (const limbHit of limbsHit) {
+						limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+					}
+
+					return `${npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``} shot ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(weapon)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** damage dealt.\n`
+				}
+
+				return `${npc.type === 'boss' ? `**${npc.display}**` : `The \`${npc.type}\``} shot ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with their ${getItemDisplay(weapon)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** damage dealt.\n`
+			}
+			else if (weapon.type === 'Throwable Weapon' && weapon.subtype === 'Fragmentation Grenade') {
+				if (limbsHit.length > 1) {
+					const limbsHitStrings = []
+
+					for (const limbHit of limbsHit) {
+						limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+					}
+
+					return `${npc.type === 'boss' ? `**${npc.display}**` : `The **${npc.display}**`} tosses a ${getItemDisplay(weapon)} that explodes and hits ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** damage dealt.\n`
+				}
+
+				return `${npc.type === 'boss' ? `**${npc.display}**` : `The **${npc.display}**`} tosses a ${getItemDisplay(weapon)} that explodes and hits ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
+			}
+			else if (weapon.type === 'Throwable Weapon' && weapon.subtype === 'Incendiary Grenade') {
+				if (limbsHit.length > 1) {
+					const limbsHitStrings = []
+
+					for (const limbHit of limbsHit) {
+						limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+					}
+
+					return `${npc.type === 'boss' ? `**${npc.display}**` : `The **${npc.display}**`} tosses a ${getItemDisplay(weapon)} that bursts into flames and hits ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** damage dealt.\n`
+				}
+
+				return `${npc.type === 'boss' ? `**${npc.display}**` : `The **${npc.display}**`} tosses a ${getItemDisplay(weapon)} that bursts into flames and hits ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
+			}
+
+			// melee weapon
+			if (limbsHit.length > 1) {
+				const limbsHitStrings = []
+
+				for (const limbHit of limbsHit) {
+					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+				}
+
+				return `You hit ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with your ${getItemDisplay(weapon)}. **${totalDamage}** damage dealt.\n`
+			}
+
+			return `You hit ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with your ${getItemDisplay(weapon)}. **${totalDamage}** damage dealt.\n`
+		}
+
+		if (limbsHit.length > 1) {
+			const limbsHitStrings = []
+
+			for (const limbHit of limbsHit) {
+				limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+			}
+
+			return `${npc.type === 'boss' ? `**${npc.display}**` : `The **${npc.display}**`} took a swipe at ${victimName}'s ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** damage dealt.\n`
+		}
+
+		return `${npc.type === 'boss' ? `**${npc.display}**` : `The **${npc.display}**`} took a swipe at ${victimName}'s ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
 	}
 }
 

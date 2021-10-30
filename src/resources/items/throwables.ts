@@ -1,10 +1,11 @@
-import { ExplosiveWeapon } from '../../types/Items'
+import { ThrowableWeapon } from '../../types/Items'
 
-const explosivesObject = <T>(et: { [K in keyof T]: ExplosiveWeapon & { name: K } }) => et
+const throwablesObject = <T>(et: { [K in keyof T]: ThrowableWeapon & { name: K } }) => et
 
-export const explosives = explosivesObject({
+export const throwables = throwablesObject({
 	grenade: {
-		type: 'Explosive Weapon',
+		type: 'Throwable Weapon',
+		subtype: 'Fragmentation Grenade',
 		name: 'grenade',
 		icon: '<:U_melee:601366669251575857>',
 		aliases: [],

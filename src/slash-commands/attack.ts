@@ -5,7 +5,7 @@ import { allItems, items } from '../resources/items'
 import { allNPCs } from '../resources/npcs'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { Ammunition, Item, RangedWeapon } from '../types/Items'
+import { Ammunition, Item, MeleeWeapon, RangedWeapon, ThrowableWeapon, Weapon } from '../types/Items'
 import { clearCooldown, createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { createItem, deleteItem, dropItemToGround, getGroundItems, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
@@ -306,20 +306,11 @@ class AttackCommand extends CustomSlashCommand {
 			if (missedPartChoice) {
 				messages.push(`${icons.danger} You try to shoot ${npcDisplayName} in the ${getBodyPartEmoji(partChoice!)} **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}) **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
 			}
-			else if (ammoPicked.item.spreadsDamageToLimbs) {
-				const limbsHitStrings = []
-
-				for (const limbHit of limbsHit) {
-					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
-				}
-
-				messages.push(`You shot ${npcDisplayName} in the ${combineArrayWithAnd(limbsHitStrings)} with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}). **${totalDamage}** total damage dealt.\n`)
-			}
 			else {
-				messages.push(`You shot ${npcDisplayName} in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}). **${totalDamage}** damage dealt.\n`)
+				messages.push(this.getAttackString(userEquips.weapon.item, npcDisplayName, limbsHit, totalDamage, ammoPicked.item))
 			}
 		}
-		else if (userEquips.weapon.item.type === 'Explosive Weapon') {
+		else if (userEquips.weapon.item.type === 'Throwable Weapon') {
 			if (userEquips.weapon.item.spreadsDamageToLimbs) {
 				limbsHit.push({
 					damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))) / userEquips.weapon.item.spreadsDamageToLimbs, userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
@@ -352,17 +343,8 @@ class AttackCommand extends CustomSlashCommand {
 			if (missedPartChoice) {
 				messages.push(`${icons.danger} You try to throw your ${getItemDisplay(userEquips.weapon.item)} at ${npcDisplayName}'s ${getBodyPartEmoji(partChoice!)} **${partChoice}** **BUT YOU MISS DUE TO LOW ACCURACY!**\n`)
 			}
-			else if (userEquips.weapon.item.spreadsDamageToLimbs) {
-				const limbsHitStrings = []
-
-				for (const limbHit of limbsHit) {
-					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
-				}
-
-				messages.push(`Your ${getItemDisplay(userEquips.weapon.item)} explodes and hits ${npcDisplayName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`)
-			}
 			else {
-				messages.push(`Your ${getItemDisplay(userEquips.weapon.item)} explodes and hits ${npcDisplayName} in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
+				messages.push(this.getAttackString(userEquips.weapon.item, npcDisplayName, limbsHit, totalDamage))
 			}
 		}
 		else {
@@ -376,7 +358,7 @@ class AttackCommand extends CustomSlashCommand {
 				messages.push(`${icons.danger} You try to hit ${npcDisplayName} in the ${getBodyPartEmoji(partChoice!)} **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
 			}
 			else {
-				messages.push(`You hit ${npcDisplayName} in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${totalDamage}** damage dealt.\n`)
+				messages.push(this.getAttackString(userEquips.weapon.item, npcDisplayName, limbsHit, totalDamage))
 			}
 		}
 
@@ -461,7 +443,7 @@ class AttackCommand extends CustomSlashCommand {
 				}
 
 				// weapon durability is random
-				const weapDurability = getRandomInt(Math.max(1, npc.weapon.durability / 4), npc.weapon.durability)
+				const weapDurability = npc.weapon.durability ? getRandomInt(Math.max(1, npc.weapon.durability / 4), npc.weapon.durability) : undefined
 				const weapRow = await createItem(transaction.query, npc.weapon.name, { durability: weapDurability })
 				await dropItemToGround(transaction.query, ctx.channelID, weapRow.id)
 
@@ -794,20 +776,11 @@ class AttackCommand extends CustomSlashCommand {
 			if (missedPartChoice) {
 				messages.push(`${icons.danger} You try to shoot <@${member.id}> in the ${getBodyPartEmoji(partChoice!)} **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}) **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
 			}
-			else if (ammoPicked.item.spreadsDamageToLimbs) {
-				const limbsHitStrings = []
-
-				for (const limbHit of limbsHit) {
-					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
-				}
-
-				messages.push(`You shot <@${member.id}> in the ${combineArrayWithAnd(limbsHitStrings)} with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}). **${totalDamage}** total damage dealt.\n`)
-			}
 			else {
-				messages.push(`You shot <@${member.id}> in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)} (ammo: ${getItemDisplay(ammoPicked.item)}). **${totalDamage}** damage dealt.\n`)
+				messages.push(this.getAttackString(userEquips.weapon.item, `<@${member.id}>`, limbsHit, totalDamage, ammoPicked.item))
 			}
 		}
-		else if (userEquips.weapon.item.type === 'Explosive Weapon') {
+		else if (userEquips.weapon.item.type === 'Throwable Weapon') {
 			attackPenetration = userEquips.weapon.item.penetration
 
 			if (userEquips.weapon.item.spreadsDamageToLimbs) {
@@ -842,17 +815,8 @@ class AttackCommand extends CustomSlashCommand {
 			if (missedPartChoice) {
 				messages.push(`${icons.danger} You try to throw your ${getItemDisplay(userEquips.weapon.item)} at <@${member.id}>'s ${getBodyPartEmoji(partChoice!)} **${partChoice}** **BUT YOU MISS DUE TO LOW ACCURACY!**\n`)
 			}
-			else if (userEquips.weapon.item.spreadsDamageToLimbs) {
-				const limbsHitStrings = []
-
-				for (const limbHit of limbsHit) {
-					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
-				}
-
-				messages.push(`Your ${getItemDisplay(userEquips.weapon.item)} explodes and hits <@${member.id}> in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`)
-			}
 			else {
-				messages.push(`Your ${getItemDisplay(userEquips.weapon.item)} explodes and hits <@${member.id}> in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}**. **${totalDamage}** damage dealt.\n`)
+				messages.push(this.getAttackString(userEquips.weapon.item, `<@${member.id}>`, limbsHit, totalDamage))
 			}
 		}
 		else {
@@ -867,7 +831,7 @@ class AttackCommand extends CustomSlashCommand {
 				messages.push(`${icons.danger} You try to hit <@${member.id}> in the ${getBodyPartEmoji(partChoice!)} **${partChoice}** with your ${getItemDisplay(userEquips.weapon.item)} **BUT YOU MISS DUE TO WEAPON ACCURACY!**\n`)
 			}
 			else {
-				messages.push(`You hit <@${member.id}> in the ${getBodyPartEmoji(bodyPartHit.result)} **${bodyPartHit.result === 'head' ? '*HEAD*' : bodyPartHit.result}** with your ${getItemDisplay(userEquips.weapon.item)}. **${totalDamage}** damage dealt.\n`)
+				messages.push(this.getAttackString(userEquips.weapon.item, `<@${member.id}>`, limbsHit, totalDamage))
 			}
 		}
 
@@ -1116,6 +1080,63 @@ class AttackCommand extends CustomSlashCommand {
 			// user didn't pick anything, return the best possible ammo
 			return ammoSortedByBest[0] as ItemWithRowOfType<Ammunition>
 		}
+	}
+
+	getAttackString (weapon: MeleeWeapon | ThrowableWeapon, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number): string
+	getAttackString (weapon: RangedWeapon, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, ammo: Ammunition): string
+	getAttackString (weapon: Weapon, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, ammo?: Ammunition): string {
+		if (weapon.type === 'Ranged Weapon') {
+			if (limbsHit.length > 1) {
+				const limbsHitStrings = []
+
+				for (const limbHit of limbsHit) {
+					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+				}
+
+				return `You shot ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with your ${getItemDisplay(weapon)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** total damage dealt.\n`
+			}
+
+			return `You shot ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with your ${getItemDisplay(weapon)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** damage dealt.\n`
+		}
+		else if (weapon.type === 'Throwable Weapon' && weapon.subtype === 'Fragmentation Grenade') {
+			if (limbsHit.length > 1) {
+				const limbsHitStrings = []
+
+				for (const limbHit of limbsHit) {
+					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+				}
+
+				return `Your ${getItemDisplay(weapon)} explodes and hits ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`
+			}
+
+			return `Your ${getItemDisplay(weapon)} explodes and hits ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
+		}
+		else if (weapon.type === 'Throwable Weapon' && weapon.subtype === 'Incendiary Grenade') {
+			if (limbsHit.length > 1) {
+				const limbsHitStrings = []
+
+				for (const limbHit of limbsHit) {
+					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+				}
+
+				return `Your ${getItemDisplay(weapon)} bursts into flames and hits ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`
+			}
+
+			return `Your ${getItemDisplay(weapon)} bursts into flames and hits ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
+		}
+
+		// melee weapon
+		if (limbsHit.length > 1) {
+			const limbsHitStrings = []
+
+			for (const limbHit of limbsHit) {
+				limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
+			}
+
+			return `You hit ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with your ${getItemDisplay(weapon)}. **${totalDamage}** damage dealt.\n`
+		}
+
+		return `You hit ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with your ${getItemDisplay(weapon)}. **${totalDamage}** damage dealt.\n`
 	}
 }
 

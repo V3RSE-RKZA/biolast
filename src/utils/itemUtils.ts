@@ -93,7 +93,7 @@ export function getEquips (backpackRows: BackpackItemRow[]): {
 				case 'Body Armor': armor = { item, row: row as BackpackItemRow & { durability: number } }; break
 				case 'Melee Weapon':
 				case 'Ranged Weapon':
-				case 'Explosive Weapon': weapon = { item, row: row as BackpackItemRow & { durability: number } }; break
+				case 'Throwable Weapon': weapon = { item, row: row as BackpackItemRow & { durability: number } }; break
 			}
 		}
 	}
