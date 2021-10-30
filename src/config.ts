@@ -56,7 +56,8 @@ export const adminUsers = ['168958344361541633', '319897342415470592', '62243721
 export const raidGuilds = {
 	suburbsGuilds: process.env.SUBURBS_GUILDS ? process.env.SUBURBS_GUILDS.split(',') : [],
 	farmGuilds: process.env.FARM_GUILDS ? process.env.FARM_GUILDS.split(',') : [],
-	mallGuilds: process.env.MALL_GUILDS ? process.env.MALL_GUILDS.split(',') : []
+	mallGuilds: process.env.MALL_GUILDS ? process.env.MALL_GUILDS.split(',') : [],
+	stationGuilds: process.env.POLICE_STATION_GUILDS ? process.env.POLICE_STATION_GUILDS.split(',') : []
 }
 
 // webhooks for sending logs to
