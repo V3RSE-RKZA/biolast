@@ -16,8 +16,8 @@ export const station: Location = {
 	channels: [
 		{
 			type: 'LootChannel',
-			name: 'antique-store',
-			display: 'Antique Store',
+			name: 'Parking Lot',
+			display: 'Parking Lot',
 			scavange: {
 				common: {
 					items: [items.replica_katana],
@@ -173,8 +173,8 @@ export const station: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'game-n-go',
-			display: 'Game N Go',
+			name: 'Jail Cell-1',
+			display: 'Jail Cell-1',
 			scavange: {
 				common: {
 					items: [items.donut],
@@ -199,8 +199,8 @@ export const station: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'staff-break-room',
-			display: 'Staff Break Room',
+			name: 'jail cell-2',
+			display: 'Jail Cell-2',
 			npcSpawns: {
 				npcs: [npcs.derek],
 				cooldownMin: 20 * 60,
@@ -209,8 +209,8 @@ export const station: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'florreds-pharmacy',
-			display: 'Florreds Pharmacy',
+			name: 'jail cell-3',
+			display: 'Jail Cell-3',
 			scavange: {
 				common: {
 					items: [items.ifak_medkit, items.compression_bandage],
