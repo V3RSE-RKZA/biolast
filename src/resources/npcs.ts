@@ -293,7 +293,7 @@ export const npcs = npcsObject({
 		display: 'Psycho',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562992142012416/raider_temp.png',
 		icon: '',
-		health: 50,
+		health: 40,
 		damage: 30,
 		drops: {
 			common: [items.knife],
@@ -306,7 +306,7 @@ export const npcs = npcsObject({
 			'~*You hear footsteps nearby*~',
 			'~*You hear someone cackling maniacally*~'
 		],
-		helmet: items.aramid_helmet,
+		helmet: items.psycho_mask,
 		xp: 125
 	},
 	game_raider: {
@@ -345,6 +345,28 @@ export const npcs = npcsObject({
 			common: [items.pitchfork, items.walker_goop],
 			uncommon: [items.apple],
 			rare: [items.fire_axe],
+			rolls: 1
+		},
+		quotes: [
+			'~*You hear footsteps nearby*~',
+			'~*You hear a deep growl close by*~'
+		],
+		xp: 50,
+		chanceToBite: 15,
+		attackPenetration: 1.3
+	},
+	inflated_walker: {
+		type: 'walker',
+		id: 'inflated_walker',
+		display: 'Bloated Walker',
+		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563461253935114/walker_temp.png',
+		icon: '🧟‍♂️',
+		health: 50,
+		damage: 35,
+		drops: {
+			common: [items.replica_katana, items.walker_goop],
+			uncommon: [items.pizza_slice],
+			rare: [items.metal_shank],
 			rolls: 1
 		},
 		quotes: [
