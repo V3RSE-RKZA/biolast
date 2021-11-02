@@ -28,7 +28,7 @@ export const mall: Location = {
 					xp: 15
 				},
 				rare: {
-					items: [items.antique_vase],
+					items: [items.antique_vase, items.small_pouch],
 					xp: 25
 				},
 				rolls: 1,
@@ -45,7 +45,7 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items.knife],
+					items: [items.knife, items.small_pouch],
 					xp: 15
 				},
 				rare: {
@@ -71,7 +71,7 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items['glock-17'], items.dome_depot_key, items.aramid_armor],
+					items: [items['glock-17'], items.dome_depot_key, items.aramid_armor, items.cloth_backpack],
 					xp: 15
 				},
 				rare: {
