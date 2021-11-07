@@ -180,6 +180,11 @@ interface HealingMedical extends BaseItem {
 	 * Whether or not this medical item cures the "Broken Arm" debuff
 	 */
 	curesBrokenArm: boolean
+
+	/**
+	 * Whether or not this medical item cures the "Burning" debuff
+	 */
+	curesBurning: boolean
 }
 
 export interface StimulantMedical extends BaseItem {

@@ -6,7 +6,7 @@ import { clearCooldown, createCooldown, formatTime, getCooldown } from '../utils
 import { deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { addHealth, getUserRow } from '../utils/db/players'
-import { formatHealth } from '../utils/stringUtils'
+import { combineArrayWithAnd, formatHealth } from '../utils/stringUtils'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems } from '../utils/itemUtils'
 import { getAfflictions } from '../utils/playerUtils'
 
@@ -82,7 +82,7 @@ class HealCommand extends CustomSlashCommand {
 				await lowerItemDurability(transaction.query, itemToUse.row.id, 1)
 			}
 
-			if (itemToUse.item.curesBitten || itemToUse.item.curesBrokenArm) {
+			if (itemToUse.item.curesBitten || itemToUse.item.curesBrokenArm || itemToUse.item.curesBurning) {
 				const afflictions = await getAfflictions(transaction.query, ctx.user.id, true)
 
 				for (const affliction of afflictions) {
@@ -92,6 +92,10 @@ class HealCommand extends CustomSlashCommand {
 					}
 					else if (itemToUse.item.curesBrokenArm && affliction.type === 'Broken Arm') {
 						await clearCooldown(transaction.query, ctx.user.id, 'broken-arm')
+						curedAfflictions.push(affliction.type)
+					}
+					else if (itemToUse.item.curesBurning && affliction.type === 'Burning') {
+						await clearCooldown(transaction.query, ctx.user.id, 'burning')
 						curedAfflictions.push(affliction.type)
 					}
 				}
@@ -111,7 +115,7 @@ class HealCommand extends CustomSlashCommand {
 			await ctx.send({
 				content: `${icons.checkmark} You use your ${itemDisplay} to heal for **${maxHeal}** health!` +
 					`You now have ${formatHealth(userData.health + maxHeal, userData.maxHealth)} **${userData.health + maxHeal} / ${userData.maxHealth}** health.` +
-					`${curedAfflictions.length ? `\n\nAfflictions cured: ${curedAfflictions.join(', ')}` : ''}`
+					`${curedAfflictions.length ? `\n\nAfflictions cured: ${combineArrayWithAnd(curedAfflictions)}` : ''}`
 			})
 		}
 		else if (itemToUse.item.type === 'Medical' && itemToUse.item.subtype === 'Stimulant') {

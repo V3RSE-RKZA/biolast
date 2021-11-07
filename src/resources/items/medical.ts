@@ -16,7 +16,8 @@ export const medical = medicalObject({
 		itemLevel: 1,
 		durability: 1,
 		curesBitten: false,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	},
 	'ifak_medkit': {
 		type: 'Medical',
@@ -32,7 +33,8 @@ export const medical = medicalObject({
 		itemLevel: 3,
 		durability: 2,
 		curesBitten: false,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	},
 	'compression_bandage': {
 		type: 'Medical',
@@ -48,7 +50,8 @@ export const medical = medicalObject({
 		itemLevel: 3,
 		durability: 1,
 		curesBitten: false,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	},
 	'adrenaline_stimulant': {
 		type: 'Medical',
@@ -160,7 +163,8 @@ export const medical = medicalObject({
 		itemLevel: 9,
 		durability: 2,
 		curesBitten: false,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	},
 	'paracetamol': {
 		type: 'Medical',
@@ -175,7 +179,8 @@ export const medical = medicalObject({
 		itemLevel: 4,
 		durability: 2,
 		curesBitten: false,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	},
 	'splint': {
 		type: 'Medical',
@@ -191,7 +196,8 @@ export const medical = medicalObject({
 		itemLevel: 1,
 		durability: 1,
 		curesBitten: false,
-		curesBrokenArm: true
+		curesBrokenArm: true,
+		curesBurning: false
 	},
 	'anti-biotics': {
 		type: 'Medical',
@@ -207,7 +213,8 @@ export const medical = medicalObject({
 		itemLevel: 3,
 		durability: 1,
 		curesBitten: true,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	},
 	'pizza_slice': {
 		type: 'Medical',
@@ -223,7 +230,8 @@ export const medical = medicalObject({
 		itemLevel: 1,
 		durability: 2,
 		curesBitten: false,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	},
 	'pretzel': {
 		type: 'Medical',
@@ -239,7 +247,8 @@ export const medical = medicalObject({
 		itemLevel: 1,
 		durability: 2,
 		curesBitten: false,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	},
 	'corn': {
 		type: 'Medical',
@@ -254,7 +263,8 @@ export const medical = medicalObject({
 		itemLevel: 1,
 		durability: 3,
 		curesBitten: false,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	},
 	'apple': {
 		type: 'Medical',
@@ -269,7 +279,8 @@ export const medical = medicalObject({
 		itemLevel: 1,
 		durability: 2,
 		curesBitten: false,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	},
 	'donut': {
 		type: 'Medical',
@@ -284,6 +295,7 @@ export const medical = medicalObject({
 		itemLevel: 7,
 		durability: 1,
 		curesBitten: false,
-		curesBrokenArm: false
+		curesBrokenArm: false,
+		curesBurning: false
 	}
 })
