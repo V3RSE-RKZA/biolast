@@ -156,6 +156,9 @@ class ItemCommand extends CustomSlashCommand {
 				else {
 					itemEmbed.addField('Damage', item.damage.toString(), true)
 				}
+				if (item.subtype === 'Incendiary Grenade') {
+					itemEmbed.addField('Applies Affliction', `${icons.burning} Burning (+25% damage taken)`, true)
+				}
 				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
 				break
 			}

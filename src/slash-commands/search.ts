@@ -8,6 +8,7 @@ import { getNPC } from '../utils/db/npcs'
 import { formatHealth, formatNumber } from '../utils/stringUtils'
 import { getItemDisplay } from '../utils/itemUtils'
 import { getRaidType } from '../utils/raidUtils'
+import { getAfflictions, getAfflictionsDisplay } from '../utils/playerUtils'
 
 class SearchCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -51,6 +52,7 @@ class SearchCommand extends CustomSlashCommand {
 			return
 		}
 
+		const npcAfflictions = await getAfflictions(query, ctx.channelID, true)
 		let npcHealthDisplay = `${npcRow.health} / ${npc.health}`
 		let npcNameDisplay = npc.display
 
@@ -86,6 +88,7 @@ class SearchCommand extends CustomSlashCommand {
 
 		npcDescription.push(`**Damage**: ${npc.damage}`)
 		npcDescription.push(`**Armor Penetration**: ${npcPenetration}`)
+		npcDescription.push(`\n__**Afflictions**__\n${getAfflictionsDisplay(npcAfflictions) || 'No afflictions'}`)
 
 		await ctx.send({
 			content: `Enemy spotted: ${npc.icon}__**${npcNameDisplay}**__\n\n${npcDescription.join('\n')}\n\n` +

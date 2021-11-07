@@ -1,3 +1,4 @@
+import { icons } from '../config'
 import { allItems } from '../resources/items'
 import { StimulantMedical } from '../types/Items'
 import { Query } from '../types/mysql'
@@ -77,10 +78,11 @@ export async function getActiveStimulants (query: Query, userID: string, types?:
  * @param forUpdate Whether this is part of an sql transaction or not
  * @returns Stimulants active and their time until expiration
  */
-export async function getAfflictions (query: Query, userID: string, forUpdate = false): Promise<{ cooldown: string, type: 'Bitten' | 'Broken Arm' }[]> {
-	const afflictions: { cooldown: string, type: 'Bitten' | 'Broken Arm' }[] = []
+export async function getAfflictions (query: Query, userID: string, forUpdate = false): Promise<{ cooldown: string, type: 'Bitten' | 'Broken Arm' | 'Burning' }[]> {
+	const afflictions: { cooldown: string, type: 'Bitten' | 'Broken Arm' | 'Burning' }[] = []
 	const bitten = await getCooldown(query, userID, 'bitten', forUpdate)
 	const broken = await getCooldown(query, userID, 'broken-arm', forUpdate)
+	const burning = await getCooldown(query, userID, 'burning', forUpdate)
 
 	if (bitten) {
 		afflictions.push({
@@ -94,6 +96,12 @@ export async function getAfflictions (query: Query, userID: string, forUpdate = 
 			type: 'Broken Arm'
 		})
 	}
+	if (burning) {
+		afflictions.push({
+			cooldown: burning,
+			type: 'Burning'
+		})
+	}
 
 	return afflictions
 }
@@ -103,7 +111,7 @@ export async function getAfflictions (query: Query, userID: string, forUpdate = 
  * @param activeStimulants The users active stimulants
  * @returns Users active effects
  */
-export function addStatusEffects (activeStimulants: StimulantMedical[], afflictions?: ('Bitten' | 'Broken Arm')[]): {
+export function addStatusEffects (activeStimulants: StimulantMedical[], afflictions?: ('Bitten' | 'Broken Arm' | 'Burning')[]): {
 	/**
 	 * Damage percent bonus (10 would be 10% bonus damage)
 	 */
@@ -149,7 +157,32 @@ export function addStatusEffects (activeStimulants: StimulantMedical[], afflicti
 		else if (type === 'Broken Arm') {
 			effects.fireRate += -15
 		}
+		else if (type === 'Burning') {
+			effects.damageReduction += -25
+		}
 	}
 
 	return effects
+}
+
+/**
+ * @param activeAfflictions Array of afflictions, can be obtained from getAfflictions
+ * @returns String display of the afflictions
+ */
+export function getAfflictionsDisplay (activeAfflictions: { cooldown: string, type: 'Bitten' | 'Broken Arm' | 'Burning' }[]): string {
+	const effectsDisplay = []
+
+	for (const affliction of activeAfflictions) {
+		if (affliction.type === 'Bitten') {
+			effectsDisplay.push(`${icons.biohazard} Bitten (-20% damage dealt, +20% damage taken) **${affliction.cooldown}** left`)
+		}
+		if (affliction.type === 'Broken Arm') {
+			effectsDisplay.push(`🦴 Broken Arm (+15% attack cooldown) **${affliction.cooldown}** left`)
+		}
+		if (affliction.type === 'Burning') {
+			effectsDisplay.push(`${icons.burning} Burning (+25% damage taken) **${affliction.cooldown}** left`)
+		}
+	}
+
+	return effectsDisplay.join('\n')
 }

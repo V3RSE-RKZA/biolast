@@ -307,6 +307,11 @@ class NPCHandler {
 				totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 				messages.push(this.getAttackString(npc, `<@${member.id}>`, limbsHit, totalDamage, npc.weapon))
+
+				if (npc.weapon.type === 'Throwable Weapon' && npc.weapon.subtype === 'Incendiary Grenade') {
+					messages.push(`${icons.debuff} **${member.displayName}** is ${icons.burning} Burning! (+25% damage taken for 4 minutes)`)
+					await createCooldown(transactionQuery, member.id, 'burning', 4 * 60)
+				}
 			}
 			else {
 				npcAttackPenetration = npc.attackPenetration

@@ -194,7 +194,10 @@ class AttackCommand extends CustomSlashCommand {
 
 		const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'fireRate', 'accuracy'], true)
 		const activeAfflictions = await getAfflictions(transaction.query, ctx.user.id, true)
+		const npcAfflictions = await getAfflictions(transaction.query, channel.id, true)
 		const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant), activeAfflictions.map(aff => aff.type))
+		const npcEffects = addStatusEffects([], npcAfflictions.map(aff => aff.type))
+		const stimulantDamageMulti = (1 + (stimulantEffects.damageBonus / 100) - (npcEffects.damageReduction / 100))
 
 		const userBackpack = await getUserBackpack(transaction.query, ctx.user.id, true)
 		const userBackpackData = getItems(userBackpack)
@@ -276,7 +279,7 @@ class AttackCommand extends CustomSlashCommand {
 
 			if (ammoPicked.item.spreadsDamageToLimbs) {
 				limbsHit.push({
-					damage: getAttackDamage((ammoPicked.item.damage * (1 + (stimulantEffects.damageBonus / 100))) / ammoPicked.item.spreadsDamageToLimbs, ammoPicked.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
+					damage: getAttackDamage((ammoPicked.item.damage * stimulantDamageMulti) / ammoPicked.item.spreadsDamageToLimbs, ammoPicked.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
 					limb: bodyPartHit.result
 				})
 
@@ -289,14 +292,14 @@ class AttackCommand extends CustomSlashCommand {
 					}
 
 					limbsHit.push({
-						damage: getAttackDamage((ammoPicked.item.damage * (1 + (stimulantEffects.damageBonus / 100))) / ammoPicked.item.spreadsDamageToLimbs, ammoPicked.item.penetration, limb.result, npc.armor, npc.helmet),
+						damage: getAttackDamage((ammoPicked.item.damage * stimulantDamageMulti) / ammoPicked.item.spreadsDamageToLimbs, ammoPicked.item.penetration, limb.result, npc.armor, npc.helmet),
 						limb: limb.result
 					})
 				}
 			}
 			else {
 				limbsHit.push({
-					damage: getAttackDamage((ammoPicked.item.damage * (1 + (stimulantEffects.damageBonus / 100))), ammoPicked.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
+					damage: getAttackDamage((ammoPicked.item.damage * stimulantDamageMulti), ammoPicked.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
 					limb: bodyPartHit.result
 				})
 			}
@@ -313,7 +316,7 @@ class AttackCommand extends CustomSlashCommand {
 		else if (userEquips.weapon.item.type === 'Throwable Weapon') {
 			if (userEquips.weapon.item.spreadsDamageToLimbs) {
 				limbsHit.push({
-					damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))) / userEquips.weapon.item.spreadsDamageToLimbs, userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
+					damage: getAttackDamage((userEquips.weapon.item.damage * stimulantDamageMulti) / userEquips.weapon.item.spreadsDamageToLimbs, userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
 					limb: bodyPartHit.result
 				})
 
@@ -326,14 +329,14 @@ class AttackCommand extends CustomSlashCommand {
 					}
 
 					limbsHit.push({
-						damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))) / userEquips.weapon.item.spreadsDamageToLimbs, userEquips.weapon.item.penetration, limb.result, npc.armor, npc.helmet),
+						damage: getAttackDamage((userEquips.weapon.item.damage * stimulantDamageMulti) / userEquips.weapon.item.spreadsDamageToLimbs, userEquips.weapon.item.penetration, limb.result, npc.armor, npc.helmet),
 						limb: limb.result
 					})
 				}
 			}
 			else {
 				limbsHit.push({
-					damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))), userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
+					damage: getAttackDamage((userEquips.weapon.item.damage * stimulantDamageMulti), userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
 					limb: bodyPartHit.result
 				})
 			}
@@ -345,11 +348,16 @@ class AttackCommand extends CustomSlashCommand {
 			}
 			else {
 				messages.push(this.getAttackString(userEquips.weapon.item, npcDisplayName, limbsHit, totalDamage))
+
+				if (userEquips.weapon.item.subtype === 'Incendiary Grenade') {
+					messages.push(`${icons.debuff} **${npcDisplayCapitalized}** is ${icons.burning} Burning! (+25% damage taken for 4 minutes)`)
+					await createCooldown(transaction.query, channel.id, 'burning', 4 * 60)
+				}
 			}
 		}
 		else {
 			limbsHit.push({
-				damage: getAttackDamage((userEquips.weapon.item.damage * (1 + (stimulantEffects.damageBonus / 100))), userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
+				damage: getAttackDamage((userEquips.weapon.item.damage * stimulantDamageMulti), userEquips.weapon.item.penetration, bodyPartHit.result, npc.armor, npc.helmet),
 				limb: bodyPartHit.result
 			})
 			totalDamage = limbsHit[0].damage.total
@@ -478,6 +486,12 @@ class AttackCommand extends CustomSlashCommand {
 
 			await increaseKills(transaction.query, ctx.user.id, npc.type === 'boss' ? 'boss' : 'npc', 1)
 			await addXp(transaction.query, ctx.user.id, npc.xp)
+
+			if (npcAfflictions.some(aff => aff.type === 'Burning')) {
+				// npc died, remove burning debuff
+				await clearCooldown(transaction.query, ctx.channelID, 'burning')
+			}
+
 			await deleteNPC(transaction.query, ctx.channelID)
 			// stop sending messages saying that an NPC is in the channel
 			this.app.npcHandler.clearNPCInterval(ctx.channelID)
@@ -658,8 +672,9 @@ class AttackCommand extends CustomSlashCommand {
 		const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['damage', 'fireRate', 'accuracy'], true)
 		const victimStimulants = await getActiveStimulants(transaction.query, member.id, ['damage'], true)
 		const activeAfflictions = await getAfflictions(transaction.query, ctx.user.id, true)
+		const victimAfflictions = await getAfflictions(transaction.query, member.id, true)
 		const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant), activeAfflictions.map(aff => aff.type))
-		const victimEffects = addStatusEffects(victimStimulants.map(stim => stim.stimulant))
+		const victimEffects = addStatusEffects(victimStimulants.map(stim => stim.stimulant), victimAfflictions.map(aff => aff.type))
 		const stimulantDamageMulti = (1 + (stimulantEffects.damageBonus / 100) - (victimEffects.damageReduction / 100))
 
 		// in case victim dies and need to update ground items
@@ -817,6 +832,11 @@ class AttackCommand extends CustomSlashCommand {
 			}
 			else {
 				messages.push(this.getAttackString(userEquips.weapon.item, `<@${member.id}>`, limbsHit, totalDamage))
+
+				if (userEquips.weapon.item.subtype === 'Incendiary Grenade') {
+					messages.push(`${icons.debuff} **${member.displayName}** is ${icons.burning} Burning! (+25% damage taken for 4 minutes)`)
+					await createCooldown(transaction.query, member.id, 'burning', 4 * 60)
+				}
 			}
 		}
 		else {
