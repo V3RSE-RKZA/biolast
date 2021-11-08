@@ -27,7 +27,7 @@
     "node-cron": "^3.0.0",
     "node-fetch": "^3.0.0",
     "pino": "^7.0.5",
-    "pino-pretty": "^7.1.0",
+    "pino-pretty": "^7.2.0",
     "slash-create": "^4.3.0"
   },
   "devDependencies": {
