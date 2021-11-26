@@ -64,11 +64,13 @@ class NPCHandler {
 
 									const interval = setInterval(async () => {
 										try {
-											await this.app.bot.executeWebhook(webhook.id, webhook.token, {
-												username: mob.display,
-												avatarURL: mob.avatarURL,
-												content: mob.quotes[Math.floor(Math.random() * mob.quotes.length)]
-											})
+											if (webhook.token) {
+												await this.app.bot.executeWebhook(webhook.id, webhook.token, {
+													username: mob.display,
+													avatarURL: mob.avatarURL,
+													content: mob.quotes[Math.floor(Math.random() * mob.quotes.length)]
+												})
+											}
 										}
 										catch (err) {
 											logger.warn(`Failed to send message: ${err}`)
@@ -133,19 +135,23 @@ class NPCHandler {
 
 					await createNPC(query, channel.id, npc)
 
-					await this.app.bot.executeWebhook(webhook.id, webhook.token, {
-						username: npc.display,
-						avatarURL: npc.avatarURL,
-						content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
-					})
+					if (webhook.token) {
+						await this.app.bot.executeWebhook(webhook.id, webhook.token, {
+							username: npc.display,
+							avatarURL: npc.avatarURL,
+							content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
+						})
+					}
 
 					const interval = setInterval(async () => {
 						try {
-							await this.app.bot.executeWebhook(webhook.id, webhook.token, {
-								username: npc.display,
-								avatarURL: npc.avatarURL,
-								content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
-							})
+							if (webhook.token) {
+								await this.app.bot.executeWebhook(webhook.id, webhook.token, {
+									username: npc.display,
+									avatarURL: npc.avatarURL,
+									content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
+								})
+							}
 						}
 						catch (err) {
 							logger.warn(`Failed to send message: ${err}`)
