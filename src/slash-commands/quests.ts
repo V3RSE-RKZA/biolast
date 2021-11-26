@@ -239,7 +239,7 @@ class QuestsCommand extends CustomSlashCommand {
 							const stashRows = await getUserStash(completedTransaction.query, ctx.user.id, true)
 							const userStashData = getItems(stashRows)
 
-							if (userStashData.slotsUsed + rewardItem.slotsUsed > userData.stashSlots) {
+							if (userStashData.slotsUsed + rewardItem.slotsUsed > completedUserData.stashSlots) {
 								await completedTransaction.commit()
 
 								await ctx.send({

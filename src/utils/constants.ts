@@ -36,6 +36,15 @@ export const GRAY_BUTTON = (label: string, customID: string, disabled?: boolean)
 	disabled
 })
 
+export const GREEN_BUTTON = (label: string, customID: string, disabled?: boolean): ComponentButton => ({
+	type: ComponentType.BUTTON,
+	label,
+	custom_id: customID,
+	style: ButtonStyle.SUCCESS,
+	disabled
+})
+
+
 export const PREVIOUS_BUTTON = (disabled: boolean): ComponentButton => ({
 	type: ComponentType.BUTTON,
 	label: 'Previous Page',

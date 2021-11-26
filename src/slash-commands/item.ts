@@ -119,7 +119,7 @@ class ItemCommand extends CustomSlashCommand {
 		}
 
 		if (item.durability) {
-			itemEmbed.addField('Max Durability', `${item.durability} uses`, true)
+			itemEmbed.addField('Max Uses', `Can be used up to **${item.durability}** times`, true)
 		}
 
 		switch (item.type) {
@@ -216,6 +216,10 @@ class ItemCommand extends CustomSlashCommand {
 						itemEmbed.addField('Cures Afflictions', curesAfflictions.join('\n'), true)
 					}
 				}
+				break
+			}
+			case 'Food': {
+				itemEmbed.addField('Reduces Hunger', `Reduces companion hunger by **${item.reducesHunger}**`, true)
 				break
 			}
 			case 'Key': {

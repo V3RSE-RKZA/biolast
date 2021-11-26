@@ -14,7 +14,7 @@ class HealCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'use',
-			description: 'Use an item such as a medical item to heal yourself.',
+			description: 'Use a medical item on yourself.',
 			longDescription: 'Use an item such as a medical item to heal yourself.',
 			options: [
 				{

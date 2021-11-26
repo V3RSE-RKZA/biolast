@@ -328,7 +328,7 @@ class ShopCommand extends CustomSlashCommand {
 						if (!shopItemRow || i.row.price !== shopItemRow.price) {
 							await transaction.commit()
 
-							await ctx.send({
+							await confirmed.editParent({
 								content: `${icons.warning} Could not find an item available in the shop with the ID **${itemID}**. You view the shop with \`/shop view\`.`
 							})
 							return
@@ -338,7 +338,7 @@ class ShopCommand extends CustomSlashCommand {
 					if (userDataV.money < price) {
 						await transaction.commit()
 
-						await ctx.send({
+						await confirmed.editParent({
 							content: `${icons.danger} You don't have enough money. You need **${formatMoney(price)}** but you only have **${formatMoney(userDataV.money)}**.`
 						})
 						return
@@ -346,7 +346,7 @@ class ShopCommand extends CustomSlashCommand {
 					else if (userDataV.shopSales + itemsToBuy.length > shopDailyBuyLimit) {
 						await transaction.commit()
 
-						await ctx.send({
+						await confirmed.editParent({
 							content: `${icons.danger} You have already purchased **${userDataV.shopSales}** items from the shop and can only purchase **${shopDailyBuyLimit - userDataV.shopSales}** more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`
 						})
 						return
@@ -354,7 +354,7 @@ class ShopCommand extends CustomSlashCommand {
 					else if (userStashDataV.slotsUsed + slotsNeeded > userDataV.stashSlots) {
 						await transaction.commit()
 
-						await ctx.send({
+						await confirmed.editParent({
 							content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`
 						})
 						return

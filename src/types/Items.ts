@@ -1,5 +1,5 @@
 interface BaseItem {
-	type: 'Ranged Weapon' | 'Melee Weapon' | 'Helmet' | 'Body Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key' | 'Collectible' | 'Throwable Weapon'
+	type: 'Ranged Weapon' | 'Melee Weapon' | 'Helmet' | 'Body Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key' | 'Collectible' | 'Throwable Weapon' | 'Food'
 	name: string
 	aliases: string[]
 	icon: string
@@ -187,6 +187,20 @@ interface HealingMedical extends BaseItem {
 	curesBurning: boolean
 }
 
+export interface Food extends BaseItem {
+	type: 'Food'
+
+	/**
+	 * How many times this item can be used to feed companions
+	 */
+	durability: number
+
+	/**
+	 * How much this item lowers companion hunger by
+	 */
+	reducesHunger: number
+}
+
 export interface StimulantMedical extends BaseItem {
 	type: 'Medical'
 	subtype: 'Stimulant'
@@ -251,4 +265,4 @@ export interface Collectible extends BaseItem {
 	type: 'Collectible'
 }
 
-export type Item = Weapon | Helmet | Armor | Ammunition | Medical | Backpack | Key | Collectible
+export type Item = Weapon | Helmet | Armor | Ammunition | Medical | Backpack | Key | Collectible | Food

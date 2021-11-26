@@ -47,52 +47,85 @@ export function formatHealth (curentHP: number, maxHP: number): string {
 			if (barPerc >= 1) {
 				hpStr += icons.health.start_full
 			}
-			else if (barPerc >= 0.75) {
-				hpStr += icons.health.start_75
-			}
-			else if (barPerc >= 0.5) {
-				hpStr += icons.health.start_50
-			}
 			else if (barPerc > 0) {
-				hpStr += icons.health.start_25
+				hpStr += icons.health.start_half
 			}
 			else {
-				hpStr += icons.health.empty
+				hpStr += icons.health.start_empty
 			}
 		}
 		else if (i === 4) {
 			if (barPerc >= 1) {
 				hpStr += icons.health.end_full
 			}
-			else if (barPerc >= 0.75) {
-				hpStr += icons.health.percent_75
-			}
-			else if (barPerc >= 0.5) {
-				hpStr += icons.health.percent_50
-			}
-			else if (barPerc >= 0.25) {
-				hpStr += icons.health.percent_25
+			else if (barPerc > 0) {
+				hpStr += icons.health.end_half
 			}
 			else {
-				hpStr += icons.health.empty
+				hpStr += icons.health.end_empty
 			}
 		}
 
 		// middle health block
-		else if (barPerc >= 1) {
+		else if (barPerc >= 0.75) {
 			hpStr += icons.health.mid_full
 		}
-		else if (barPerc >= 0.75) {
-			hpStr += icons.health.percent_75
-		}
-		else if (barPerc >= 0.5) {
-			hpStr += icons.health.percent_50
-		}
-		else if (barPerc >= 0.25) {
-			hpStr += icons.health.percent_25
+		else if (barPerc > 0) {
+			hpStr += icons.health.mid_half
 		}
 		else {
-			hpStr += icons.health.empty
+			hpStr += icons.health.mid_empty
+		}
+	}
+
+	return hpStr
+}
+
+/**
+ * Format progress into a red bar
+ * @param current Current value
+ * @param maxValue Max value
+ * @returns A progress bar made of emojis
+ */
+export function formatRedBar (current: number, maxValue: number): string {
+	const hpPerBar = maxValue / 5
+	let hpStr = ''
+
+	for (let i = 0; i < 5; i++) {
+		const barPerc = (current - (hpPerBar * i)) / hpPerBar
+
+		if (i === 0) {
+			if (barPerc >= 1) {
+				hpStr += icons.red_bar.start_full
+			}
+			else if (barPerc > 0) {
+				hpStr += icons.red_bar.start_half
+			}
+			else {
+				hpStr += icons.red_bar.start_empty
+			}
+		}
+		else if (i === 4) {
+			if (barPerc >= 1) {
+				hpStr += icons.red_bar.end_full
+			}
+			else if (barPerc > 0) {
+				hpStr += icons.red_bar.end_half
+			}
+			else {
+				hpStr += icons.red_bar.end_empty
+			}
+		}
+
+		// middle health block
+		else if (barPerc >= 0.75) {
+			hpStr += icons.red_bar.mid_full
+		}
+		else if (barPerc > 0) {
+			hpStr += icons.red_bar.mid_half
+		}
+		else {
+			hpStr += icons.red_bar.mid_empty
 		}
 	}
 

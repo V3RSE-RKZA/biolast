@@ -12,16 +12,26 @@ export const icons = {
 	tier2_currency: '<:silver:903310312730664990>',
 	tier1_currency: '<:copper:903310312701313114>',
 	health: {
-		start_full: '<:health_bar_start_full:849053369368313906>',
-		mid_full: '<:health_bar_mid_full:849053369317326868>',
-		end_full: '<:health_bar_end_full:849053369385615431>',
-		percent_25: '<:health_bar_25:849055032875810816>',
-		percent_50: '<:health_bar_50:849055033126944828>',
-		percent_75: '<:health_bar_75:849055032879218718>',
-		start_25: '<:health_bar_start_25:849056171821236224>',
-		start_50: '<:health_bar_start_50:849056171792007168>',
-		start_75: '<:health_bar_start_75:849056171540348959>',
-		empty: '<:health_bar_empty:849065056363872318>'
+		start_full: '<:health_1_full:907929719817764884>',
+		start_half: '<:health_1_half:907929719876509697>',
+		start_empty: '<:health_1_empty:907929719717101598>',
+		mid_full: '<:health_mid_full:907929720019111946>',
+		mid_half: '<:health_mid_half:907929719868125205>',
+		mid_empty: '<:bar_mid_empty:907929719486418986>',
+		end_full: '<:health_end_full:907929719972986880>',
+		end_half: '<:health_end_half:907929719935213578>',
+		end_empty: '<:bar_end_empty:907929719763251230>'
+	},
+	red_bar: {
+		start_full: '<:red_1_full:907947200712179763>',
+		start_half: '<:red_1_half:907947200988995584>',
+		start_empty: '<:red_1_empty:907947539335086080>',
+		mid_full: '<:red_mid_full:907943811303485470>',
+		mid_half: '<:red_mid_half:907943811311861840>',
+		mid_empty: '<:bar_mid_empty:907929719486418986>',
+		end_full: '<:red_end_full:907947201093853184>',
+		end_half: '<:red_end_half:907947201047699476>',
+		end_empty: '<:bar_end_empty:907929719763251230>'
 	},
 	rarities: {
 		rare: ['<:rare_1:903415663564038195>', '<:rare_2:903415663861858355>'],

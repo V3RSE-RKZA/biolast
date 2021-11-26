@@ -92,3 +92,16 @@ export interface QuestRow {
 	sideQuest: 0 | 1
 	createdAt: Date
 }
+
+export interface CompanionRow {
+	ownerId: string
+	type: string
+	name?: string
+	xp: number
+	level: number
+	stress: number
+	hunger: number
+	fetches: number
+	fetching: 0 | 1
+	createdAt: Date
+}
