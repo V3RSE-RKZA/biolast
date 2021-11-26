@@ -91,5 +91,16 @@ export const helmets = helmetObject({
 		level: 3,
 		slotsUsed: 1,
 		itemLevel: 8
+	},
+	swat_helmet: {
+		type: 'Helmet',
+		name: 'swat_helmet',
+		icon: '<:U_helmet:874671013181415434>',
+		aliases: ['swat'],
+		sellPrice: 50,
+		durability: 1,
+		level: 3,
+		slotsUsed: 1,
+		itemLevel: 8
 	}
 })
