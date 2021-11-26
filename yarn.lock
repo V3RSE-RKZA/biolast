@@ -314,10 +314,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@discordjs/collection@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@discordjs/collection/-/collection-0.2.1.tgz#ea4bc7b41b7b7b6daa82e439141222ec95c469b2"
-  integrity sha512-vhxqzzM8gkomw0TYRF3tgx7SwElzUlXT/Aa41O7mOcyN6wIJfj5JmDWaO5XGKsGSsNx7F3i5oIlrucCCWV1Nog==
+"@discordjs/collection@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@discordjs/collection/-/collection-0.3.2.tgz#3c271dd8a93dad89b186d330e24dbceaab58424a"
+  integrity sha512-dMjLl60b2DMqObbH1MQZKePgWhsNe49XkKBZ0W5Acl5uVV43SN414i2QfZwRI7dXAqIn8pEWD2+XXQFn9KWxqg==
 
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
@@ -3436,12 +3436,12 @@ sisteransi@^1.0.5:
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
   integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
 
-slash-create@^4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/slash-create/-/slash-create-4.3.0.tgz#59ca7f39e57c47fcc5f6fe7ac59ff06a77f5fdc3"
-  integrity sha512-iok9qoFji6EMB9nkOimYc/Xe36Z18EJxiFDVdSOfCeJ71RloPjKOrKtq68GXytG1SWWd4nQBH5sg6PwtJ679dQ==
+slash-create@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/slash-create/-/slash-create-4.3.1.tgz#a487cfc0c196f2a601082f557488a264bbddae4f"
+  integrity sha512-zsRYCucQbHE2zFlZrdzQRKvLBY0+q8sOcG1GrXU1ggMYO0XNf5g2ELJ34HdkeTSXTe9pRUtae1aW9POqdXAKwA==
   dependencies:
-    "@discordjs/collection" "^0.2.1"
+    "@discordjs/collection" "^0.3.2"
     eventemitter3 "^4.0.7"
     lodash.isequal "^4.5.0"
     lodash.uniq "^4.5.0"
