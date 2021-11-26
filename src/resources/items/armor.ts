@@ -70,5 +70,17 @@ export const armor = armorObject({
 		level: 2,
 		slotsUsed: 2,
 		itemLevel: 3
+	},
+	tactical_armor: {
+		type: 'Body Armor',
+		name: 'tactical_armor',
+		icon: '<:U_shield:601366669474136074>',
+		description: 'Body armor that looks like it can stop a couple of bullets',
+		aliases: ['tactical'],
+		sellPrice: 1100,
+		durability: 4,
+		level: 4,
+		slotsUsed: 2,
+		itemLevel: 13
 	}
 })
