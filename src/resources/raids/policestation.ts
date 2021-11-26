@@ -37,8 +37,8 @@ export const station: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'food-court',
-			display: 'Food Court',
+			name: 'evidence-locker',
+			display: 'Evidence Locker',
 			scavange: {
 				common: {
 					items: [items.pizza_slice, items.pretzel, items.fork],
@@ -89,8 +89,8 @@ export const station: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'dome-depot',
-			display: 'Dome Depot',
+			name: 'uniform-area',
+			display: 'Uniform Area',
 			scavange: {
 				common: {
 					items: [items.sledgehammer, items.fire_axe, items.wooden_armor, items.wooden_helmet],
@@ -120,8 +120,8 @@ export const station: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'plaza',
-			display: 'plaza',
+			name: 'district-office',
+			display: 'District Office',
 			scavange: {
 				common: {
 					items: [items.sledgehammer, items.wooden_helmet],
@@ -150,8 +150,8 @@ export const station: Location = {
 		},
 		{
 			type: 'LootChannel',
-			name: 'dereks-hunting-shop',
-			display: 'Dereks Hunting Shop',
+			name: 'weapon-room',
+			display: 'Weapons and Ammunition Room',
 			scavange: {
 				common: {
 					items: [items['aks-74u'], items['FN_Five-seveN'], items.SS195LF_bullet],
@@ -272,8 +272,8 @@ export const station: Location = {
 
 		{
 			type: 'LootChannel',
-			name: 'mall-fountain',
-			display: 'Mall Fountain',
+			name: 'staff-room',
+			display: 'Staff Room',
 			npcSpawns: {
 				npcs: [npcs.the_many],
 				cooldownMin: 60 * 60,
