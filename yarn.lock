@@ -3444,10 +3444,10 @@ sisteransi@^1.0.5:
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
   integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
 
-slash-create@^4.3.1:
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/slash-create/-/slash-create-4.3.1.tgz#a487cfc0c196f2a601082f557488a264bbddae4f"
-  integrity sha512-zsRYCucQbHE2zFlZrdzQRKvLBY0+q8sOcG1GrXU1ggMYO0XNf5g2ELJ34HdkeTSXTe9pRUtae1aW9POqdXAKwA==
+slash-create@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/slash-create/-/slash-create-4.4.0.tgz#e48fa0b167a8d024b12c2c4943270d7cb0d9f720"
+  integrity sha512-Pwk011YXVO229DR3fQ0zP2TQQorf/3LcQdN3NFQpOQR+9PI4Nf6fixVVN70b/UFeYN28zAvLNrWBiylsoMY17g==
   dependencies:
     "@discordjs/collection" "^0.3.2"
     eventemitter3 "^4.0.7"
