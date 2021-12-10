@@ -235,5 +235,18 @@ export const ranged = rangedObject({
 		fireRate: 35,
 		accuracy: 70,
 		itemLevel: 16
+	},
+	'Colt_Python': {
+		type: 'Ranged Weapon',
+		name: 'Colt Python',
+		icon: '<:U_weapon:601366669272678411>',
+		aliases: ['Colt, Python'],
+		description: 'A single/double action revolver,which incorporates a full length, snag free, ejector shroud and interchangeable front sight on the barrel.',
+		sellPrice: 10021,
+		durability: 6,
+		slotsUsed: 4,
+		fireRate: 35,
+		accuracy: 70,
+		itemLevel: 16
 	}
 })
