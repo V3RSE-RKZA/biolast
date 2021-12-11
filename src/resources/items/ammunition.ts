@@ -332,5 +332,17 @@ export const ammunition = ammoObject({
 		sellPrice: 5575,
 		slotsUsed: 1,
 		itemLevel: 17
-	}
+	},
+	'.357_Magnum': {
+		type: 'Ammunition',
+		name: '.357_Magnum',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['.357'],
+		description: 'A smokeless powder cartridge with a.357-inch bullet diameter.',
+		damage: 34,
+		penetration: 2.3,
+		ammoFor: [ranged['FN_Five-seveN'], ranged.FN_P90],
+		sellPrice: 672,
+		slotsUsed: 1,
+		itemLevel: 7
 })
