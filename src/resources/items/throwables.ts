@@ -46,10 +46,27 @@ export const throwables = throwablesObject({
 		durability: 1,
 		slotsUsed: 1,
 		fireRate: 45,
-		accuracy: 74,
+		accuracy: 43,
 		damage: 35,
 		penetration: 2.5,
 		itemLevel: 9,
 		spreadsDamageToLimbs: 2
+	},
+	AN_M14_incendiary_TH3: {
+		type: 'Throwable Weapon',
+		subtype: 'Incendiary Grenade',
+		name: 'AN_M14_incendiary_TH3',
+		icon: '<:U_melee:601366669251575857>',
+		description: 'Incendiary hand grenade is used to destroy equipment or start fires.',
+		aliases: ['M14', 'AN', 'TH3'],
+		sellPrice: 1800,
+		durability: 1,
+		slotsUsed: 1,
+		fireRate: 45,
+		accuracy: 74,
+		damage: 40,
+		penetration: 3.0,
+		itemLevel: 9,
+		spreadsDamageToLimbs: 3
 	}
 })
