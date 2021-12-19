@@ -201,6 +201,23 @@ export interface Food extends BaseItem {
 	reducesHunger: number
 }
 
+/**
+ * Status effects that can be applied to a user (such as the effects from using stimulants or afflictions like Burning)
+ */
+export interface StatusEffects {
+	/**
+	 * Percent damage bonus (10 would be 10% damage bonus)
+	 */
+	damageBonus: number
+	/**
+	 * Percent accuracy bonus (10 would be 10% accuracy bonus)
+	 */
+	accuracyBonus: number
+	/**
+	 * Percent damage reduction from attacks (10 would be 10% reduction)
+	 */
+	damageReduction: number
+}
 export interface StimulantMedical extends BaseItem {
 	type: 'Medical'
 	subtype: 'Stimulant'

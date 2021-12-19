@@ -4,6 +4,8 @@ import { StimulantMedical } from '../types/Items'
 import { Query } from '../types/mysql'
 import { getCooldown } from './db/cooldowns'
 
+export type Affliction = 'Bitten' | 'Broken Arm' | 'Burning'
+
 /**
  * Calculates the XP required to level up given a level. IF YOU PLAN ON CHANGING THIS YOU SHOULD ALSO CHANGE THE AMOUNT OF XP QUESTS GIVE (src/slash-commands/quests)
  * @param level The level to get XP required for
@@ -78,8 +80,8 @@ export async function getActiveStimulants (query: Query, userID: string, types?:
  * @param forUpdate Whether this is part of an sql transaction or not
  * @returns Stimulants active and their time until expiration
  */
-export async function getAfflictions (query: Query, userID: string, forUpdate = false): Promise<{ cooldown: string, type: 'Bitten' | 'Broken Arm' | 'Burning' }[]> {
-	const afflictions: { cooldown: string, type: 'Bitten' | 'Broken Arm' | 'Burning' }[] = []
+export async function getAfflictions (query: Query, userID: string, forUpdate = false): Promise<{ cooldown: string, type: Affliction }[]> {
+	const afflictions: { cooldown: string, type: Affliction }[] = []
 	const bitten = await getCooldown(query, userID, 'bitten', forUpdate)
 	const broken = await getCooldown(query, userID, 'broken-arm', forUpdate)
 	const burning = await getCooldown(query, userID, 'burning', forUpdate)
@@ -111,7 +113,7 @@ export async function getAfflictions (query: Query, userID: string, forUpdate = 
  * @param activeStimulants The users active stimulants
  * @returns Users active effects
  */
-export function addStatusEffects (activeStimulants: StimulantMedical[], afflictions?: ('Bitten' | 'Broken Arm' | 'Burning')[]): {
+export function addStatusEffects (activeStimulants: StimulantMedical[], afflictions?: Affliction[]): {
 	/**
 	 * Damage percent bonus (10 would be 10% bonus damage)
 	 */
@@ -169,7 +171,7 @@ export function addStatusEffects (activeStimulants: StimulantMedical[], afflicti
  * @param activeAfflictions Array of afflictions, can be obtained from getAfflictions
  * @returns String display of the afflictions
  */
-export function getAfflictionsDisplay (activeAfflictions: { cooldown: string, type: 'Bitten' | 'Broken Arm' | 'Burning' }[]): string {
+export function getAfflictionsDisplay (activeAfflictions: { cooldown: string, type: Affliction }[]): string {
 	const effectsDisplay = []
 
 	for (const affliction of activeAfflictions) {
