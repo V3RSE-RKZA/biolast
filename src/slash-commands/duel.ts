@@ -122,8 +122,12 @@ class DuelCommand extends CustomSlashCommand {
 			await setFighting(preTransaction.query, member.id, true)
 			await preTransaction.commit()
 
+			let turn = Math.random() < 0.5 ? ctx.user.id : member.id
+			let turnNumber = 1
+			let duelIsActive = true
+
 			await confirmed.editParent({
-				content: `<@${ctx.user.id}>'s turn:`,
+				content: `<@${turn}> has been selected to go first:`,
 				embeds: [
 					this.getDuelEmbed(
 						ctx.member,
@@ -144,10 +148,6 @@ class DuelCommand extends CustomSlashCommand {
 					components: [GRAY_BUTTON('Attack', 'attack', false, '🗡️'), GRAY_BUTTON('Use Medical Item', 'heal', false, '🩹'), GRAY_BUTTON('Use Stimulant', 'stimulant', false, '💉'), RED_BUTTON('Try to Flee', 'flee')]
 				}]
 			})
-
-			let turn = ctx.user.id
-			let turnNumber = 1
-			let duelIsActive = true
 
 			while (duelIsActive) {
 				try {
@@ -771,6 +771,8 @@ class DuelCommand extends CustomSlashCommand {
 									.setFooter(`Turn #${turnNumber}`)
 									.setColor(9043800)
 
+								await setFighting(preTransaction.query, ctx.user.id, false)
+								await setFighting(preTransaction.query, member.id, false)
 								await val.sendFollowUp({
 									content: `<@${turn}> chose to flee!`,
 									embeds: [fleeEmbed.embed]
