@@ -108,6 +108,7 @@ class AttackCommand extends CustomSlashCommand {
 			worksInDMs: false,
 			onlyWorksInRaidGuild: true,
 			canBeUsedInRaid: true,
+			worksDuringDuel: false,
 			guildIDs: [],
 
 			// can't defer this command because it pings users and editing the original

@@ -20,6 +20,11 @@ interface BaseCommandOptions {
 	onlyWorksInRaidGuild: boolean
 
 	/**
+	 * Whether this command can be used while user is in an active duel
+	 */
+	worksDuringDuel: boolean
+
+	/**
 	 * Description to display in help command
 	 */
 	longDescription: string
@@ -42,6 +47,8 @@ interface DMCommandOptions extends BaseCommandOptions {
 
 	// command must not be raid-only command
 	onlyWorksInRaidGuild: false
+
+	worksDuringDuel: true
 }
 
 interface GuildCommandOptions extends BaseCommandOptions {

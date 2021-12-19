@@ -32,6 +32,7 @@ class InventoryCommand extends CustomSlashCommand {
 			worksInDMs: true,
 			onlyWorksInRaidGuild: false,
 			canBeUsedInRaid: true,
+			worksDuringDuel: true,
 			guildIDs: []
 		})
 

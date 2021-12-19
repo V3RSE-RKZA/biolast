@@ -30,10 +30,8 @@ const app = new App(`Bot ${botToken}`, {
 
 app.launch()
 
-process.on('SIGINT', async () => {
+process.on('SIGINT', () => {
 	logger.info('Stopping')
-
-	process.exit(0)
 })
 
 process.on('unhandledRejection', (reason, promise) => {

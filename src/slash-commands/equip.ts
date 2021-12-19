@@ -26,6 +26,7 @@ class EquipCommand extends CustomSlashCommand {
 			worksInDMs: false,
 			onlyWorksInRaidGuild: false,
 			canBeUsedInRaid: true,
+			worksDuringDuel: false,
 			guildIDs: []
 		})
 

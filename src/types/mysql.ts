@@ -33,6 +33,7 @@ export interface UserRow {
 	bossKills: number
 	deaths: number
 	questsCompleted: number
+	fighting: 0 | 1
 }
 
 export interface Cooldown {

@@ -96,9 +96,10 @@ class CompanionCommand extends CustomSlashCommand {
 			],
 			category: 'items',
 			guildModsOnly: false,
-			worksInDMs: true,
+			worksInDMs: false,
 			onlyWorksInRaidGuild: false,
 			canBeUsedInRaid: false,
+			worksDuringDuel: false,
 			guildIDs: []
 		})
 

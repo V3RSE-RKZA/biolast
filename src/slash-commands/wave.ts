@@ -20,6 +20,7 @@ class HelpCommand extends CustomSlashCommand {
 			worksInDMs: false,
 			onlyWorksInRaidGuild: true,
 			canBeUsedInRaid: true,
+			worksDuringDuel: true,
 			guildIDs: []
 		})
 

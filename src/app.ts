@@ -96,6 +96,7 @@ class App {
 		)
 
 		await this.loadSlashCommmands()
+		await query('UPDATE users SET fighting = 0 WHERE fighting = 1')
 
 		// handling slash commands manually so I can filter them through my custom command handler
 		this.slashCreator.on('commandInteraction', (i, res, webserverMode) => {
@@ -433,6 +434,13 @@ class App {
 								'Once you\'re ready to enter a raid, use the `raid` command. **Good luck!** - 💙 blobfysh'
 						})
 					}
+				}
+
+				else if (userData.fighting && !command.customOptions.worksDuringDuel) {
+					return ctx.send({
+						content: `${icons.danger} That command cannot be used while you are in a duel.`,
+						flags: InteractionResponseFlags.EPHEMERAL
+					})
 				}
 
 				else {

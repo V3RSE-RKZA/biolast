@@ -13,7 +13,7 @@ import { addItemToShop, addItemToStash, getAllShopItems, getShopItem, getUserBac
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addMoney, getUserRow, increaseShopSales, removeMoney } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { getItemDisplay, getItems, sortItemsByLevel } from '../utils/itemUtils'
+import { getItemDisplay, getItemPrice, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 
 const ITEMS_PER_PAGE = 15
@@ -110,9 +110,10 @@ class ShopCommand extends CustomSlashCommand {
 			],
 			category: 'items',
 			guildModsOnly: false,
-			worksInDMs: true,
+			worksInDMs: false,
 			onlyWorksInRaidGuild: false,
 			canBeUsedInRaid: false,
+			worksDuringDuel: false,
 			guildIDs: []
 		})
 
@@ -159,13 +160,13 @@ class ShopCommand extends CustomSlashCommand {
 				}
 				else {
 					itemsToSell.push(foundItem)
-					price += this.getItemPrice(foundItem.item, foundItem.row)
+					price += this.getItemShopPrice(foundItem.item, foundItem.row)
 				}
 			}
 
 			const botMessage = await ctx.send({
 				content: `Sell **${itemsToSell.length}x** items for **${formatMoney(price)}**?\n\n` +
-					`${itemsToSell.map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}`,
+					`${itemsToSell.map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemShopPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}`,
 				components: CONFIRM_BUTTONS
 			}) as Message
 
@@ -407,13 +408,13 @@ class ShopCommand extends CustomSlashCommand {
 				}
 				else {
 					itemsToSell.push(itm)
-					price += this.getItemPrice(itm.item, itm.row)
+					price += this.getItemShopPrice(itm.item, itm.row)
 				}
 			}
 
 			const botMessage = await ctx.send({
 				content: `Sell **EVERYTHING IN YOUR INVENTORY** (**${itemsToSell.length}x** items) for **${formatMoney(price)}**?\n\n` +
-					`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}` +
+					`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemShopPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}` +
 					`${itemsToSell.length > 5 ? `\n...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}` : ''}`,
 				components: CONFIRM_BUTTONS
 			}) as Message
@@ -465,7 +466,7 @@ class ShopCommand extends CustomSlashCommand {
 
 					await confirmed.editParent({
 						content: `${icons.checkmark} Sold everything in your inventory (**${itemsToSell.length}x** items) for **${formatMoney(price)}**.\n\n` +
-							`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `~~${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemPrice(i.item, i.row))}**~~` : `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}` +
+							`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `~~${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemShopPrice(i.item, i.row))}**~~` : `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}` +
 							`${itemsToSell.length > 5 ? `\n~~...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}~~` : ''}\n\n` +
 							`${icons.information} You now have **${formatMoney(userDataV.money + price)}**.`,
 						components: []
@@ -502,13 +503,13 @@ class ShopCommand extends CustomSlashCommand {
 				}
 				else {
 					itemsToSell.push(itm)
-					price += this.getItemPrice(itm.item, itm.row)
+					price += this.getItemShopPrice(itm.item, itm.row)
 				}
 			}
 
 			const botMessage = await ctx.send({
 				content: `Sell **EVERYTHING IN YOUR STASH** (**${itemsToSell.length}x** items) for **${formatMoney(price)}**?\n\n` +
-					`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}` +
+					`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemShopPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}` +
 					`${itemsToSell.length > 5 ? `\n~~...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}~~` : ''}`,
 				components: CONFIRM_BUTTONS
 			}) as Message
@@ -560,7 +561,7 @@ class ShopCommand extends CustomSlashCommand {
 
 					await confirmed.editParent({
 						content: `${icons.checkmark} Sold everything in your stash (**${itemsToSell.length}x** items) for **${formatMoney(price)}**.\n\n` +
-							`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `~~${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemPrice(i.item, i.row))}**~~` : `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}` +
+							`${sortItemsByLevel(itemsToSell, true).slice(0, 5).map(i => itemsToSell.length > 1 ? `~~${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemShopPrice(i.item, i.row))}**~~` : `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}` +
 							`${itemsToSell.length > 5 ? `\n...and **${itemsToSell.length - 5}** other item${itemsToSell.length - 5 > 1 ? 's' : ''}` : ''}\n\n` +
 							`${icons.information} You now have **${formatMoney(userDataV.money + price)}**.`,
 						components: []
@@ -614,15 +615,8 @@ class ShopCommand extends CustomSlashCommand {
 		}
 	}
 
-	getItemPrice (item: Item, itemRow: ItemRow): number {
-		if (!item.sellPrice) {
-			return 0
-		}
-		else if (item.durability && itemRow.durability) {
-			return Math.floor((itemRow.durability / item.durability) * (item.sellPrice * this.app.shopSellMultiplier))
-		}
-
-		return Math.floor(item.sellPrice * this.app.shopSellMultiplier)
+	getItemShopPrice (item: Item, itemRow: ItemRow): number {
+		return Math.floor(getItemPrice(item, itemRow) * this.app.shopSellMultiplier)
 	}
 
 	generatePages (rows: ShopItemRow[], searchedItem?: Item): Embed[] {

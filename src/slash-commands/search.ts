@@ -22,6 +22,7 @@ class SearchCommand extends CustomSlashCommand {
 			worksInDMs: false,
 			onlyWorksInRaidGuild: true,
 			canBeUsedInRaid: true,
+			worksDuringDuel: true,
 
 			// this is automatically populated with the ids of raid guilds since onlyWorksInRaidGuild is set to true
 			guildIDs: []

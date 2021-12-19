@@ -81,6 +81,7 @@ class GroundCommand extends CustomSlashCommand {
 			worksInDMs: false,
 			onlyWorksInRaidGuild: true,
 			canBeUsedInRaid: true,
+			worksDuringDuel: false,
 			guildIDs: []
 		})
 

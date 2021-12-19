@@ -152,7 +152,7 @@ export interface Ammunition extends BaseItem {
 	spreadsDamageToLimbs?: 2 | 3 | 4
 }
 
-interface HealingMedical extends BaseItem {
+export interface HealingMedical extends BaseItem {
 	type: 'Medical'
 	subtype: 'Healing'
 

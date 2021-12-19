@@ -35,9 +35,10 @@ class RaidCommand extends CustomSlashCommand {
 			],
 			category: 'info',
 			guildModsOnly: false,
-			worksInDMs: true,
+			worksInDMs: false,
 			onlyWorksInRaidGuild: false,
 			canBeUsedInRaid: true,
+			worksDuringDuel: false,
 			guildIDs: [],
 			deferEphemeral: true
 		})

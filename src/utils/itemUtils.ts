@@ -129,6 +129,22 @@ export function getBackpackLimit (backpack?: Backpack, slotsBonus?: number): num
 }
 
 /**
+ * @param item Item to get price of
+ * @param itemRow Row of the item (durability can affect the item price)
+ * @returns Value of item
+ */
+export function getItemPrice (item: Item, itemRow: ItemRow): number {
+	if (!item.sellPrice) {
+		return 0
+	}
+	else if (item.durability && itemRow.durability) {
+		return Math.floor((itemRow.durability / item.durability) * item.sellPrice)
+	}
+
+	return item.sellPrice
+}
+
+/**
  *
  * @param ammos Array of ammo to sort
  * @returns Array of ammo sorted from highest damage to lowest
@@ -270,6 +286,22 @@ export function sortItemsByName (arr: (Item | ItemWithRow<ItemRow>)[], containsR
 
 	return (arr as Item[]).sort((a, b) => a.name.localeCompare(b.name))
 }
+
+/**
+ * Sorts an array of items by their value DESCENDING
+ * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
+ * @param containsRows Whether or not the function is sorting items with rows
+ */
+export function sortItemsByValue (arr: Item[], containsRows?: false): Item[]
+export function sortItemsByValue<T extends ItemRow> (arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
+export function sortItemsByValue (arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
+	if (containsRows) {
+		return (arr as ItemWithRow<ItemRow>[]).sort((a, b) => getItemPrice(b.item, b.row) - getItemPrice(a.item, a.row))
+	}
+
+	return (arr as Item[]).sort((a, b) => (b.sellPrice || 0) - (a.sellPrice || 0))
+}
+
 
 /**
  * Sorts an array of items by their type

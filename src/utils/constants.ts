@@ -20,28 +20,37 @@ export const CONFIRM_BUTTONS: ComponentActionRow[] = [
 	}
 ]
 
-export const RED_BUTTON = (label: string, customID: string, disabled?: boolean): ComponentButton => ({
+export const RED_BUTTON = (label: string, customID: string, disabled?: boolean, icon?: string): ComponentButton => ({
 	type: ComponentType.BUTTON,
 	label,
 	custom_id: customID,
 	style: ButtonStyle.DESTRUCTIVE,
-	disabled
+	disabled,
+	emoji: icon ? {
+		name: icon
+	} : undefined
 })
 
-export const GRAY_BUTTON = (label: string, customID: string, disabled?: boolean): ComponentButton => ({
+export const GRAY_BUTTON = (label: string, customID: string, disabled?: boolean, icon?: string): ComponentButton => ({
 	type: ComponentType.BUTTON,
 	label,
 	custom_id: customID,
 	style: ButtonStyle.SECONDARY,
-	disabled
+	disabled,
+	emoji: icon ? {
+		name: icon
+	} : undefined
 })
 
-export const GREEN_BUTTON = (label: string, customID: string, disabled?: boolean): ComponentButton => ({
+export const GREEN_BUTTON = (label: string, customID: string, disabled?: boolean, icon?: string): ComponentButton => ({
 	type: ComponentType.BUTTON,
 	label,
 	custom_id: customID,
 	style: ButtonStyle.SUCCESS,
-	disabled
+	disabled,
+	emoji: icon ? {
+		name: icon
+	} : undefined
 })
 
 

@@ -18,6 +18,7 @@ class RaidTimeCommand extends CustomSlashCommand {
 			worksInDMs: false,
 			onlyWorksInRaidGuild: true,
 			canBeUsedInRaid: true,
+			worksDuringDuel: true,
 
 			// deferEphemeral because the command responds with only ephemeral messages
 			deferEphemeral: true,

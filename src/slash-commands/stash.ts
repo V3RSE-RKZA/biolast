@@ -86,9 +86,10 @@ class StashCommand extends CustomSlashCommand {
 			],
 			category: 'info',
 			guildModsOnly: false,
-			worksInDMs: true,
+			worksInDMs: false,
 			onlyWorksInRaidGuild: false,
 			canBeUsedInRaid: false,
+			worksDuringDuel: false,
 			guildIDs: []
 		})
 
