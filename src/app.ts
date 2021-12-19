@@ -136,7 +136,7 @@ class App {
 		// add users who use slash commands to the eris cache if they aren't already
 		// this helps prevent API calls to fetch users
 		this.slashCreator.on('rawInteraction', i => {
-			if (i.type === InteractionType.COMMAND) {
+			if (i.type === InteractionType.APPLICATION_COMMAND) {
 				const data = i as any
 				let user
 

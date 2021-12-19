@@ -1,7 +1,16 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": [
+      "tsconfig.json",
+      "tsconfig.test.json"
+	]
+  },
   "plugins": [
+    "deprecation",
     "@typescript-eslint"
   ],
   "extends": [
@@ -133,6 +142,7 @@
   }],
   "@typescript-eslint/no-non-null-assertion": "off",
   "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }],
-  "@typescript-eslint/space-before-function-paren": ["error", "always"]
+  "@typescript-eslint/space-before-function-paren": ["error", "always"],
+  "deprecation/deprecation": "warn"
   }
 }
