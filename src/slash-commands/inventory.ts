@@ -30,8 +30,6 @@ class InventoryCommand extends CustomSlashCommand {
 			category: 'info',
 			guildModsOnly: false,
 			worksInDMs: true,
-			onlyWorksInRaidGuild: false,
-			canBeUsedInRaid: true,
 			worksDuringDuel: true,
 			guildIDs: []
 		})

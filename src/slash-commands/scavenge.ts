@@ -29,8 +29,6 @@ class ScavengeCommand extends CustomSlashCommand {
 			category: 'info',
 			guildModsOnly: false,
 			worksInDMs: false,
-			onlyWorksInRaidGuild: true,
-			canBeUsedInRaid: true,
 			worksDuringDuel: false,
 
 			// this is automatically populated with the ids of raid guilds since onlyWorksInRaidGuild is set to true

@@ -21,8 +21,6 @@ class HelpCommand extends CustomSlashCommand {
 			category: 'info',
 			guildModsOnly: false,
 			worksInDMs: true,
-			onlyWorksInRaidGuild: false,
-			canBeUsedInRaid: true,
 			worksDuringDuel: true,
 			guildIDs: []
 		})
@@ -68,46 +66,19 @@ class HelpCommand extends CustomSlashCommand {
 			cmdEmbed.addField('Cooldown', formatTime(cmd.cooldown * 1000), true)
 			*/
 
-			cmdEmbed.addField('Can be used in raid?', cmd.customOptions.onlyWorksInRaidGuild ? 'Only works while in raid' : cmd.customOptions.canBeUsedInRaid ? 'Yes' : 'No')
-
 			await ctx.send({
 				embeds: [cmdEmbed.embed]
 			})
 			return
 		}
 
-		const raidCommandsEmb = new Embed()
-			.setTitle('What commands can be used while in a raid?')
-			.setDescription('Use `/help <command>` to see more about a specific command. You can also hover your mouse over the command for a short description.')
-			.addField(
-				'Commands that ONLY work in a raid:',
-				this.app.slashCreator.commands
-					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && (cmd as CustomSlashCommand).customOptions.onlyWorksInRaidGuild)
+		const commandsEmb = new Embed()
+			.setTitle('What are the commands?')
+			.setDescription('Use `/help <command>` to see more about a specific command. You can also hover your mouse over the command for a short description.' +
+				`\n\n${this.app.slashCreator.commands
+					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin')
 					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/0lvPMdMtsGU '${cmd.description}')`)
-					.join(', ')
-			)
-			.addField(
-				'Commands that can be used in AND out of a raid:',
-				this.app.slashCreator.commands
-					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && (cmd as CustomSlashCommand).customOptions.canBeUsedInRaid && !(cmd as CustomSlashCommand).customOptions.onlyWorksInRaidGuild)
-					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/0lvPMdMtsGU '${cmd.description}')`)
-					.join(', ')
-			)
-			.addField(
-				'The following CAN\'T be used in raid:',
-				this.app.slashCreator.commands
-					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin' && !(cmd as CustomSlashCommand).customOptions.canBeUsedInRaid)
-					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/0lvPMdMtsGU '${cmd.description}')`)
-					.join(', ')
-			)
-
-		const itemsEmbed = new Embed()
-			.setTitle('What is a raid?')
-			.setDescription('The primary way to get more loot is by entering a **raid**. Raids are locations you *and other players* can explore for loot.' +
-				'\n\nYou can enter a raid using the `raid` command, make sure you\'re well equipped and have all the items you want to take with you in your **inventory** as the items in your stash ' +
-				' won\'t be accessible while in a raid.\n\nIn raid, you\'ll be able to use the `scavenge` command in a channel to look for items. You can also `search` for threats in a channel such as walkers or raiders.' +
-				' When you find a threat, you can use your equipped weapon to fight them using the `attack` command. If you kill a walker or raider, they will drop their weapon, armor, and some items onto the ground.' +
-				'\n\n**Be careful in raids, other players might see you as a threat and attack you for your items.** If you die in a raid, you\'ll lose all the items in your **inventory**, the items in your stash will be fine though.')
+					.join(', ')}`)
 
 		const damageEmbed = new Embed()
 			.setTitle('How is damage calculated?')
@@ -121,9 +92,8 @@ class HelpCommand extends CustomSlashCommand {
 
 		const healEmbed = new Embed()
 			.setTitle('How do I heal?')
-			.setDescription('If you find that you\'ve been attacked and need to replenish some health, you can use a **Medical** item to heal: `/use <item id>`' +
-				'\n\nIf you don\'t have any medical items on you, you can check the shop (`/shop view`) to see if any medical items are for sale. If all else fails, you ' +
-				' will heal passively for **5 health** every **5 minutes** when out of raid.')
+			.setDescription('While in a duel, you can click the "Use Medical Item" to use a healing item from your inventory.' +
+				' If you aren\'t in a duel, you will heal passively for **5 health** every **5 minutes**.')
 
 		const storageEmbed = new Embed()
 			.setTitle('How do I increase storage space?')
@@ -142,13 +112,8 @@ class HelpCommand extends CustomSlashCommand {
 							custom_id: 'help-command',
 							options: [
 								{
-									label: 'What commands can be used while in a raid?',
-									value: 'raid-commands',
-									description: ''
-								},
-								{
-									label: 'What is a raid?',
-									value: 'how-to-raid',
+									label: 'What are the commands?',
+									value: 'commands',
 									description: ''
 								},
 								{
@@ -177,16 +142,10 @@ class HelpCommand extends CustomSlashCommand {
 
 		collector.on('collect', async c => {
 			try {
-				if (c.values.includes('raid-commands')) {
+				if (c.values.includes('commands')) {
 					await c.editParent({
 						content: '',
-						embeds: [raidCommandsEmb.embed]
-					})
-				}
-				else if (c.values.includes('how-to-raid')) {
-					await c.editParent({
-						content: '',
-						embeds: [itemsEmbed.embed]
+						embeds: [commandsEmb.embed]
 					})
 				}
 				else if (c.values.includes('damage')) {

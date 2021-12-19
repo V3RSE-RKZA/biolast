@@ -79,8 +79,6 @@ class GroundCommand extends CustomSlashCommand {
 			category: 'items',
 			guildModsOnly: false,
 			worksInDMs: false,
-			onlyWorksInRaidGuild: true,
-			canBeUsedInRaid: true,
 			worksDuringDuel: false,
 			guildIDs: []
 		})

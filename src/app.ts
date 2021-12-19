@@ -379,13 +379,6 @@ class App {
 				})
 			}
 
-			else if (command.commandName !== 'heal' && this.extractingUsers.has(ctx.user.id)) {
-				return ctx.send({
-					content: `${icons.warning} You cannot use that command while extracting!`,
-					flags: InteractionResponseFlags.EPHEMERAL
-				})
-			}
-
 			// command was run in a server
 			else if (ctx.guildID) {
 				const userData = await getUserRow(query, ctx.user.id)
@@ -394,13 +387,6 @@ class App {
 				if (command.customOptions.guildModsOnly && (!ctx.member || !ctx.member.permissions.has(Constants.Permissions.manageGuild))) {
 					return ctx.send({
 						content: `${icons.danger} You need the \`Manage Server\` permission to use this command!`,
-						flags: InteractionResponseFlags.EPHEMERAL
-					})
-				}
-
-				else if (command.customOptions.onlyWorksInRaidGuild && !isRaidGuild(ctx.guildID)) {
-					return ctx.send({
-						content: `${icons.danger} That command can **ONLY** be used in a raid. Join a raid with the \`raid\` command.`,
 						flags: InteractionResponseFlags.EPHEMERAL
 					})
 				}
@@ -472,13 +458,6 @@ class App {
 			else if (!command.customOptions.worksInDMs) {
 				return ctx.send({
 					content: `${icons.warning} That command cannot be used in DMs.`,
-					flags: InteractionResponseFlags.EPHEMERAL
-				})
-			}
-
-			if (!command.customOptions.canBeUsedInRaid && (isRaidGuild(ctx.guildID) || await userInRaid(query, ctx.user.id))) {
-				return ctx.send({
-					content: `${icons.warning} That command cannot be used while you are in an active raid! You need to evac to finish the raid (dying also works).`,
 					flags: InteractionResponseFlags.EPHEMERAL
 				})
 			}

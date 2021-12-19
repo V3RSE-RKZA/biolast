@@ -21,8 +21,6 @@ class HealthCommand extends CustomSlashCommand {
 			category: 'info',
 			guildModsOnly: false,
 			worksInDMs: true,
-			onlyWorksInRaidGuild: false,
-			canBeUsedInRaid: true,
 			worksDuringDuel: true,
 			guildIDs: []
 		})
@@ -52,7 +50,7 @@ class HealthCommand extends CustomSlashCommand {
 		const userData = (await getUserRow(query, ctx.user.id))!
 
 		await ctx.send({
-			content: `You currently have ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP. You will gain **5 HP every 5 minutes** while you are not in a duel.`
+			content: `You currently have ${formatHealth(userData.health, userData.maxHealth)} **${userData.health} / ${userData.maxHealth}** HP. You will gain **5 health every 5 minutes** while you are not in a duel.`
 		})
 	}
 }

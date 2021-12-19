@@ -23,8 +23,6 @@ class EvalCommand extends CustomSlashCommand {
 			category: 'admin',
 			guildModsOnly: false,
 			worksInDMs: true,
-			onlyWorksInRaidGuild: false,
-			canBeUsedInRaid: true,
 			worksDuringDuel: true,
 			guildIDs: ['497302646521069568'],
 			deferEphemeral: true

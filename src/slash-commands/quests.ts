@@ -31,8 +31,6 @@ class QuestsCommand extends CustomSlashCommand {
 			category: 'info',
 			guildModsOnly: false,
 			worksInDMs: false,
-			onlyWorksInRaidGuild: false,
-			canBeUsedInRaid: true,
 			worksDuringDuel: false,
 			guildIDs: [],
 			deferEphemeral: true
