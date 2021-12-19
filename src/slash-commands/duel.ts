@@ -194,7 +194,7 @@ class DuelCommand extends CustomSlashCommand {
 								const weaponChoice = choice.weapon
 								const hasWeapon = !weaponChoice.row || playerInventory.items.find(i => i.row.id === weaponChoice.row.id)
 								const hasAmmo = playerInventory.items.find(i => i.row.id === choice.ammo?.row.id)
-								const bodyPartHit = getBodyPartHit((choice.weapon.item as Weapon).accuracy + stimulantEffects.accuracyBonus, choice.limbTarget)
+								const bodyPartHit = getBodyPartHit(choice.weapon.item.accuracy + stimulantEffects.accuracyBonus, choice.limbTarget)
 								const missedPartChoice = choice.limbTarget && (choice.limbTarget !== bodyPartHit.result || !bodyPartHit.accurate)
 								const victimItemsRemoved: number[] = []
 								const limbsHit = []
