@@ -225,32 +225,7 @@ export interface StimulantMedical extends BaseItem {
 	/**
 	 * The effects this item gives when used
 	 */
-	effects: {
-		/**
-		 * Percent damage bonus (10 would be 10% damage bonus)
-		 */
-		damageBonus: number
-		/**
-		 * Percent accuracy bonus (10 would be 10% accuracy bonus)
-		 */
-		accuracyBonus: number
-		/**
-		 * Slots bonus (10 would be 10 slots bonus)
-		 */
-		weightBonus: number
-		/**
-		 * Percent firerate cooldown reduction (10 would be 10% time reduction)
-		 */
-		fireRate: number
-		/**
-		 * Percent damage reduction from attacks (10 would be 10% reduction)
-		 */
-		damageReduction: number
-		/**
-		 * Length in seconds this stimulant lasts
-		 */
-		length: number
-	}
+	effects: StatusEffects
 
 	/**
 	 * How many times this item can be used to heal before it breaks

@@ -217,7 +217,7 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items['anti-biotics'], items.splint, items.adrenaline_stimulant, items.adderall],
+					items: [items['anti-biotics'], items.splint, items.adrenaline, items.adderall],
 					xp: 15
 				},
 				rare: {

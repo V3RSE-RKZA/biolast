@@ -17,7 +17,6 @@ import { getEquips, getItemDisplay, getItems, sortItemsByLevel } from './itemUti
 import { logger } from './logger'
 import { BodyPart, getAttackDamage, getBodyPartHit } from './raidUtils'
 import getRandomInt from './randomInt'
-import { addStatusEffects, getActiveStimulants } from './playerUtils'
 import { TextChannel, Webhook } from 'eris'
 import Embed from '../structures/Embed'
 
@@ -236,9 +235,7 @@ class NPCHandler {
 		const messages = []
 		const userBackpackData = getItems(userBackpack)
 		const userEquips = getEquips(userBackpack)
-		const victimStimulants = await getActiveStimulants(transactionQuery, member.id, ['damage'], true)
-		const victimEffects = addStatusEffects(victimStimulants.map(stim => stim.stimulant))
-		const stimulantDamageMulti = (1 - (victimEffects.damageReduction / 100))
+		const stimulantDamageMulti = 1 // TODO replace this with new status effect system (1 - (victimEffects.damageReduction / 100))
 		const limbsHit = []
 		const bodyPartHit = getBodyPartHit(50)
 		let totalDamage

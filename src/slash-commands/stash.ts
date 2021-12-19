@@ -10,7 +10,6 @@ import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
 import { backpackHasSpace, getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
-import { addStatusEffects, getActiveStimulants } from '../utils/playerUtils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -165,8 +164,6 @@ class StashCommand extends CustomSlashCommand {
 			const transaction = await beginTransaction()
 			const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
 			const stashRows = await getUserStash(transaction.query, ctx.user.id, true)
-			const activeStimulants = await getActiveStimulants(transaction.query, ctx.user.id, ['weight'], true)
-			const stimulantEffects = addStatusEffects(activeStimulants.map(stim => stim.stimulant))
 			const userStashData = getItems(stashRows)
 			const itemsToWithdraw = []
 			let spaceNeeded = 0
@@ -189,7 +186,7 @@ class StashCommand extends CustomSlashCommand {
 				}
 			}
 
-			if (!backpackHasSpace(backpackRows, spaceNeeded, stimulantEffects.weightBonus)) {
+			if (!backpackHasSpace(backpackRows, spaceNeeded)) {
 				await transaction.commit()
 
 				await ctx.send({

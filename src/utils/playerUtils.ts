@@ -1,10 +1,5 @@
-import { icons } from '../config'
-import { allItems } from '../resources/items'
-import { StimulantMedical } from '../types/Items'
-import { Query } from '../types/mysql'
-import { getCooldown } from './db/cooldowns'
-
-export type Affliction = 'Bitten' | 'Broken Arm' | 'Burning'
+import { Affliction } from '../resources/afflictions'
+import { StatusEffects, StimulantMedical } from '../types/Items'
 
 /**
  * Calculates the XP required to level up given a level. IF YOU PLAN ON CHANGING THIS YOU SHOULD ALSO CHANGE THE AMOUNT OF XP QUESTS GIVE (src/slash-commands/quests)
@@ -39,128 +34,27 @@ export function getPlayerXp (playerXp: number, level: number): { relativeLevelXp
 }
 
 /**
- * Get the stimulants a user has active (and their time until expiration)
- * @param query The query to use
- * @param userID The ID of user to get stimulants for
- * @param types Types of stimulants to check for, reduces the number of queries on database
- * @param forUpdate Whether this is part of an sql transaction or not
- * @returns Stimulants active and their time until expiration
- */
-export async function getActiveStimulants (query: Query, userID: string, types?: ('damage' | 'accuracy' | 'weight' | 'fireRate')[], forUpdate = false): Promise<{ cooldown: string, stimulant: StimulantMedical }[]> {
-	const stimulantItems = allItems.filter(itm => itm.type === 'Medical' && itm.subtype === 'Stimulant') as StimulantMedical[]
-	const activeStimulants: { cooldown: string, stimulant: StimulantMedical }[] = []
-
-	for (const item of stimulantItems) {
-		if (
-			!types ||
-			(item.effects.accuracyBonus && types.includes('accuracy')) ||
-			(item.effects.damageBonus && types.includes('damage')) ||
-			(item.effects.fireRate && types.includes('fireRate')) ||
-			(item.effects.weightBonus && types.includes('weight')) ||
-			(item.effects.damageReduction && types.includes('damage'))
-		) {
-			const active = await getCooldown(query, userID, item.name, forUpdate)
-
-			if (active) {
-				activeStimulants.push({
-					cooldown: active,
-					stimulant: item
-				})
-			}
-		}
-	}
-
-	return activeStimulants
-}
-
-/**
- * Get the afflictions (debuffs) a user has active (and their time until expiration)
- * @param query The query to use
- * @param userID The ID of user to get afflictions for
- * @param forUpdate Whether this is part of an sql transaction or not
- * @returns Stimulants active and their time until expiration
- */
-export async function getAfflictions (query: Query, userID: string, forUpdate = false): Promise<{ cooldown: string, type: Affliction }[]> {
-	const afflictions: { cooldown: string, type: Affliction }[] = []
-	const bitten = await getCooldown(query, userID, 'bitten', forUpdate)
-	const broken = await getCooldown(query, userID, 'broken-arm', forUpdate)
-	const burning = await getCooldown(query, userID, 'burning', forUpdate)
-
-	if (bitten) {
-		afflictions.push({
-			cooldown: bitten,
-			type: 'Bitten'
-		})
-	}
-	if (broken) {
-		afflictions.push({
-			cooldown: broken,
-			type: 'Broken Arm'
-		})
-	}
-	if (burning) {
-		afflictions.push({
-			cooldown: burning,
-			type: 'Burning'
-		})
-	}
-
-	return afflictions
-}
-
-/**
  * Adds the effects a user has active
  * @param activeStimulants The users active stimulants
+ * @param afflictions Afflictions user has
  * @returns Users active effects
  */
-export function addStatusEffects (activeStimulants: StimulantMedical[], afflictions?: Affliction[]): {
-	/**
-	 * Damage percent bonus (10 would be 10% bonus damage)
-	 */
-	damageBonus: number
-	/**
-	 * Accuracy percent bonus (10 would be 10% bonus accuracy)
-	 */
-	accuracyBonus: number
-	/**
-	 * Weight added (10 would be 10 extra slots)
-	 */
-	weightBonus: number
-	/**
-	 * Percent firerate cooldown reduction (10 would be 10% time reduction)
-	 */
-	fireRate: number
-	/**
-	 * Percent damage reduction from attacks (10 would be 10% reduction)
-	 */
-	damageReduction: number
-} {
-	const effects = {
+export function addStatusEffects (activeStimulants: StimulantMedical[], afflictions: Affliction[] = []): StatusEffects {
+	const effects: StatusEffects = {
 		damageBonus: 0,
 		accuracyBonus: 0,
-		weightBonus: 0,
-		fireRate: 0,
 		damageReduction: 0
 	}
 
 	for (const item of activeStimulants) {
-		effects.accuracyBonus += item.effects.accuracyBonus
-		effects.damageBonus += item.effects.damageBonus
-		effects.weightBonus += item.effects.weightBonus
-		effects.fireRate += item.effects.fireRate
-		effects.damageReduction += item.effects.damageReduction
+		for (const effect in item.effects) {
+			effects[effect as keyof StatusEffects] += item.effects[effect as keyof StatusEffects]
+		}
 	}
 
-	for (const type of afflictions || []) {
-		if (type === 'Bitten') {
-			effects.damageBonus += -20
-			effects.damageReduction += -20
-		}
-		else if (type === 'Broken Arm') {
-			effects.fireRate += -15
-		}
-		else if (type === 'Burning') {
-			effects.damageReduction += -25
+	for (const affliction of afflictions) {
+		for (const effect in affliction.effects) {
+			effects[effect as keyof StatusEffects] += affliction.effects[effect as keyof StatusEffects]
 		}
 	}
 
@@ -168,23 +62,35 @@ export function addStatusEffects (activeStimulants: StimulantMedical[], afflicti
 }
 
 /**
- * @param activeAfflictions Array of afflictions, can be obtained from getAfflictions
- * @returns String display of the afflictions
+ * Convert an effects object to a array of strings used to display the effects
+ * @param effects The effects to get display of
+ * @param showAll Whether or not to show all current effects regardless if they are 0%
  */
-export function getAfflictionsDisplay (activeAfflictions: { cooldown: string, type: Affliction }[]): string {
-	const effectsDisplay = []
+export function getEffectsDisplay (effects: StatusEffects, showAll = false): string[] {
+	const display = []
 
-	for (const affliction of activeAfflictions) {
-		if (affliction.type === 'Bitten') {
-			effectsDisplay.push(`${icons.biohazard} Bitten (-20% damage dealt, +20% damage taken) **${affliction.cooldown}** left`)
-		}
-		if (affliction.type === 'Broken Arm') {
-			effectsDisplay.push(`🦴 Broken Arm (+15% attack cooldown) **${affliction.cooldown}** left`)
-		}
-		if (affliction.type === 'Burning') {
-			effectsDisplay.push(`${icons.burning} Burning (+25% damage taken) **${affliction.cooldown}** left`)
+	for (const effect in effects) {
+		const typedEffect = effect as keyof StatusEffects
+
+		if (showAll || effects[typedEffect]) {
+			const percentDisplay = `${effects[typedEffect] <= 0 ? '' : '+'}${effects[typedEffect]}%`
+
+			switch (typedEffect) {
+				case 'accuracyBonus': {
+					display.push(`${percentDisplay} accuracy`)
+					break
+				}
+				case 'damageBonus': {
+					display.push(`${percentDisplay} damage`)
+					break
+				}
+				case 'damageReduction': {
+					display.push(`${percentDisplay} damage taken`)
+					break
+				}
+			}
 		}
 	}
 
-	return effectsDisplay.join('\n')
+	return display
 }

@@ -2,6 +2,7 @@ import { CommandOptionType, SlashCreator, CommandContext, ComponentType, Message
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import App from '../app'
 import { icons } from '../config'
+import { Affliction, afflictions } from '../resources/afflictions'
 import { allItems, items } from '../resources/items'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
@@ -14,11 +15,13 @@ import { addHealth, addXp, getUserRow, increaseDeaths, increaseKills, lowerHealt
 import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByAmmo, sortItemsByLevel, sortItemsByValue } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
-import { addStatusEffects } from '../utils/playerUtils'
+import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
 import { BodyPart, getAttackDamage, getBodyPartHit } from '../utils/raidUtils'
 import { combineArrayWithAnd, formatHealth, formatMoney, getBodyPartEmoji } from '../utils/stringUtils'
 
 type ItemWithRowOfType<T extends Item> = ItemWithRow<BackpackItemRow> & { item: T }
+
+const maxStimulantsPerDuel = 4
 
 class DuelCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -51,6 +54,12 @@ class DuelCommand extends CustomSlashCommand {
 		if (!member) {
 			await ctx.send({
 				content: `${icons.danger} You must specify someone to duel against!`
+			})
+			return
+		}
+		else if (member.id === ctx.user.id) {
+			await ctx.send({
+				content: `${icons.danger} You cannot duel yourself!`
 			})
 			return
 		}
@@ -88,9 +97,9 @@ class DuelCommand extends CustomSlashCommand {
 			const player1Inventory = await getUserBackpack(preTransaction.query, ctx.user.id, true)
 			const player2Inventory = await getUserBackpack(preTransaction.query, member.id, true)
 			const player1Stimulants: StimulantMedical[] = []
-			const player1Afflictions: ('Bitten' | 'Broken Arm' | 'Burning')[] = []
+			const player1Afflictions: Affliction[] = []
 			const player2Stimulants: StimulantMedical[] = []
-			const player2Afflictions: ('Bitten' | 'Broken Arm' | 'Burning')[] = []
+			const player2Afflictions: Affliction[] = []
 
 			if (player1Data.fighting) {
 				await preTransaction.commit()
@@ -185,7 +194,7 @@ class DuelCommand extends CustomSlashCommand {
 								const weaponChoice = choice.weapon
 								const hasWeapon = !weaponChoice.row || playerInventory.items.find(i => i.row.id === weaponChoice.row.id)
 								const hasAmmo = playerInventory.items.find(i => i.row.id === choice.ammo?.row.id)
-								const bodyPartHit = getBodyPartHit((choice.weapon.item as Weapon).accuracy, choice.limbTarget)
+								const bodyPartHit = getBodyPartHit((choice.weapon.item as Weapon).accuracy + stimulantEffects.accuracyBonus, choice.limbTarget)
 								const missedPartChoice = choice.limbTarget && (choice.limbTarget !== bodyPartHit.result || !bodyPartHit.accurate)
 								const victimItemsRemoved: number[] = []
 								const limbsHit = []
@@ -290,13 +299,13 @@ class DuelCommand extends CustomSlashCommand {
 										messages.push(this.getAttackString(choice.weapon.item, `<@${turn}>`, `<@${otherPlayerID}>`, limbsHit, totalDamage))
 
 										if (choice.weapon.item.subtype === 'Incendiary Grenade') {
-											messages.push(`- ${icons.debuff} <@${otherPlayerID}> is ${icons.burning} Burning! (+25% damage taken for 4 minutes)`)
+											messages.push(`- ${icons.debuff} <@${otherPlayerID}> is Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
 
 											if (turn === ctx.user.id) {
-												player2Afflictions.push('Burning')
+												player2Afflictions.push(afflictions.Burning)
 											}
 											else {
-												player1Afflictions.push('Burning')
+												player1Afflictions.push(afflictions.Burning)
 											}
 										}
 									}
@@ -369,14 +378,13 @@ class DuelCommand extends CustomSlashCommand {
 											}
 										}
 										else if (result.limb === 'arm' && Math.random() <= 0.2) {
-											// TODO replace arm broken debuff with damage debuff
-											messages.push(`- ${icons.debuff} <@${otherPlayerID}>'s arm was broken! (+15% attack cooldown for 4 minutes)`)
+											messages.push(`- ${icons.debuff} <@${otherPlayerID}>'s arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
 
 											if (turn === ctx.user.id) {
-												player2Afflictions.push('Broken Arm')
+												player2Afflictions.push(afflictions['Broken Arm'])
 											}
 											else {
-												player1Afflictions.push('Broken Arm')
+												player1Afflictions.push(afflictions['Broken Arm'])
 											}
 										}
 									}
@@ -591,15 +599,15 @@ class DuelCommand extends CustomSlashCommand {
 									for (let i = playerAfflictions.length - 1; i >= 0; i--) {
 										const affliction = playerAfflictions[i]
 
-										if (choice.item.curesBitten && affliction === 'Bitten') {
+										if (choice.item.curesBitten && affliction.name === 'Bitten') {
 											curedAfflictions.push(affliction)
 											playerAfflictions.splice(i, 1)
 										}
-										else if (choice.item.curesBrokenArm && affliction === 'Broken Arm') {
+										else if (choice.item.curesBrokenArm && affliction.name === 'Broken Arm') {
 											curedAfflictions.push(affliction)
 											playerAfflictions.splice(i, 1)
 										}
-										else if (choice.item.curesBurning && affliction === 'Burning') {
+										else if (choice.item.curesBurning && affliction.name === 'Burning') {
 											curedAfflictions.push(affliction)
 											playerAfflictions.splice(i, 1)
 										}
@@ -620,7 +628,7 @@ class DuelCommand extends CustomSlashCommand {
 									.setTitle(`Duel - ${ctx.member.displayName} vs ${member.displayName}`)
 									.setDescription(`<@${turn}> uses a ${itemDisplay} to heal for **${maxHeal}** health.` +
 										`\n<@${turn}> now has ${formatHealth(playerData.health + maxHeal, playerData.maxHealth)} **${playerData.health + maxHeal} / ${playerData.maxHealth}** health.` +
-										`${curedAfflictions.length ? `\n<@${turn}> cured the following afflictions: ${combineArrayWithAnd(curedAfflictions)}` : ''}`)
+										`${curedAfflictions.length ? `\n<@${turn}> cured the following afflictions: ${combineArrayWithAnd(curedAfflictions.map(a => a.name))}` : ''}`)
 									.setFooter(`Turn #${turnNumber}`)
 
 								await val.sendFollowUp({
@@ -662,6 +670,21 @@ class DuelCommand extends CustomSlashCommand {
 								await val.sendFollowUp({
 									ephemeral: true,
 									content: `${icons.danger} You don't have any stimulants that you can inject right now. Please select a different action.`
+								})
+								continue
+							}
+							else if (playerStimulants.length >= maxStimulantsPerDuel) {
+								// user has used max stimulants in this duel already
+								stimBtnDisabled = true
+								await val.editOriginal({
+									components: [{
+										type: ComponentType.ACTION_ROW,
+										components: [GRAY_BUTTON('Attack', 'attack', false, '🗡️'), GRAY_BUTTON('Use Medical Item', 'heal', healBtnDisabled, '🩹'), GRAY_BUTTON('Use Stimulant', 'stimulant', stimBtnDisabled, '💉'), RED_BUTTON('Try to Flee', 'flee')]
+									}]
+								})
+								await val.sendFollowUp({
+									ephemeral: true,
+									content: `${icons.danger} You can only inject up to **${maxStimulantsPerDuel}** stimulants per duel. Please select a different action.`
 								})
 								continue
 							}
@@ -713,28 +736,12 @@ class DuelCommand extends CustomSlashCommand {
 								}, {
 									showID: false
 								})
-								const effectsDisplay = []
-
-								if (choice.item.effects.accuracyBonus) {
-									effectsDisplay.push(`${choice.item.effects.accuracyBonus > 0 ? icons.buff : icons.debuff} <@${turn}> now has **${choice.item.effects.accuracyBonus > 0 ? '+' : ''}${choice.item.effects.accuracyBonus}%** accuracy with weapons.`)
-								}
-								if (choice.item.effects.damageBonus) {
-									effectsDisplay.push(`${choice.item.effects.damageBonus > 0 ? icons.buff : icons.debuff} <@${turn}> now deals **${choice.item.effects.damageBonus > 0 ? '+' : ''}${choice.item.effects.damageBonus}%** damage with weapons.`)
-								}
-								if (choice.item.effects.weightBonus) {
-									effectsDisplay.push(`${choice.item.effects.weightBonus > 0 ? icons.buff : icons.debuff} <@${turn}>'s inventory slots have been ${choice.item.effects.weightBonus > 0 ? 'increased' : 'decreased'} by **${choice.item.effects.weightBonus}**.`)
-								}
-								if (choice.item.effects.fireRate) {
-									effectsDisplay.push(`${choice.item.effects.fireRate > 0 ? icons.buff : icons.debuff} <@${turn}>'s attack cooldown is now ${choice.item.effects.fireRate > 0 ? 'decreased' : 'increased'} by **${choice.item.effects.fireRate}%**.`)
-								}
-								if (choice.item.effects.damageReduction) {
-									effectsDisplay.push(`${choice.item.effects.damageReduction > 0 ? icons.buff : icons.debuff} <@${turn}>'s damage taken from attacks is now ${choice.item.effects.damageReduction > 0 ? 'decreased' : 'increased'} by **${choice.item.effects.damageReduction}%**.`)
-								}
+								const effectsDisplay = getEffectsDisplay(choice.item.effects)
 
 								const healEmbed = new Embed()
 									.setTitle(`Duel - ${ctx.member.displayName} vs ${member.displayName}`)
 									.setDescription(`<@${turn}> injects themself with ${itemDisplay}.` +
-										`\n${effectsDisplay.join('\n')}`)
+										`\n\n__Effects Received__\n${effectsDisplay.join('\n')}`)
 									.setFooter(`Turn #${turnNumber}`)
 
 								await val.sendFollowUp({
@@ -855,11 +862,16 @@ class DuelCommand extends CustomSlashCommand {
 		turnNumber: number,
 		player1Stimulants: StimulantMedical[],
 		player2Stimulants: StimulantMedical[],
-		player1Afflictions: ('Bitten' | 'Broken Arm' | 'Burning')[],
-		player2Afflictions: ('Bitten' | 'Broken Arm' | 'Burning')[]
+		player1Afflictions: Affliction[],
+		player2Afflictions: Affliction[]
 	): Embed {
 		const player1Equips = getEquips(player1Inventory)
 		const player2Equips = getEquips(player2Inventory)
+		const player1Effects = addStatusEffects(player1Stimulants, player1Afflictions)
+		const player2Effects = addStatusEffects(player2Stimulants, player2Afflictions)
+		const player1EffectsDisplay = getEffectsDisplay(player1Effects)
+		const player2EffectsDisplay = getEffectsDisplay(player2Effects)
+
 		const duelEmb = new Embed()
 			.setTitle(`Duel - ${player1.displayName} vs ${player2.displayName}`)
 			.addField(`${player1.user.username}#${player1.user.discriminator} (Level ${player1Data.level})`,
@@ -867,16 +879,18 @@ class DuelCommand extends CustomSlashCommand {
 				`\n\n__**Gear**__\n**Backpack**: ${player1Equips.backpack ? getItemDisplay(player1Equips.backpack.item, player1Equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Helmet**: ${player1Equips.helmet ? getItemDisplay(player1Equips.helmet.item, player1Equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Body Armor**: ${player1Equips.armor ? getItemDisplay(player1Equips.armor.item, player1Equips.armor.row, { showEquipped: false, showID: false }) : 'None'}` +
-				`\n\n__**Effects**__\n**Stimulants**: ${player1Stimulants.length ? `\n${player1Stimulants.map(i => getItemDisplay(i)).join('\n')}` : 'None'}` +
-				`\n**Afflictions**: ${player1Afflictions.length ? combineArrayWithAnd(player1Afflictions) : 'None'}`,
+				`\n\n__**Stimulants**__\n${player1Stimulants.length ? player1Stimulants.map(i => getItemDisplay(i)).join('\n') : 'None'}` +
+				`\n\n__**Afflictions**__\n${player1Afflictions.length ? combineArrayWithAnd(player1Afflictions.map(a => a.name)) : 'None'}` +
+				`${player1EffectsDisplay.length ? `\n\n__**Effects**__\n${player1EffectsDisplay.join('\n')}` : ''}`,
 				true)
 			.addField(`${player2.user.username}#${player2.user.discriminator} (Level ${player2Data.level})`,
 				`__**Health**__\n**${player2Data.health} / ${player2Data.maxHealth}** HP\n${formatHealth(player2Data.health, player2Data.maxHealth)}` +
 				`\n\n__**Gear**__\n**Backpack**: ${player2Equips.backpack ? getItemDisplay(player2Equips.backpack.item, player2Equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Helmet**: ${player2Equips.helmet ? getItemDisplay(player2Equips.helmet.item, player2Equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Body Armor**: ${player2Equips.armor ? getItemDisplay(player2Equips.armor.item, player2Equips.armor.row, { showEquipped: false, showID: false }) : 'None'}` +
-				`\n\n__**Effects**__\n**Stimulants**: ${player2Stimulants.length ? `\n${player2Stimulants.map(i => getItemDisplay(i)).join('\n')}` : 'None'}` +
-				`\n**Afflictions**: ${player2Afflictions.length ? combineArrayWithAnd(player2Afflictions) : 'None'}`,
+				`\n\n__**Stimulants**__\n${player2Stimulants.length ? player2Stimulants.map(i => getItemDisplay(i)).join('\n') : 'None'}` +
+				`\n\n__**Afflictions**__\n${player2Afflictions.length ? combineArrayWithAnd(player2Afflictions.map(a => a.name)) : 'None'}` +
+				`${player2EffectsDisplay.length ? `\n\n__**Effects**__\n${player2EffectsDisplay.join('\n')}` : ''}`,
 				true)
 			.setFooter(`Turn #${turnNumber} / 20 max`)
 

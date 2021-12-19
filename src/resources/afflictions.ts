@@ -1,6 +1,6 @@
 import { StatusEffects } from '../types/Items'
 
-interface Affliction {
+export interface Affliction {
 	name: string
 	effects: StatusEffects
 }

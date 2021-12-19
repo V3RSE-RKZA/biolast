@@ -53,23 +53,20 @@ export const medical = medicalObject({
 		curesBrokenArm: false,
 		curesBurning: false
 	},
-	'adrenaline_stimulant': {
+	'adrenaline': {
 		type: 'Medical',
 		subtype: 'Stimulant',
-		name: 'adrenaline_stimulant',
+		name: 'adrenaline',
 		icon: '<:syringe:886561670812549130>',
-		aliases: ['adrenaline', 'adrena_stim'],
+		aliases: ['adrena_stim', 'adrena'],
 		sellPrice: 561,
 		slotsUsed: 1,
 		itemLevel: 8,
 		durability: 1,
 		effects: {
-			damageBonus: 20,
+			damageBonus: 25,
 			accuracyBonus: 0,
-			weightBonus: 0,
-			fireRate: 0,
-			damageReduction: -20,
-			length: 300
+			damageReduction: -20
 		}
 	},
 	'hypo_stim': {
@@ -85,10 +82,7 @@ export const medical = medicalObject({
 		effects: {
 			damageBonus: 0,
 			accuracyBonus: -15,
-			weightBonus: 0,
-			fireRate: 20,
-			damageReduction: 0,
-			length: 300
+			damageReduction: 0
 		}
 	},
 	'adderall': {
@@ -104,10 +98,7 @@ export const medical = medicalObject({
 		effects: {
 			damageBonus: 0,
 			accuracyBonus: 15,
-			weightBonus: 0,
-			fireRate: -20,
-			damageReduction: 0,
-			length: 300
+			damageReduction: 0
 		}
 	},
 	'morphine': {
@@ -123,10 +114,7 @@ export const medical = medicalObject({
 		effects: {
 			damageBonus: -20,
 			accuracyBonus: 0,
-			weightBonus: 0,
-			fireRate: 0,
-			damageReduction: 20,
-			length: 300
+			damageReduction: 20
 		}
 	},
 	'daves_concoction': {
@@ -143,10 +131,7 @@ export const medical = medicalObject({
 		effects: {
 			damageBonus: 0,
 			accuracyBonus: 0,
-			weightBonus: 10,
-			fireRate: -35,
-			damageReduction: 0,
-			length: 300
+			damageReduction: 0
 		}
 	},
 	'hyfin_chest_seal': {

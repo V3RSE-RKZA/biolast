@@ -171,7 +171,7 @@ export const farm: Location = {
 					xp: 8
 				},
 				uncommon: {
-					items: [items.adrenaline_stimulant, items.morphine],
+					items: [items.adrenaline, items.morphine],
 					xp: 10
 				},
 				rare: {
