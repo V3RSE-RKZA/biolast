@@ -12,7 +12,6 @@ export const ranged = rangedObject({
 		sellPrice: 876,
 		durability: 6,
 		slotsUsed: 4,
-		fireRate: 45,
 		accuracy: 91,
 		itemLevel: 7
 	},
@@ -25,7 +24,6 @@ export const ranged = rangedObject({
 		sellPrice: 1588,
 		durability: 5,
 		slotsUsed: 3,
-		fireRate: 25,
 		accuracy: 60,
 		itemLevel: 10
 	},
@@ -38,7 +36,6 @@ export const ranged = rangedObject({
 		sellPrice: 2242,
 		durability: 6,
 		slotsUsed: 4,
-		fireRate: 28,
 		accuracy: 63,
 		itemLevel: 12
 	},
@@ -51,7 +48,6 @@ export const ranged = rangedObject({
 		sellPrice: 22032,
 		durability: 10,
 		slotsUsed: 5,
-		fireRate: 70,
 		accuracy: 98,
 		itemLevel: 23
 	},
@@ -64,7 +60,6 @@ export const ranged = rangedObject({
 		sellPrice: 3182,
 		durability: 5,
 		slotsUsed: 4,
-		fireRate: 30,
 		accuracy: 90,
 		itemLevel: 13
 	},
@@ -77,7 +72,6 @@ export const ranged = rangedObject({
 		sellPrice: 951,
 		durability: 5,
 		slotsUsed: 2,
-		fireRate: 40,
 		accuracy: 85,
 		itemLevel: 8
 	},
@@ -90,7 +84,6 @@ export const ranged = rangedObject({
 		sellPrice: 1782,
 		durability: 6,
 		slotsUsed: 3,
-		fireRate: 26,
 		accuracy: 78,
 		itemLevel: 13
 	},
@@ -102,7 +95,6 @@ export const ranged = rangedObject({
 		sellPrice: 251,
 		durability: 6,
 		slotsUsed: 2,
-		fireRate: 40,
 		accuracy: 91,
 		itemLevel: 5
 	},
@@ -115,7 +107,6 @@ export const ranged = rangedObject({
 		sellPrice: 1464,
 		durability: 5,
 		slotsUsed: 3,
-		fireRate: 20,
 		accuracy: 65,
 		itemLevel: 9
 	},
@@ -128,7 +119,6 @@ export const ranged = rangedObject({
 		sellPrice: 261,
 		durability: 4,
 		slotsUsed: 2,
-		fireRate: 35,
 		accuracy: 90,
 		itemLevel: 5
 	},
@@ -141,7 +131,6 @@ export const ranged = rangedObject({
 		sellPrice: 134,
 		durability: 4,
 		slotsUsed: 2,
-		fireRate: 35,
 		accuracy: 86,
 		itemLevel: 3
 	},
@@ -154,7 +143,6 @@ export const ranged = rangedObject({
 		sellPrice: 48,
 		durability: 2,
 		slotsUsed: 2,
-		fireRate: 30,
 		accuracy: 71,
 		itemLevel: 1
 	},
@@ -167,7 +155,6 @@ export const ranged = rangedObject({
 		sellPrice: 79,
 		durability: 3,
 		slotsUsed: 3,
-		fireRate: 45,
 		accuracy: 73,
 		itemLevel: 3
 	},
@@ -180,7 +167,6 @@ export const ranged = rangedObject({
 		sellPrice: 142,
 		durability: 3,
 		slotsUsed: 2,
-		fireRate: 60,
 		accuracy: 71,
 		itemLevel: 3
 	},
@@ -193,7 +179,6 @@ export const ranged = rangedObject({
 		sellPrice: 7056,
 		durability: 5,
 		slotsUsed: 4,
-		fireRate: 70,
 		accuracy: 94,
 		itemLevel: 15
 	},
@@ -206,7 +191,6 @@ export const ranged = rangedObject({
 		sellPrice: 2003,
 		durability: 5,
 		slotsUsed: 3,
-		fireRate: 40,
 		accuracy: 68,
 		itemLevel: 10
 	},
@@ -219,7 +203,6 @@ export const ranged = rangedObject({
 		sellPrice: 5212,
 		durability: 5,
 		slotsUsed: 4,
-		fireRate: 60,
 		accuracy: 72,
 		itemLevel: 13
 	},
@@ -232,7 +215,6 @@ export const ranged = rangedObject({
 		sellPrice: 10021,
 		durability: 6,
 		slotsUsed: 4,
-		fireRate: 35,
 		accuracy: 70,
 		itemLevel: 16
 	}

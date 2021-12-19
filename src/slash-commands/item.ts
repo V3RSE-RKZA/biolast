@@ -141,14 +141,12 @@ class ItemCommand extends CustomSlashCommand {
 			}
 			case 'Melee Weapon': {
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
-				itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
 				itemEmbed.addField('Damage', item.damage.toString(), true)
 				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
 				break
 			}
 			case 'Throwable Weapon': {
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
-				itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
 				if (item.spreadsDamageToLimbs) {
 					itemEmbed.addField('Damage', `${item.damage} (${Math.round(item.damage / item.spreadsDamageToLimbs)} x ${item.spreadsDamageToLimbs} limbs)`, true)
 					itemEmbed.addField('Special', `Spreads damage across **${item.spreadsDamageToLimbs}** limbs.`, true)
@@ -166,7 +164,6 @@ class ItemCommand extends CustomSlashCommand {
 				const ammunition = sortItemsByAmmo(allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item))) as Ammunition[]
 
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
-				itemEmbed.addField('Attack Rate', `${item.fireRate} seconds`, true)
 				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (${itm.spreadsDamageToLimbs ? `**${Math.round(itm.damage / itm.spreadsDamageToLimbs)} x ${itm.spreadsDamageToLimbs}** damage` : `**${itm.damage}** damage`})`).join('\n'))
 				break
 			}

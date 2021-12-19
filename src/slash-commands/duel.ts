@@ -1018,7 +1018,6 @@ class DuelCommand extends CustomSlashCommand {
 							icon: '👊',
 							slotsUsed: 0,
 							itemLevel: 1,
-							fireRate: 10,
 							damage: 10,
 							accuracy: 50,
 							durability: 1,

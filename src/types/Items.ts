@@ -21,11 +21,6 @@ export interface RangedWeapon extends BaseItem {
 	type: 'Ranged Weapon'
 
 	/**
-	 * How often can this weapon be used (cooldown in seconds)
-	 */
-	fireRate: number
-
-	/**
 	 * The percent chance for this weapon to hit target (0% - 100%)
 	 */
 	accuracy: number
@@ -38,11 +33,6 @@ export interface RangedWeapon extends BaseItem {
 
 export interface MeleeWeapon extends BaseItem {
 	type: 'Melee Weapon'
-
-	/**
-	 * How often can this weapon be used (cooldown in seconds)
-	 */
-	fireRate: number
 
 	/**
 	 * The amount of damage this melee weapon deals when used
@@ -69,11 +59,6 @@ export interface MeleeWeapon extends BaseItem {
 export interface ThrowableWeapon extends BaseItem {
 	type: 'Throwable Weapon'
 	subtype: 'Fragmentation Grenade' | 'Incendiary Grenade'
-
-	/**
-	 * How often can this weapon be used (cooldown in seconds)
-	 */
-	fireRate: number
 
 	/**
 	 * The amount of damage this melee weapon deals when used
