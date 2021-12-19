@@ -47,11 +47,11 @@ class EquipCommand extends CustomSlashCommand {
 			})
 			return
 		}
-		else if (!['Ranged Weapon', 'Melee Weapon', 'Throwable Weapon', 'Helmet', 'Body Armor', 'Backpack'].includes(itemToEquip.item.type)) {
+		else if (!['Helmet', 'Body Armor', 'Backpack'].includes(itemToEquip.item.type)) {
 			await transaction.commit()
 
 			await ctx.send({
-				content: `${icons.warning} Unequippable item. You cannot equip items of type **${itemToEquip.item.type}**. Specify a weapon, helmet, armor, or backpack to equip.`
+				content: `${icons.warning} Unequippable item. You cannot equip items of type **${itemToEquip.item.type}**. Specify a helmet, armor, or backpack to equip.`
 			})
 			return
 		}
@@ -62,10 +62,6 @@ class EquipCommand extends CustomSlashCommand {
 		if (equips.backpack && itemToEquip.item.type === 'Backpack') {
 			unequippedItem = equips.backpack
 			await unequipItem(transaction.query, equips.backpack.row.id)
-		}
-		else if (equips.weapon && (itemToEquip.item.type === 'Melee Weapon' || itemToEquip.item.type === 'Ranged Weapon' || itemToEquip.item.type === 'Throwable Weapon')) {
-			unequippedItem = equips.weapon
-			await unequipItem(transaction.query, equips.weapon.row.id)
 		}
 		else if (equips.helmet && itemToEquip.item.type === 'Helmet') {
 			unequippedItem = equips.helmet

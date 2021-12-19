@@ -1,7 +1,7 @@
 import { ItemRow, BackpackItemRow, ItemWithRow } from '../types/mysql'
 import { allItems } from '../resources/items'
 import { baseBackpackLimit } from '../config'
-import { Ammunition, Armor, Backpack, Helmet, Item, Weapon } from '../types/Items'
+import { Ammunition, Armor, Backpack, Helmet, Item } from '../types/Items'
 
 function instanceOfBackpackRow (itemRow: ItemRow | BackpackItemRow): itemRow is BackpackItemRow {
 	return 'equipped' in itemRow
@@ -76,12 +76,10 @@ export function getEquips (backpackRows: BackpackItemRow[]): {
 	backpack?: { item: Backpack, row: BackpackItemRow }
 	helmet?: { item: Helmet, row: BackpackItemRow & { durability: number } }
 	armor?: { item: Armor, row: BackpackItemRow & { durability: number } }
-	weapon?: { item: Weapon, row: BackpackItemRow & { durability: number } }
 } {
 	let backpack
 	let helmet
 	let armor
-	let weapon
 
 	for (const row of backpackRows) {
 		const item = allItems.find(i => i.name === row.item)
@@ -91,9 +89,6 @@ export function getEquips (backpackRows: BackpackItemRow[]): {
 				case 'Backpack': backpack = { item, row }; break
 				case 'Helmet': helmet = { item, row: row as BackpackItemRow & { durability: number } }; break
 				case 'Body Armor': armor = { item, row: row as BackpackItemRow & { durability: number } }; break
-				case 'Melee Weapon':
-				case 'Ranged Weapon':
-				case 'Throwable Weapon': weapon = { item, row: row as BackpackItemRow & { durability: number } }; break
 			}
 		}
 	}
@@ -101,8 +96,7 @@ export function getEquips (backpackRows: BackpackItemRow[]): {
 	return {
 		backpack,
 		helmet,
-		armor,
-		weapon
+		armor
 	}
 }
 

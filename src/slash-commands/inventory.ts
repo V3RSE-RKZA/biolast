@@ -102,8 +102,7 @@ class InventoryCommand extends CustomSlashCommand {
 				.addField('__Equips__', 'Equip an item with `/equip <item id>`.\n' +
 					`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}\n` +
-					`**Body Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row, { showEquipped: false, showID: false }) : 'None'}\n` +
-					`**Weapon**: ${equips.weapon ? getItemDisplay(equips.weapon.item, equips.weapon.row, { showEquipped: false, showID: false }) : 'None'}`)
+					`**Body Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row, { showEquipped: false, showID: false }) : 'None'}`)
 				.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})`, filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || 'No items found. Move items from your stash to your inventory with `/stash take <item id>`.')
 			pages.push(embed)
 		}

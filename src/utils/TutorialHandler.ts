@@ -8,8 +8,6 @@ import { getNPC } from './db/npcs'
 import { query } from './db/mysql'
 import { allNPCs } from '../resources/npcs'
 import { locations } from '../resources/raids'
-import { getUserBackpack } from './db/items'
-import { getEquips } from './itemUtils'
 import { logger } from './logger'
 
 class TutorialHandler {
@@ -346,20 +344,7 @@ class TutorialHandler {
 					}
 				}
 				else if (activeTutorial === 8) {
-					const userBackpack = await getUserBackpack(query, ctx.user.id)
-					const userEquips = getEquips(userBackpack)
-
-					if (command.commandName === 'attack' && ctx.options.npc && userEquips.weapon) {
-						await ctx.sendFollowUp({
-							content: `Tutorial Step 8/10:\n\n${icons.checkmark} Great job! You successfully attacked the walker, and the walker attacked you back.` +
-								' If you were to continue and successfully kill this walker, they would drop items onto the **ground**.' +
-								' **You can view items on the ground with `/ground view`.**',
-							flags: InteractionResponseFlags.EPHEMERAL
-						})
-
-						this.tutorialUsers.set(ctx.user.id, 9)
-					}
-					else if (command.commandName === 'attack' && ctx.options.npc) {
+					if (command.commandName === 'attack' && ctx.options.npc) {
 						const botMessage = await ctx.sendFollowUp({
 							content: `Tutorial Step 8/10:\n\n${icons.warning} Make sure you have a weapon equipped. You can equip a weapon from your inventory using \`/equip <item id>\`.`,
 							flags: InteractionResponseFlags.EPHEMERAL,

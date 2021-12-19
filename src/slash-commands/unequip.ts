@@ -28,10 +28,6 @@ class UnequipCommand extends CustomSlashCommand {
 							value: 'helmet'
 						},
 						{
-							name: 'Weapon',
-							value: 'weapon'
-						},
-						{
 							name: 'Backpack',
 							value: 'backpack'
 						}
@@ -60,10 +56,6 @@ class UnequipCommand extends CustomSlashCommand {
 		if (equips.backpack && itemType === 'backpack') {
 			unequippedItem = equips.backpack
 			await unequipItem(transaction.query, equips.backpack.row.id)
-		}
-		else if (equips.weapon && itemType === 'weapon') {
-			unequippedItem = equips.weapon
-			await unequipItem(transaction.query, equips.weapon.row.id)
 		}
 		else if (equips.helmet && itemType === 'helmet') {
 			unequippedItem = equips.helmet
