@@ -47,6 +47,11 @@ class App {
 	shopSellMultiplier: number
 	tutorialHandler: TutorialHandler
 
+	/**
+	 * IDs of users who are currently in a duel whether it be against another player or NPC
+	 */
+	activeDuelers: Set<string>
+
 	constructor (token: string, options: Eris.ClientOptions) {
 		if (!clientId) {
 			throw new Error('BOT_CLIENT_ID not defined in .env file')
@@ -73,6 +78,7 @@ class App {
 		this.shopSellMultiplier = getRandomInt(90, 110) / 100
 		this.extractingUsers = new Set()
 		this.tutorialHandler = new TutorialHandler(this)
+		this.activeDuelers = new Set()
 	}
 
 	async launch (): Promise<void> {

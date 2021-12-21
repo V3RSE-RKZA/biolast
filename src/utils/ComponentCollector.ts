@@ -23,6 +23,11 @@ interface CollectorEvents<T> {
 	(event: 'end', listener: (msg: string | ComponentContext[]) => void): T
 }
 
+export interface CollectorObject {
+	collector: CollectorEventEmitter
+	stopCollector: (reason?: string) => void
+}
+
 class ComponentCollector {
 	private app: App
 	private collectors: Collector[]
@@ -60,7 +65,7 @@ class ComponentCollector {
 	 * @param limit How many button interactions to collect max
 	 * @returns An object with an event emitting object: collector, and and function used to stop the collector early: stopCollector
 	 */
-	createCollector (messageID: string, filter: (i: ComponentContext) => boolean, time = 15000, limit?: number): { collector: CollectorEventEmitter, stopCollector: () => void } {
+	createCollector (messageID: string, filter: (i: ComponentContext) => boolean, time = 15000, limit?: number): CollectorObject {
 		const eventCollector = new EventEmitter()
 
 		const collectorObj: Collector = {
@@ -78,7 +83,7 @@ class ComponentCollector {
 
 		return {
 			collector: collectorObj.e,
-			stopCollector: () => { this.stopCollector(collectorObj) }
+			stopCollector: (reason?: string) => { this.stopCollector(collectorObj, reason) }
 		}
 	}
 
