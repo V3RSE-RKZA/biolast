@@ -29,6 +29,11 @@ export interface RangedWeapon extends BaseItem {
 	 * How many times this weapon can be used to attack
 	 */
 	durability: number
+
+	/**
+	 * How fast this weapon attacks in duels (player who uses item with higher speed goes first)
+	 */
+	speed: number
 }
 
 export interface MeleeWeapon extends BaseItem {
@@ -54,6 +59,11 @@ export interface MeleeWeapon extends BaseItem {
 	 * Otherwise, the damage will be reduced based on the difference between this number and the victims armor level.
 	 */
 	penetration: number
+
+	/**
+	 * How fast this weapon attacks in duels (player who uses item with higher speed goes first)
+	 */
+	speed: number
 }
 
 export interface ThrowableWeapon extends BaseItem {
@@ -80,6 +90,11 @@ export interface ThrowableWeapon extends BaseItem {
 	 * Otherwise, the damage will be reduced based on the difference between this number and the victims armor level.
 	 */
 	penetration: number
+
+	/**
+	 * How fast this weapon attacks in duels (player who uses item with higher speed goes first)
+	 */
+	speed: number
 }
 
 export type Weapon = RangedWeapon | MeleeWeapon | ThrowableWeapon

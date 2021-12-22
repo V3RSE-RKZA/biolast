@@ -16,7 +16,8 @@ export const throwables = throwablesObject({
 		damage: 54,
 		penetration: 1.7,
 		itemLevel: 8,
-		spreadsDamageToLimbs: 3
+		spreadsDamageToLimbs: 3,
+		speed: 6
 	},
 	M67_grenade: {
 		type: 'Throwable Weapon',
@@ -31,7 +32,8 @@ export const throwables = throwablesObject({
 		damage: 57,
 		penetration: 3.1,
 		itemLevel: 12,
-		spreadsDamageToLimbs: 3
+		spreadsDamageToLimbs: 3,
+		speed: 5
 	},
 	molotov_cocktail: {
 		type: 'Throwable Weapon',
@@ -47,6 +49,7 @@ export const throwables = throwablesObject({
 		damage: 35,
 		penetration: 2.5,
 		itemLevel: 9,
-		spreadsDamageToLimbs: 2
+		spreadsDamageToLimbs: 2,
+		speed: 4
 	}
 })

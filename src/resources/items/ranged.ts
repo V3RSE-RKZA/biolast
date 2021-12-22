@@ -13,7 +13,8 @@ export const ranged = rangedObject({
 		durability: 6,
 		slotsUsed: 4,
 		accuracy: 91,
-		itemLevel: 7
+		itemLevel: 7,
+		speed: 14
 	},
 	'aks-74u': {
 		type: 'Ranged Weapon',
@@ -25,7 +26,8 @@ export const ranged = rangedObject({
 		durability: 5,
 		slotsUsed: 3,
 		accuracy: 60,
-		itemLevel: 10
+		itemLevel: 10,
+		speed: 34
 	},
 	'ak-47': {
 		type: 'Ranged Weapon',
@@ -37,7 +39,8 @@ export const ranged = rangedObject({
 		durability: 6,
 		slotsUsed: 4,
 		accuracy: 63,
-		itemLevel: 12
+		itemLevel: 12,
+		speed: 29
 	},
 	'awm': {
 		type: 'Ranged Weapon',
@@ -49,7 +52,8 @@ export const ranged = rangedObject({
 		durability: 10,
 		slotsUsed: 5,
 		accuracy: 98,
-		itemLevel: 23
+		itemLevel: 23,
+		speed: 2
 	},
 	'm4a1': {
 		type: 'Ranged Weapon',
@@ -61,7 +65,8 @@ export const ranged = rangedObject({
 		durability: 5,
 		slotsUsed: 4,
 		accuracy: 90,
-		itemLevel: 13
+		itemLevel: 13,
+		speed: 31
 	},
 	'FN_Five-seveN': {
 		type: 'Ranged Weapon',
@@ -73,7 +78,8 @@ export const ranged = rangedObject({
 		durability: 5,
 		slotsUsed: 2,
 		accuracy: 85,
-		itemLevel: 8
+		itemLevel: 8,
+		speed: 26
 	},
 	'FN_P90': {
 		type: 'Ranged Weapon',
@@ -85,7 +91,8 @@ export const ranged = rangedObject({
 		durability: 6,
 		slotsUsed: 3,
 		accuracy: 78,
-		itemLevel: 13
+		itemLevel: 13,
+		speed: 45
 	},
 	'glock-17': {
 		type: 'Ranged Weapon',
@@ -96,7 +103,8 @@ export const ranged = rangedObject({
 		durability: 6,
 		slotsUsed: 2,
 		accuracy: 91,
-		itemLevel: 5
+		itemLevel: 5,
+		speed: 20
 	},
 	'mp5': {
 		type: 'Ranged Weapon',
@@ -108,7 +116,8 @@ export const ranged = rangedObject({
 		durability: 5,
 		slotsUsed: 3,
 		accuracy: 65,
-		itemLevel: 9
+		itemLevel: 9,
+		speed: 28
 	},
 	'P320': {
 		type: 'Ranged Weapon',
@@ -120,7 +129,8 @@ export const ranged = rangedObject({
 		durability: 4,
 		slotsUsed: 2,
 		accuracy: 90,
-		itemLevel: 5
+		itemLevel: 5,
+		speed: 18
 	},
 	'luger': {
 		type: 'Ranged Weapon',
@@ -132,7 +142,8 @@ export const ranged = rangedObject({
 		durability: 4,
 		slotsUsed: 2,
 		accuracy: 86,
-		itemLevel: 3
+		itemLevel: 3,
+		speed: 17
 	},
 	'makeshift_pistol': {
 		type: 'Ranged Weapon',
@@ -144,7 +155,8 @@ export const ranged = rangedObject({
 		durability: 2,
 		slotsUsed: 2,
 		accuracy: 71,
-		itemLevel: 1
+		itemLevel: 1,
+		speed: 15
 	},
 	'makeshift_rifle': {
 		type: 'Ranged Weapon',
@@ -156,7 +168,8 @@ export const ranged = rangedObject({
 		durability: 3,
 		slotsUsed: 3,
 		accuracy: 73,
-		itemLevel: 3
+		itemLevel: 3,
+		speed: 25
 	},
 	'makeshift_shotgun': {
 		type: 'Ranged Weapon',
@@ -168,7 +181,8 @@ export const ranged = rangedObject({
 		durability: 3,
 		slotsUsed: 2,
 		accuracy: 71,
-		itemLevel: 3
+		itemLevel: 3,
+		speed: 9
 	},
 	'lee-enfield': {
 		type: 'Ranged Weapon',
@@ -180,7 +194,8 @@ export const ranged = rangedObject({
 		durability: 5,
 		slotsUsed: 4,
 		accuracy: 94,
-		itemLevel: 15
+		itemLevel: 15,
+		speed: 3
 	},
 	'bobwhite_g2': {
 		type: 'Ranged Weapon',
@@ -192,7 +207,8 @@ export const ranged = rangedObject({
 		durability: 5,
 		slotsUsed: 3,
 		accuracy: 68,
-		itemLevel: 10
+		itemLevel: 10,
+		speed: 14
 	},
 	'mossberg_500': {
 		type: 'Ranged Weapon',
@@ -204,7 +220,8 @@ export const ranged = rangedObject({
 		durability: 5,
 		slotsUsed: 4,
 		accuracy: 72,
-		itemLevel: 13
+		itemLevel: 13,
+		speed: 10
 	},
 	'benelli_M4': {
 		type: 'Ranged Weapon',
@@ -216,6 +233,7 @@ export const ranged = rangedObject({
 		durability: 6,
 		slotsUsed: 4,
 		accuracy: 70,
-		itemLevel: 16
+		itemLevel: 16,
+		speed: 13
 	}
 })

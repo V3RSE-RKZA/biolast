@@ -14,7 +14,8 @@ export const melee = meleeObject({
 		accuracy: 80,
 		damage: 8,
 		penetration: 1.0,
-		itemLevel: 2
+		itemLevel: 2,
+		speed: 22
 	},
 	wooden_bat: {
 		type: 'Melee Weapon',
@@ -27,7 +28,8 @@ export const melee = meleeObject({
 		accuracy: 75,
 		damage: 10,
 		penetration: 0.5,
-		itemLevel: 1
+		itemLevel: 1,
+		speed: 9
 	},
 	metal_bat: {
 		type: 'Melee Weapon',
@@ -40,7 +42,8 @@ export const melee = meleeObject({
 		accuracy: 75,
 		damage: 10,
 		penetration: 0.8,
-		itemLevel: 3
+		itemLevel: 3,
+		speed: 9
 	},
 	metal_shank: {
 		type: 'Melee Weapon',
@@ -53,7 +56,8 @@ export const melee = meleeObject({
 		accuracy: 80,
 		damage: 16,
 		penetration: 1.6,
-		itemLevel: 10
+		itemLevel: 10,
+		speed: 30
 	},
 	fork: {
 		type: 'Melee Weapon',
@@ -66,7 +70,8 @@ export const melee = meleeObject({
 		accuracy: 80,
 		damage: 5,
 		penetration: 0.7,
-		itemLevel: 1
+		itemLevel: 1,
+		speed: 9
 	},
 	sledgehammer: {
 		type: 'Melee Weapon',
@@ -79,7 +84,8 @@ export const melee = meleeObject({
 		accuracy: 65,
 		damage: 30,
 		penetration: 0.75,
-		itemLevel: 3
+		itemLevel: 3,
+		speed: 3
 	},
 	scythe: {
 		type: 'Melee Weapon',
@@ -92,7 +98,8 @@ export const melee = meleeObject({
 		accuracy: 70,
 		damage: 15,
 		penetration: 0.5,
-		itemLevel: 2
+		itemLevel: 2,
+		speed: 4
 	},
 	pitchfork: {
 		type: 'Melee Weapon',
@@ -105,7 +112,8 @@ export const melee = meleeObject({
 		accuracy: 65,
 		damage: 15,
 		penetration: 1.0,
-		itemLevel: 3
+		itemLevel: 3,
+		speed: 4
 	},
 	fire_axe: {
 		type: 'Melee Weapon',
@@ -118,7 +126,8 @@ export const melee = meleeObject({
 		accuracy: 75,
 		damage: 20,
 		penetration: 1.4,
-		itemLevel: 4
+		itemLevel: 4,
+		speed: 6
 	},
 	chainsaw: {
 		type: 'Melee Weapon',
@@ -131,7 +140,8 @@ export const melee = meleeObject({
 		accuracy: 70,
 		damage: 30,
 		penetration: 1.8,
-		itemLevel: 8
+		itemLevel: 8,
+		speed: 4
 	},
 	replica_katana: {
 		type: 'Melee Weapon',
@@ -144,7 +154,8 @@ export const melee = meleeObject({
 		accuracy: 70,
 		damage: 20,
 		penetration: 0.95,
-		itemLevel: 6
+		itemLevel: 6,
+		speed: 8
 	},
 	police_baton: {
 		type: 'Melee Weapon',
@@ -157,6 +168,7 @@ export const melee = meleeObject({
 		accuracy: 80,
 		damage: 14,
 		penetration: 0.5,
-		itemLevel: 10
+		itemLevel: 10,
+		speed: 7
 	}
 })

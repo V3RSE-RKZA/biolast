@@ -163,6 +163,7 @@ class ItemCommand extends CustomSlashCommand {
 			case 'Ranged Weapon': {
 				const ammunition = sortItemsByAmmo(allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item))) as Ammunition[]
 
+				itemEmbed.addField('Speed', `${item.speed}\n\nDetermines who turn order in duels.`, true)
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (${itm.spreadsDamageToLimbs ? `**${Math.round(itm.damage / itm.spreadsDamageToLimbs)} x ${itm.spreadsDamageToLimbs}** damage` : `**${itm.damage}** damage`})`).join('\n'))
 				break

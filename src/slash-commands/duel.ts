@@ -293,7 +293,8 @@ class DuelCommand extends CustomSlashCommand {
 													damage: 10,
 													accuracy: 50,
 													durability: 1,
-													penetration: 0
+													penetration: 0,
+													speed: 0
 												}
 											}
 										}
@@ -469,7 +470,7 @@ class DuelCommand extends CustomSlashCommand {
 										weapon,
 										ammo,
 										limbTarget,
-										speed: 1
+										speed: weapon.item.speed
 									})
 
 									if (actionCtx.user.id === ctx.user.id) {
