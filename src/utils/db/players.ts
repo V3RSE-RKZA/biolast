@@ -126,16 +126,6 @@ export async function setMaxHealth (query: Query, userID: string, amount: number
 }
 
 /**
- * Set whether a user is in a fight (PvP or PvE)
- * @param query Query to use
- * @param userID ID of user to set
- * @param fighting Amount to set max health to
- */
-export async function setFighting (query: Query, userID: string, fighting: boolean): Promise<void> {
-	await query('UPDATE users SET fighting = ? WHERE userId = ?', [fighting ? 1 : 0, userID])
-}
-
-/**
  * Set a users stash space
  * @param query Query to use
  * @param userID ID of user to set stash slots of

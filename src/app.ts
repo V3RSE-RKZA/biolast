@@ -102,7 +102,6 @@ class App {
 		)
 
 		await this.loadSlashCommmands()
-		await query('UPDATE users SET fighting = 0 WHERE fighting = 1')
 
 		// handling slash commands manually so I can filter them through my custom command handler
 		this.slashCreator.on('commandInteraction', (i, res, webserverMode) => {
