@@ -185,7 +185,7 @@ class DuelCommand extends CustomSlashCommand {
 			})
 
 			const runTurn = () => new Promise<void>((resolve, reject) => {
-				const turnCollector = this.app.componentCollector.createCollector(botMessage.id, i => i.user.id === ctx.user.id || i.user.id === member.id, 30000)
+				const turnCollector = this.app.componentCollector.createCollector(botMessage.id, i => i.user.id === ctx.user.id || i.user.id === member.id, 40000)
 				const actionCollectors: CollectorObject[] = []
 				let player1ChoiceLocked = false
 				let player2ChoiceLocked = false
@@ -206,7 +206,7 @@ class DuelCommand extends CustomSlashCommand {
 							await actionCtx.send({
 								ephemeral: true,
 								content: `${icons.danger} You cannot change your action after you have already selected one.` +
-									' You must complete your chosen action within **30 seconds** or your turn will be skipped.'
+									' You must complete your chosen action within **40 seconds** or your turn will be skipped.'
 							})
 						}
 						else if (actionCtx.customID === 'attack') {
@@ -1454,7 +1454,7 @@ class DuelCommand extends CustomSlashCommand {
 				`\n\n__**Afflictions**__\n${player2Afflictions.length ? combineArrayWithAnd(player2Afflictions.map(a => a.name)) : 'None'}` +
 				`${player2EffectsDisplay.length ? `\n\n__**Effects**__\n${player2EffectsDisplay.join('\n')}` : ''}`,
 				true)
-			.setFooter(`Turn #${turnNumber} / 20 max · 30 seconds to make selection`)
+			.setFooter(`Turn #${turnNumber} / 20 max · 40 seconds to make selection`)
 
 		return duelEmb
 	}
