@@ -13,7 +13,6 @@ import { formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { isRaidGuild } from '../utils/raidUtils'
-import { formatTime } from '../utils/db/cooldowns'
 import { allLocations } from '../resources/raids'
 import { getEffectsDisplay } from '../utils/playerUtils'
 
@@ -143,6 +142,7 @@ class ItemCommand extends CustomSlashCommand {
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 				itemEmbed.addField('Damage', item.damage.toString(), true)
 				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
+				itemEmbed.addField('Speed', `${item.speed} (determines turn order in duels)`, true)
 				break
 			}
 			case 'Throwable Weapon': {
@@ -158,13 +158,14 @@ class ItemCommand extends CustomSlashCommand {
 					itemEmbed.addField('Applies Affliction', `${icons.burning} Burning (+25% damage taken)`, true)
 				}
 				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
+				itemEmbed.addField('Speed', `${item.speed} (determines turn order in duels)`, true)
 				break
 			}
 			case 'Ranged Weapon': {
 				const ammunition = sortItemsByAmmo(allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item))) as Ammunition[]
 
-				itemEmbed.addField('Speed', `${item.speed}\n\nDetermines who turn order in duels.`, true)
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
+				itemEmbed.addField('Speed', `${item.speed} (determines turn order in duels)`, true)
 				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (${itm.spreadsDamageToLimbs ? `**${Math.round(itm.damage / itm.spreadsDamageToLimbs)} x ${itm.spreadsDamageToLimbs}** damage` : `**${itm.damage}** damage`})`).join('\n'))
 				break
 			}
@@ -177,6 +178,8 @@ class ItemCommand extends CustomSlashCommand {
 				break
 			}
 			case 'Medical': {
+				itemEmbed.addField('Speed', `${item.speed} (determines turn order in duels)`, true)
+
 				if (item.subtype === 'Stimulant') {
 					const effectsDisplay = getEffectsDisplay(item.effects)
 
@@ -186,7 +189,6 @@ class ItemCommand extends CustomSlashCommand {
 					const curesAfflictions = []
 
 					itemEmbed.addField('Heals For', `${item.healsFor} health`, true)
-					itemEmbed.addField('Healing Rate', formatTime(item.healRate * 1000), true)
 
 					if (item.curesBitten) {
 						curesAfflictions.push(`${icons.biohazard} Bitten`)
@@ -194,6 +196,7 @@ class ItemCommand extends CustomSlashCommand {
 					if (item.curesBrokenArm) {
 						curesAfflictions.push('🦴 Broken Arm')
 					}
+
 					if (curesAfflictions.length) {
 						itemEmbed.addField('Cures Afflictions', curesAfflictions.join('\n'), true)
 					}

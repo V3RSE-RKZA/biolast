@@ -12,7 +12,7 @@ export const medical = medicalObject({
 		sellPrice: 37,
 		healsFor: 20,
 		slotsUsed: 1,
-		healRate: 25,
+		speed: 25,
 		itemLevel: 1,
 		durability: 1,
 		curesBitten: false,
@@ -29,7 +29,7 @@ export const medical = medicalObject({
 		sellPrice: 102,
 		healsFor: 25,
 		slotsUsed: 2,
-		healRate: 30,
+		speed: 6,
 		itemLevel: 3,
 		durability: 2,
 		curesBitten: false,
@@ -46,7 +46,7 @@ export const medical = medicalObject({
 		sellPrice: 152,
 		healsFor: 20,
 		slotsUsed: 1,
-		healRate: 20,
+		speed: 20,
 		itemLevel: 3,
 		durability: 1,
 		curesBitten: false,
@@ -67,7 +67,8 @@ export const medical = medicalObject({
 			damageBonus: 25,
 			accuracyBonus: 0,
 			damageReduction: -20
-		}
+		},
+		speed: 30
 	},
 	'hypo_stim': {
 		type: 'Medical',
@@ -83,7 +84,8 @@ export const medical = medicalObject({
 			damageBonus: 0,
 			accuracyBonus: -15,
 			damageReduction: 0
-		}
+		},
+		speed: 30
 	},
 	'adderall': {
 		type: 'Medical',
@@ -99,7 +101,8 @@ export const medical = medicalObject({
 			damageBonus: 0,
 			accuracyBonus: 15,
 			damageReduction: 0
-		}
+		},
+		speed: 30
 	},
 	'morphine': {
 		type: 'Medical',
@@ -115,7 +118,8 @@ export const medical = medicalObject({
 			damageBonus: -20,
 			accuracyBonus: 0,
 			damageReduction: 20
-		}
+		},
+		speed: 30
 	},
 	'daves_concoction': {
 		type: 'Medical',
@@ -132,7 +136,8 @@ export const medical = medicalObject({
 			damageBonus: 0,
 			accuracyBonus: 0,
 			damageReduction: 0
-		}
+		},
+		speed: 30
 	},
 	'hyfin_chest_seal': {
 		type: 'Medical',
@@ -144,12 +149,12 @@ export const medical = medicalObject({
 		sellPrice: 1202,
 		healsFor: 62,
 		slotsUsed: 1,
-		healRate: 65,
 		itemLevel: 9,
 		durability: 2,
 		curesBitten: false,
 		curesBrokenArm: false,
-		curesBurning: false
+		curesBurning: false,
+		speed: 3
 	},
 	'paracetamol': {
 		type: 'Medical',
@@ -160,12 +165,12 @@ export const medical = medicalObject({
 		sellPrice: 429,
 		healsFor: 35,
 		slotsUsed: 1,
-		healRate: 25,
 		itemLevel: 4,
 		durability: 2,
 		curesBitten: false,
 		curesBrokenArm: false,
-		curesBurning: false
+		curesBurning: false,
+		speed: 10
 	},
 	'splint': {
 		type: 'Medical',
@@ -177,12 +182,12 @@ export const medical = medicalObject({
 		sellPrice: 146,
 		healsFor: 10,
 		slotsUsed: 1,
-		healRate: 25,
 		itemLevel: 1,
 		durability: 1,
 		curesBitten: false,
 		curesBrokenArm: true,
-		curesBurning: false
+		curesBurning: false,
+		speed: 15
 	},
 	'anti-biotics': {
 		type: 'Medical',
@@ -194,11 +199,11 @@ export const medical = medicalObject({
 		sellPrice: 307,
 		healsFor: 20,
 		slotsUsed: 1,
-		healRate: 30,
 		itemLevel: 3,
 		durability: 1,
 		curesBitten: true,
 		curesBrokenArm: false,
-		curesBurning: false
+		curesBurning: false,
+		speed: 20
 	}
 })

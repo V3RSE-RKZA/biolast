@@ -604,11 +604,10 @@ class DuelCommand extends CustomSlashCommand {
 
 									actionCollectors.splice(actionCollectors.indexOf(healCollector), 1)
 
-									// TODO add speed stat to healing items
 									playerChoices.set(actionCtx.user.id, {
 										choice: 'use a medical item',
 										itemRow: healItem,
-										speed: 1
+										speed: healItem.item.speed
 									})
 
 									// end turn if both players have finished actions
@@ -753,11 +752,10 @@ class DuelCommand extends CustomSlashCommand {
 
 									actionCollectors.splice(actionCollectors.indexOf(stimCollector), 1)
 
-									// TODO add speed stat to healing items
 									playerChoices.set(actionCtx.user.id, {
 										choice: 'use a stimulant',
 										itemRow: stimItem,
-										speed: 1
+										speed: stimItem.item.speed
 									})
 
 									// end turn if both players have finished actions

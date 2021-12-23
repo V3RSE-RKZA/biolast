@@ -167,9 +167,9 @@ export interface HealingMedical extends BaseItem {
 	healsFor: number
 
 	/**
-	 * How long will this prevent user from healing again (cooldown in seconds)
+	 * How fast this weapon attacks in duels (player who uses item with higher speed goes first)
 	 */
-	healRate: number
+	speed: number
 
 	/**
 	 * Whether or not this medical item cures the "Bitten" debuff
@@ -226,6 +226,11 @@ export interface StimulantMedical extends BaseItem {
 	 * The effects this item gives when used
 	 */
 	effects: StatusEffects
+
+	/**
+	 * How fast this weapon attacks in duels (player who uses item with higher speed goes first)
+	 */
+	speed: number
 
 	/**
 	 * How many times this item can be used to heal before it breaks
