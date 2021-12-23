@@ -59,7 +59,8 @@ class DuelCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
-			guildIDs: []
+			guildIDs: [],
+			deferEphemeral: true
 		})
 
 		this.filePath = __filename
@@ -106,7 +107,11 @@ class DuelCommand extends CustomSlashCommand {
 			return
 		}
 
-		let botMessage = await ctx.send({
+		await ctx.send({
+			content: 'Sending duel request...'
+		})
+
+		let botMessage = await ctx.sendFollowUp({
 			content: `<@${member.id}>, **${ctx.member.displayName}** would like to fight you!`,
 			components: [{
 				type: ComponentType.ACTION_ROW,

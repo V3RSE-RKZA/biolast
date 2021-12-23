@@ -405,6 +405,8 @@ class CompanionCommand extends CustomSlashCommand {
 			const companion = companions.find(c => c.name === companionRow?.type)
 
 			if (!companionRow || !companion) {
+				await transaction.commit()
+
 				await ctx.send({
 					content: `${icons.warning} You don't have a companion. Hire one from the \`/companion shop\`.`
 				})
