@@ -6,7 +6,7 @@ import { Affliction, afflictions } from '../resources/afflictions'
 import { allItems, items } from '../resources/items'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { Ammunition, HealingMedical, Item, MeleeWeapon, RangedWeapon, StimulantMedical, ThrowableWeapon, Weapon } from '../types/Items'
+import { Ammunition, HealingMedical, Item, StimulantMedical, Weapon } from '../types/Items'
 import { BackpackItemRow, ItemWithRow, UserRow } from '../types/mysql'
 import { CollectorObject } from '../utils/ComponentCollector'
 import { GRAY_BUTTON, GREEN_BUTTON, RED_BUTTON } from '../utils/constants'
@@ -17,7 +17,7 @@ import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByAmmo, sortItemsByLevel, sortItemsByValue } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
-import { BodyPart, getAttackDamage, getBodyPartHit } from '../utils/attackUtils'
+import { BodyPart, getAttackDamage, getAttackString, getBodyPartHit } from '../utils/attackUtils'
 import { combineArrayWithAnd, formatHealth, formatMoney, getBodyPartEmoji } from '../utils/stringUtils'
 
 type ItemWithRowOfType<T extends Item> = ItemWithRow<BackpackItemRow> & { item: T }
@@ -1055,7 +1055,7 @@ class DuelCommand extends CustomSlashCommand {
 									messages[i].push(`<@${userChoice.user}> tries to shoot <@${otherPlayerID}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item)} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
 								}
 								else {
-									messages[i].push(this.getAttackString(choice.weapon.item, `<@${userChoice.user}>`, `<@${otherPlayerID}>`, limbsHit, totalDamage, choice.ammo.item))
+									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.user}>`, `<@${otherPlayerID}>`, limbsHit, totalDamage, choice.ammo.item))
 								}
 							}
 							else if (choice.weapon.item.type === 'Throwable Weapon') {
@@ -1094,7 +1094,7 @@ class DuelCommand extends CustomSlashCommand {
 									messages[i].push(`${icons.danger} <@${userChoice.user}> tries to throw a ${getItemDisplay(choice.weapon.item)} at <@${otherPlayerID}>'s ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** **BUT MISSES!**\n`)
 								}
 								else {
-									messages[i].push(this.getAttackString(choice.weapon.item, `<@${userChoice.user}>`, `<@${otherPlayerID}>`, limbsHit, totalDamage))
+									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.user}>`, `<@${otherPlayerID}>`, limbsHit, totalDamage))
 
 									if (choice.weapon.item.subtype === 'Incendiary Grenade') {
 										messages[i].push(`${icons.debuff} <@${otherPlayerID}> is Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
@@ -1121,7 +1121,7 @@ class DuelCommand extends CustomSlashCommand {
 									messages[i].push(`${icons.danger} <@${userChoice.user}> tries to hit <@${otherPlayerID}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item)} **BUT MISSES!**\n`)
 								}
 								else {
-									messages[i].push(this.getAttackString(choice.weapon.item, `<@${userChoice.user}>`, `<@${otherPlayerID}>`, limbsHit, totalDamage))
+									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.user}>`, `<@${otherPlayerID}>`, limbsHit, totalDamage))
 								}
 							}
 
@@ -1462,63 +1462,6 @@ class DuelCommand extends CustomSlashCommand {
 			.setFooter(`Turn #${turnNumber} / 20 max · 40 seconds to make selection`)
 
 		return duelEmb
-	}
-
-	getAttackString (weapon: MeleeWeapon | ThrowableWeapon, attackerName: string, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number): string
-	getAttackString (weapon: RangedWeapon, attackerName: string, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, ammo: Ammunition): string
-	getAttackString (weapon: Weapon, attackerName: string, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, ammo?: Ammunition): string {
-		if (weapon.type === 'Ranged Weapon') {
-			if (limbsHit.length > 1) {
-				const limbsHitStrings = []
-
-				for (const limbHit of limbsHit) {
-					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
-				}
-
-				return `${attackerName} shot ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(weapon)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** total damage dealt.\n`
-			}
-
-			return `${attackerName} shot ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with their ${getItemDisplay(weapon)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** damage dealt.\n`
-		}
-		else if (weapon.type === 'Throwable Weapon' && weapon.subtype === 'Fragmentation Grenade') {
-			if (limbsHit.length > 1) {
-				const limbsHitStrings = []
-
-				for (const limbHit of limbsHit) {
-					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
-				}
-
-				return `${attackerName} throws a ${getItemDisplay(weapon)} that explodes and hits ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`
-			}
-
-			return `${attackerName} throws a ${getItemDisplay(weapon)} that explodes and hits ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
-		}
-		else if (weapon.type === 'Throwable Weapon' && weapon.subtype === 'Incendiary Grenade') {
-			if (limbsHit.length > 1) {
-				const limbsHitStrings = []
-
-				for (const limbHit of limbsHit) {
-					limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
-				}
-
-				return `${attackerName} throws a ${getItemDisplay(weapon)} that bursts into flames and hits ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`
-			}
-
-			return `${attackerName} throws a ${getItemDisplay(weapon)} that bursts into flames and hits ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
-		}
-
-		// melee weapon
-		if (limbsHit.length > 1) {
-			const limbsHitStrings = []
-
-			for (const limbHit of limbsHit) {
-				limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
-			}
-
-			return `${attackerName} hit ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(weapon)}. **${totalDamage}** damage dealt.\n`
-		}
-
-		return `${attackerName} hit ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with their ${getItemDisplay(weapon)}. **${totalDamage}** damage dealt.\n`
 	}
 }
 
