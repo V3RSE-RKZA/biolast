@@ -62,15 +62,6 @@ export const baseBackpackLimit = 15
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
 export const adminUsers = ['168958344361541633', '319897342415470592', '622437218744664120', '596841923508174849']
 
-// IDs of guilds where raids can take place. They will be automatically set up by the bot on
-// start-up (make sure you invite the bot with admin perms to these guilds)
-export const raidGuilds = {
-	suburbsGuilds: process.env.SUBURBS_GUILDS ? process.env.SUBURBS_GUILDS.split(',') : [],
-	farmGuilds: process.env.FARM_GUILDS ? process.env.FARM_GUILDS.split(',') : [],
-	mallGuilds: process.env.MALL_GUILDS ? process.env.MALL_GUILDS.split(',') : [],
-	stationGuilds: process.env.POLICE_STATION_GUILDS ? process.env.POLICE_STATION_GUILDS.split(',') : []
-}
-
 // webhooks for sending logs to
 export const webhooks = {
 	pvp: {
@@ -78,9 +69,6 @@ export const webhooks = {
 		token: process.env.GLOBAL_PVP_KILLFEED_WEBHOOK_TOKEN
 	}
 }
-
-// seconds that the user wont be allowed to enter a raid after having just finished a raid
-export const raidCooldown = 10 * 60
 
 // Slash commands will be registered here while debug is true. Registering commands to a guild is faster than registering globally.
 // If you leave this unset, commands will be registered globally regardless if debug is true.

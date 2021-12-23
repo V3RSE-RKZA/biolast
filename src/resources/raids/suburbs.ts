@@ -1,12 +1,10 @@
-import { raidGuilds } from '../../config'
-import { Location } from '../../types/Raids'
+import { Location } from '../../types/Locations'
 import { items } from '../items'
 import { npcs } from '../npcs'
 
 export const suburbs: Location = {
 	id: 'suburbs',
 	display: 'The Suburbs',
-	guilds: raidGuilds.suburbsGuilds,
 	requirements: {
 		minLevel: 1,
 		maxLevel: 7

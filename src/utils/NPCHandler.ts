@@ -1,21 +1,20 @@
 import { Member } from 'slash-create'
 import App from '../app'
-import { icons, raidCooldown } from '../config'
-import { allNPCs, NPC } from '../resources/npcs'
+import { icons } from '../config'
+import { NPC } from '../resources/npcs'
 import { allLocations } from '../resources/raids'
 import { Ammunition, Item, MeleeWeapon, RangedWeapon, ThrowableWeapon, Weapon } from '../types/Items'
 import { BackpackItemRow, Query, UserRow } from '../types/mysql'
-import { Location } from '../types/Raids'
+import { Location } from '../types/Locations'
 import { createCooldown } from './db/cooldowns'
 import { deleteItem, dropItemToGround, lowerItemDurability, removeItemFromBackpack } from './db/items'
 import { query } from './db/mysql'
-import { createNPC, deleteNPC, getAllNPCs } from './db/npcs'
+import { createNPC } from './db/npcs'
 import { lowerHealth } from './db/players'
-import { removeUserFromRaid } from './db/raids'
 import { combineArrayWithAnd, formatHealth, getBodyPartEmoji, getRarityDisplay } from './stringUtils'
 import { getEquips, getItemDisplay, getItems, sortItemsByLevel } from './itemUtils'
 import { logger } from './logger'
-import { BodyPart, getAttackDamage, getBodyPartHit } from './raidUtils'
+import { BodyPart, getAttackDamage, getBodyPartHit } from './attackUtils'
 import getRandomInt from './randomInt'
 import { TextChannel, Webhook } from 'eris'
 import Embed from '../structures/Embed'
@@ -27,71 +26,6 @@ class NPCHandler {
 	constructor (app: App) {
 		this.app = app
 		this.intervals = new Map()
-	}
-
-	async start (): Promise<void> {
-		const spawns = await getAllNPCs(query)
-
-		// loop through all raid locations and check
-		// if the raid channels have an npc spawned
-		for (const location of allLocations) {
-			for (const guildId of location.guilds) {
-				const guild = this.app.bot.guilds.get(guildId)
-
-				// make sure guild is cached on this shard
-				if (guild) {
-					for (const raidChannel of location.channels) {
-						const channel = guild.channels.find(ch => ch.name === raidChannel.name) as TextChannel
-
-						if (channel) {
-							const spawn = spawns.find(row => row.channelId === channel.id)
-
-							if (spawn) {
-								// mob already spawned, set timeouts here
-								const mob = allNPCs.find(npc => npc.id === spawn.id)
-
-								if (!mob) {
-									// mob doesn't exist anymore, delete the row
-									await deleteNPC(query, spawn.channelId)
-								}
-								else {
-									// send messages showing that mob is present in channel
-									const maxInterval = location.raidLength / 3
-									const minInterval = location.raidLength / 5
-									const timer = getRandomInt(minInterval, maxInterval)
-									const webhook = await this.getNPCWebhook(channel)
-
-									const interval = setInterval(async () => {
-										try {
-											if (webhook.token) {
-												await this.app.bot.executeWebhook(webhook.id, webhook.token, {
-													username: mob.display,
-													avatarURL: mob.avatarURL,
-													content: mob.quotes[Math.floor(Math.random() * mob.quotes.length)]
-												})
-											}
-										}
-										catch (err) {
-											logger.warn(`Failed to send message: ${err}`)
-										}
-									}, timer * 1000)
-
-									this.intervals.set(channel.id, interval)
-								}
-							}
-							else if (raidChannel.npcSpawns) {
-								// mob not spawned, spawn here
-								await this.spawnNPC(channel)
-							}
-						}
-						else {
-							// this shouldn't happen
-							logger.error(`UNABLE TO FIND CHANNEL WITH NAME: ${raidChannel.name} IN GUILD: ${guild.name} (${guild.id})`)
-						}
-					}
-				}
-			}
-		}
 	}
 
 	async getNPCWebhook (channel: TextChannel): Promise<Webhook> {
@@ -399,9 +333,6 @@ class NPCHandler {
 				await removeItemFromBackpack(transactionQuery, victimItem.row.id)
 				await dropItemToGround(transactionQuery, channelID, victimItem.row.id)
 			}
-
-			await removeUserFromRaid(transactionQuery, member.id)
-			await createCooldown(transactionQuery, member.id, `raid-${raidType.id}`, raidCooldown)
 
 			messages.push(`☠️ **${member.displayName}** DIED! They dropped **${victimLoot.length}** items on the ground.`)
 

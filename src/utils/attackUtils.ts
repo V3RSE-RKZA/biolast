@@ -1,25 +1,6 @@
-import { allLocations } from '../resources/raids'
-import { Armor, Helmet, Item } from '../types/Items'
-import { Location } from '../types/Raids'
+import { Armor, Helmet } from '../types/Items'
 
 export type BodyPart = 'arm' | 'leg' | 'chest' | 'head'
-
-/**
- * Check if guild ID is a raid server
- * @param guildID The guild ID to check
- * @returns Whether or not guild is a raid server
- */
-export function isRaidGuild (guildID?: string): boolean {
-	return guildID ? !!getRaidType(guildID) : false
-}
-
-export function getRaidType (guildID: string): Location | undefined {
-	for (const location of allLocations) {
-		if (location.guilds.includes(guildID)) {
-			return location
-		}
-	}
-}
 
 /**
  * Gets a random body part:
@@ -133,65 +114,4 @@ export function getAttackDamage (damage: number, penetration: number, bodyPartHi
 		total: adjusted,
 		reduced: damage - adjusted
 	}
-}
-
-/**
- * Get all the items that can be found at a location
- * @param location The location to get items from
- * @returns An array of possible items
- */
-export function getPossibleItems (location: Location): Item[] {
-	const items = []
-
-	for (const raidChan of location.channels) {
-		if (raidChan.scavange) {
-			for (const item of raidChan.scavange.common.items) {
-				items.push(item)
-			}
-			for (const item of raidChan.scavange.uncommon.items) {
-				items.push(item)
-			}
-			for (const item of raidChan.scavange.rare.items) {
-				items.push(item)
-			}
-
-			if (raidChan.scavange.rarest) {
-				for (const item of raidChan.scavange.rarest.items) {
-					items.push(item)
-				}
-			}
-		}
-
-		if (raidChan.npcSpawns) {
-			for (const npc of raidChan.npcSpawns.npcs) {
-				if (npc.armor) {
-					items.push(npc.armor)
-				}
-				else if (npc.helmet) {
-					items.push(npc.helmet)
-				}
-				else if ((npc.type === 'raider' || npc.type === 'boss')) {
-					if (npc.subtype !== 'walker') {
-						items.push(npc.weapon)
-					}
-
-					if (npc.subtype === 'ranged') {
-						items.push(npc.ammo)
-					}
-				}
-
-				for (const item of npc.drops.common) {
-					items.push(item)
-				}
-				for (const item of npc.drops.uncommon) {
-					items.push(item)
-				}
-				for (const item of npc.drops.rare) {
-					items.push(item)
-				}
-			}
-		}
-	}
-
-	return [...new Set(items)]
 }

@@ -19,8 +19,8 @@ class InventoryCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'inventory',
 			description: 'View your player inventory including items, equips, health, and level.',
-			longDescription: 'View your player inventory. Your inventory is different from your stash in that the items in your inventory are taken with you into raids.' +
-				' If you die in a raid, you will lose the items in your inventory.',
+			longDescription: 'View your player inventory. Your inventory is different from your stash in that the items in your inventory are taken with you into duels.' +
+				' If you die in a duel, you will lose the items in your inventory.',
 			options: [{
 				type: CommandOptionType.USER,
 				name: 'user',

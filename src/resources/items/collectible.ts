@@ -65,7 +65,7 @@ export const collectible = questObject({
 		type: 'Collectible',
 		name: 'dog_tags',
 		aliases: ['tags'],
-		description: 'Identification tags worn by scavengers. You can obtain dog tags of a specific user by killing them in raid.',
+		description: 'Identification tags worn by scavengers. You can obtain dog tags of a specific user by killing them in a duel.',
 		icon: '🏷️',
 		sellPrice: 50,
 		slotsUsed: 0.1,

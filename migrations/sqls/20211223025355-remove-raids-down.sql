@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS active_raids (
+	userId VARCHAR(255) NOT NULL,
+	guildId VARCHAR(255) NOT NULL,
+	invite VARCHAR(255) NOT NULL,
+	length INT NOT NULL,
+	startedAt DATETIME NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (userId),
+	KEY(userId, guildId)
+) ENGINE = InnoDB;

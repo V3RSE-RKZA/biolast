@@ -3,7 +3,7 @@ import { reply } from '../utils/messageUtils'
 import { getItem } from '../utils/argParsers'
 import { getItemDisplay } from '../utils/itemUtils'
 import { icons } from '../config'
-import { getAttackDamage } from '../utils/raidUtils'
+import { getAttackDamage } from '../utils/attackUtils'
 
 // yes this command is ugly its only for admins >:(
 

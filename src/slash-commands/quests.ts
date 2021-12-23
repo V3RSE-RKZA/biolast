@@ -10,7 +10,6 @@ import { addItemToStash, createItem, deleteItem, getUserBackpack, getUserStash }
 import { beginTransaction } from '../utils/db/mysql'
 import { addMoney, addXp, getUserRow, increaseQuestsCompleted } from '../utils/db/players'
 import { createQuest, deleteQuest, getUserQuests, increaseProgress } from '../utils/db/quests'
-import { getUsersRaid } from '../utils/db/raids'
 import { combineArrayWithAnd, formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
@@ -31,7 +30,7 @@ class QuestsCommand extends CustomSlashCommand {
 			category: 'info',
 			guildModsOnly: false,
 			worksInDMs: false,
-			worksDuringDuel: false,
+			worksDuringDuel: true,
 			guildIDs: [],
 			deferEphemeral: true
 		})
@@ -41,7 +40,7 @@ class QuestsCommand extends CustomSlashCommand {
 
 	async run (ctx: CommandContext): Promise<void> {
 		const transaction = await beginTransaction()
-		const isInRaid = await getUsersRaid(transaction.query, ctx.user.id)
+		const isInDuel = this.app.activeDuelers.has(ctx.user.id)
 		const dailyQuestCDRow = await getCooldownRow(transaction.query, ctx.user.id, 'daily-quest', true)
 		const hourlyQuestCDRow = await getCooldownRow(transaction.query, ctx.user.id, 'hourly-quest', true)
 		const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
@@ -110,15 +109,15 @@ class QuestsCommand extends CustomSlashCommand {
 		const questButtons: ComponentButton[] = []
 		let questsEmbed = new Embed()
 			.setAuthor('Your Quests', ctx.user.avatarURL)
-			.setDescription(isInRaid ?
-				`${icons.danger} You cannot complete quests while in a raid!` :
+			.setDescription(isInDuel ?
+				`${icons.danger} You cannot complete quests while in a duel!` :
 				`${userQuestRows.filter(q => !q.sideQuest).length ? `${icons.warning} You have **${formatTime(dailyQuestCDTimeLeft)}** to complete daily quests.` : `${icons.information} You will receive a new daily quest in **${formatTime(dailyQuestCDTimeLeft)}**.`}` +
 					`\n${userQuestRows.filter(q => q.sideQuest).length ? `${icons.warning} You have **${formatTime(hourlyQuestCDTimeLeft)}** to complete hourly quests.` : `${icons.information} You will receive a new hourly quest in **${formatTime(hourlyQuestCDTimeLeft)}**.`}`)
 
 		for (let i = 0; i < userQuestRows.length; i++) {
 			questsEmbed.addField(`__${userQuestRows[i].sideQuest ? 'Hourly' : 'Daily'} Quest #${userQuestRows[i].id}__`, this.getQuestDescription(userQuests[i], userQuestRows[i]))
 
-			questButtons.push(this.getQuestButton(userQuests[i], userQuestRows[i], isInRaid ? true : !this.questCanBeCompleted(userQuests[i], userQuestRows[i], userBackpackRows, userStashRows)))
+			questButtons.push(this.getQuestButton(userQuests[i], userQuestRows[i], isInDuel ? true : !this.questCanBeCompleted(userQuests[i], userQuestRows[i], userBackpackRows, userStashRows)))
 		}
 
 		if (!userQuestRows.length) {
@@ -151,7 +150,7 @@ class QuestsCommand extends CustomSlashCommand {
 				const validUserQuests = []
 
 				if (
-					!isInRaid &&
+					!isInDuel &&
 					completedQuestRow &&
 					completedQuest &&
 					(
@@ -329,7 +328,7 @@ class QuestsCommand extends CustomSlashCommand {
 				logger.warn(err)
 
 				await ctx.editOriginal({
-					content: `${icons.cancel} That quest cannot be completed (you may have leveled up and are no longer eligible or you are in a raid). Please re-run the command.`,
+					content: `${icons.cancel} That quest cannot be completed (you may have leveled up and are no longer eligible or you are in a duel). Please re-run the command.`,
 					embeds: [questsEmbed.embed],
 					components: []
 				})

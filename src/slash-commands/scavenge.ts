@@ -5,7 +5,7 @@ import { allNPCs } from '../resources/npcs'
 import { dailyQuests } from '../resources/quests'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { Item } from '../types/Items'
-import { RaidChannel } from '../types/Raids'
+import { RaidChannel } from '../types/Locations'
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { addItemToBackpack, createItem, deleteItem, dropItemToGround, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
@@ -15,7 +15,6 @@ import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { messageUser } from '../utils/messageUtils'
-import { getRaidType } from '../utils/raidUtils'
 import { combineArrayWithOr, getRarityDisplay } from '../utils/stringUtils'
 
 class ScavengeCommand extends CustomSlashCommand {
@@ -29,8 +28,6 @@ class ScavengeCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
-
-			// this is automatically populated with the ids of raid guilds since onlyWorksInRaidGuild is set to true
 			guildIDs: []
 		})
 
@@ -38,31 +35,9 @@ class ScavengeCommand extends CustomSlashCommand {
 	}
 
 	async run (ctx: CommandContext): Promise<void> {
-		const raidType = getRaidType(ctx.guildID as string)
-		if (!raidType) {
-			// raid type not found?? this shouldn't happen so throw error
-			throw new Error('Could not find raid type')
-		}
-		const guild = this.app.bot.guilds.get(ctx.guildID as string)
-		if (!guild) {
-			throw new Error('Guild not found in Eris cache')
-		}
-		const raidChannel = raidType.channels.find(ch => ch.name === guild.channels.get(ctx.channelID)?.name)
-		if (!raidChannel) {
-			// raid channel not found, was the channel not specified in the location?
-			throw new Error('Could not find raid channel')
-		}
-		else if (!ctx.member) {
-			throw new Error('Member not attached to interaction')
-		}
+		throw new Error('Scavenge not working yet')
 
-		else if (!raidChannel.scavange) {
-			await ctx.send({
-				content: `${icons.warning} You try to scavenge for items but find nothing.`
-			})
-			return
-		}
-
+		/*
 		const transaction = await beginTransaction()
 
 		try {
@@ -275,6 +250,7 @@ class ScavengeCommand extends CustomSlashCommand {
 
 			await transaction.commit()
 		}
+		*/
 	}
 
 	getRandomSpecialItem (raidChannel: RaidChannel): { item: Item, xp: number } {

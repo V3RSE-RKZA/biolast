@@ -18,7 +18,7 @@ class StashCommand extends CustomSlashCommand {
 		super(creator, app, {
 			name: 'stash',
 			description: 'View the items in your stash or transfer items to it using the put/take sub-commands.',
-			longDescription: 'View the items in your stash. Your stash holds much more than your inventory but can only be altered when out of raid. ' +
+			longDescription: 'View the items in your stash. Your stash holds much more than your inventory. ' +
 				'You can put items from your inventory into your stash using `/stash put <item id>` or take items from your stash and put them into your inventory with `/stash take <item id>`.',
 			options: [
 				{

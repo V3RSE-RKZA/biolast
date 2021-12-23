@@ -1,12 +1,10 @@
-import { raidGuilds } from '../../config'
-import { Location } from '../../types/Raids'
+import { Location } from '../../types/Locations'
 import { items } from '../items'
 import { npcs } from '../npcs'
 
 export const mall: Location = {
 	id: 'mall',
 	display: 'The Mall',
-	guilds: raidGuilds.mallGuilds,
 	requirements: {
 		minLevel: 8,
 		maxLevel: 15

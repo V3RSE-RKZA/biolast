@@ -1,12 +1,10 @@
-import { raidGuilds } from '../../config'
-import { Location } from '../../types/Raids'
+import { Location } from '../../types/Locations'
 import { items } from '../items'
 import { npcs } from '../npcs'
 
 export const farm: Location = {
 	id: 'farm',
 	display: 'The Farm',
-	guilds: raidGuilds.farmGuilds,
 	requirements: {
 		minLevel: 3,
 		maxLevel: 10

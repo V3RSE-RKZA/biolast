@@ -1,5 +1,5 @@
 import { icons } from '../config'
-import { BodyPart } from './raidUtils'
+import { BodyPart } from './attackUtils'
 
 export function formatNumber (number: number): string {
 	return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')

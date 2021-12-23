@@ -1,4 +1,4 @@
-import { Location } from '../../types/Raids'
+import { Location } from '../../types/Locations'
 import { farm } from './farm'
 import { mall } from './mall'
 import { station } from './policestation'

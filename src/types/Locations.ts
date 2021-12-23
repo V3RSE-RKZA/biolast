@@ -182,11 +182,6 @@ export interface Location {
 		item?: Item
 	}
 
-	/**
-	 * IDs of guilds for this location
-	 */
-	guilds: string[]
-
 	channels: RaidChannel[]
 }
 

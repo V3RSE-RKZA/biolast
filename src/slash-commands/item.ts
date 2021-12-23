@@ -11,8 +11,6 @@ import { getUserBackpack } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
 import { formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
-import { logger } from '../utils/logger'
-import { isRaidGuild } from '../utils/raidUtils'
 import { allLocations } from '../resources/raids'
 import { getEffectsDisplay } from '../utils/playerUtils'
 
@@ -73,18 +71,6 @@ class ItemCommand extends CustomSlashCommand {
 				await ctx.send({
 					content: relatedItem ? `${icons.information} Could not find an item matching that name. Did you mean ${getItemDisplay(relatedItem)}?` : `${icons.warning} Could not find an item matching that name.`
 				})
-
-				// auto-delete message if in raid server so that users can't use the slash command options to communicate with each other.
-				if (isRaidGuild(ctx.guildID)) {
-					setTimeout(async () => {
-						try {
-							await ctx.delete()
-						}
-						catch (err) {
-							logger.warn(err)
-						}
-					}, 3000)
-				}
 			}
 
 			return

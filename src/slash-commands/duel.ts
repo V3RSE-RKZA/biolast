@@ -17,7 +17,7 @@ import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByAmmo, sortItemsByLevel, sortItemsByValue } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
-import { BodyPart, getAttackDamage, getBodyPartHit } from '../utils/raidUtils'
+import { BodyPart, getAttackDamage, getBodyPartHit } from '../utils/attackUtils'
 import { combineArrayWithAnd, formatHealth, formatMoney, getBodyPartEmoji } from '../utils/stringUtils'
 
 type ItemWithRowOfType<T extends Item> = ItemWithRow<BackpackItemRow> & { item: T }

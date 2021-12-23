@@ -1,12 +1,10 @@
-import { raidGuilds } from '../../config'
-import { Location } from '../../types/Raids'
+import { Location } from '../../types/Locations'
 import { items } from '../items'
 import { npcs } from '../npcs'
 
 export const station: Location = {
 	id: 'policestation',
 	display: 'The Police Station',
-	guilds: raidGuilds.stationGuilds,
 	requirements: {
 		minLevel: 15,
 		maxLevel: 15

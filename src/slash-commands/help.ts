@@ -3,8 +3,6 @@ import App from '../app'
 import { adminUsers, icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { logger } from '../utils/logger'
-import { isRaidGuild } from '../utils/raidUtils'
 
 class HelpCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -38,18 +36,6 @@ class HelpCommand extends CustomSlashCommand {
 				await ctx.send({
 					content: `${icons.danger} That command doesn't exist!`
 				})
-
-				// auto-delete message if in raid server so that users can't use the slash command options to communicate with each other.
-				if (isRaidGuild(ctx.guildID)) {
-					setTimeout(async () => {
-						try {
-							await ctx.delete()
-						}
-						catch (err) {
-							logger.warn(err)
-						}
-					}, 3000)
-				}
 
 				return
 			}
@@ -97,7 +83,7 @@ class HelpCommand extends CustomSlashCommand {
 
 		const storageEmbed = new Embed()
 			.setTitle('How do I increase storage space?')
-			.setDescription('You can equip a backpack to increase your inventory space. Backpacks of varying levels can be found in raid or bought from the shop.' +
+			.setDescription('You can equip a backpack to increase your inventory space. Backpacks of varying levels can be found from scavenging or bought from the shop.' +
 				' Once you have one, simply do `/equip <item id>` to equip the backpack. Your stash space cannot be altered with backpacks, instead stash space will increase as you level up.')
 
 

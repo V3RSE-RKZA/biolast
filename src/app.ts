@@ -5,16 +5,13 @@ import MessageCollector from './utils/MessageCollector'
 import ComponentCollector from './utils/ComponentCollector'
 import NPCHandler from './utils/NPCHandler'
 import CronJobs from './utils/CronJobs'
-import { getAllRaids, getUsersRaid, removeUserFromRaid, userInRaid } from './utils/db/raids'
-import { clientId, botToken, adminUsers, icons, raidCooldown } from './config'
+import { clientId, botToken, adminUsers, icons } from './config'
 import fs from 'fs'
 import path from 'path'
-import { beginTransaction, query } from './utils/db/mysql'
-import { addItemToBackpack, createItem, getUserBackpack, removeAllItemsFromBackpack } from './utils/db/items'
-import { createCooldown, formatTime, getCooldown, getCooldownTimeLeft } from './utils/db/cooldowns'
+import { query } from './utils/db/mysql'
+import { addItemToBackpack, createItem } from './utils/db/items'
 import CustomSlashCommand from './structures/CustomSlashCommand'
 import { createAccount, getUserRow, increaseLevel, setMaxHealth, setStashSlots } from './utils/db/players'
-import { getRaidType, isRaidGuild } from './utils/raidUtils'
 import { items } from './resources/items'
 import { getPlayerXp } from './utils/playerUtils'
 import { getItemDisplay } from './utils/itemUtils'
@@ -34,11 +31,6 @@ class App {
 		userID: string
 		timeout: NodeJS.Timeout
 	}[]
-	/**
-	 * IDs of users who are currently evacuating a raid. Used to prevent them from using other command while
-	 * in the process of evacuating.
-	 */
-	extractingUsers: Set<string>
 	acceptingCommands: boolean
 	npcHandler: NPCHandler
 	/**
@@ -76,7 +68,6 @@ class App {
 		this.acceptingCommands = false
 		this.npcHandler = new NPCHandler(this)
 		this.shopSellMultiplier = getRandomInt(90, 110) / 100
-		this.extractingUsers = new Set()
 		this.tutorialHandler = new TutorialHandler(this)
 		this.activeDuelers = new Set()
 	}
@@ -292,76 +283,6 @@ class App {
 		}
 	}
 
-	async loadRaidTimers (): Promise<void> {
-		const activeRaids = await getAllRaids(query)
-
-		for (const row of activeRaids) {
-			const guild = this.bot.guilds.get(row.guildId)
-
-			if (guild) {
-				const timeLeft = getCooldownTimeLeft(row.length, row.startedAt.getTime())
-				const raidType = getRaidType(row.guildId)
-
-				if (!raidType || timeLeft <= 0) {
-					// raid ended while the bot was offline, dont remove items from users backpack since bot was offline
-					await removeUserFromRaid(query, row.userId)
-
-					try {
-						await guild.kickMember(row.userId, 'Raid expired while bot was offline')
-					}
-					catch (err) {
-						// user not in raid server
-					}
-				}
-				else {
-					logger.info(`Starting raid timer for ${row.userId} which will expire in ${formatTime(timeLeft)}`)
-
-					this.activeRaids.push({
-						userID: row.userId,
-						timeout: setTimeout(async () => {
-							try {
-								const erisUser = await this.fetchUser(row.userId)
-								const transaction = await beginTransaction()
-								await getUsersRaid(transaction.query, row.userId, true)
-								await getUserBackpack(transaction.query, row.userId, true)
-								await removeUserFromRaid(transaction.query, row.userId)
-								await createCooldown(transaction.query, row.userId, `raid-${raidType.id}`, raidCooldown)
-
-								// remove items from backpack since user didn't evac
-								await removeAllItemsFromBackpack(transaction.query, row.userId)
-								await transaction.commit()
-
-								await guild.kickMember(row.userId, 'Raid time ran out')
-								if (erisUser) {
-									await messageUser(erisUser, {
-										content: `${icons.danger} Raid failed!\n\n` +
-											'You spent too long in the raid and ran out of time to evac! Next time make sure you have enough time to find an evac and escape the raid.\n' +
-											'You lost all the items in your inventory.'
-									})
-								}
-							}
-							catch (err) {
-								logger.error(err)
-								// unable to kick user?
-							}
-						}, timeLeft)
-					})
-				}
-			}
-		}
-	}
-
-	clearRaidTimer (userID: string): void {
-		// backwards loop prevents splice from messing with the index
-		for (let i = this.activeRaids.length - 1; i >= 0; i--) {
-			if (this.activeRaids[i].userID === userID) {
-				logger.info(`Clearing raid timer for ${userID}`)
-				clearTimeout(this.activeRaids[i].timeout)
-				this.activeRaids.splice(i, 1)
-			}
-		}
-	}
-
 	private _getCommandFromInteraction (interaction: InteractionRequestData): CustomSlashCommand | undefined {
 		// blatantly taken from the slash-create library since the function is marked as private
 		return 'guild_id' in interaction ?
@@ -417,12 +338,10 @@ class App {
 								'You are a scavenger just trying to survive in the middle of an apocalypse. You need to explore areas and collect as much loot as you can all while ' +
 								'making sure you aren\'t killed. It\'s survival of the fittest, other scavengers will try to kill you for your loot. You need to find weapons and armor ' +
 								'to protect yourself with. Scavengers aren\'t the only thing trying to get you though, watch out for walkers and heavily armed raiders.\n\n' +
-								'You have a `stash` and an `inventory` for your items. Whenever you enter a **raid**, you will take all the items in your `inventory` with you. ' +
-								'I would highly recommend taking a weapon with you to protect yourself with. **If you die while in raid, you will lose all the items in your inventory.** ' +
-								'This could also work in your favor, if you kill another player you can steal everything they had in their inventory for yourself. ' +
-								'Once you are finished looting in a raid, you need to find a channel to **evac** from. Channels that have an evac will typically have it in the name: ex. `backwoods-evac`.\n\n' +
+								'You have a `stash` and an `inventory` for your items. Whenever you enter a duel, you will be able to use whatever items in your `inventory` to fight. ' +
+								'**If you die in a duel, you will lose all the items in your inventory.**\n\n' +
 								`I've put some items in your \`inventory\` to help you get started: **1x** ${getItemDisplay(items.wooden_bat)}, **1x** ${getItemDisplay(items.bandage)}\n\n` +
-								'Once you\'re ready to enter a raid, use the `raid` command. **Good luck!** - 💙 blobfysh'
+								'Use the `scavenge` command to start searching for loot. **Good luck!** - 💙 blobfysh'
 						})
 					}
 				}
@@ -475,46 +394,14 @@ class App {
 			logger.info(`Command (${command.commandName}) run by ${ctx.user.username}#${ctx.user.discriminator} (${ctx.user.id}) in ${ctx.guildID ? `guild (${ctx.guildID})` : 'DMs'}`)
 			await command.run(ctx)
 
+			/* TODO fix tutorial
 			try {
 				await this.tutorialHandler.handle(command, ctx)
 			}
 			catch (err) {
 				logger.error(err)
 			}
-
-			// reminds users to use raidtime command to check how much time they have left in raid,
-			// it doesn't send the time in this message because I want players raidtime to be kept private from other players
-			if (isRaidGuild(ctx.guildID) && command.commandName !== 'raidtime') {
-				try {
-					const raidTimeReminderCD = await getCooldown(query, ctx.user.id, 'raidreminder')
-
-					if (!raidTimeReminderCD) {
-						const userRaid = await getUsersRaid(query, ctx.user.id)
-
-						if (userRaid) {
-							const timeLeft = getCooldownTimeLeft(userRaid.length, userRaid.startedAt.getTime())
-
-							// send alert if 5 minutes remaining and there's at least 30 seconds so user can evac
-							if (timeLeft <= 5 * 60 * 1000 && timeLeft > 30 * 1000) {
-								await createCooldown(query, ctx.user.id, 'raidreminder', 3 * 60)
-
-								try {
-									await ctx.sendFollowUp({
-										content: `${icons.warning} You have **${formatTime(timeLeft)}** to find an evac and escape from this raid. You should start looking for an evac channel now.`,
-										flags: InteractionResponseFlags.EPHEMERAL
-									})
-								}
-								catch (err) {
-									logger.warn(err)
-								}
-							}
-						}
-					}
-				}
-				catch (err) {
-					logger.error(err)
-				}
-			}
+			*/
 
 			// send level up message as a follow up after user uses command
 			if (userLeveledUpMessage) {

@@ -1,7 +1,6 @@
 import { SlashCommand, SlashCommandOptions, SlashCreator } from 'slash-create'
 import App from '../app'
 import { debug, testingGuildIDs } from '../config'
-import { allLocations } from '../resources/raids'
 import { logger } from '../utils/logger'
 
 type CommandCategory = 'admin' | 'info' | 'items' | 'utility'
@@ -60,10 +59,10 @@ class CustomSlashCommand extends SlashCommand {
 			logger.debug(`Registering ${slashOptions.name} to testing guild instead of globally: ${testingGuildIDs.join(', ')}`)
 
 			if (slashOptions.guildIDs) {
-				slashOptions.guildIDs = [...slashOptions.guildIDs, ...testingGuildIDs, ...allLocations.map(loc => loc.guilds).flat(1)]
+				slashOptions.guildIDs = [...slashOptions.guildIDs, ...testingGuildIDs]
 			}
 			else {
-				slashOptions.guildIDs = [...testingGuildIDs, ...allLocations.map(loc => loc.guilds).flat(1)]
+				slashOptions.guildIDs = testingGuildIDs
 			}
 		}
 
