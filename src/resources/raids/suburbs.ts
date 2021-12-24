@@ -6,17 +6,13 @@ export const suburbs: Location = {
 	id: 'suburbs',
 	display: 'The Suburbs',
 	requirements: {
-		minLevel: 1,
-		maxLevel: 7
+		minLevel: 1
 	},
-	raidLength: 10 * 60,
-	playerLimit: 10,
-	channels: [
+	areas: [
 		{
-			type: 'LootChannel',
 			name: 'backstreets',
 			display: 'Backstreets',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.wooden_bat],
 					xp: 5
@@ -29,16 +25,13 @@ export const suburbs: Location = {
 					items: [items.metal_bat, items.makeshift_pistol],
 					xp: 20
 				},
-				rolls: 1,
-				cooldown: 1 * 10
+				rolls: 1
 			}
 		},
 		{
-			type: 'LootChannel',
 			name: 'red-house',
 			display: 'Red House',
-			topic: 'It\'s quiet in here...',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.makeshift_pistol, items.makeshift_pistol_bullet],
 					xp: 5
@@ -51,21 +44,17 @@ export const suburbs: Location = {
 					items: [items.luger, items['.22LR_bullet'], items.sledgehammer, items.shed_key],
 					xp: 20
 				},
-				rolls: 2,
-				cooldown: 1 * 10
+				rolls: 2
 			},
 			npcSpawns: {
-				npcs: [npcs.walker_weak],
-				cooldownMin: 60,
-				cooldownMax: 2 * 60
+				chance: 30,
+				npcs: [npcs.walker_weak]
 			}
 		},
 		{
-			type: 'LootChannel',
 			name: 'apartments',
 			display: 'Apartments',
-			topic: 'Who knows what lies down these dark halls.',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.shed_key, items.wooden_bat, items.bandage],
 					xp: 5
@@ -78,35 +67,17 @@ export const suburbs: Location = {
 					items: [items.luger, items['.22LR_bullet']],
 					xp: 20
 				},
-				rolls: 2,
-				cooldown: 1 * 30
+				rolls: 2
 			},
 			npcSpawns: {
-				npcs: [npcs.raider_weak],
-				cooldownMin: 3 * 60,
-				cooldownMax: 5 * 60
-			}
-		},
-
-		{
-			type: 'EvacChannel',
-			name: 'woods-evac',
-			display: 'Woods',
-			topic: 'Not much noise coming from these woods. This could be a good place to escape the area.',
-			evac: {
-				time: 15
-			},
-			npcSpawns: {
-				cooldownMin: 5 * 60,
-				cooldownMax: 10 * 60,
+				chance: 40,
 				npcs: [npcs.raider_weak]
 			}
 		},
 		{
-			type: 'LootChannel',
 			name: 'backyard-shed',
 			display: 'Backyard Shed',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.cloth_armor, items.cloth_helmet],
 					xp: 5
@@ -119,17 +90,15 @@ export const suburbs: Location = {
 					items: [items.knife, items.ifak_medkit, items.wooden_armor],
 					xp: 20
 				},
-				rolls: 2,
-				cooldown: 1 * 10,
-				requiresKey: [items.shed_key],
-				keyIsOptional: false
-			}
+				rolls: 2
+			},
+			requiresKey: [items.shed_key],
+			keyIsOptional: false
 		},
 		{
-			type: 'LootChannel',
 			name: 'park',
 			display: 'Park',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.wooden_bat],
 					xp: 5
@@ -142,15 +111,13 @@ export const suburbs: Location = {
 					items: [items.wooden_helmet, items.metal_bat],
 					xp: 20
 				},
-				rolls: 1,
-				cooldown: 1 * 30
+				rolls: 1
 			}
 		},
 		{
-			type: 'LootChannel',
 			name: 'cedar-lake',
 			display: 'Cedar Lake',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.makeshift_rifle, items.makeshift_rifle_bullet, items['.22LR_bullet']],
 					xp: 5
@@ -163,32 +130,11 @@ export const suburbs: Location = {
 					items: [items['glock-17'], items.P320, items.wooden_helmet, items.wooden_armor],
 					xp: 20
 				},
-				rolls: 2,
-				cooldown: 1 * 30
+				rolls: 2
 			},
 			npcSpawns: {
-				cooldownMin: 1 * 60,
-				cooldownMax: 2 * 60,
+				chance: 40,
 				npcs: [npcs.crawler_weak]
-			}
-		},
-		{
-			type: 'LootChannel',
-			name: 'graveyard',
-			display: 'Graveyard',
-			topic: 'Is there someone else here?',
-			npcSpawns: {
-				npcs: [npcs.cain],
-				cooldownMin: 30 * 60,
-				cooldownMax: 60 * 60
-			}
-		},
-		{
-			type: 'EvacChannel',
-			name: 'sewers-evac',
-			display: 'Sewers',
-			evac: {
-				time: 30
 			}
 		}
 	]

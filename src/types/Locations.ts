@@ -1,7 +1,7 @@
 import { NPC } from '../resources/npcs'
 import { Item } from './Items'
 
-interface ScavengeBase {
+interface Loot {
 	/**
 	 * Array of item names, one name is picked random
 	 * 55% - 60% chance of rolling this loot pool
@@ -55,48 +55,58 @@ interface ScavengeBase {
 	 * How many times to roll a random item name
 	 */
 	rolls: number
+}
+
+
+interface AreaBase {
+	name: string
+	display: string
+	loot: Loot
 
 	/**
-	 * How often this channel can be scavenged in seconds
+	 * Whether or not NPCs can be encountered here
 	 */
-	cooldown: number
+	npcSpawns?: {
+		/**
+		 * Chance to encounter NPC when scavenging here (0 - 100)
+		 */
+		chance: number
+
+		/**
+		 * NPCs that can spawn in this channel
+		 */
+		npcs: NPC[]
+	}
 
 	/**
-	 * Key/item's user must have in order to scavenge this channel. If you specify multiple items, the user must have at least 1 of them to scavenge.
+	 * Key/item's user must have in order to scavenge this area. If you specify multiple items, the user must have at least 1 of them to scavenge.
 	 */
 	requiresKey?: Item[]
 
 	/**
-	 * Whether or not the required key to scavenge this channel is optional.
+	 * Whether or not the required key to scavenge this area is optional.
 	 *
 	 * If set to true and the user scavenges with the key, they will receive an
 	 * item from the special loot pool
 	 */
 	keyIsOptional?: boolean
 }
-
-interface FreeScavenge extends ScavengeBase {
-	requiresKey?: undefined
-}
-
-interface KeyScavenge extends ScavengeBase {
-	keyIsOptional: boolean
+interface KeyArea extends AreaBase {
 	requiresKey: Item[]
+	keyIsOptional: boolean
 }
-
-interface RequiredKeyScavenge extends KeyScavenge {
+interface RequiredKeyArea extends KeyArea {
 	keyIsOptional: false
 	requiresKey: Item[]
 }
-
-interface OptionalKeyScavenge extends KeyScavenge {
+interface OptionalKeyArea extends KeyArea {
 	keyIsOptional: true
 	requiresKey: Item[]
 
 	/**
 	 * Loot pool if user scavenges with the special key
 	 */
-	special: {
+	specialLoot: {
 		items: Item[]
 
 		/**
@@ -106,83 +116,22 @@ interface OptionalKeyScavenge extends KeyScavenge {
 	}
 }
 
-type ScavengeOptions = RequiredKeyScavenge | OptionalKeyScavenge | FreeScavenge
-
-interface RaidChannelBase {
-	type: 'EvacChannel' | 'LootChannel'
-	name: string
-	display: string
-	scavange?: ScavengeOptions
-
-	/**
-	 * Topic of the channel (kinda like a description for the channel, users will see this)
-	 */
-	topic?: string
-
-	/**
-	 * Whether or not NPCs spawn in this channel
-	 */
-	npcSpawns?: {
-		/**
-		 * The minimum cooldown in seconds for an NPC to spawn after a previous NPC dies
-		 */
-		cooldownMin: number
-
-		/**
-		 * The maximum cooldown in seconds for an NPC to spawn after a previous NPC dies
-		 */
-		cooldownMax: number
-
-		/**
-		 * NPCs that can spawn in this channel
-		 */
-		npcs: NPC[]
-	}
+interface FreeLootArea extends AreaBase {
+	requiresKey?: undefined
 }
 
-interface LootChannel extends RaidChannelBase {
-	type: 'LootChannel'
-}
-
-interface EvacChannel extends RaidChannelBase {
-	type: 'EvacChannel'
-	evac: {
-		/**
-		 * How long in seconds it takes for user to evac
-		 */
-		time: number
-
-		/**
-		 * The key user must have in order to evac here, escaping here should remove 1 durability from the key
-		 */
-		requiresKey?: Item
-	}
-}
+type Area = RequiredKeyArea | OptionalKeyArea | FreeLootArea
 
 export interface Location {
 	id: string
 	display: string
 
-	/**
-	 * How long the raid lasts in seconds
-	 */
-	raidLength: number
-
-	playerLimit: number
-
 	requirements: {
 		/**
-		 * The minimum level required to enter this location
+		 * The minimum level required to scavenge areas in this location
 		 */
 		minLevel: number
-		/**
-		 * The maximum level a user can be when entering this location
-		 */
-		maxLevel: number
-		item?: Item
 	}
 
-	channels: RaidChannel[]
+	areas: Area[]
 }
-
-export type RaidChannel = LootChannel | EvacChannel

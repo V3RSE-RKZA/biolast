@@ -28,23 +28,23 @@ export const command: TextCommand = {
 		const obtainedFromQuests = []
 
 		for (const loc of allLocations) {
-			for (const chan of loc.channels) {
-				if (chan.scavange) {
-					if (chan.scavange.common.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${combineArrayWithOr(chan.scavange.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (common 60% drop)`)
+			for (const chan of loc.areas) {
+				if (chan.loot) {
+					if (chan.loot.common.items.find(i => i.name === item.name)) {
+						obtainedFromChannels.push(`\`${chan.name}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (common 60% drop)`)
 					}
-					else if (chan.scavange.uncommon.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${combineArrayWithOr(chan.scavange.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (uncommon 25% drop)`)
+					else if (chan.loot.uncommon.items.find(i => i.name === item.name)) {
+						obtainedFromChannels.push(`\`${chan.name}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (uncommon 25% drop)`)
 					}
-					else if (chan.scavange.rare.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${combineArrayWithOr(chan.scavange.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (rare 15% drop)`)
+					else if (chan.loot.rare.items.find(i => i.name === item.name)) {
+						obtainedFromChannels.push(`\`${chan.name}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (rare 15% drop)`)
 					}
-					else if (chan.scavange.rarest?.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.scavange.requiresKey ? `(requires ${combineArrayWithOr(chan.scavange.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (rarest 5% drop)`)
+					else if (chan.loot.rarest?.items.find(i => i.name === item.name)) {
+						obtainedFromChannels.push(`\`${chan.name}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (rarest 5% drop)`)
 					}
 
-					if (chan.scavange.requiresKey && chan.scavange.keyIsOptional && chan.scavange.special.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` in **${loc.display}** (special drop, requires ${combineArrayWithOr(chan.scavange.requiresKey.map(key => getItemDisplay(key)))} key to obtain)`)
+					if (chan.requiresKey && chan.keyIsOptional && chan.specialLoot.items.find(i => i.name === item.name)) {
+						obtainedFromChannels.push(`\`${chan.name}\` in **${loc.display}** (special drop, requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to obtain)`)
 					}
 				}
 			}

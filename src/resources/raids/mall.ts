@@ -6,17 +6,13 @@ export const mall: Location = {
 	id: 'mall',
 	display: 'The Mall',
 	requirements: {
-		minLevel: 8,
-		maxLevel: 15
+		minLevel: 8
 	},
-	raidLength: 15 * 60,
-	playerLimit: 15,
-	channels: [
+	areas: [
 		{
-			type: 'LootChannel',
 			name: 'antique-store',
 			display: 'Antique Store',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.replica_katana],
 					xp: 10
@@ -29,15 +25,13 @@ export const mall: Location = {
 					items: [items.antique_vase, items.small_pouch],
 					xp: 25
 				},
-				rolls: 1,
-				cooldown: 1 * 10
+				rolls: 1
 			}
 		},
 		{
-			type: 'LootChannel',
 			name: 'food-court',
 			display: 'Food Court',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.pizza_slice, items.pretzel, items.fork],
 					xp: 10
@@ -50,20 +44,17 @@ export const mall: Location = {
 					items: [items.metal_shank, items.aramid_armor],
 					xp: 25
 				},
-				rolls: 1,
-				cooldown: 1 * 10
+				rolls: 1
 			},
 			npcSpawns: {
-				npcs: [npcs.bloated_walker],
-				cooldownMin: 1 * 60,
-				cooldownMax: 3 * 60
+				chance: 50,
+				npcs: [npcs.bloated_walker]
 			}
 		},
 		{
-			type: 'LootChannel',
 			name: 'pathway-park',
 			display: 'pathway-park',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.bandage, items['9mm_FMJ_bullet']],
 					xp: 10
@@ -76,20 +67,17 @@ export const mall: Location = {
 					items: [items['ak-47'], items['7.62x39mm_FMJ_bullet']],
 					xp: 25
 				},
-				rolls: 2,
-				cooldown: 1 * 10
+				rolls: 2
 			},
 			npcSpawns: {
-				npcs: [npcs.medium_raider, npcs.psycho_raider],
-				cooldownMin: 2 * 60,
-				cooldownMax: 4 * 60
+				chance: 50,
+				npcs: [npcs.medium_raider, npcs.psycho_raider]
 			}
 		},
 		{
-			type: 'LootChannel',
 			name: 'dome-depot',
 			display: 'Dome Depot',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.sledgehammer, items.fire_axe, items.wooden_armor, items.wooden_helmet],
 					xp: 10
@@ -102,25 +90,15 @@ export const mall: Location = {
 					items: [items.duffle_bag, items.aramid_helmet],
 					xp: 25
 				},
-				rolls: 2,
-				cooldown: 1 * 10,
-				requiresKey: [items.dome_depot_key, items.security_key],
-				keyIsOptional: false
-			}
+				rolls: 2
+			},
+			requiresKey: [items.dome_depot_key, items.security_key],
+			keyIsOptional: false
 		},
 		{
-			type: 'EvacChannel',
-			name: 'parking-lot-evac',
-			display: 'Parking Lot',
-			evac: {
-				time: 30
-			}
-		},
-		{
-			type: 'LootChannel',
 			name: 'plaza',
 			display: 'plaza',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.sledgehammer, items.wooden_helmet],
 					xp: 10
@@ -137,20 +115,17 @@ export const mall: Location = {
 					items: [items.aramid_helmet],
 					xp: 35
 				},
-				rolls: 2,
-				cooldown: 1 * 10
+				rolls: 2
 			},
 			npcSpawns: {
-				npcs: [npcs.crawler_medium],
-				cooldownMin: 1 * 60,
-				cooldownMax: 2 * 60
+				chance: 50,
+				npcs: [npcs.crawler_medium]
 			}
 		},
 		{
-			type: 'LootChannel',
 			name: 'dereks-hunting-shop',
 			display: 'Dereks Hunting Shop',
-			scavange: {
+			loot: {
 				common: {
 					items: [items['aks-74u'], items['FN_Five-seveN'], items.SS195LF_bullet],
 					xp: 10
@@ -163,17 +138,15 @@ export const mall: Location = {
 					items: [items['5.45x39mm_7N24_bullet'], items.steel_armor, items.SS190_bullet],
 					xp: 25
 				},
-				rolls: 3,
-				cooldown: 2 * 60,
-				requiresKey: [items.dereks_shop_key, items.security_key],
-				keyIsOptional: false
-			}
+				rolls: 3
+			},
+			requiresKey: [items.dereks_shop_key, items.security_key],
+			keyIsOptional: false
 		},
 		{
-			type: 'LootChannel',
 			name: 'game-n-go',
 			display: 'Game N Go',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.donut],
 					xp: 10
@@ -186,30 +159,40 @@ export const mall: Location = {
 					items: [items.paracetamol, items.tech_trash, items.morphine],
 					xp: 25
 				},
-				rolls: 2,
-				cooldown: 1 * 50
+				rolls: 2
 			},
 			npcSpawns: {
-				npcs: [npcs.game_raider, npcs.psycho_raider],
-				cooldownMin: 3 * 60,
-				cooldownMax: 4 * 60
+				chance: 50,
+				npcs: [npcs.game_raider, npcs.psycho_raider]
 			}
 		},
 		{
-			type: 'LootChannel',
 			name: 'staff-break-room',
 			display: 'Staff Break Room',
+			loot: {
+				common: {
+					items: [items.donut],
+					xp: 10
+				},
+				uncommon: {
+					items: [items.ifak_medkit],
+					xp: 15
+				},
+				rare: {
+					items: [items.paracetamol, items.tech_trash, items.morphine],
+					xp: 25
+				},
+				rolls: 2
+			},
 			npcSpawns: {
-				npcs: [npcs.derek],
-				cooldownMin: 20 * 60,
-				cooldownMax: 40 * 60
+				chance: 80,
+				npcs: [npcs.derek]
 			}
 		},
 		{
-			type: 'LootChannel',
 			name: 'florreds-pharmacy',
 			display: 'Florreds Pharmacy',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.ifak_medkit, items.compression_bandage],
 					xp: 10
@@ -222,17 +205,15 @@ export const mall: Location = {
 					items: [items.paracetamol, items.morphine, items.duffle_bag],
 					xp: 25
 				},
-				rolls: 2,
-				cooldown: 1 * 10,
-				requiresKey: [items.florreds_pharmacy_key, items.security_key],
-				keyIsOptional: false
-			}
+				rolls: 2
+			},
+			requiresKey: [items.florreds_pharmacy_key, items.security_key],
+			keyIsOptional: false
 		},
 		{
-			type: 'LootChannel',
 			name: 'security-room',
 			display: 'Security Room',
-			scavange: {
+			loot: {
 				common: {
 					items: [items.donut],
 					xp: 10
@@ -245,37 +226,11 @@ export const mall: Location = {
 					items: [items.paracetamol, items.tech_trash, items.security_key],
 					xp: 25
 				},
-				rolls: 2,
-				cooldown: 1 * 50
+				rolls: 2
 			},
 			npcSpawns: {
-				npcs: [npcs.walker_security_officer],
-				cooldownMin: 2 * 60,
-				cooldownMax: 3 * 60
-			}
-		},
-		{
-			type: 'EvacChannel',
-			name: 'roof-helipad-evac',
-			display: 'Roof Helipad',
-			evac: {
-				time: 15
-			},
-			npcSpawns: {
-				npcs: [npcs.medium_raider, npcs.psycho_raider],
-				cooldownMin: 5 * 60,
-				cooldownMax: 10 * 60
-			}
-		},
-
-		{
-			type: 'LootChannel',
-			name: 'mall-fountain',
-			display: 'Mall Fountain',
-			npcSpawns: {
-				npcs: [npcs.the_many],
-				cooldownMin: 60 * 60,
-				cooldownMax: 90 * 60
+				chance: 50,
+				npcs: [npcs.walker_security_officer]
 			}
 		}
 	]

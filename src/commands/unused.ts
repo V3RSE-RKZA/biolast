@@ -18,22 +18,22 @@ export const command: TextCommand = {
 
 		for (const item of allItems) {
 			for (const loc of allLocations) {
-				for (const chan of loc.channels) {
-					if (chan.scavange) {
-						if (chan.scavange.common.items.find(i => i.name === item.name)) {
+				for (const chan of loc.areas) {
+					if (chan.loot) {
+						if (chan.loot.common.items.find(i => i.name === item.name)) {
 							obtainable.push(item)
 						}
-						else if (chan.scavange.uncommon.items.find(i => i.name === item.name)) {
+						else if (chan.loot.uncommon.items.find(i => i.name === item.name)) {
 							obtainable.push(item)
 						}
-						else if (chan.scavange.rare.items.find(i => i.name === item.name)) {
+						else if (chan.loot.rare.items.find(i => i.name === item.name)) {
 							obtainable.push(item)
 						}
-						else if (chan.scavange.rarest?.items.find(i => i.name === item.name)) {
+						else if (chan.loot.rarest?.items.find(i => i.name === item.name)) {
 							obtainable.push(item)
 						}
 
-						if (chan.scavange.requiresKey && chan.scavange.keyIsOptional && chan.scavange.special.items.find(i => i.name === item.name)) {
+						if (chan.requiresKey && chan.keyIsOptional && chan.specialLoot.items.find(i => i.name === item.name)) {
 							obtainable.push(item)
 						}
 					}

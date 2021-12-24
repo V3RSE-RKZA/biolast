@@ -194,17 +194,17 @@ class ItemCommand extends CustomSlashCommand {
 				break
 			}
 			case 'Key': {
-				const usableChannels = []
+				const usableAreas = []
 
 				for (const location of allLocations) {
-					for (const channel of location.channels) {
-						if (channel.scavange && channel.scavange.requiresKey?.includes(item)) {
-							usableChannels.push(channel)
+					for (const area of location.areas) {
+						if (area.requiresKey?.includes(item)) {
+							usableAreas.push(area)
 						}
 					}
 				}
 
-				itemEmbed.addField('Used to Scavenge', usableChannels.map(chan => chan.display).join('\n'), true)
+				itemEmbed.addField('Used to Scavenge', usableAreas.map(chan => chan.display).join('\n'), true)
 			}
 		}
 

@@ -2,20 +2,15 @@ import { Member } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
 import { NPC } from '../resources/npcs'
-import { allLocations } from '../resources/raids'
 import { Ammunition, Item, MeleeWeapon, RangedWeapon, ThrowableWeapon, Weapon } from '../types/Items'
 import { BackpackItemRow, Query, UserRow } from '../types/mysql'
 import { Location } from '../types/Locations'
 import { createCooldown } from './db/cooldowns'
 import { deleteItem, dropItemToGround, lowerItemDurability, removeItemFromBackpack } from './db/items'
-import { query } from './db/mysql'
-import { createNPC } from './db/npcs'
 import { lowerHealth } from './db/players'
 import { combineArrayWithAnd, formatHealth, getBodyPartEmoji, getRarityDisplay } from './stringUtils'
 import { getEquips, getItemDisplay, getItems, sortItemsByLevel } from './itemUtils'
-import { logger } from './logger'
 import { BodyPart, getAttackDamage, getBodyPartHit } from './attackUtils'
-import getRandomInt from './randomInt'
 import { TextChannel, Webhook } from 'eris'
 import Embed from '../structures/Embed'
 
@@ -42,65 +37,6 @@ class NPCHandler {
 		}
 
 		return webhook
-	}
-
-	/**
-	 * Spawns an NPC in a raid channel after some time
-	 * @param channel Channel to spawn npc in
-	 */
-	async spawnNPC (channel: TextChannel): Promise<void> {
-		const location = allLocations.find(loc => loc.channels.some(ch => ch.name === channel.name))
-		const raidChannel = location?.channels.find(ch => ch.name === channel.name)
-
-		if (location && raidChannel && raidChannel.npcSpawns) {
-			const timer = getRandomInt(raidChannel.npcSpawns.cooldownMin, raidChannel.npcSpawns.cooldownMax)
-			const possibleSpawns = raidChannel.npcSpawns.npcs
-
-			logger.info(`Spawning NPC at channel: ${channel.name} in ${timer} seconds`)
-
-			setTimeout(async () => {
-				try {
-					const npc = possibleSpawns[Math.floor(Math.random() * possibleSpawns.length)]
-					const maxInterval = location.raidLength / 3
-					const minInterval = location.raidLength / 5
-					const intervalTimer = getRandomInt(minInterval, maxInterval)
-					const webhook = await this.getNPCWebhook(channel)
-
-					await createNPC(query, channel.id, npc)
-
-					if (webhook.token) {
-						await this.app.bot.executeWebhook(webhook.id, webhook.token, {
-							username: npc.display,
-							avatarURL: npc.avatarURL,
-							content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
-						})
-					}
-
-					const interval = setInterval(async () => {
-						try {
-							if (webhook.token) {
-								await this.app.bot.executeWebhook(webhook.id, webhook.token, {
-									username: npc.display,
-									avatarURL: npc.avatarURL,
-									content: npc.quotes[Math.floor(Math.random() * npc.quotes.length)]
-								})
-							}
-						}
-						catch (err) {
-							logger.warn(`Failed to send message: ${err}`)
-						}
-					}, intervalTimer * 1000)
-
-					this.intervals.set(channel.id, interval)
-				}
-				catch (err) {
-					logger.error(err)
-				}
-			}, timer * 1000)
-		}
-		else {
-			logger.error(`Channel: ${channel.name} (${channel.id}) is not a raid channel that spawns NPCs`)
-		}
 	}
 
 	/**
