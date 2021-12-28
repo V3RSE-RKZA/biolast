@@ -214,9 +214,9 @@ export interface StatusEffects {
 	 */
 	accuracyBonus: number
 	/**
-	 * Percent damage reduction from attacks (10 would be 10% reduction)
+	 * Percent damage taken from attacks (-10 would be -10% damage taken, 10 would be +10% damage taken)
 	 */
-	damageReduction: number
+	damageTaken: number
 }
 export interface StimulantMedical extends BaseItem {
 	type: 'Medical'

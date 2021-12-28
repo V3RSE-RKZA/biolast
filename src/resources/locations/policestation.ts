@@ -10,7 +10,6 @@ export const station: Location = {
 	},
 	areas: [
 		{
-			name: 'Parking Lot',
 			display: 'Parking Lot',
 			loot: {
 				common: {
@@ -29,7 +28,6 @@ export const station: Location = {
 			}
 		},
 		{
-			name: 'evidence-locker',
 			display: 'Evidence Locker',
 			loot: {
 				common: {
@@ -52,8 +50,7 @@ export const station: Location = {
 			}
 		},
 		{
-			name: 'pathway-park',
-			display: 'pathway-park',
+			display: 'Pathway Park',
 			loot: {
 				common: {
 					items: [items.bandage, items['9mm_FMJ_bullet']],
@@ -75,7 +72,6 @@ export const station: Location = {
 			}
 		},
 		{
-			name: 'uniform-area',
 			display: 'Uniform Area',
 			loot: {
 				common: {
@@ -96,7 +92,6 @@ export const station: Location = {
 			keyIsOptional: false
 		},
 		{
-			name: 'district-office',
 			display: 'District Office',
 			loot: {
 				common: {
@@ -123,7 +118,6 @@ export const station: Location = {
 			}
 		},
 		{
-			name: 'weapon-room',
 			display: 'Weapons and Ammunition Room',
 			loot: {
 				common: {
@@ -144,7 +138,6 @@ export const station: Location = {
 			keyIsOptional: false
 		},
 		{
-			name: 'Jail Cell-1',
 			display: 'Jail Cell-1',
 			loot: {
 				common: {
@@ -167,7 +160,6 @@ export const station: Location = {
 			}
 		},
 		{
-			name: 'jail cell-2',
 			display: 'Jail Cell-2',
 			loot: {
 				common: {
@@ -188,7 +180,6 @@ export const station: Location = {
 			keyIsOptional: false
 		},
 		{
-			name: 'security-room',
 			display: 'Security Room',
 			loot: {
 				common: {

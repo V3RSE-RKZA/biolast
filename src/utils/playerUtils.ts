@@ -43,7 +43,7 @@ export function addStatusEffects (activeStimulants: StimulantMedical[], afflicti
 	const effects: StatusEffects = {
 		damageBonus: 0,
 		accuracyBonus: 0,
-		damageReduction: 0
+		damageTaken: 0
 	}
 
 	for (const item of activeStimulants) {
@@ -84,7 +84,7 @@ export function getEffectsDisplay (effects: StatusEffects, showAll = false): str
 					display.push(`${percentDisplay} damage`)
 					break
 				}
-				case 'damageReduction': {
+				case 'damageTaken': {
 					display.push(`${percentDisplay} damage taken`)
 					break
 				}

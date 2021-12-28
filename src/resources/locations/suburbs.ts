@@ -10,7 +10,6 @@ export const suburbs: Location = {
 	},
 	areas: [
 		{
-			name: 'backstreets',
 			display: 'Backstreets',
 			loot: {
 				common: {
@@ -29,7 +28,6 @@ export const suburbs: Location = {
 			}
 		},
 		{
-			name: 'red-house',
 			display: 'Red House',
 			loot: {
 				common: {
@@ -52,7 +50,6 @@ export const suburbs: Location = {
 			}
 		},
 		{
-			name: 'apartments',
 			display: 'Apartments',
 			loot: {
 				common: {
@@ -75,7 +72,6 @@ export const suburbs: Location = {
 			}
 		},
 		{
-			name: 'backyard-shed',
 			display: 'Backyard Shed',
 			loot: {
 				common: {
@@ -96,7 +92,6 @@ export const suburbs: Location = {
 			keyIsOptional: false
 		},
 		{
-			name: 'park',
 			display: 'Park',
 			loot: {
 				common: {
@@ -115,7 +110,6 @@ export const suburbs: Location = {
 			}
 		},
 		{
-			name: 'cedar-lake',
 			display: 'Cedar Lake',
 			loot: {
 				common: {

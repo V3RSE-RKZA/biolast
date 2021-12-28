@@ -73,6 +73,8 @@ export interface ShopItemRow extends ItemRow {
 
 export type ItemWithRow<T extends ItemRow> = { item: Item, row: T }
 
+export type ItemWithBackpackRowOfType<T extends Item> = ItemWithRow<BackpackItemRow> & { item: T }
+
 export interface NPCRow {
 	channelId: string
 	createdAt: Date

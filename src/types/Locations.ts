@@ -52,14 +52,13 @@ interface Loot {
 	}
 
 	/**
-	 * How many times to roll a random item name
+	 * How many times to roll a random item
 	 */
 	rolls: number
 }
 
 
 interface AreaBase {
-	name: string
 	display: string
 	loot: Loot
 
@@ -120,7 +119,7 @@ interface FreeLootArea extends AreaBase {
 	requiresKey?: undefined
 }
 
-type Area = RequiredKeyArea | OptionalKeyArea | FreeLootArea
+export type Area = RequiredKeyArea | OptionalKeyArea | FreeLootArea
 
 export interface Location {
 	id: string

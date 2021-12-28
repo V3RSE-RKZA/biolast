@@ -10,7 +10,6 @@ export const mall: Location = {
 	},
 	areas: [
 		{
-			name: 'antique-store',
 			display: 'Antique Store',
 			loot: {
 				common: {
@@ -29,7 +28,6 @@ export const mall: Location = {
 			}
 		},
 		{
-			name: 'food-court',
 			display: 'Food Court',
 			loot: {
 				common: {
@@ -52,7 +50,6 @@ export const mall: Location = {
 			}
 		},
 		{
-			name: 'pathway-park',
 			display: 'pathway-park',
 			loot: {
 				common: {
@@ -75,7 +72,6 @@ export const mall: Location = {
 			}
 		},
 		{
-			name: 'dome-depot',
 			display: 'Dome Depot',
 			loot: {
 				common: {
@@ -96,7 +92,6 @@ export const mall: Location = {
 			keyIsOptional: false
 		},
 		{
-			name: 'plaza',
 			display: 'plaza',
 			loot: {
 				common: {
@@ -123,7 +118,6 @@ export const mall: Location = {
 			}
 		},
 		{
-			name: 'dereks-hunting-shop',
 			display: 'Dereks Hunting Shop',
 			loot: {
 				common: {
@@ -144,7 +138,6 @@ export const mall: Location = {
 			keyIsOptional: false
 		},
 		{
-			name: 'game-n-go',
 			display: 'Game N Go',
 			loot: {
 				common: {
@@ -167,7 +160,6 @@ export const mall: Location = {
 			}
 		},
 		{
-			name: 'staff-break-room',
 			display: 'Staff Break Room',
 			loot: {
 				common: {
@@ -190,7 +182,6 @@ export const mall: Location = {
 			}
 		},
 		{
-			name: 'florreds-pharmacy',
 			display: 'Florreds Pharmacy',
 			loot: {
 				common: {
@@ -211,7 +202,6 @@ export const mall: Location = {
 			keyIsOptional: false
 		},
 		{
-			name: 'security-room',
 			display: 'Security Room',
 			loot: {
 				common: {

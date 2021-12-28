@@ -1,47 +1,23 @@
-import { CommandOptionType, SlashCreator, CommandContext, ComponentType, Message, ComponentContext, ComponentSelectMenu } from 'slash-create'
+import { CommandOptionType, SlashCreator, CommandContext, ComponentType, Message, ComponentSelectMenu } from 'slash-create'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import App from '../app'
 import { icons } from '../config'
 import { Affliction, afflictions } from '../resources/afflictions'
-import { allItems, items } from '../resources/items'
+import { items } from '../resources/items'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { Ammunition, HealingMedical, Item, StimulantMedical, Weapon } from '../types/Items'
-import { BackpackItemRow, ItemWithRow, UserRow } from '../types/mysql'
-import { CollectorObject } from '../utils/ComponentCollector'
+import { StimulantMedical } from '../types/Items'
+import { BackpackItemRow, UserRow } from '../types/mysql'
 import { GRAY_BUTTON, GREEN_BUTTON, RED_BUTTON } from '../utils/constants'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
-import { addHealth, addXp, getUserRow, increaseDeaths, increaseKills, lowerHealth } from '../utils/db/players'
+import { addHealth, addXp, getUserRow, increaseDeaths, increaseKills, lowerHealth, setFighting } from '../utils/db/players'
 import { getUserQuests, increaseProgress } from '../utils/db/quests'
-import { getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByAmmo, sortItemsByLevel, sortItemsByValue } from '../utils/itemUtils'
+import { getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByValue } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
-import { BodyPart, getAttackDamage, getAttackString, getBodyPartHit } from '../utils/attackUtils'
+import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
 import { combineArrayWithAnd, formatHealth, formatMoney, getBodyPartEmoji } from '../utils/stringUtils'
-
-type ItemWithRowOfType<T extends Item> = ItemWithRow<BackpackItemRow> & { item: T }
-
-interface AttackChoice {
-	choice: 'attack'
-	weapon: ItemWithRowOfType<Weapon> | { item: Weapon, row: undefined }
-	ammo?: ItemWithRowOfType<Ammunition>
-	limbTarget?: BodyPart
-}
-interface HealChoice {
-	choice: 'use a medical item'
-	itemRow: ItemWithRowOfType<HealingMedical>
-}
-interface StimulantChoice {
-	choice: 'use a stimulant'
-	itemRow: ItemWithRowOfType<StimulantMedical>
-}
-interface FleeChoice {
-	choice: 'try to flee'
-}
-type PlayerChoice = (AttackChoice | HealChoice | StimulantChoice | FleeChoice) & { speed: number }
-
-const maxStimulantsPerDuel = 4
 
 class DuelCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -84,25 +60,18 @@ class DuelCommand extends CustomSlashCommand {
 			})
 			return
 		}
-		else if (this.app.activeDuelers.has(ctx.user.id)) {
-			await ctx.send({
-				content: `${icons.warning} You cannot start another duel while you are already in one.`,
-				components: []
-			})
-			return
-		}
-		else if (this.app.activeDuelers.has(member.id)) {
-			await ctx.send({
-				content: `${icons.warning} **${member.displayName}** is in another fight right now!`,
-				components: []
-			})
-			return
-		}
 
 		const memberData = await getUserRow(query, member.id)
 		if (!memberData) {
 			await ctx.send({
 				content: `${icons.warning} **${member.displayName}** does not have an account!`
+			})
+			return
+		}
+		else if (memberData.fighting) {
+			await ctx.send({
+				content: `${icons.warning} **${member.displayName}** is in another fight right now!`,
+				components: []
 			})
 			return
 		}
@@ -140,7 +109,7 @@ class DuelCommand extends CustomSlashCommand {
 			const player2Stimulants: StimulantMedical[] = []
 			const player2Afflictions: Affliction[] = []
 
-			if (this.app.activeDuelers.has(ctx.user.id)) {
+			if (player1Data.fighting) {
 				await preTransaction.commit()
 				await confirmed.editParent({
 					content: `${icons.warning} **${ctx.member.displayName}** is in another fight right now!`,
@@ -148,7 +117,7 @@ class DuelCommand extends CustomSlashCommand {
 				})
 				return
 			}
-			else if (this.app.activeDuelers.has(member.id)) {
+			else if (player2Data.fighting) {
 				await preTransaction.commit()
 				await confirmed.editParent({
 					content: `${icons.warning} **${member.displayName}** is in another fight right now!`,
@@ -157,14 +126,13 @@ class DuelCommand extends CustomSlashCommand {
 				return
 			}
 
-			this.app.activeDuelers.add(ctx.user.id).add(member.id)
+			await setFighting(preTransaction.query, ctx.user.id, true)
+			await setFighting(preTransaction.query, member.id, true)
 			await preTransaction.commit()
 
 			const playerChoices = new Map<string, PlayerChoice>()
 			let turnNumber = 1
 			let duelIsActive = true
-			let player1AttackCtx: ComponentContext | undefined
-			let player2AttackCtx: ComponentContext | undefined
 
 			await confirmed.editParent({
 				content: `<@${ctx.user.id}> <@${member.id}>, Turn #1 - select your action:`,
@@ -189,654 +157,16 @@ class DuelCommand extends CustomSlashCommand {
 				}]
 			})
 
-			const runTurn = () => new Promise<void>((resolve, reject) => {
-				const turnCollector = this.app.componentCollector.createCollector(botMessage.id, i => i.user.id === ctx.user.id || i.user.id === member.id, 40000)
-				const actionCollectors: CollectorObject[] = []
-				let player1ChoiceLocked = false
-				let player2ChoiceLocked = false
-
-				turnCollector.collector.on('collect', async actionCtx => {
-					try {
-						const playerChoice = playerChoices.get(actionCtx.user.id)
-						const playerLocked = actionCtx.user.id === ctx.user.id ? player1ChoiceLocked : player2ChoiceLocked
-						const otherPlayerID = actionCtx.user.id === ctx.user.id ? member.id : ctx.user.id
-
-						if (playerChoice) {
-							await actionCtx.send({
-								ephemeral: true,
-								content: `${icons.danger} You have already selected \`${playerChoice.choice}\` this turn. Currently waiting for <@${otherPlayerID}> to select an action.`
-							})
-						}
-						else if (playerLocked) {
-							await actionCtx.send({
-								ephemeral: true,
-								content: `${icons.danger} You cannot change your action after you have already selected one.` +
-									' You must complete your chosen action within **40 seconds** or your turn will be skipped.'
-							})
-						}
-						else if (actionCtx.customID === 'attack') {
-							if (actionCtx.user.id === ctx.user.id) {
-								player1ChoiceLocked = true
-							}
-							else {
-								player2ChoiceLocked = true
-							}
-
-							await actionCtx.acknowledge()
-
-							const preSelectPlayerBackpackRows = await getUserBackpack(query, actionCtx.user.id)
-							const preSelectPlayerInventory = getItems(preSelectPlayerBackpackRows)
-							let components: ComponentSelectMenu[] = [
-								{
-									type: ComponentType.SELECT,
-									custom_id: 'weapon',
-									placeholder: 'Select a weapon from your inventory to use.',
-									options: [
-										...(sortItemsByLevel(preSelectPlayerInventory.items, true).filter(i => ['Melee Weapon', 'Ranged Weapon', 'Throwable Weapon'].includes(i.item.type))).slice(0, 24).map(i => {
-											const iconID = i.item.icon.match(/:([0-9]*)>/)
-											const weaponDesc = i.item.type === 'Throwable Weapon' && i.item.spreadsDamageToLimbs ?
-												`${i.item.damage} (${Math.round(i.item.damage / i.item.spreadsDamageToLimbs)} x ${i.item.spreadsDamageToLimbs} limbs) damage. ${i.item.penetration.toFixed(1)} armor penetration.` :
-												i.item.type === 'Melee Weapon' || i.item.type === 'Throwable Weapon' ?
-													`${i.item.damage} damage. ${i.item.penetration.toFixed(1)} armor penetration.` :
-													'Damage determined by ammunition.'
-
-
-											return {
-												label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
-												value: i.row.id.toString(),
-												description: `${i.row.durability ? `${i.row.durability} uses left. ` : ''}${weaponDesc}`,
-												emoji: iconID ? {
-													id: iconID[1],
-													name: i.item.name
-												} : undefined
-											}
-										}),
-										{
-											label: 'Fists',
-											value: 'fists',
-											description: '10 damage. 0.0 armor penetration.',
-											emoji: {
-												name: '👊'
-											}
-										}
-									]
-								}
-							]
-
-							const attackMessage = await actionCtx.sendFollowUp({
-								ephemeral: true,
-								content: 'What weapon do you want to attack with?',
-								components: [{
-									type: ComponentType.ACTION_ROW,
-									components
-								}]
-							})
-							const attackCollector = this.app.componentCollector.createCollector(attackMessage.id, i => i.user.id === actionCtx.user.id, 60000)
-							let weapon: ItemWithRowOfType<Weapon> | { item: Weapon, row?: undefined }
-							let ammo: ItemWithRowOfType<Ammunition> | undefined
-							let limbTarget: BodyPart | undefined
-
-							actionCollectors.push(attackCollector)
-
-							attackCollector.collector.on('collect', async attackCtx => {
-								try {
-									await attackCtx.acknowledge()
-
-									if (attackCtx.customID === 'weapon') {
-										const weaponItemRow = preSelectPlayerInventory.items.find(i => i.row.id.toString() === attackCtx.values[0])
-										const weaponItem = weaponItemRow?.item
-
-										if (attackCtx.values[0] === 'fists') {
-											weapon = {
-												item: {
-													type: 'Melee Weapon',
-													name: 'fists',
-													aliases: [],
-													icon: '👊',
-													slotsUsed: 0,
-													itemLevel: 1,
-													damage: 10,
-													accuracy: 50,
-													durability: 1,
-													penetration: 0,
-													speed: 0
-												}
-											}
-										}
-										else if (!weaponItemRow || !weaponItem) {
-											await attackMessage.edit({
-												content: `${icons.danger} Weapon not found in your inventory. Please select another weapon:`
-											})
-											return
-										}
-										else {
-											if (weaponItem.type === 'Ranged Weapon') {
-												const userPossibleAmmo = preSelectPlayerInventory.items.filter((row, i) =>
-													row.item.type === 'Ammunition' &&
-													row.item.ammoFor.includes(weaponItem) &&
-													preSelectPlayerInventory.items.map(r => r.item.name).indexOf(row.item.name) === i
-												)
-
-												if (!userPossibleAmmo.length) {
-													await attackMessage.edit({
-														content: `${icons.danger} You don't have any ammo for your ${getItemDisplay(weaponItemRow.item, weaponItemRow.row, { showEquipped: false, showDurability: false })}.` +
-															` You need one of the following ammunitions in your inventory:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponItem)).map(i => getItemDisplay(i)).join(', ')}.` +
-															'\n\nPlease select another weapon:'
-													})
-													return
-												}
-
-												// user must select ammo
-												const ammoSortedByBest = sortItemsByAmmo(userPossibleAmmo, true)
-
-												components = [{
-													type: ComponentType.SELECT,
-													custom_id: 'ammo',
-													placeholder: 'Select an ammunition from your inventory to use.',
-													options: ammoSortedByBest.map(i => {
-														const ammoItem = i.item as Ammunition
-														const iconID = i.item.icon.match(/:([0-9]*)>/)
-														const ammoDesc = ammoItem.spreadsDamageToLimbs ?
-															`${ammoItem.damage} (${Math.round(ammoItem.damage / ammoItem.spreadsDamageToLimbs)} x ${ammoItem.spreadsDamageToLimbs} limbs) damage. ${ammoItem.penetration.toFixed(1)} armor penetration.` :
-															`${ammoItem.damage} damage. ${ammoItem.penetration.toFixed(1)} armor penetration.`
-
-														return {
-															label: i.item.name.replace(/_/g, ' '),
-															value: i.row.id.toString(),
-															description: ammoDesc,
-															emoji: iconID ? {
-																id: iconID[1],
-																name: i.item.name
-															} : undefined
-														}
-													})
-												}]
-
-												await attackMessage.edit({
-													content: `${icons.warning} Which ammo do you want to use with your ${getItemDisplay(weaponItemRow.item)}?`,
-													components: [{
-														type: ComponentType.ACTION_ROW,
-														components
-													}]
-												})
-											}
-
-											weapon = weaponItemRow as ItemWithRowOfType<Weapon>
-										}
-									}
-									else if (attackCtx.customID === 'ammo') {
-										const ammoItemRow = preSelectPlayerInventory.items.find(i => i.row.id.toString() === attackCtx.values[0])
-
-										if (!ammoItemRow) {
-											await attackMessage.edit({
-												content: `${icons.danger} Ammo not found in your inventory. Please select a different ammunition:`
-											})
-										}
-
-										ammo = ammoItemRow as ItemWithRowOfType<Ammunition>
-									}
-
-									if (attackCtx.customID === 'limb') {
-										if (attackCtx.values[0] !== 'none') {
-											limbTarget = attackCtx.values[0] as BodyPart
-										}
-
-										attackCollector.stopCollector()
-										await attackMessage.edit({
-											content: `${icons.checkmark} ${getItemDisplay(weapon!.item)} ${ammo ? `(ammo: ${getItemDisplay(ammo.item)})` : ''} selected as your weapon!`,
-											components: [{
-												type: ComponentType.ACTION_ROW,
-												components: components.map(c => ({ ...c, disabled: true }))
-											}]
-										})
-									}
-									else if ((weapon && ammo) || (weapon && weapon.item.type !== 'Ranged Weapon')) {
-										components = [
-											{
-												type: ComponentType.SELECT,
-												custom_id: 'limb',
-												placeholder: 'Select a limb to target.',
-												options: [
-													{
-														label: 'Head',
-														value: 'head',
-														description: 'Deals more damage. Higher chance of missing.',
-														emoji: {
-															name: getBodyPartEmoji('head')
-														}
-													},
-													{
-														label: 'Chest',
-														value: 'chest',
-														description: 'Deals base damage. Armor can reduce damage.',
-														emoji: {
-															name: getBodyPartEmoji('chest')
-														}
-													},
-													{
-														label: 'Arms',
-														value: 'arm',
-														description: 'Deals less damage. Armor does not protect arms.',
-														emoji: {
-															name: getBodyPartEmoji('arm')
-														}
-													},
-													{
-														label: 'Legs',
-														value: 'leg',
-														description: 'Deals less damage. Armor does not protect legs.',
-														emoji: {
-															name: getBodyPartEmoji('leg')
-														}
-													},
-													{
-														label: 'Don\'t target any limbs.',
-														value: 'none',
-														description: 'You\'re targeted limb is random but you will never miss.',
-														emoji: {
-															name: '🚫'
-														}
-													}
-												]
-											}
-										]
-
-										await attackMessage.edit({
-											content: `${getItemDisplay(weapon.item)} selected as your weapon! What limb do you want to target?`,
-											components: [{
-												type: ComponentType.ACTION_ROW,
-												components
-											}]
-										})
-									}
-								}
-								catch (err) {
-									logger.warn(err)
-								}
-							})
-
-							attackCollector.collector.on('end', async msg => {
-								try {
-									if (msg === 'time') {
-										await attackMessage.edit({
-											content: `${icons.timer} You ran out of time to complete this attack. Your turn has been skipped.`,
-											components: [{
-												type: ComponentType.ACTION_ROW,
-												components: components.map(c => ({ ...c, disabled: true }))
-											}]
-										})
-										return
-									}
-
-									actionCollectors.splice(actionCollectors.indexOf(attackCollector), 1)
-
-									playerChoices.set(actionCtx.user.id, {
-										choice: 'attack',
-										weapon,
-										ammo,
-										limbTarget,
-										speed: weapon.item.speed
-									})
-
-									if (actionCtx.user.id === ctx.user.id) {
-										player1AttackCtx = actionCtx
-									}
-									else {
-										player2AttackCtx = actionCtx
-									}
-
-									// end turn if both players have finished actions
-									if (playerChoices.get(otherPlayerID)) {
-										turnCollector.stopCollector()
-									}
-								}
-								catch (err) {
-									logger.error(err)
-								}
-							})
-						}
-						else if (actionCtx.customID === 'heal') {
-							await actionCtx.acknowledge()
-
-							const preHealPlayerData = (await getUserRow(query, actionCtx.user.id))!
-							const preHealBackpackRows = await getUserBackpack(query, actionCtx.user.id)
-							const preHealInventory = getItems(preHealBackpackRows)
-							const possibleHealItems = preHealInventory.items.filter(i => i.item.type === 'Medical' && i.item.subtype === 'Healing')
-							const preHealMaxPossible = preHealPlayerData.maxHealth - preHealPlayerData.health
-
-							if (!possibleHealItems.length) {
-								await actionCtx.send({
-									ephemeral: true,
-									content: `${icons.danger} You don't have any healing items in your inventory. Please select a different action.`
-								})
-								return
-							}
-							else if (preHealMaxPossible <= 0) {
-								await actionCtx.send({
-									ephemeral: true,
-									content: `${icons.danger} You are already at max health. Please select a different action.`
-								})
-								return
-							}
-
-							// valid heal, lock in action choice
-							if (actionCtx.user.id === ctx.user.id) {
-								player1ChoiceLocked = true
-							}
-							else {
-								player2ChoiceLocked = true
-							}
-
-							const components: ComponentSelectMenu[] = [
-								{
-									type: ComponentType.SELECT,
-									custom_id: 'item',
-									placeholder: 'Select a medical item from your inventory to use.',
-									options: [
-										...sortItemsByLevel(possibleHealItems, true).slice(0, 25).map(i => {
-											const iconID = i.item.icon.match(/:([0-9]*)>/)
-											const itemDesc = i.item.type === 'Medical' && i.item.subtype === 'Healing' ?
-												`Heals for ${i.item.healsFor} HP.` :
-												''
-
-											return {
-												label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
-												value: i.row.id.toString(),
-												description: `${i.row.durability ? `${i.row.durability} uses left. ` : ''}${itemDesc}`,
-												emoji: iconID ? {
-													id: iconID[1],
-													name: i.item.name
-												} : undefined
-											}
-										})
-									]
-								}
-							]
-							const healMessage = await actionCtx.sendFollowUp({
-								ephemeral: true,
-								content: 'What item do you want to heal with?',
-								components: [{
-									type: ComponentType.ACTION_ROW,
-									components
-								}]
-							})
-							const healCollector = this.app.componentCollector.createCollector(healMessage.id, i => i.user.id === actionCtx.user.id, 60000)
-							let healItem: ItemWithRowOfType<HealingMedical>
-
-							actionCollectors.push(healCollector)
-
-							healCollector.collector.on('collect', async healCtx => {
-								try {
-									const healItemRow = preHealInventory.items.find(i => i.row.id.toString() === healCtx.values[0])
-
-									await healCtx.acknowledge()
-
-									if (!healItemRow) {
-										await healMessage.edit({
-											content: `${icons.danger} Item not found in your inventory. Please select another item:`
-										})
-										return
-									}
-
-									healItem = healItemRow as ItemWithRowOfType<HealingMedical>
-									healCollector.stopCollector()
-
-									await healMessage.edit({
-										content: `${icons.checkmark} ${getItemDisplay(healItemRow.item)} selected!`,
-										components: [{
-											type: ComponentType.ACTION_ROW,
-											components: components.map(c => ({ ...c, disabled: true }))
-										}]
-									})
-								}
-								catch (err) {
-									logger.warn(err)
-								}
-							})
-
-							healCollector.collector.on('end', async msg => {
-								try {
-									if (msg === 'time') {
-										await healMessage.edit({
-											content: `${icons.timer} You ran out of time to select an item. Your turn has been skipped.`,
-											components: [{
-												type: ComponentType.ACTION_ROW,
-												components: components.map(c => ({ ...c, disabled: true }))
-											}]
-										})
-										return
-									}
-
-									actionCollectors.splice(actionCollectors.indexOf(healCollector), 1)
-
-									playerChoices.set(actionCtx.user.id, {
-										choice: 'use a medical item',
-										itemRow: healItem,
-										speed: healItem.item.speed
-									})
-
-									// end turn if both players have finished actions
-									if (playerChoices.get(otherPlayerID)) {
-										turnCollector.stopCollector()
-									}
-								}
-								catch (err) {
-									logger.error(err)
-								}
-							})
-						}
-						else if (actionCtx.customID === 'stimulant') {
-							await actionCtx.acknowledge()
-
-							const preHealBackpackRows = await getUserBackpack(query, actionCtx.user.id)
-							const preHealInventory = getItems(preHealBackpackRows)
-							const playerStimulants = actionCtx.user.id === ctx.user.id ? player1Stimulants : player2Stimulants
-							const playerStimItems = preHealInventory.items.filter(i => i.item.type === 'Medical' && i.item.subtype === 'Stimulant')
-							const possibleStimulants = playerStimItems.filter(i => !playerStimulants.some(stim => stim.name === i.item.name))
-
-							if (!playerStimItems.length) {
-								await actionCtx.send({
-									ephemeral: true,
-									content: `${icons.danger} You don't have any stimulants in your inventory. Please select a different action.`
-								})
-								return
-							}
-							else if (!possibleStimulants.length) {
-								// user has stimulants but they are already active, cannot inject the same stimulant twice
-								await actionCtx.send({
-									ephemeral: true,
-									content: `${icons.danger} You don't have any stimulants that you can inject right now. Please select a different action.`
-								})
-								return
-							}
-							else if (playerStimulants.length >= maxStimulantsPerDuel) {
-								// user has used max stimulants in this duel already
-								await actionCtx.send({
-									ephemeral: true,
-									content: `${icons.danger} You can only inject up to **${maxStimulantsPerDuel}** stimulants per duel. Please select a different action.`
-								})
-								return
-							}
-
-							// valid stimulant, lock in action choice
-							if (actionCtx.user.id === ctx.user.id) {
-								player1ChoiceLocked = true
-							}
-							else {
-								player2ChoiceLocked = true
-							}
-
-							const components: ComponentSelectMenu[] = [
-								{
-									type: ComponentType.SELECT,
-									custom_id: 'item',
-									placeholder: 'Select a stimulant from your inventory to use.',
-									options: [
-										...sortItemsByLevel(playerStimItems, true).slice(0, 25).map(i => {
-											const item = i.item as StimulantMedical
-											const iconID = i.item.icon.match(/:([0-9]*)>/)
-											const effectsDisplay = []
-
-											if (item.effects.accuracyBonus) {
-												effectsDisplay.push(`Accuracy ${item.effects.accuracyBonus > 0 ? '+' : '-'}${Math.abs(item.effects.accuracyBonus)}%.`)
-											}
-											if (item.effects.damageBonus) {
-												effectsDisplay.push(`Damage dealt ${item.effects.damageBonus > 0 ? '+' : '-'}${Math.abs(item.effects.damageBonus)}%.`)
-											}
-											if (item.effects.damageReduction) {
-												effectsDisplay.push(`Damage taken ${item.effects.damageReduction > 0 ? '-' : '+'}${Math.abs(item.effects.damageReduction)}%.`)
-											}
-
-											return {
-												label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
-												value: i.row.id.toString(),
-												description: `${i.row.durability ? `${i.row.durability} uses left. ` : ''}${effectsDisplay.join(' ') || 'No viable effects.'}`,
-												emoji: iconID ? {
-													id: iconID[1],
-													name: i.item.name
-												} : undefined
-											}
-										})
-									]
-								}
-							]
-							const stimMessage = await actionCtx.sendFollowUp({
-								ephemeral: true,
-								content: 'What stimulant do you want to use?',
-								components: [{
-									type: ComponentType.ACTION_ROW,
-									components
-								}]
-							})
-							const stimCollector = this.app.componentCollector.createCollector(stimMessage.id, i => i.user.id === actionCtx.user.id, 60000)
-							let stimItem: ItemWithRowOfType<StimulantMedical>
-
-							actionCollectors.push(stimCollector)
-
-							stimCollector.collector.on('collect', async stimCtx => {
-								try {
-									const stimItemRow = preHealInventory.items.find(i => i.row.id.toString() === stimCtx.values[0])
-
-									await stimCtx.acknowledge()
-
-									if (!stimItemRow) {
-										await stimMessage.edit({
-											content: `${icons.danger} Item not found in your inventory. Please select another item:`
-										})
-										return
-									}
-
-									stimItem = stimItemRow as ItemWithRowOfType<StimulantMedical>
-									stimCollector.stopCollector()
-
-									await stimMessage.edit({
-										content: `${icons.checkmark} ${getItemDisplay(stimItemRow.item)} selected!`,
-										components: [{
-											type: ComponentType.ACTION_ROW,
-											components: components.map(c => ({ ...c, disabled: true }))
-										}]
-									})
-								}
-								catch (err) {
-									logger.warn(err)
-								}
-							})
-
-							stimCollector.collector.on('end', async msg => {
-								try {
-									if (msg === 'time') {
-										await stimMessage.edit({
-											content: `${icons.timer} You ran out of time to select an item. Your turn has been skipped.`,
-											components: [{
-												type: ComponentType.ACTION_ROW,
-												components: components.map(c => ({ ...c, disabled: true }))
-											}]
-										})
-										return
-									}
-
-									actionCollectors.splice(actionCollectors.indexOf(stimCollector), 1)
-
-									playerChoices.set(actionCtx.user.id, {
-										choice: 'use a stimulant',
-										itemRow: stimItem,
-										speed: stimItem.item.speed
-									})
-
-									// end turn if both players have finished actions
-									if (playerChoices.get(otherPlayerID)) {
-										turnCollector.stopCollector()
-									}
-								}
-								catch (err) {
-									logger.error(err)
-								}
-							})
-						}
-						else if (actionCtx.customID === 'flee') {
-							if (actionCtx.user.id === ctx.user.id) {
-								player1ChoiceLocked = true
-							}
-							else {
-								player2ChoiceLocked = true
-							}
-
-							await actionCtx.acknowledge()
-
-							playerChoices.set(actionCtx.user.id, {
-								choice: 'try to flee',
-								speed: 1000
-							})
-
-							// end turn if both players have finished actions
-							if (playerChoices.get(otherPlayerID)) {
-								turnCollector.stopCollector()
-							}
-
-							await actionCtx.send({
-								ephemeral: true,
-								content: `${icons.checkmark} Attempt to flee selected!`
-							})
-						}
-					}
-					catch (err) {
-						logger.warn(err)
-					}
-				})
-
-				turnCollector.collector.on('end', async msg => {
-					// handle end of turn
-					for (const actionCollector of actionCollectors) {
-						// stop all sub-component collectors such as the weapon selection menu
-						actionCollector.stopCollector('time')
-					}
-
-					try {
-						await botMessage.edit({
-							content: `${icons.timer} Turn #${turnNumber} selection has ended.`,
-							components: [{
-								type: ComponentType.ACTION_ROW,
-								components: [GRAY_BUTTON('Attack', 'attack', true, '🗡️'), GRAY_BUTTON('Use Medical Item', 'heal', true, '🩹'), GRAY_BUTTON('Use Stimulant', 'stimulant', true, '💉'), RED_BUTTON('Try to Flee', 'flee', true)]
-							}]
-						})
-					}
-					catch (err) {
-						logger.warn(err)
-					}
-
-					resolve()
-				})
-			})
-
 			while (duelIsActive) {
 				try {
-					await runTurn()
+					await awaitPlayerChoices(this.app.componentCollector, botMessage, playerChoices, [
+						{ member: ctx.member, stims: player1Stimulants, afflictions: player1Afflictions },
+						{ member, stims: player2Stimulants, afflictions: player2Afflictions }
+					], turnNumber)
 
 					const player1Choice = playerChoices.get(ctx.user.id)
 					const player2Choice = playerChoices.get(member.id)
-					const player1Speed = player1Choice?.speed || 0
-					const player2Speed = player2Choice?.speed || 0
-					const orderedChoices = [{ user: ctx.user.id, action: player1Choice, speed: player1Speed }, { user: member.id, action: player2Choice, speed: player2Speed }]
+					const orderedChoices = [{ user: ctx.user.id, action: player1Choice, speed: player1Choice?.speed || 0 }, { user: member.id, action: player2Choice, speed: player2Choice?.speed || 0 }]
 						.map(c => ({ ...c, random: Math.random() }))
 						.sort((a, b) => {
 							if (a.speed > b.speed) {
@@ -864,8 +194,8 @@ class DuelCommand extends CustomSlashCommand {
 								// success
 								duelIsActive = false
 								messages[i].push(`<@${userChoice.user}> flees from the duel! The duel has ended.`)
-								this.app.activeDuelers.delete(ctx.user.id)
-								this.app.activeDuelers.delete(member.id)
+								await setFighting(query, ctx.user.id, false)
+								await setFighting(query, member.id, false)
 								break
 							}
 							else {
@@ -994,7 +324,7 @@ class DuelCommand extends CustomSlashCommand {
 							const victimAfflictions = userChoice.user === ctx.user.id ? player2Afflictions : player1Afflictions
 							const stimulantEffects = addStatusEffects(playerStimulants, playerAfflictions)
 							const victimEffects = addStatusEffects(victimStimulants, victimAfflictions)
-							const stimulantDamageMulti = (1 + (stimulantEffects.damageBonus / 100) - (victimEffects.damageReduction / 100))
+							const stimulantDamageMulti = (1 + (stimulantEffects.damageBonus / 100) - ((victimEffects.damageTaken * -1) / 100))
 
 							const weaponChoice = choice.weapon
 							const hasWeapon = !weaponChoice.row || playerInventory.items.find(itm => itm.row.id === weaponChoice.row.id)
@@ -1210,6 +540,8 @@ class DuelCommand extends CustomSlashCommand {
 									row: { ...dogTagsRow, equipped: 0 }
 								})
 
+								await setFighting(atkTransaction.query, ctx.user.id, false)
+								await setFighting(atkTransaction.query, member.id, false)
 								await increaseKills(atkTransaction.query, userChoice.user, 'player', 1)
 								await increaseDeaths(atkTransaction.query, otherPlayerID, 1)
 								await addXp(atkTransaction.query, userChoice.user, xpEarned)
@@ -1234,8 +566,6 @@ class DuelCommand extends CustomSlashCommand {
 
 							if (!missedPartChoice && victimData.health - totalDamage <= 0) {
 								// end the duel
-								this.app.activeDuelers.delete(ctx.user.id)
-								this.app.activeDuelers.delete(member.id)
 								duelIsActive = false
 
 								// user picks items from victims inventory
@@ -1263,7 +593,7 @@ class DuelCommand extends CustomSlashCommand {
 									}
 								]
 
-								const playerAttackCtx = userChoice.user === ctx.user.id ? player1AttackCtx : player2AttackCtx
+								const playerAttackCtx = userChoice.action.attackCtx
 								if (playerAttackCtx) {
 									setTimeout(async () => {
 										try {
@@ -1347,15 +677,18 @@ class DuelCommand extends CustomSlashCommand {
 
 					if (!player1Choice && !player2Choice) {
 						duelIsActive = false
-						this.app.activeDuelers.delete(ctx.user.id)
-						this.app.activeDuelers.delete(member.id)
+						await setFighting(query, ctx.user.id, false)
+						await setFighting(query, member.id, false)
 						messages.push(['Neither players selected an action, the duel has been ended early.'])
 					}
 
 					const actionsEmbed = new Embed()
 						.setTitle(`Duel - ${ctx.member.displayName} vs ${member.displayName}`)
-						.setDescription(messages.filter(msg => msg.length).map((msg, i) => `${i <= 1 ? `${i + 1}. ` : ''}${msg.join('\n')}`).join('\n\n'))
 						.setFooter(`Turn #${turnNumber} · actions are ordered by speed (higher speed action goes first)`)
+
+					for (const msg of messages.filter(m => m.length)) {
+						actionsEmbed.addField('\u200b', msg.join('\n'))
+					}
 
 					await confirmed.sendFollowUp({
 						embeds: [actionsEmbed.embed]
@@ -1371,8 +704,8 @@ class DuelCommand extends CustomSlashCommand {
 					if (duelIsActive) {
 						if (turnNumber >= 20) {
 							duelIsActive = false
-							this.app.activeDuelers.delete(ctx.user.id)
-							this.app.activeDuelers.delete(member.id)
+							await setFighting(query, ctx.user.id, false)
+							await setFighting(query, member.id, false)
 							await confirmed.sendFollowUp({
 								content: `${icons.danger} <@${ctx.user.id}> <@${member.id}>, **The max turn limit (20) has been reached!** The duel ends in a tie, neither players will lose their items.`
 							})

@@ -3,7 +3,6 @@ import { SlashCreator, GatewayServer, AnyRequestData, CommandContext, Interactio
 import { TextCommand } from './types/Commands'
 import MessageCollector from './utils/MessageCollector'
 import ComponentCollector from './utils/ComponentCollector'
-import NPCHandler from './utils/NPCHandler'
 import CronJobs from './utils/CronJobs'
 import { clientId, botToken, adminUsers, icons } from './config'
 import fs from 'fs'
@@ -32,17 +31,11 @@ class App {
 		timeout: NodeJS.Timeout
 	}[]
 	acceptingCommands: boolean
-	npcHandler: NPCHandler
 	/**
 	 * The current multiplier for selling items to the shop (changes every hour)
 	 */
 	shopSellMultiplier: number
 	tutorialHandler: TutorialHandler
-
-	/**
-	 * IDs of users who are currently in a duel whether it be against another player or NPC
-	 */
-	activeDuelers: Set<string>
 
 	constructor (token: string, options: Eris.ClientOptions) {
 		if (!clientId) {
@@ -66,10 +59,8 @@ class App {
 		this.cronJobs = new CronJobs(this)
 		this.activeRaids = []
 		this.acceptingCommands = false
-		this.npcHandler = new NPCHandler(this)
 		this.shopSellMultiplier = getRandomInt(90, 110) / 100
 		this.tutorialHandler = new TutorialHandler(this)
-		this.activeDuelers = new Set()
 	}
 
 	async launch (): Promise<void> {
@@ -93,6 +84,7 @@ class App {
 		)
 
 		await this.loadSlashCommmands()
+		await query('UPDATE users SET fighting = 0 WHERE fighting = 1')
 
 		// handling slash commands manually so I can filter them through my custom command handler
 		this.slashCreator.on('commandInteraction', (i, res, webserverMode) => {

@@ -10,7 +10,6 @@ export const farm: Location = {
 	},
 	areas: [
 		{
-			name: 'fields',
 			display: 'Fields',
 			loot: {
 				common: {
@@ -29,7 +28,6 @@ export const farm: Location = {
 			}
 		},
 		{
-			name: 'cellar',
 			display: 'Cellar',
 			loot: {
 				common: {
@@ -52,7 +50,6 @@ export const farm: Location = {
 			}
 		},
 		{
-			name: 'barn',
 			display: 'Barn',
 			loot: {
 				common: {
@@ -75,7 +72,6 @@ export const farm: Location = {
 			}
 		},
 		{
-			name: 'warehouse',
 			display: 'Warehouse',
 			loot: {
 				common: {
@@ -96,8 +92,7 @@ export const farm: Location = {
 			keyIsOptional: false
 		},
 		{
-			name: 'bedroom',
-			display: 'bedroom',
+			display: 'Bedroom',
 			loot: {
 				common: {
 					items: [items.truck_key, items.warehouse_key, items.compression_bandage, items['9mm_HP_bullet']],
@@ -117,7 +112,6 @@ export const farm: Location = {
 			keyIsOptional: false
 		},
 		{
-			name: 'drug-room',
 			display: 'Drug Room',
 			loot: {
 				common: {

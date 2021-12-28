@@ -13,7 +13,7 @@ export const afflictions = afflictionsObject({
 		effects: {
 			damageBonus: 0,
 			accuracyBonus: 0,
-			damageReduction: -25
+			damageTaken: 25
 		}
 	},
 	'Broken Arm': {
@@ -21,7 +21,7 @@ export const afflictions = afflictionsObject({
 		effects: {
 			damageBonus: -10,
 			accuracyBonus: -35,
-			damageReduction: 0
+			damageTaken: 0
 		}
 	},
 	'Bitten': {
@@ -29,7 +29,7 @@ export const afflictions = afflictionsObject({
 		effects: {
 			damageBonus: -20,
 			accuracyBonus: 0,
-			damageReduction: -20
+			damageTaken: 20
 		}
 	}
 })

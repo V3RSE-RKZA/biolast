@@ -31,7 +31,7 @@ Join our discord server if you'd like to help work on the bot: https://discord.g
 - [ ] add `notifications` command that would show user notifications such as who they were killed by, who they killed, successful/failed raid evacs, level ups.
 - [ ] `leaderboard` command for viewing players with most xp/level, money, successful raids, quests completed
 - [ ] add tests that make sure every item is obtainable, whether it be from scavenging channels in raids or as drops from an npc.
-- [ ] players drop dog tags when they die, they would show up as "user#1234's Dog Tags". this would allow people to collect dog tags of the players they kill.
+- [x] players drop dog tags when they die, they would show up as "user#1234's Dog Tags". this would allow people to collect dog tags of the players they kill.
 
 ### Further down line (after bot releases):
 - [ ] when user votes for the bot on a bot list, they should receive a random item (maybe like 10% weapon, 30% ammo, 60% other stuff)

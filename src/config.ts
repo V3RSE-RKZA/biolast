@@ -49,6 +49,7 @@ export const icons = {
 	crosshair: '<:crosshair:886854038161874954>',
 	timer: '<:cooldown:886855254568747028>',
 	biohazard: '<:biohazard:886561850622345216>',
+	key: '<:U_key:870786870852874260>',
 	burning: '🔥',
 	debuff: '<:debuff:902746707794726942>',
 	buff: '<:buff:902746707622776832>'

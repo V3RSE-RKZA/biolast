@@ -11,7 +11,7 @@ import { getUserBackpack } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
 import { formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
-import { allLocations } from '../resources/raids'
+import { allLocations } from '../resources/locations'
 import { getEffectsDisplay } from '../utils/playerUtils'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])

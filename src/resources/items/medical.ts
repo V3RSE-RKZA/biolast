@@ -66,7 +66,7 @@ export const medical = medicalObject({
 		effects: {
 			damageBonus: 25,
 			accuracyBonus: 0,
-			damageReduction: -20
+			damageTaken: 20
 		},
 		speed: 30
 	},
@@ -83,7 +83,7 @@ export const medical = medicalObject({
 		effects: {
 			damageBonus: 0,
 			accuracyBonus: -15,
-			damageReduction: 0
+			damageTaken: 0
 		},
 		speed: 30
 	},
@@ -100,7 +100,7 @@ export const medical = medicalObject({
 		effects: {
 			damageBonus: 0,
 			accuracyBonus: 15,
-			damageReduction: 0
+			damageTaken: 0
 		},
 		speed: 30
 	},
@@ -117,7 +117,7 @@ export const medical = medicalObject({
 		effects: {
 			damageBonus: -20,
 			accuracyBonus: 0,
-			damageReduction: 20
+			damageTaken: -20
 		},
 		speed: 30
 	},
@@ -135,7 +135,7 @@ export const medical = medicalObject({
 		effects: {
 			damageBonus: 0,
 			accuracyBonus: 0,
-			damageReduction: 0
+			damageTaken: 0
 		},
 		speed: 30
 	},

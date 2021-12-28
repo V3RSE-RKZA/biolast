@@ -54,7 +54,7 @@ class CronJobs {
 			ELSE maxHealth
 		END
 		WHERE health < maxHealth
-		AND userId NOT IN (${Array.from(this.app.activeDuelers).join(', ') || '\'\''})`)
+		AND fighting = 0`)
 	}
 }
 

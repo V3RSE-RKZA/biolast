@@ -40,10 +40,10 @@ class QuestsCommand extends CustomSlashCommand {
 
 	async run (ctx: CommandContext): Promise<void> {
 		const transaction = await beginTransaction()
-		const isInDuel = this.app.activeDuelers.has(ctx.user.id)
 		const dailyQuestCDRow = await getCooldownRow(transaction.query, ctx.user.id, 'daily-quest', true)
 		const hourlyQuestCDRow = await getCooldownRow(transaction.query, ctx.user.id, 'hourly-quest', true)
 		const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
+		const isInDuel = userData.fighting
 		const userQuestRows = await getUserQuests(transaction.query, ctx.user.id, true)
 		const userBackpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
 		const userStashRows = await getUserStash(transaction.query, ctx.user.id, true)

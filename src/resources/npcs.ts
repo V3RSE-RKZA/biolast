@@ -1,7 +1,7 @@
-import { Ammunition, Armor, ThrowableWeapon, Helmet, Item, MeleeWeapon, RangedWeapon } from '../types/Items'
+import { Ammunition, Armor, HealingMedical, Helmet, Item, MeleeWeapon, RangedWeapon, StimulantMedical, ThrowableWeapon } from '../types/Items'
 import { items } from './items'
 
-type NPCType = 'walker' | 'raider' | 'boss'
+type NPCType = 'walker' | 'raider'
 
 interface NPCBase {
 	type: NPCType
@@ -32,6 +32,15 @@ interface NPCBase {
 	}
 
 	/**
+	 * The stimulants this NPC uses, if any
+	 */
+	usesStimulants?: StimulantMedical[]
+	/**
+	 * The healing items this NPC uses, if any
+	 */
+	usesHeals?: HealingMedical[]
+
+	/**
 	 * Helmet npc is wearing
 	 */
 	helmet?: Helmet
@@ -45,6 +54,11 @@ interface NPCBase {
 	 * The XP earned for killing this NPC
 	 */
 	xp: number
+
+	/**
+	 * Whether or not this NPC is a boss
+	 */
+	boss: boolean
 }
 
 interface Walker extends NPCBase {
@@ -61,7 +75,6 @@ interface Walker extends NPCBase {
 
 interface RangedRaider extends NPCBase {
 	type: 'raider'
-	subtype: 'ranged'
 
 	/**
 	 * The weapon item this raider uses
@@ -75,7 +88,6 @@ interface RangedRaider extends NPCBase {
 }
 interface MeleeRaider extends NPCBase {
 	type: 'raider'
-	subtype: 'melee'
 
 	/**
 	 * The weapon item this raider uses
@@ -84,7 +96,6 @@ interface MeleeRaider extends NPCBase {
 }
 interface ThrowerRaider extends NPCBase {
 	type: 'raider'
-	subtype: 'thrower'
 
 	/**
 	 * The weapon item this raider uses
@@ -92,56 +103,8 @@ interface ThrowerRaider extends NPCBase {
 	weapon: ThrowableWeapon
 }
 
-interface RangedBoss extends NPCBase {
-	type: 'boss'
-	subtype: 'ranged'
-
-	/**
-	 * The weapon item this raider uses
-	 */
-	weapon: RangedWeapon
-
-	/**
-	 * The ammo if weapon is ranged
-	 */
-	ammo: Ammunition
-}
-interface MeleeBoss extends NPCBase {
-	type: 'boss'
-	subtype: 'melee'
-
-	/**
-	 * The weapon item this raider uses
-	 */
-	weapon: MeleeWeapon
-}
-interface ThrowerBoss extends NPCBase {
-	type: 'boss'
-	subtype: 'thrower'
-
-	/**
-	 * The weapon item this raider uses
-	 */
-	weapon: MeleeWeapon
-}
-interface WalkerBoss extends NPCBase {
-	type: 'boss'
-	subtype: 'walker'
-
-	/**
-	 * Percent chance this walker will bite the user and apply the "Bitten" debuff (0 - 100%)
-	 */
-	chanceToBite: number
-	/**
-	 * the penetration this walker has with it's attacks
-	 */
-	attackPenetration: number
-}
-
 type Raider = RangedRaider | MeleeRaider | ThrowerRaider
-type Boss = RangedBoss | MeleeBoss | WalkerBoss | ThrowerBoss
-
-export type NPC = Raider | Walker | Boss
+export type NPC = Raider | Walker
 
 const npcsObject = <T>(et: { [K in keyof T]: NPC & { id: K } }) => et
 
@@ -166,7 +129,8 @@ export const npcs = npcsObject({
 		],
 		xp: 20,
 		chanceToBite: 15,
-		attackPenetration: 0.6
+		attackPenetration: 0.6,
+		boss: false
 	},
 	crawler_weak: {
 		type: 'walker',
@@ -187,7 +151,8 @@ export const npcs = npcsObject({
 		],
 		xp: 20,
 		chanceToBite: 20,
-		attackPenetration: 0.9
+		attackPenetration: 0.9,
+		boss: false
 	},
 	crawler_medium: {
 		type: 'walker',
@@ -208,11 +173,11 @@ export const npcs = npcsObject({
 		],
 		xp: 60,
 		chanceToBite: 25,
-		attackPenetration: 1.9
+		attackPenetration: 1.9,
+		boss: false
 	},
 	cain: {
-		type: 'boss',
-		subtype: 'ranged',
+		type: 'raider',
 		id: 'cain',
 		display: 'Cain, The Gravekeeper',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562973208915978/R_12.jpg',
@@ -236,11 +201,11 @@ export const npcs = npcsObject({
 		],
 		armor: items.wooden_armor,
 		helmet: items.wooden_helmet,
-		xp: 100
+		xp: 100,
+		boss: true
 	},
 	raider_weak: {
 		type: 'raider',
-		subtype: 'ranged',
 		id: 'raider_weak',
 		display: 'Raider',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562992142012416/raider_temp.png',
@@ -260,11 +225,11 @@ export const npcs = npcsObject({
 		],
 		armor: items.cloth_armor,
 		helmet: items.cloth_helmet,
-		xp: 40
+		xp: 40,
+		boss: false
 	},
 	medium_raider: {
 		type: 'raider',
-		subtype: 'ranged',
 		id: 'medium_raider',
 		display: 'Raider',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562992142012416/raider_temp.png',
@@ -284,11 +249,11 @@ export const npcs = npcsObject({
 		],
 		armor: items.wooden_armor,
 		helmet: items.wooden_helmet,
-		xp: 125
+		xp: 125,
+		boss: false
 	},
 	psycho_raider: {
 		type: 'raider',
-		subtype: 'melee',
 		id: 'psycho_raider',
 		display: 'Psycho',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562992142012416/raider_temp.png',
@@ -307,11 +272,11 @@ export const npcs = npcsObject({
 			'~*You hear someone cackling maniacally*~'
 		],
 		helmet: items.psycho_mask,
-		xp: 125
+		xp: 125,
+		boss: false
 	},
 	game_raider: {
 		type: 'raider',
-		subtype: 'ranged',
 		id: 'game_raider',
 		display: 'Raider',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891562992142012416/raider_temp.png',
@@ -331,7 +296,8 @@ export const npcs = npcsObject({
 		],
 		armor: items.wooden_armor,
 		helmet: items.wooden_helmet,
-		xp: 125
+		xp: 125,
+		boss: false
 	},
 	bloated_walker: {
 		type: 'walker',
@@ -353,7 +319,8 @@ export const npcs = npcsObject({
 		],
 		xp: 50,
 		chanceToBite: 15,
-		attackPenetration: 1.3
+		attackPenetration: 1.3,
+		boss: false
 	},
 	inflated_walker: {
 		type: 'walker',
@@ -375,11 +342,11 @@ export const npcs = npcsObject({
 		],
 		xp: 50,
 		chanceToBite: 15,
-		attackPenetration: 1.3
+		attackPenetration: 1.3,
+		boss: false
 	},
 	derek: {
-		type: 'boss',
-		subtype: 'ranged',
+		type: 'raider',
 		id: 'derek',
 		display: 'Derek',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563193929986068/R_13.jpg',
@@ -399,11 +366,11 @@ export const npcs = npcsObject({
 			'~*Derek: I fear no man. But that thing, it scares me.*~'
 		],
 		armor: items.aramid_armor,
-		xp: 550
+		xp: 550,
+		boss: true
 	},
 	dave: {
-		type: 'boss',
-		subtype: 'ranged',
+		type: 'raider',
 		id: 'dave',
 		display: 'Dave, The Redneck',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/891563193929986068/R_13.jpg',
@@ -427,7 +394,8 @@ export const npcs = npcsObject({
 		],
 		armor: items.cloth_armor,
 		helmet: items.sauce_pan,
-		xp: 500
+		xp: 500,
+		boss: true
 	},
 	feral_animal: {
 		type: 'walker',
@@ -449,7 +417,8 @@ export const npcs = npcsObject({
 		],
 		xp: 35,
 		chanceToBite: 30,
-		attackPenetration: 1.6
+		attackPenetration: 1.6,
+		boss: false
 	},
 	walker_security_officer: {
 		type: 'walker',
@@ -472,11 +441,11 @@ export const npcs = npcsObject({
 		armor: items.aramid_armor,
 		xp: 80,
 		chanceToBite: 10,
-		attackPenetration: 1.5
+		attackPenetration: 1.5,
+		boss: false
 	},
 	the_many: {
-		type: 'boss',
-		subtype: 'walker',
+		type: 'walker',
 		id: 'the_many',
 		display: 'The Many',
 		avatarURL: 'https://cdn.discordapp.com/attachments/883521731090841651/896088090962198588/R_14.jpg',
@@ -496,7 +465,8 @@ export const npcs = npcsObject({
 		],
 		xp: 1000,
 		attackPenetration: 2.8,
-		chanceToBite: 15
+		chanceToBite: 15,
+		boss: true
 	}
 })
 

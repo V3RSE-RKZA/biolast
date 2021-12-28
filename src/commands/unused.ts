@@ -1,6 +1,6 @@
 import { TextCommand } from '../types/Commands'
 import { reply } from '../utils/messageUtils'
-import { allLocations } from '../resources/raids'
+import { allLocations } from '../resources/locations'
 import { allNPCs } from '../resources/npcs'
 import { getItemDisplay, sortItemsByType } from '../utils/itemUtils'
 import { dailyQuests } from '../resources/quests'
@@ -47,10 +47,10 @@ export const command: TextCommand = {
 				else if (npc.helmet && npc.helmet.name === item.name) {
 					obtainable.push(item)
 				}
-				else if ((npc.type === 'raider' || (npc.type === 'boss' && npc.subtype !== 'walker')) && npc.weapon.name === item.name) {
+				else if (npc.type === 'raider' && npc.weapon.name === item.name) {
 					obtainable.push(item)
 				}
-				else if ((npc.type === 'raider' || npc.type === 'boss') && npc.subtype === 'ranged' && npc.ammo.name === item.name) {
+				else if (npc.type === 'raider' && 'ammo' in npc && npc.ammo.name === item.name) {
 					obtainable.push(item)
 				}
 				else if (npc.drops.common.find(i => i.name === item.name)) {

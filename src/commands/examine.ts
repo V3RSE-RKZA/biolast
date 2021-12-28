@@ -1,6 +1,6 @@
 import { TextCommand } from '../types/Commands'
 import { reply } from '../utils/messageUtils'
-import { allLocations } from '../resources/raids'
+import { allLocations } from '../resources/locations'
 import { getItem } from '../utils/argParsers'
 import { allNPCs } from '../resources/npcs'
 import { getItemDisplay } from '../utils/itemUtils'
@@ -31,20 +31,20 @@ export const command: TextCommand = {
 			for (const chan of loc.areas) {
 				if (chan.loot) {
 					if (chan.loot.common.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (common 60% drop)`)
+						obtainedFromChannels.push(`\`${chan.display}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (common 60% drop)`)
 					}
 					else if (chan.loot.uncommon.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (uncommon 25% drop)`)
+						obtainedFromChannels.push(`\`${chan.display}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (uncommon 25% drop)`)
 					}
 					else if (chan.loot.rare.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (rare 15% drop)`)
+						obtainedFromChannels.push(`\`${chan.display}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (rare 15% drop)`)
 					}
 					else if (chan.loot.rarest?.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (rarest 5% drop)`)
+						obtainedFromChannels.push(`\`${chan.display}\` ${chan.requiresKey ? `(requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to scavenge)` : ''} in **${loc.display}** (rarest 5% drop)`)
 					}
 
 					if (chan.requiresKey && chan.keyIsOptional && chan.specialLoot.items.find(i => i.name === item.name)) {
-						obtainedFromChannels.push(`\`${chan.name}\` in **${loc.display}** (special drop, requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to obtain)`)
+						obtainedFromChannels.push(`\`${chan.display}\` in **${loc.display}** (special drop, requires ${combineArrayWithOr(chan.requiresKey.map(key => getItemDisplay(key)))} key to obtain)`)
 					}
 				}
 			}
@@ -57,10 +57,10 @@ export const command: TextCommand = {
 			else if (npc.helmet && npc.helmet.name === item.name) {
 				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) wears this as a helmet and will 100% drop it with random durability`)
 			}
-			else if ((npc.type === 'raider' || (npc.type === 'boss' && npc.subtype !== 'walker')) && npc.weapon.name === item.name) {
+			else if (npc.type === 'raider' && npc.weapon.name === item.name) {
 				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) uses this as a weapon and will 100% drop it with random durability`)
 			}
-			else if ((npc.type === 'raider' || npc.type === 'boss') && npc.subtype === 'ranged' && npc.ammo.name === item.name) {
+			else if (npc.type === 'raider' && 'ammo' in npc && npc.ammo.name === item.name) {
 				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) uses this as ammo and will drop 1x - 3x of it`)
 			}
 			else if (npc.drops.common.find(i => i.name === item.name)) {
