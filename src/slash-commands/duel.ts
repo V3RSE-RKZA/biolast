@@ -333,7 +333,6 @@ class DuelCommand extends CustomSlashCommand {
 							const missedPartChoice = choice.limbTarget && (choice.limbTarget !== bodyPartHit.result || !bodyPartHit.accurate)
 							const victimItemsRemoved: number[] = []
 							const limbsHit = []
-							let attackPenetration
 							let totalDamage
 
 							// verify user has weapon they want to attack with
@@ -349,7 +348,6 @@ class DuelCommand extends CustomSlashCommand {
 									continue
 								}
 
-								attackPenetration = choice.ammo.item.penetration
 								await deleteItem(atkTransaction.query, choice.ammo.row.id)
 
 								if (choice.ammo.item.spreadsDamageToLimbs) {
@@ -389,8 +387,6 @@ class DuelCommand extends CustomSlashCommand {
 								}
 							}
 							else if (choice.weapon.item.type === 'Throwable Weapon') {
-								attackPenetration = choice.weapon.item.penetration
-
 								if (choice.weapon.item.spreadsDamageToLimbs) {
 									limbsHit.push({
 										damage: getAttackDamage((choice.weapon.item.damage * stimulantDamageMulti) / choice.weapon.item.spreadsDamageToLimbs, choice.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
@@ -440,7 +436,6 @@ class DuelCommand extends CustomSlashCommand {
 							}
 							else {
 								// melee weapon
-								attackPenetration = choice.weapon.item.penetration
 								limbsHit.push({
 									damage: getAttackDamage((choice.weapon.item.damage * stimulantDamageMulti), choice.weapon.item.penetration, bodyPartHit.result, victimEquips.armor?.item, victimEquips.helmet?.item),
 									limb: bodyPartHit.result
@@ -472,37 +467,27 @@ class DuelCommand extends CustomSlashCommand {
 									if (result.limb === 'head' && victimEquips.helmet) {
 										messages[i].push(`<@${otherPlayerID}>'s helmet (${getItemDisplay(victimEquips.helmet.item)}) reduced the damage by **${result.damage.reduced}**.`)
 
-										// only lower helmet durability if attackers weapon is within 1 penetration (exclusive) of
-										// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
-										// against someone who had level 3 armor, the armor would NOT lose durability)
-										if (attackPenetration > victimEquips.helmet.item.level - 1) {
-											if (victimEquips.helmet.row.durability - 1 <= 0) {
-												messages[i].push(`<@${otherPlayerID}>'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
+										if (victimEquips.helmet.row.durability - 1 <= 0) {
+											messages[i].push(`<@${otherPlayerID}>'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
 
-												await deleteItem(atkTransaction.query, victimEquips.helmet.row.id)
-												victimItemsRemoved.push(victimEquips.helmet.row.id)
-											}
-											else {
-												await lowerItemDurability(atkTransaction.query, victimEquips.helmet.row.id, 1)
-											}
+											await deleteItem(atkTransaction.query, victimEquips.helmet.row.id)
+											victimItemsRemoved.push(victimEquips.helmet.row.id)
+										}
+										else {
+											await lowerItemDurability(atkTransaction.query, victimEquips.helmet.row.id, 1)
 										}
 									}
 									else if (result.limb === 'chest' && victimEquips.armor) {
 										messages[i].push(`<@${otherPlayerID}>'s armor (${getItemDisplay(victimEquips.armor.item)}) reduced the damage by **${result.damage.reduced}**.`)
 
-										// only lower armor durability if attackers weapon is within 1 penetration (exclusive) of
-										// the level of armor victim is wearing (so if someone used a knife with 1.0 level penetration
-										// against someone who had level 3 armor, the armor would NOT lose durability)
-										if (attackPenetration > victimEquips.armor.item.level - 1) {
-											if (victimEquips.armor.row.durability - 1 <= 0) {
-												messages[i].push(`<@${otherPlayerID}>'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
+										if (victimEquips.armor.row.durability - 1 <= 0) {
+											messages[i].push(`<@${otherPlayerID}>'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
 
-												await deleteItem(atkTransaction.query, victimEquips.armor.row.id)
-												victimItemsRemoved.push(victimEquips.armor.row.id)
-											}
-											else {
-												await lowerItemDurability(atkTransaction.query, victimEquips.armor.row.id, 1)
-											}
+											await deleteItem(atkTransaction.query, victimEquips.armor.row.id)
+											victimItemsRemoved.push(victimEquips.armor.row.id)
+										}
+										else {
+											await lowerItemDurability(atkTransaction.query, victimEquips.armor.row.id, 1)
 										}
 									}
 									else if (result.limb === 'arm' && Math.random() <= 0.2) {
