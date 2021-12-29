@@ -212,7 +212,7 @@ class ItemCommand extends CustomSlashCommand {
 	}
 
 	async autocomplete (ctx: AutocompleteContext): Promise<void> {
-		const search = ctx.options[ctx.focused].replace(/ +/g, '_')
+		const search = ctx.options[ctx.focused].replace(/ +/g, '_').toLowerCase()
 		const items = allItems.filter(itm => itm.name.toLowerCase().includes(search) || itm.type.toLowerCase().includes(search))
 
 		if (items.length) {

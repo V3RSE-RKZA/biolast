@@ -1,6 +1,7 @@
 import { CommandOptionType, SlashCreator, CommandContext, ComponentType, Message } from 'slash-create'
 import App from '../app'
 import { adminUsers, icons } from '../config'
+import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 
@@ -30,7 +31,15 @@ class HelpCommand extends CustomSlashCommand {
 		const command = ctx.options.command
 
 		if (command) {
-			const cmd = this.app.slashCreator.commands.find(c => c.commandName === command) as CustomSlashCommand | undefined
+			let cmd = this.app.slashCreator.commands.find(c => c.commandName === command) as CustomSlashCommand | undefined
+
+			if (!cmd) {
+				// try correcting command name
+				const cmdCorrector = new Corrector(this.app.slashCreator.commands.map(c => c.commandName))
+				const correctedCmd = cmdCorrector.getWord(command)
+
+				cmd = this.app.slashCreator.commands.find(c => c.commandName === correctedCmd) as CustomSlashCommand | undefined
+			}
 
 			if (!cmd || (cmd.customOptions.category === 'admin' && !adminUsers.includes(ctx.user.id))) {
 				await ctx.send({
@@ -51,6 +60,8 @@ class HelpCommand extends CustomSlashCommand {
 
 			cmdEmbed.addField('Cooldown', formatTime(cmd.cooldown * 1000), true)
 			*/
+
+			cmdEmbed.addField('Can be used while in a duel?', cmd.customOptions.worksDuringDuel ? 'Yes' : 'No')
 
 			await ctx.send({
 				embeds: [cmdEmbed.embed]
