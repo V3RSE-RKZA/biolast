@@ -53,7 +53,7 @@ class InventoryCommand extends CustomSlashCommand {
 			}
 
 			const userBackpack = await getUserBackpack(query, member.id)
-			const pages = this.generatePages(member, userBackpack, userData)
+			const pages = this.generatePages(member, userBackpack, userData, false)
 
 			if (pages.length === 1) {
 				await ctx.send({
@@ -68,7 +68,7 @@ class InventoryCommand extends CustomSlashCommand {
 
 		const userData = (await getUserRow(query, ctx.user.id))!
 		const userBackpack = await getUserBackpack(query, ctx.user.id)
-		const pages = this.generatePages(ctx.member || ctx.user, userBackpack, userData)
+		const pages = this.generatePages(ctx.member || ctx.user, userBackpack, userData, true)
 
 		if (pages.length === 1) {
 			await ctx.send({
@@ -80,7 +80,7 @@ class InventoryCommand extends CustomSlashCommand {
 		}
 	}
 
-	generatePages (member: ResolvedMember | User, rows: BackpackItemRow[], userData: UserRow): Embed[] {
+	generatePages (member: ResolvedMember | User, rows: BackpackItemRow[], userData: UserRow, isSelf: boolean): Embed[] {
 		const user = 'user' in member ? member.user : member
 		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
 		const itemData = getItems(rows)
@@ -107,6 +107,11 @@ class InventoryCommand extends CustomSlashCommand {
 					`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Body Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row, { showEquipped: false, showID: false }) : 'None'}`)
 				.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})`, filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || 'No items found. Move items from your stash to your inventory with `/stash take <item id>`.')
+
+			if (isSelf) {
+				embed.setFooter('Inventory items WILL be lost when you die, put items in your stash for safekeeping')
+			}
+
 			pages.push(embed)
 		}
 

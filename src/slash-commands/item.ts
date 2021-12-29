@@ -40,40 +40,34 @@ class ItemCommand extends CustomSlashCommand {
 	}
 
 	async run (ctx: CommandContext): Promise<void> {
-		const item = getItem([ctx.options.item])
+		let item = getItem([ctx.options.item])
 
 		if (!item) {
 			// check if user was specifying an item ID
 			const itemID = getNumber(ctx.options.item)
 
-			if (itemID) {
-				const backpackRows = await getUserBackpack(query, ctx.user.id)
-				const userBackpackData = getItems(backpackRows)
-				const itemToCheck = userBackpackData.items.find(itm => itm.row.id === itemID)
-
-				if (!itemToCheck) {
-					await ctx.send({
-						content: `${icons.warning} You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
-					})
-					return
-				}
-
-				const itemEmbed = this.getItemEmbed(itemToCheck.item)
-
-				await ctx.send({
-					embeds: [itemEmbed.embed]
-				})
-			}
-			else {
+			if (!itemID) {
 				const related = itemCorrector.getWord(ctx.options.item, 5)
 				const relatedItem = related && allItems.find(i => i.name.toLowerCase() === related || i.aliases.map(a => a.toLowerCase()).includes(related))
 
 				await ctx.send({
 					content: relatedItem ? `${icons.information} Could not find an item matching that name. Did you mean ${getItemDisplay(relatedItem)}?` : `${icons.warning} Could not find an item matching that name.`
 				})
+				return
 			}
 
-			return
+			const backpackRows = await getUserBackpack(query, ctx.user.id)
+			const userBackpackData = getItems(backpackRows)
+			const itemToCheck = userBackpackData.items.find(itm => itm.row.id === itemID)
+
+			if (!itemToCheck) {
+				await ctx.send({
+					content: `${icons.warning} You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
+				})
+				return
+			}
+
+			item = itemToCheck.item
 		}
 
 		const itemEmbed = this.getItemEmbed(item)

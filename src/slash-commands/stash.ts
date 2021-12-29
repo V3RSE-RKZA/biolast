@@ -222,7 +222,7 @@ class StashCommand extends CustomSlashCommand {
 			}
 
 			const userStash = await getUserStash(query, member.id)
-			const pages = this.generatePages(member, userStash, userData)
+			const pages = this.generatePages(member, userStash, userData, false)
 
 			if (pages.length === 1) {
 				await ctx.send({
@@ -237,7 +237,7 @@ class StashCommand extends CustomSlashCommand {
 
 		const userData = (await getUserRow(query, ctx.user.id))!
 		const userStash = await getUserStash(query, ctx.user.id)
-		const pages = this.generatePages(ctx.member || ctx.user, userStash, userData)
+		const pages = this.generatePages(ctx.member || ctx.user, userStash, userData, true)
 
 		if (pages.length === 1) {
 			await ctx.send({
@@ -249,7 +249,7 @@ class StashCommand extends CustomSlashCommand {
 		}
 	}
 
-	generatePages (member: ResolvedMember | User, rows: ItemRow[], userData: UserRow): Embed[] {
+	generatePages (member: ResolvedMember | User, rows: ItemRow[], userData: UserRow, isSelf: boolean): Embed[] {
 		const user = 'user' in member ? member.user : member
 		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
 		const itemData = getItems(rows)
@@ -270,6 +270,11 @@ class StashCommand extends CustomSlashCommand {
 					`\n**Stash Value**: ${formatMoney(stashValue)}`)
 				.addField(`__Items in Stash__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})`,
 					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your inventory to your stash with \`/stash put <item id>\`.`)
+
+			if (isSelf) {
+				embed.setFooter('Stashed items will NOT be lost when you die')
+			}
+
 			pages.push(embed)
 		}
 

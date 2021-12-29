@@ -126,7 +126,14 @@ class ComponentCollector {
 
 		let page = 0
 
-		embeds[0].setFooter(`Page 1/${embeds.length}`)
+		for (let i = 0; i < embeds.length; i++) {
+			if (embeds[i].embed.footer?.text) {
+				embeds[i].setFooter(`Page ${i + 1}/${embeds.length} · ${embeds[i].embed.footer?.text}`)
+			}
+			else {
+				embeds[i].setFooter(`Page ${i + 1}/${embeds.length}`)
+			}
+		}
 
 		const botMessage = await ctx.send({
 			embeds: [embeds[0].embed],
@@ -147,7 +154,6 @@ class ComponentCollector {
 
 				if (c.customID === 'previous' && page !== 0) {
 					page--
-					embeds[page].setFooter(`Page ${page + 1}/${embeds.length}`)
 
 					components.push(PREVIOUS_BUTTON(page === 0), NEXT_BUTTON(false))
 
@@ -161,7 +167,6 @@ class ComponentCollector {
 				}
 				else if (c.customID === 'next' && page !== (embeds.length - 1)) {
 					page++
-					embeds[page].setFooter(`Page ${page + 1}/${embeds.length}`)
 
 					components.push(PREVIOUS_BUTTON(false), NEXT_BUTTON(page === (embeds.length - 1)))
 
@@ -181,7 +186,7 @@ class ComponentCollector {
 
 		collector.on('end', msg => {
 			if (msg === 'time') {
-				embeds[page].setFooter(`Page ${page + 1} | Page buttons timed out`)
+				embeds[page].setFooter(`Page ${page + 1} · Page buttons timed out`)
 
 				botMessage.edit({
 					embeds: [embeds[page].embed],

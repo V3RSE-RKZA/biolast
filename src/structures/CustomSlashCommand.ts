@@ -55,7 +55,7 @@ class CustomSlashCommand extends SlashCommand {
 		slashOptions: Omit<SlashCommandOptions, 'throttling' | 'permissions'> & CommandOptions
 	) {
 		if (debug && testingGuildIDs) {
-			// register to testing guild and raids while bot is in debug mode
+			// register to testing guild while bot is in debug mode
 			logger.debug(`Registering ${slashOptions.name} to testing guild instead of globally: ${testingGuildIDs.join(', ')}`)
 
 			if (slashOptions.guildIDs) {
