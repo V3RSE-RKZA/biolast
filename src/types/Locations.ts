@@ -1,5 +1,5 @@
-import { NPC } from '../resources/npcs'
 import { Item } from './Items'
+import { NPC } from './NPCs'
 
 interface Loot {
 	/**

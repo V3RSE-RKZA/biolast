@@ -1,6 +1,133 @@
 import { Location } from '../../types/Locations'
+import { NPC } from '../../types/NPCs'
 import { items } from '../items'
-import { npcs } from '../npcs'
+
+/*
+	npcs that appear in this location
+*/
+// TODO this bloated walker appears in The Farm with same stats, change this to something stronger
+const bloatedWalker: NPC = {
+	type: 'walker',
+	display: 'Bloated Walker',
+	health: 50,
+	damage: 35,
+	drops: {
+		common: [items.pitchfork, items.walker_goop],
+		uncommon: [items.apple],
+		rare: [items.fire_axe],
+		rolls: 1
+	},
+	quotes: [
+		'~*You hear footsteps nearby*~',
+		'~*You hear a deep growl close by*~'
+	],
+	xp: 50,
+	chanceToBite: 15,
+	attackPenetration: 1.3,
+	boss: false
+}
+const mediumRaider: NPC = {
+	type: 'raider',
+	display: 'Raider',
+	health: 60,
+	damage: 35,
+	drops: {
+		common: [items['9mm_FMJ_bullet']],
+		uncommon: [items.ifak_medkit, items['anti-biotics']],
+		rare: [items['9mm_RIP_bullet'], items.duffle_bag],
+		rolls: 1
+	},
+	weapon: items['glock-17'],
+	ammo: items['9mm_HP_bullet'],
+	quotes: [
+		'~*You hear footsteps nearby*~'
+	],
+	armor: items.wooden_armor,
+	helmet: items.wooden_helmet,
+	xp: 125,
+	boss: false
+}
+const psychoRaider: NPC = {
+	type: 'raider',
+	display: 'Psycho',
+	health: 40,
+	damage: 30,
+	drops: {
+		common: [items.knife],
+		uncommon: [items.fire_axe, items.splint],
+		rare: [items.hypo_stim, items.duffle_bag],
+		rolls: 1
+	},
+	weapon: items.chainsaw,
+	quotes: [
+		'~*You hear footsteps nearby*~',
+		'~*You hear someone cackling maniacally*~'
+	],
+	helmet: items.psycho_mask,
+	xp: 125,
+	boss: false
+}
+const mediumCrawler: NPC = {
+	type: 'walker',
+	display: 'Crawler',
+	health: 40,
+	damage: 50,
+	drops: {
+		common: [items.compression_bandage],
+		uncommon: [items['9mm_FMJ_bullet']],
+		rare: [items.walker_goop],
+		rolls: 1
+	},
+	quotes: [
+		'~*You hear a deep growl close by*~'
+	],
+	xp: 60,
+	chanceToBite: 25,
+	attackPenetration: 1.9,
+	boss: false
+}
+const gameNGoRaider: NPC = {
+	type: 'raider',
+	display: 'Raider',
+	health: 60,
+	damage: 35,
+	drops: {
+		common: [items['9mm_FMJ_bullet']],
+		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
+		rare: [items['9mm_RIP_bullet'], items.escape_from_fristoe],
+		rolls: 1
+	},
+	weapon: items['glock-17'],
+	ammo: items['9mm_HP_bullet'],
+	quotes: [
+		'~*You hear footsteps nearby*~'
+	],
+	armor: items.wooden_armor,
+	helmet: items.wooden_helmet,
+	xp: 125,
+	boss: false
+}
+const securityOfficerWalker: NPC = {
+	type: 'walker',
+	display: 'Walker Security Officer',
+	health: 60,
+	damage: 30,
+	drops: {
+		common: [items.police_baton],
+		uncommon: [items['9mm_FMJ_bullet'], items.duffle_bag, items.walker_goop],
+		rare: [items['glock-17'], items.security_key],
+		rolls: 1
+	},
+	quotes: [
+		'~*You hear footsteps nearby*~',
+		'~*You hear a deep growl close by*~'
+	],
+	armor: items.aramid_armor,
+	xp: 80,
+	chanceToBite: 10,
+	attackPenetration: 1.5,
+	boss: false
+}
 
 export const station: Location = {
 	id: 'policestation',
@@ -46,7 +173,7 @@ export const station: Location = {
 			},
 			npcSpawns: {
 				chance: 30,
-				npcs: [npcs.bloated_walker]
+				npcs: [bloatedWalker]
 			}
 		},
 		{
@@ -68,7 +195,7 @@ export const station: Location = {
 			},
 			npcSpawns: {
 				chance: 50,
-				npcs: [npcs.medium_raider, npcs.psycho_raider]
+				npcs: [mediumRaider, psychoRaider]
 			}
 		},
 		{
@@ -114,7 +241,7 @@ export const station: Location = {
 			},
 			npcSpawns: {
 				chance: 30,
-				npcs: [npcs.crawler_medium]
+				npcs: [mediumCrawler]
 			}
 		},
 		{
@@ -156,7 +283,7 @@ export const station: Location = {
 			},
 			npcSpawns: {
 				chance: 50,
-				npcs: [npcs.game_raider, npcs.psycho_raider]
+				npcs: [gameNGoRaider, psychoRaider]
 			}
 		},
 		{
@@ -198,7 +325,7 @@ export const station: Location = {
 			},
 			npcSpawns: {
 				chance: 40,
-				npcs: [npcs.walker_security_officer]
+				npcs: [securityOfficerWalker]
 			}
 		}
 	]

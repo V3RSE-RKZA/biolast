@@ -1,6 +1,95 @@
 import { Location } from '../../types/Locations'
+import { NPC } from '../../types/NPCs'
 import { items } from '../items'
-import { npcs } from '../npcs'
+
+/*
+	npcs that appear in this location
+*/
+const walkerWeak: NPC = {
+	type: 'walker',
+	display: 'Walker',
+	health: 30,
+	damage: 20,
+	drops: {
+		common: [items.bandage],
+		uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.walker_goop],
+		rare: [items['9mm_FMJ_bullet']],
+		rolls: 1
+	},
+	quotes: [
+		'~*You hear footsteps nearby*~',
+		'~*You hear a deep growl close by*~'
+	],
+	xp: 20,
+	chanceToBite: 15,
+	attackPenetration: 0.6,
+	boss: false
+}
+const raiderWeak: NPC = {
+	type: 'raider',
+	display: 'Raider',
+	health: 30,
+	damage: 25,
+	drops: {
+		common: [items.bandage],
+		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
+		rare: [items['5.45x39mm_FMJ_bullet'], items['9mm_FMJ_bullet'], items.small_pouch],
+		rolls: 1
+	},
+	weapon: items.luger,
+	ammo: items['.22LR_bullet'],
+	quotes: [
+		'~*You hear footsteps nearby*~'
+	],
+	armor: items.cloth_armor,
+	helmet: items.cloth_helmet,
+	xp: 40,
+	boss: false
+}
+const crawlerWeak: NPC = {
+	type: 'walker',
+	display: 'Crawler',
+	health: 20,
+	damage: 35,
+	drops: {
+		common: [items.bandage],
+		uncommon: [items.makeshift_pistol_bullet],
+		rare: [items.walker_goop],
+		rolls: 1
+	},
+	quotes: [
+		'~*You hear a deep growl close by*~'
+	],
+	xp: 20,
+	chanceToBite: 20,
+	attackPenetration: 0.9,
+	boss: false
+}
+const cainTheGravekeeperBoss: NPC = {
+	type: 'raider',
+	display: 'Cain, The Gravekeeper',
+	health: 125,
+	damage: 30,
+	drops: {
+		common: [items.bandage],
+		uncommon: [items.ifak_medkit],
+		rare: [items.sledgehammer, items.bone_armor],
+		rolls: 1
+	},
+	weapon: items['glock-17'],
+	ammo: items['9mm_FMJ_bullet'],
+	quotes: [
+		'~*You hear footsteps nearby*~',
+		'~*Cain: Life is suffering.*~',
+		'~*Cain: I have a plot specifically made for you.*~',
+		'~*Cain: Do not be afraid of death. Welcome it.*~',
+		'~*Cain: The dead shall not be disturbed.*~'
+	],
+	armor: items.wooden_armor,
+	helmet: items.wooden_helmet,
+	xp: 100,
+	boss: true
+}
 
 export const suburbs: Location = {
 	id: 'suburbs',
@@ -46,7 +135,7 @@ export const suburbs: Location = {
 			},
 			npcSpawns: {
 				chance: 30,
-				npcs: [npcs.walker_weak]
+				npcs: [walkerWeak]
 			}
 		},
 		{
@@ -68,7 +157,7 @@ export const suburbs: Location = {
 			},
 			npcSpawns: {
 				chance: 40,
-				npcs: [npcs.raider_weak]
+				npcs: [raiderWeak]
 			}
 		},
 		{
@@ -128,7 +217,7 @@ export const suburbs: Location = {
 			},
 			npcSpawns: {
 				chance: 40,
-				npcs: [npcs.crawler_weak]
+				npcs: [crawlerWeak]
 			}
 		}
 	]

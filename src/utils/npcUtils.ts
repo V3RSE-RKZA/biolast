@@ -1,7 +1,7 @@
 import { Member } from 'slash-create'
 import { icons } from '../config'
 import { Affliction, afflictions } from '../resources/afflictions'
-import { NPC } from '../resources/npcs'
+import { NPC } from '../types/NPCs'
 import { Ammunition, Medical, Item, MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon, Weapon } from '../types/Items'
 import { BackpackItemRow, Query, UserRow } from '../types/mysql'
 import { deleteItem, lowerItemDurability } from './db/items'

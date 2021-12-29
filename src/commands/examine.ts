@@ -2,7 +2,6 @@ import { TextCommand } from '../types/Commands'
 import { reply } from '../utils/messageUtils'
 import { allLocations } from '../resources/locations'
 import { getItem } from '../utils/argParsers'
-import { allNPCs } from '../resources/npcs'
 import { getItemDisplay } from '../utils/itemUtils'
 import { dailyQuests } from '../resources/quests'
 import { icons } from '../config'
@@ -23,7 +22,6 @@ export const command: TextCommand = {
 			return
 		}
 
-		const obtainedFromNpcs = []
 		const obtainedFromChannels = []
 		const obtainedFromQuests = []
 
@@ -50,30 +48,6 @@ export const command: TextCommand = {
 			}
 		}
 
-		for (const npc of allNPCs) {
-			if (npc.armor && npc.armor.name === item.name) {
-				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) wears this as armor and will 100% drop it with random durability`)
-			}
-			else if (npc.helmet && npc.helmet.name === item.name) {
-				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) wears this as a helmet and will 100% drop it with random durability`)
-			}
-			else if (npc.type === 'raider' && npc.weapon.name === item.name) {
-				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) uses this as a weapon and will 100% drop it with random durability`)
-			}
-			else if (npc.type === 'raider' && 'ammo' in npc && npc.ammo.name === item.name) {
-				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) uses this as ammo and will drop 1x - 3x of it`)
-			}
-			else if (npc.drops.common.find(i => i.name === item.name)) {
-				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) drops this as a common 60% drop`)
-			}
-			else if (npc.drops.uncommon.find(i => i.name === item.name)) {
-				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) drops this as a uncommon 25% drop`)
-			}
-			else if (npc.drops.rare.find(i => i.name === item.name)) {
-				obtainedFromNpcs.push(`\`${npc.id}\` (${npc.type}) drops this as a rare 15% drop`)
-			}
-		}
-
 		for (const quest of dailyQuests) {
 			if (quest.rewards.item && quest.rewards.item.name === item.name) {
 				obtainedFromQuests.push(`\`${quest.id}\` (quest type: ${quest.questType}) gives this as a reward. Quest eligible for players level **${quest.minLevel}** - **${quest.maxLevel}**`)
@@ -82,7 +56,6 @@ export const command: TextCommand = {
 
 		await reply(message, {
 			content: `${getItemDisplay(item)} can be obtained from:\n\n` +
-				`**NPCS**:\n${obtainedFromNpcs.join('\n') || '❌ none'}\n\n` +
 				`**Channels**:\n${obtainedFromChannels.join('\n') || '❌ none'}\n\n` +
 				`**Daily Quests**:\n${obtainedFromQuests.join('\n') || '❌ none'}`
 		})

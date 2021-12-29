@@ -1,7 +1,7 @@
 import { SlashCreator, CommandContext, CommandOptionType, ComponentType, Message, ComponentSelectMenu } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
-import { NPC } from '../resources/npcs'
+import { NPC } from '../types/NPCs'
 import { dailyQuests } from '../resources/quests'
 import { allLocations } from '../resources/locations'
 import CustomSlashCommand from '../structures/CustomSlashCommand'

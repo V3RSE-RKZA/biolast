@@ -1,6 +1,97 @@
 import { Location } from '../../types/Locations'
+import { NPC } from '../../types/NPCs'
 import { items } from '../items'
-import { npcs } from '../npcs'
+
+/*
+	npcs that appear in this location
+*/
+// TODO change this raider weak to something stronger to emphasize this disparity between this location and suburbs
+const raiderWeak: NPC = {
+	type: 'raider',
+	display: 'Raider',
+	health: 30,
+	damage: 25,
+	drops: {
+		common: [items.bandage],
+		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
+		rare: [items['5.45x39mm_FMJ_bullet'], items['9mm_FMJ_bullet'], items.small_pouch],
+		rolls: 1
+	},
+	weapon: items.luger,
+	ammo: items['.22LR_bullet'],
+	quotes: [
+		'~*You hear footsteps nearby*~'
+	],
+	armor: items.cloth_armor,
+	helmet: items.cloth_helmet,
+	xp: 40,
+	boss: false
+}
+const feralAnimal: NPC = {
+	type: 'walker',
+	display: 'Feral Animal',
+	health: 35,
+	damage: 45,
+	drops: {
+		common: [items.apple, items.corn],
+		uncommon: [items.apple],
+		rare: [items.corn],
+		rolls: 1
+	},
+	quotes: [
+		'~*You hear hiss nearby*~',
+		'~*You hear a deep growl close by*~'
+	],
+	xp: 35,
+	chanceToBite: 30,
+	attackPenetration: 1.6,
+	boss: false
+}
+const bloatedWalker: NPC = {
+	type: 'walker',
+	display: 'Bloated Walker',
+	health: 50,
+	damage: 35,
+	drops: {
+		common: [items.pitchfork, items.walker_goop],
+		uncommon: [items.apple],
+		rare: [items.fire_axe],
+		rolls: 1
+	},
+	quotes: [
+		'~*You hear footsteps nearby*~',
+		'~*You hear a deep growl close by*~'
+	],
+	xp: 50,
+	chanceToBite: 15,
+	attackPenetration: 1.3,
+	boss: false
+}
+const daveTheRedneckBoss: NPC = {
+	type: 'raider',
+	display: 'Dave, The Redneck',
+	health: 185,
+	damage: 20,
+	drops: {
+		common: [items.pitchfork, items.daves_drug_key, items.P320],
+		uncommon: [items.sauce_pan, items.paracetamol, items.farming_guide],
+		rare: [items.sledgehammer, items.gunsafe_code],
+		rolls: 2
+	},
+	weapon: items.saiga_MK,
+	ammo: items['5.45x39mm_FMJ_bullet'],
+	quotes: [
+		'~*You hear the giggles and crackles of a man...*~',
+		'~*Dave: Did I hear somebody?*~',
+		'~*Dave: buUUUUuUrP*~',
+		'~*Dave: What do you mean, zombies?*~',
+		'~*Dave: Damn pterodactyls eating my crops again.*~'
+	],
+	armor: items.cloth_armor,
+	helmet: items.sauce_pan,
+	xp: 500,
+	boss: true
+}
 
 export const farm: Location = {
 	id: 'farm',
@@ -46,7 +137,7 @@ export const farm: Location = {
 			},
 			npcSpawns: {
 				chance: 50,
-				npcs: [npcs.raider_weak, npcs.feral_animal]
+				npcs: [raiderWeak, feralAnimal]
 			}
 		},
 		{
@@ -68,7 +159,7 @@ export const farm: Location = {
 			},
 			npcSpawns: {
 				chance: 50,
-				npcs: [npcs.bloated_walker]
+				npcs: [bloatedWalker]
 			}
 		},
 		{
