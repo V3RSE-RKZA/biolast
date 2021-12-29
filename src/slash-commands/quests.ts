@@ -133,7 +133,7 @@ class QuestsCommand extends CustomSlashCommand {
 			}] : []
 		}) as Message
 
-		const { collector, stopCollector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 30000)
+		const { collector, stopCollector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 40000)
 
 		collector.on('collect', async buttonCtx => {
 			try {
@@ -423,8 +423,8 @@ class QuestsCommand extends CustomSlashCommand {
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
 					`**Reward**: ${this.getRewardsString(questRow)}`
 			}
-			case 'Evacs': {
-				return `**Description**: Successfully evac **${quest.progressGoal}** times.\n` +
+			case 'Scavenge': {
+				return `**Description**: Scavenge **${quest.progressGoal}** times.\n` +
 					`**Progress**: ${questRow.progress} / ${questRow.progressGoal}\n` +
 					`**Reward**: ${this.getRewardsString(questRow)}`
 			}

@@ -7,7 +7,7 @@ type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
         [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>
     }[Keys]
 
-export type QuestType = 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Evacs' | 'Scavenge With A Key' | 'Retrieve Item'
+export type QuestType = 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Scavenge' | 'Scavenge With A Key' | 'Retrieve Item'
 
 interface BaseQuest {
 	/**
@@ -46,7 +46,7 @@ interface BaseDailyQuest extends BaseQuest {
 	}>
 }
 interface BasicDailyQuest extends BaseDailyQuest {
-	questType: 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Evacs'
+	questType: 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Scavenge'
 }
 /**
  * This quest type requires a key to be specified
@@ -75,7 +75,7 @@ interface BaseSideQuest extends BaseQuest {
 	item: Item
 }
 interface BasicSideQuest extends BaseSideQuest {
-	questType: 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Evacs'
+	questType: 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Scavenge'
 }
 
 /**

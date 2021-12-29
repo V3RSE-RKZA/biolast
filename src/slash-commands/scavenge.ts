@@ -163,24 +163,28 @@ class ScavengeCommand extends CustomSlashCommand {
 				return
 			}
 
-			// lower durability or remove key
-			if (hasRequiredKey) {
-				const userQuests = (await getUserQuests(transaction.query, ctx.user.id, true)).filter(q => q.questType === 'Scavenge With A Key')
+			const preUserQuests = (await getUserQuests(transaction.query, ctx.user.id, true))
+				.filter(q => q.questType === 'Scavenge With A Key' || q.questType === 'Scavenge')
 
-				// check if user had a quest to scavenge with a key
-				for (const questRow of userQuests) {
-					const quest = dailyQuests.find(q => q.id === questRow.questId)
+			// check if user had any scavenge quests
+			for (const questRow of preUserQuests) {
+				const quest = dailyQuests.find(q => q.id === questRow.questId)
 
+				if (questRow.progress < questRow.progressGoal) {
 					if (
-						quest &&
+						(quest &&
 						quest.questType === 'Scavenge With A Key' &&
-						quest.key.name === hasRequiredKey.item.name &&
-						questRow.progress < questRow.progressGoal
+						hasRequiredKey &&
+						quest.key.name === hasRequiredKey.item.name) ||
+						questRow.questType === 'Scavenge'
 					) {
 						await increaseProgress(transaction.query, questRow.id, 1)
 					}
 				}
+			}
 
+			// lower durability or remove key
+			if (hasRequiredKey) {
 				if (!hasRequiredKey.row.durability || hasRequiredKey.row.durability - 1 <= 0) {
 					await deleteItem(transaction.query, hasRequiredKey.row.id)
 				}
@@ -754,8 +758,7 @@ class ScavengeCommand extends CustomSlashCommand {
 								}
 
 								messages[i].push(
-									`☠️ ${npcDisplayCapitalized} **DIED!**`,
-									`<@${ctx.user.id}> earned 🌟 ***+${npc.xp}*** xp for this kill.`,
+									`☠️ ${npcDisplayCapitalized} **DIED!** <@${ctx.user.id}> earned 🌟 ***+${npc.xp}*** xp for this kill.`,
 									`\n__Loot Received__\n${(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
 										.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : `${getRarityDisplay('Common')} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}`
 								)
@@ -877,7 +880,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				`\n\n__**Afflictions**__\n${playerAfflictions.length ? combineArrayWithAnd(playerAfflictions.map(a => a.name)) : 'None'}` +
 				`${playerEffectsDisplay.length ? `\n\n__**Effects**__\n${playerEffectsDisplay.join('\n')}` : ''}`,
 				true)
-			.addField(`${mob.display}`,
+			.addField(`${mob.display} (${mob.boss ? 'boss' : 'mob'})`,
 				`__**Health**__\n**${npcHealth} / ${mob.health}** HP\n${formatHealth(npcHealth, mob.health)}` +
 				`\n\n__**Gear**__\n**Weapon**: ${mob.type === 'raider' ? getItemDisplay(mob.weapon) : 'None'}` +
 				`${'ammo' in mob ? `\n**Ammo**: ${getItemDisplay(mob.ammo)}` : ''}` +

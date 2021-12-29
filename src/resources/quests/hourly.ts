@@ -34,14 +34,14 @@ export const sideQuests: SideQuest[] = [
 	},
 	{
 		type: 'Side',
-		id: 'side_evacs_1',
-		questType: 'Evacs',
+		id: 'side_scavenge_1',
+		questType: 'Scavenge',
 		progressGoal: 1
 	},
 	{
 		type: 'Side',
-		id: 'side_evacs_2',
-		questType: 'Evacs',
+		id: 'side_scavenge_2',
+		questType: 'Scavenge',
 		progressGoal: 2
 	},
 	{

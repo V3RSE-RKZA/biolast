@@ -26,8 +26,8 @@ export const dailyQuests: DailyQuest[] = [
 	},
 	{
 		type: 'Daily',
-		id: 'lowest_lvl_evacs_1',
-		questType: 'Evacs',
+		id: 'lowest_lvl_scavenge_1',
+		questType: 'Scavenge',
 		minLevel: 1,
 		maxLevel: 4,
 		progressGoal: 2,
@@ -37,8 +37,8 @@ export const dailyQuests: DailyQuest[] = [
 	},
 	{
 		type: 'Daily',
-		id: 'lowest_lvl_evacs_2',
-		questType: 'Evacs',
+		id: 'lowest_lvl_scavenge_2',
+		questType: 'Scavenge',
 		minLevel: 1,
 		maxLevel: 4,
 		progressGoal: 2,
