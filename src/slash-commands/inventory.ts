@@ -8,8 +8,8 @@ import { BackpackItemRow, UserRow } from '../types/mysql'
 import { getUserBackpack } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
-import { formatHealth } from '../utils/stringUtils'
-import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
+import { formatHealth, formatMoney } from '../utils/stringUtils'
+import { getBackpackLimit, getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
 import { getPlayerXp } from '../utils/playerUtils'
 
 const ITEMS_PER_PAGE = 10
@@ -89,6 +89,7 @@ class InventoryCommand extends CustomSlashCommand {
 		const sortedItems = sortItemsByName(itemData.items, true)
 		const pages = []
 		const maxPage = Math.ceil(sortedItems.length / ITEMS_PER_PAGE) || 1
+		const invValue = itemData.items.reduce((prev, curr) => prev + (getItemPrice(curr.item, curr.row) * this.app.shopSellMultiplier), 0)
 
 		for (let i = 1; i < maxPage + 1; i++) {
 			const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
@@ -97,6 +98,8 @@ class InventoryCommand extends CustomSlashCommand {
 
 			const embed = new Embed()
 				.setAuthor(`${userDisplay}'s Inventory`, user.avatarURL)
+				.setDescription(`**Number of Items**: ${itemData.items.length}` +
+					`\n**Inventory Value**: ${formatMoney(invValue)}`)
 				.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP (+5HP/5 mins)\n${formatHealth(userData.health, userData.maxHealth)}`, true)
 				.addField('__Experience__', `**Level**: ${userData.level}\n**XP**: ${playerXp.relativeLevelXp} / ${playerXp.levelTotalXpNeeded} xp`, true)
 				.addField('__Equips__', 'Equip an item with `/equip <item id>`.\n' +

@@ -74,7 +74,7 @@ class HelpCommand extends CustomSlashCommand {
 			.setDescription('Use `/help <command>` to see more about a specific command. You can also hover your mouse over the command for a short description.' +
 				`\n\n${this.app.slashCreator.commands
 					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin')
-					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/0lvPMdMtsGU '${cmd.description}')`)
+					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/hnVhYwYuqcM '${cmd.description}')`)
 					.join(', ')}`)
 
 		const damageEmbed = new Embed()

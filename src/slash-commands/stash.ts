@@ -9,7 +9,7 @@ import { addItemToBackpack, addItemToStash, getUserBackpack, getUserStash, remov
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { backpackHasSpace, getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
+import { backpackHasSpace, getItemDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -256,6 +256,7 @@ class StashCommand extends CustomSlashCommand {
 		const sortedItems = sortItemsByName(itemData.items, true)
 		const pages = []
 		const maxPage = Math.ceil(itemData.items.length / ITEMS_PER_PAGE) || 1
+		const stashValue = itemData.items.reduce((prev, curr) => prev + (getItemPrice(curr.item, curr.row) * this.app.shopSellMultiplier), 0)
 
 		for (let i = 1; i < maxPage + 1; i++) {
 			const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
@@ -264,8 +265,9 @@ class StashCommand extends CustomSlashCommand {
 
 			const embed = new Embed()
 				.setAuthor(`${userDisplay}'s Stash`, user.avatarURL)
-				.addField('__Stash Info__', `**Coins**: ${formatMoney(userData.money)}\n` +
-				`**Number of Items**: ${itemData.items.length}`)
+				.setDescription(`**Coins**: ${formatMoney(userData.money)}` +
+					`\n**Number of Items**: ${itemData.items.length}` +
+					`\n**Stash Value**: ${formatMoney(stashValue)}`)
 				.addField(`__Items in Stash__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})`,
 					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your inventory to your stash with \`/stash put <item id>\`.`)
 			pages.push(embed)

@@ -152,15 +152,17 @@ class ItemCommand extends CustomSlashCommand {
 
 				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
 				itemEmbed.addField('Speed', `${item.speed} (determines turn order in duels)`, true)
-				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (${itm.spreadsDamageToLimbs ? `**${Math.round(itm.damage / itm.spreadsDamageToLimbs)} x ${itm.spreadsDamageToLimbs}** damage` : `**${itm.damage}** damage`})`).join('\n'))
+				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (${itm.spreadsDamageToLimbs ?
+					`**${Math.round(itm.damage / itm.spreadsDamageToLimbs)} x ${itm.spreadsDamageToLimbs}** damage` :
+					`**${itm.damage}** damage`}, **${itm.penetration}** armor penetration)`).join('\n'))
 				break
 			}
 			case 'Body Armor': {
-				itemEmbed.addField('Armor Level', item.level.toString(), true)
+				itemEmbed.addField('Armor Level', `Level **${item.level}** protection.\n\n${icons.information} Reduces damage from weapons/ammo with a penetration below **${item.level.toFixed(2)}**`, true)
 				break
 			}
 			case 'Helmet': {
-				itemEmbed.addField('Armor Level', item.level.toString(), true)
+				itemEmbed.addField('Armor Level', `Level **${item.level}** protection.\n\n${icons.information} Reduces damage from weapons/ammo with a penetration below **${item.level.toFixed(2)}**`, true)
 				break
 			}
 			case 'Stimulant': {
