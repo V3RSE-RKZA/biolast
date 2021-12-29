@@ -1,5 +1,5 @@
 import { Affliction } from '../resources/afflictions'
-import { StatusEffects, StimulantMedical } from '../types/Items'
+import { StatusEffects, Stimulant } from '../types/Items'
 
 /**
  * Calculates the XP required to level up given a level. IF YOU PLAN ON CHANGING THIS YOU SHOULD ALSO CHANGE THE AMOUNT OF XP QUESTS GIVE (src/slash-commands/quests)
@@ -39,7 +39,7 @@ export function getPlayerXp (playerXp: number, level: number): { relativeLevelXp
  * @param afflictions Afflictions user has
  * @returns Users active effects
  */
-export function addStatusEffects (activeStimulants: StimulantMedical[], afflictions: Affliction[] = []): StatusEffects {
+export function addStatusEffects (activeStimulants: Stimulant[], afflictions: Affliction[] = []): StatusEffects {
 	const effects: StatusEffects = {
 		damageBonus: 0,
 		accuracyBonus: 0,

@@ -3,7 +3,7 @@ import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import { icons } from '../config'
 import { Affliction } from '../resources/afflictions'
 import { allItems } from '../resources/items'
-import { Ammunition, Armor, HealingMedical, Helmet, MeleeWeapon, RangedWeapon, StimulantMedical, ThrowableWeapon, Weapon } from '../types/Items'
+import { Ammunition, Armor, Medical, Helmet, MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon, Weapon } from '../types/Items'
 import { ItemWithBackpackRowOfType } from '../types/mysql'
 import ComponentCollector, { CollectorObject } from './ComponentCollector'
 import { GRAY_BUTTON, RED_BUTTON } from './constants'
@@ -24,11 +24,11 @@ interface AttackChoice {
 }
 interface HealChoice {
 	choice: 'use a medical item'
-	itemRow: ItemWithBackpackRowOfType<HealingMedical>
+	itemRow: ItemWithBackpackRowOfType<Medical>
 }
 interface StimulantChoice {
 	choice: 'use a stimulant'
-	itemRow: ItemWithBackpackRowOfType<StimulantMedical>
+	itemRow: ItemWithBackpackRowOfType<Stimulant>
 }
 interface FleeChoice {
 	choice: 'try to flee'
@@ -215,7 +215,7 @@ export function awaitPlayerChoices (
 	componentCollector: ComponentCollector,
 	botMessage: Message,
 	playerChoices: Map<string, PlayerChoice>,
-	players: { member: ResolvedMember, stims: StimulantMedical[], afflictions: Affliction[] }[],
+	players: { member: ResolvedMember, stims: Stimulant[], afflictions: Affliction[] }[],
 	turnNumber: number
 ): Promise<void> {
 	return new Promise<void>((resolve, reject) => {
@@ -517,7 +517,7 @@ export function awaitPlayerChoices (
 					const preHealPlayerData = (await getUserRow(query, actionCtx.user.id))!
 					const preHealBackpackRows = await getUserBackpack(query, actionCtx.user.id)
 					const preHealInventory = getItems(preHealBackpackRows)
-					const possibleHealItems = preHealInventory.items.filter(i => i.item.type === 'Medical' && i.item.subtype === 'Healing')
+					const possibleHealItems = preHealInventory.items.filter(i => i.item.type === 'Medical')
 					const preHealMaxPossible = preHealPlayerData.maxHealth - preHealPlayerData.health
 
 					if (!possibleHealItems.length) {
@@ -546,7 +546,7 @@ export function awaitPlayerChoices (
 							options: [
 								...sortItemsByLevel(possibleHealItems, true).slice(0, 25).map(i => {
 									const iconID = i.item.icon.match(/:([0-9]*)>/)
-									const itemDesc = i.item.type === 'Medical' && i.item.subtype === 'Healing' ?
+									const itemDesc = i.item.type === 'Medical' ?
 										`Heals for ${i.item.healsFor} HP.` :
 										''
 
@@ -572,7 +572,7 @@ export function awaitPlayerChoices (
 						}]
 					})
 					const healCollector = componentCollector.createCollector(healMessage.id, i => i.user.id === actionCtx.user.id, 60000)
-					let healItem: ItemWithBackpackRowOfType<HealingMedical>
+					let healItem: ItemWithBackpackRowOfType<Medical>
 
 					actionCollectors.push(healCollector)
 
@@ -589,7 +589,7 @@ export function awaitPlayerChoices (
 								return
 							}
 
-							healItem = healItemRow as ItemWithBackpackRowOfType<HealingMedical>
+							healItem = healItemRow as ItemWithBackpackRowOfType<Medical>
 							healCollector.stopCollector()
 
 							await healMessage.edit({
@@ -642,7 +642,7 @@ export function awaitPlayerChoices (
 					const preHealBackpackRows = await getUserBackpack(query, actionCtx.user.id)
 					const preHealInventory = getItems(preHealBackpackRows)
 					const playerStimulants = players.find(p => p.member.id === actionCtx.user.id)?.stims
-					const playerStimItems = preHealInventory.items.filter(i => i.item.type === 'Medical' && i.item.subtype === 'Stimulant')
+					const playerStimItems = preHealInventory.items.filter(i => i.item.type === 'Medical')
 					const possibleStimulants = playerStimItems.filter(i => !playerStimulants?.some(stim => stim.name === i.item.name))
 
 					if (!playerStimItems.length || !playerStimulants) {
@@ -679,7 +679,7 @@ export function awaitPlayerChoices (
 							placeholder: 'Select a stimulant from your inventory to use.',
 							options: [
 								...sortItemsByLevel(playerStimItems, true).slice(0, 25).map(i => {
-									const item = i.item as StimulantMedical
+									const item = i.item as Stimulant
 									const iconID = i.item.icon.match(/:([0-9]*)>/)
 									const effectsDisplay = getEffectsDisplay(item.effects)
 
@@ -705,7 +705,7 @@ export function awaitPlayerChoices (
 						}]
 					})
 					const stimCollector = componentCollector.createCollector(stimMessage.id, i => i.user.id === actionCtx.user.id, 60000)
-					let stimItem: ItemWithBackpackRowOfType<StimulantMedical>
+					let stimItem: ItemWithBackpackRowOfType<Stimulant>
 
 					actionCollectors.push(stimCollector)
 
@@ -722,7 +722,7 @@ export function awaitPlayerChoices (
 								return
 							}
 
-							stimItem = stimItemRow as ItemWithBackpackRowOfType<StimulantMedical>
+							stimItem = stimItemRow as ItemWithBackpackRowOfType<Stimulant>
 							stimCollector.stopCollector()
 
 							await stimMessage.edit({

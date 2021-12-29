@@ -6,7 +6,7 @@ import { Affliction, afflictions } from '../resources/afflictions'
 import { items } from '../resources/items'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { StimulantMedical } from '../types/Items'
+import { Stimulant } from '../types/Items'
 import { BackpackItemRow, UserRow } from '../types/mysql'
 import { GRAY_BUTTON, GREEN_BUTTON, RED_BUTTON } from '../utils/constants'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
@@ -104,9 +104,9 @@ class DuelCommand extends CustomSlashCommand {
 			const player2Data = (await getUserRow(preTransaction.query, member.id, true))!
 			const player1Inventory = await getUserBackpack(preTransaction.query, ctx.user.id, true)
 			const player2Inventory = await getUserBackpack(preTransaction.query, member.id, true)
-			const player1Stimulants: StimulantMedical[] = []
+			const player1Stimulants: Stimulant[] = []
 			const player1Afflictions: Affliction[] = []
-			const player2Stimulants: StimulantMedical[] = []
+			const player2Stimulants: Stimulant[] = []
 			const player2Afflictions: Affliction[] = []
 
 			if (player1Data.fighting) {
@@ -745,8 +745,8 @@ class DuelCommand extends CustomSlashCommand {
 		player1Inventory: BackpackItemRow[],
 		player2Inventory: BackpackItemRow[],
 		turnNumber: number,
-		player1Stimulants: StimulantMedical[],
-		player2Stimulants: StimulantMedical[],
+		player1Stimulants: Stimulant[],
+		player2Stimulants: Stimulant[],
 		player1Afflictions: Affliction[],
 		player2Afflictions: Affliction[]
 	): Embed {

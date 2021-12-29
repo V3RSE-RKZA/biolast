@@ -2,7 +2,7 @@ import { Member } from 'slash-create'
 import { icons } from '../config'
 import { Affliction, afflictions } from '../resources/afflictions'
 import { NPC } from '../resources/npcs'
-import { Ammunition, HealingMedical, Item, MeleeWeapon, RangedWeapon, StimulantMedical, ThrowableWeapon, Weapon } from '../types/Items'
+import { Ammunition, Medical, Item, MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon, Weapon } from '../types/Items'
 import { BackpackItemRow, Query, UserRow } from '../types/mysql'
 import { deleteItem, lowerItemDurability } from './db/items'
 import { lowerHealth, setFighting } from './db/players'
@@ -16,11 +16,11 @@ interface MobAttackChoice {
 }
 interface MobHealChoice {
 	choice: 'use a medical item'
-	item: HealingMedical
+	item: Medical
 }
 interface MobStimulantChoice {
 	choice: 'use a stimulant'
-	item: StimulantMedical
+	item: Stimulant
 }
 export type MobChoice = (MobAttackChoice | MobHealChoice | MobStimulantChoice) & { speed: number }
 
@@ -53,7 +53,7 @@ export function getMobDrop (npc: NPC): { item: Item, rarityDisplay: string } | u
 	}
 }
 
-export function getMobChoice (npc: NPC, npcStimulants: StimulantMedical[], currentHealth: number): MobChoice {
+export function getMobChoice (npc: NPC, npcStimulants: Stimulant[], currentHealth: number): MobChoice {
 	const random = Math.random()
 
 	if (npc.usesHeals && random <= 0.25 && currentHealth < npc.health) {
@@ -129,9 +129,9 @@ export async function attackPlayer (
 	userRow: UserRow,
 	userBackpack: BackpackItemRow[],
 	npc: NPC,
-	playerStimulants: StimulantMedical[],
+	playerStimulants: Stimulant[],
 	playerAfflictions: Affliction[],
-	npcStimulants: StimulantMedical[],
+	npcStimulants: Stimulant[],
 	npcAfflictions: Affliction[]
 ): Promise<{ messages: string[], damage: number }> {
 	const messages = []

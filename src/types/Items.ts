@@ -1,5 +1,16 @@
 interface BaseItem {
-	type: 'Ranged Weapon' | 'Melee Weapon' | 'Helmet' | 'Body Armor' | 'Ammunition' | 'Medical' | 'Backpack' | 'Key' | 'Collectible' | 'Throwable Weapon' | 'Food'
+	type: 'Ranged Weapon'
+		| 'Melee Weapon'
+		| 'Helmet'
+		| 'Body Armor'
+		| 'Ammunition'
+		| 'Medical'
+		| 'Stimulant'
+		| 'Backpack'
+		| 'Key'
+		| 'Collectible'
+		| 'Throwable Weapon'
+		| 'Food'
 	name: string
 	aliases: string[]
 	icon: string
@@ -152,9 +163,8 @@ export interface Ammunition extends BaseItem {
 	spreadsDamageToLimbs?: 2 | 3 | 4
 }
 
-export interface HealingMedical extends BaseItem {
+export interface Medical extends BaseItem {
 	type: 'Medical'
-	subtype: 'Healing'
 
 	/**
 	 * How many times this item can be used to heal before it breaks
@@ -218,9 +228,8 @@ export interface StatusEffects {
 	 */
 	damageTaken: number
 }
-export interface StimulantMedical extends BaseItem {
-	type: 'Medical'
-	subtype: 'Stimulant'
+export interface Stimulant extends BaseItem {
+	type: 'Stimulant'
 
 	/**
 	 * The effects this item gives when used
@@ -237,8 +246,6 @@ export interface StimulantMedical extends BaseItem {
 	 */
 	durability: number
 }
-
-export type Medical = HealingMedical | StimulantMedical
 
 export interface Backpack extends BaseItem {
 	type: 'Backpack'
@@ -262,4 +269,4 @@ export interface Collectible extends BaseItem {
 	type: 'Collectible'
 }
 
-export type Item = Weapon | Helmet | Armor | Ammunition | Medical | Backpack | Key | Collectible | Food
+export type Item = Weapon | Helmet | Armor | Ammunition | Medical | Stimulant | Backpack | Key | Collectible | Food

@@ -163,29 +163,28 @@ class ItemCommand extends CustomSlashCommand {
 				itemEmbed.addField('Armor Level', item.level.toString(), true)
 				break
 			}
-			case 'Medical': {
+			case 'Stimulant': {
+				const effectsDisplay = getEffectsDisplay(item.effects)
+
 				itemEmbed.addField('Speed', `${item.speed} (determines turn order in duels)`, true)
+				itemEmbed.addField('Gives Effects', effectsDisplay.join('\n'), true)
+				break
+			}
+			case 'Medical': {
+				const curesAfflictions = []
 
-				if (item.subtype === 'Stimulant') {
-					const effectsDisplay = getEffectsDisplay(item.effects)
+				itemEmbed.addField('Speed', `${item.speed} (determines turn order in duels)`, true)
+				itemEmbed.addField('Heals For', `${item.healsFor} health`, true)
 
-					itemEmbed.addField('Gives Effects', effectsDisplay.join('\n'), true)
+				if (item.curesBitten) {
+					curesAfflictions.push(`${icons.biohazard} Bitten`)
 				}
-				else {
-					const curesAfflictions = []
+				if (item.curesBrokenArm) {
+					curesAfflictions.push('🦴 Broken Arm')
+				}
 
-					itemEmbed.addField('Heals For', `${item.healsFor} health`, true)
-
-					if (item.curesBitten) {
-						curesAfflictions.push(`${icons.biohazard} Bitten`)
-					}
-					if (item.curesBrokenArm) {
-						curesAfflictions.push('🦴 Broken Arm')
-					}
-
-					if (curesAfflictions.length) {
-						itemEmbed.addField('Cures Afflictions', curesAfflictions.join('\n'), true)
-					}
+				if (curesAfflictions.length) {
+					itemEmbed.addField('Cures Afflictions', curesAfflictions.join('\n'), true)
 				}
 				break
 			}

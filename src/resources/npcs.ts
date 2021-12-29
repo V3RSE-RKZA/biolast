@@ -1,4 +1,4 @@
-import { Ammunition, Armor, HealingMedical, Helmet, Item, MeleeWeapon, RangedWeapon, StimulantMedical, ThrowableWeapon } from '../types/Items'
+import { Ammunition, Armor, Medical, Helmet, Item, MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon } from '../types/Items'
 import { items } from './items'
 
 type NPCType = 'walker' | 'raider'
@@ -34,11 +34,11 @@ interface NPCBase {
 	/**
 	 * The stimulants this NPC uses, if any
 	 */
-	usesStimulants?: StimulantMedical[]
+	usesStimulants?: Stimulant[]
 	/**
 	 * The healing items this NPC uses, if any
 	 */
-	usesHeals?: HealingMedical[]
+	usesHeals?: Medical[]
 
 	/**
 	 * Helmet npc is wearing

@@ -6,7 +6,7 @@ import { dailyQuests } from '../resources/quests'
 import { allLocations } from '../resources/locations'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { Item, StimulantMedical } from '../types/Items'
+import { Item, Stimulant } from '../types/Items'
 import { Area } from '../types/Locations'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
@@ -261,9 +261,9 @@ class ScavengeCommand extends CustomSlashCommand {
 				`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
 				''}try and scavenge **${areaChoice.display}** but **ENCOUNTER A ${npc.type.toUpperCase()}!**`
 			const playerChoices = new Map<string, PlayerChoice>()
-			const playerStimulants: StimulantMedical[] = []
+			const playerStimulants: Stimulant[] = []
 			const playerAfflictions: Affliction[] = []
-			const npcStimulants: StimulantMedical[] = []
+			const npcStimulants: Stimulant[] = []
 			const npcAfflictions: Affliction[] = []
 			let npcHealth = npc.health
 			let turnNumber = 1
@@ -853,8 +853,8 @@ class ScavengeCommand extends CustomSlashCommand {
 		npcHealth: number,
 		playerInventory: BackpackItemRow[],
 		turnNumber: number,
-		playerStimulants: StimulantMedical[],
-		npcStimulants: StimulantMedical[],
+		playerStimulants: Stimulant[],
+		npcStimulants: Stimulant[],
 		playerAfflictions: Affliction[],
 		npcAfflictions: Affliction[]
 	): Embed {

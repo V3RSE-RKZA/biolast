@@ -5,7 +5,6 @@ const medicalObject = <T>(et: { [K in keyof T]: Medical & { name: K } }) => et
 export const medical = medicalObject({
 	'bandage': {
 		type: 'Medical',
-		subtype: 'Healing',
 		name: 'bandage',
 		icon: '<:medical:886561670745452554>',
 		aliases: ['bandage'],
@@ -21,7 +20,6 @@ export const medical = medicalObject({
 	},
 	'ifak_medkit': {
 		type: 'Medical',
-		subtype: 'Healing',
 		name: 'ifak_medkit',
 		icon: '<:medical:886561670745452554>',
 		aliases: ['ifak', 'medkit'],
@@ -38,7 +36,6 @@ export const medical = medicalObject({
 	},
 	'compression_bandage': {
 		type: 'Medical',
-		subtype: 'Healing',
 		name: 'compression_bandage',
 		icon: '<:medical:886561670745452554>',
 		description: 'Elastic bandage designed to reduce the flow of blood to an area in order to restrict swelling.',
@@ -53,95 +50,8 @@ export const medical = medicalObject({
 		curesBrokenArm: false,
 		curesBurning: false
 	},
-	'adrenaline': {
-		type: 'Medical',
-		subtype: 'Stimulant',
-		name: 'adrenaline',
-		icon: '<:syringe:886561670812549130>',
-		aliases: ['adrena_stim', 'adrena'],
-		sellPrice: 561,
-		slotsUsed: 1,
-		itemLevel: 8,
-		durability: 1,
-		effects: {
-			damageBonus: 25,
-			accuracyBonus: 0,
-			damageTaken: 20
-		},
-		speed: 30
-	},
-	'hypo_stim': {
-		type: 'Medical',
-		subtype: 'Stimulant',
-		name: 'hypo_stim',
-		icon: '<:syringe:886561670812549130>',
-		aliases: ['hypo'],
-		sellPrice: 571,
-		slotsUsed: 1,
-		itemLevel: 8,
-		durability: 1,
-		effects: {
-			damageBonus: 0,
-			accuracyBonus: -15,
-			damageTaken: 0
-		},
-		speed: 30
-	},
-	'adderall': {
-		type: 'Medical',
-		subtype: 'Stimulant',
-		name: 'adderall',
-		icon: '<:syringe:886561670812549130>',
-		aliases: ['addy'],
-		sellPrice: 581,
-		slotsUsed: 1,
-		itemLevel: 8,
-		durability: 1,
-		effects: {
-			damageBonus: 0,
-			accuracyBonus: 15,
-			damageTaken: 0
-		},
-		speed: 30
-	},
-	'morphine': {
-		type: 'Medical',
-		subtype: 'Stimulant',
-		name: 'morphine',
-		icon: '<:syringe:886561670812549130>',
-		aliases: [],
-		sellPrice: 565,
-		slotsUsed: 1,
-		itemLevel: 8,
-		durability: 1,
-		effects: {
-			damageBonus: -20,
-			accuracyBonus: 0,
-			damageTaken: -20
-		},
-		speed: 30
-	},
-	'daves_concoction': {
-		type: 'Medical',
-		subtype: 'Stimulant',
-		name: 'daves_concoction',
-		icon: '<:syringe:886561670812549130>',
-		description: 'Dave must have made this stimulant himself, who knows what chemicals it contains.',
-		aliases: ['concoction'],
-		sellPrice: 1253,
-		slotsUsed: 1,
-		itemLevel: 10,
-		durability: 2,
-		effects: {
-			damageBonus: 0,
-			accuracyBonus: 0,
-			damageTaken: 0
-		},
-		speed: 30
-	},
 	'hyfin_chest_seal': {
 		type: 'Medical',
-		subtype: 'Healing',
 		name: 'hyfin_chest_seal',
 		icon: '<:medical:886561670745452554>',
 		aliases: ['chest_seal', 'hyfin', 'hyfin_seal', 'seal'],
@@ -158,7 +68,6 @@ export const medical = medicalObject({
 	},
 	'paracetamol': {
 		type: 'Medical',
-		subtype: 'Healing',
 		name: 'paracetamol',
 		icon: '<:U_usable:601366669259964418>',
 		aliases: ['paracet'],
@@ -174,7 +83,6 @@ export const medical = medicalObject({
 	},
 	'splint': {
 		type: 'Medical',
-		subtype: 'Healing',
 		name: 'splint',
 		icon: '<:U_usable:601366669259964418>',
 		description: 'Use this to fix broken limbs.',
@@ -191,7 +99,6 @@ export const medical = medicalObject({
 	},
 	'anti-biotics': {
 		type: 'Medical',
-		subtype: 'Healing',
 		name: 'anti-biotics',
 		icon: '<:U_usable:601366669259964418>',
 		description: 'Cures various infections, such as those from walker bites.',

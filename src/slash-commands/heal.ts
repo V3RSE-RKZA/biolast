@@ -50,7 +50,7 @@ class HealCommand extends CustomSlashCommand {
 				content: `${icons.warning} You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
 			})
 		}
-		else if (itemToUse.item.type === 'Medical' && itemToUse.item.subtype === 'Healing') {
+		else if (itemToUse.item.type === 'Medical') {
 			const maxHeal = Math.min(userData.maxHealth - userData.health, itemToUse.item.healsFor)
 
 			if (maxHeal === 0) {
