@@ -1,4 +1,4 @@
-import { CommandOptionType, SlashCreator, CommandContext, AutocompleteContext } from 'slash-create'
+import { CommandOptionType, SlashCreator, CommandContext, AutocompleteContext, Message, ComponentType } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
 import { allItems } from '../resources/items'
@@ -9,10 +9,11 @@ import { Ammunition, Item } from '../types/Items'
 import { getItem, getNumber } from '../utils/argParsers'
 import { getUserBackpack } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
-import { formatMoney } from '../utils/stringUtils'
+import { combineArrayWithOr, formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
 import { allLocations } from '../resources/locations'
 import { getEffectsDisplay } from '../utils/playerUtils'
+import { GRAY_BUTTON } from '../utils/constants'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
@@ -70,10 +71,86 @@ class ItemCommand extends CustomSlashCommand {
 			item = itemToCheck.item
 		}
 
-		const itemEmbed = this.getItemEmbed(item)
+		const itemFixed = item
+		const itemEmbed = this.getItemEmbed(itemFixed)
+		const botMessage = await ctx.send({
+			embeds: [itemEmbed.embed],
+			components: [{
+				type: ComponentType.ACTION_ROW,
+				components: [GRAY_BUTTON('Where can I find this item?', 'find')]
+			}]
+		}) as Message
 
-		await ctx.send({
-			embeds: [itemEmbed.embed]
+		const { collector } = this.app.componentCollector.createCollector(botMessage.id, c => true, 60000)
+
+		collector.on('collect', async buttonCtx => {
+			try {
+				if (buttonCtx.customID === 'find') {
+					const obtainedFrom: { [key: string]: string[] } = allLocations.reduce((prev, curr) => ({ ...prev, [curr.display]: [] }), {})
+
+					for (const loc of allLocations) {
+						for (const area of loc.areas) {
+							if (area.loot.common.items.find(i => i.name === itemFixed.name)) {
+								obtainedFrom[loc.display].push(`Commonly found from scavenging **${area.display}**`)
+							}
+							else if (area.loot.uncommon.items.find(i => i.name === itemFixed.name)) {
+								obtainedFrom[loc.display].push(`Uncommonly found from scavenging **${area.display}**`)
+							}
+							else if (area.loot.rare.items.find(i => i.name === itemFixed.name)) {
+								obtainedFrom[loc.display].push(`Rarely found from scavenging **${area.display}**`)
+							}
+							else if (area.loot.rarest?.items.find(i => i.name === itemFixed.name)) {
+								obtainedFrom[loc.display].push(`Very rarely found from scavenging **${area.display}**`)
+							}
+							else if (area.requiresKey && area.keyIsOptional && area.specialLoot.items.find(i => i.name === itemFixed.name)) {
+								obtainedFrom[loc.display].push(`Commonly found from scavenging **${area.display}** if you have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))}.`)
+							}
+
+							if (area.npcSpawns) {
+								for (const npc of area.npcSpawns.npcs) {
+									if (
+										(npc.armor && npc.armor.name === itemFixed.name) ||
+										(npc.helmet && npc.helmet.name === itemFixed.name) ||
+										(npc.type === 'raider' && npc.weapon.name === itemFixed.name) ||
+										(npc.type === 'raider' && 'ammo' in npc && npc.ammo.name === itemFixed.name) ||
+										(npc.drops.common.find(i => i.name === itemFixed.name)) ||
+										(npc.drops.uncommon.find(i => i.name === itemFixed.name)) ||
+										(npc.drops.rare.find(i => i.name === itemFixed.name))
+									) {
+										obtainedFrom[loc.display].push(`${npc.boss ? `**${npc.display}**` : `A **${npc.display}**`} was spotted at **${area.display}** with this item`)
+									}
+								}
+							}
+						}
+					}
+
+					const placesFound = Object.keys(obtainedFrom).reduce((prev, curr) => prev + obtainedFrom[curr].length, 0)
+					if (!placesFound) {
+						await buttonCtx.send({
+							content: `${getItemDisplay(itemFixed)} cannot found anywhere!`,
+							ephemeral: true
+						})
+						return
+					}
+
+					await buttonCtx.send({
+						content: `${getItemDisplay(itemFixed)} can be found in the following areas:\n\n` +
+							`${Object.keys(obtainedFrom).filter(loc => obtainedFrom[loc].length).map(loc => `__${loc}__\n${obtainedFrom[loc].join('\n')}`).join('\n\n')}`,
+						ephemeral: true
+					})
+				}
+			}
+			catch (err) {
+				// continue
+			}
+		})
+
+		collector.on('end', msg => {
+			if (msg === 'time') {
+				botMessage.edit({
+					components: []
+				})
+			}
 		})
 	}
 

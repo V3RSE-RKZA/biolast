@@ -50,7 +50,7 @@ export const mall: Location = {
 			}
 		},
 		{
-			display: 'pathway-park',
+			display: 'Pathway Park',
 			loot: {
 				common: {
 					items: [items.bandage, items['9mm_FMJ_bullet']],
@@ -92,7 +92,7 @@ export const mall: Location = {
 			keyIsOptional: false
 		},
 		{
-			display: 'plaza',
+			display: 'Plaza',
 			loot: {
 				common: {
 					items: [items.sledgehammer, items.wooden_helmet],
