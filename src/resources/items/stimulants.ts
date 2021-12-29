@@ -78,8 +78,8 @@ export const stimulants = stimulantsObject({
 		itemLevel: 10,
 		durability: 2,
 		effects: {
-			damageBonus: 0,
-			accuracyBonus: 0,
+			damageBonus: -10,
+			accuracyBonus: 70,
 			damageTaken: 0
 		},
 		speed: 30
