@@ -122,15 +122,22 @@ interface FreeLootArea extends AreaBase {
 export type Area = RequiredKeyArea | OptionalKeyArea | FreeLootArea
 
 export interface Location {
-	id: string
 	display: string
 
-	requirements: {
-		/**
-		 * The minimum level required to scavenge areas in this location
-		 */
-		minLevel: number
-	}
+	/**
+	 * The minimum locationLevel user must have in order to travel to this location
+	 */
+	locationLevel: number
+
+	/**
+	 * Icon to display in select menu on travel command for this location
+	 */
+	icon: string
+
+	/**
+	 * The boss user must beat in order to advance their locationLevel (if they haven't beaten the boss already)
+	 */
+	boss: NPC
 
 	areas: Area[]
 }

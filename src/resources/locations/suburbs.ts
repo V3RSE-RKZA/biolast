@@ -92,11 +92,10 @@ const cainTheGravekeeperBoss: NPC = {
 }
 
 export const suburbs: Location = {
-	id: 'suburbs',
 	display: 'The Suburbs',
-	requirements: {
-		minLevel: 1
-	},
+	icon: '🏡',
+	locationLevel: 1,
+	boss: cainTheGravekeeperBoss,
 	areas: [
 		{
 			display: 'Backstreets',

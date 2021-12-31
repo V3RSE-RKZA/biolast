@@ -130,11 +130,10 @@ const securityOfficerWalker: NPC = {
 }
 
 export const station: Location = {
-	id: 'policestation',
 	display: 'The Police Station',
-	requirements: {
-		minLevel: 15
-	},
+	icon: '🚓',
+	locationLevel: 4,
+	boss: securityOfficerWalker,
 	areas: [
 		{
 			display: 'Parking Lot',

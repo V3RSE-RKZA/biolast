@@ -1,3 +1,4 @@
+import { LocationName } from '../../resources/locations'
 import { Query, UserRow } from '../../types/mysql'
 
 /**
@@ -155,6 +156,23 @@ export async function addXp (query: Query, userID: string, amount: number): Prom
 	await query('UPDATE users SET xp = xp + ? WHERE userId = ?', [amount, userID])
 }
 
+/**
+ * @param query Query to use
+ * @param userID ID of user to set
+ * @param locationID ID of location user travels to
+ */
+export async function setLocation (query: Query, userID: string, locationID: LocationName): Promise<void> {
+	await query('UPDATE users SET currentLocation = ? WHERE userId = ?', [locationID, userID])
+}
+
+/**
+ * @param query Query to use
+ * @param userID ID of user to set
+ * @param locationLevel value to set users location level to
+ */
+export async function setLocationLevel (query: Query, userID: string, locationLevel: number): Promise<void> {
+	await query('UPDATE users SET locationLevel = ? WHERE userId = ?', [locationLevel, userID])
+}
 
 /**
  * Creates an account for user

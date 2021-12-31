@@ -1,9 +1,9 @@
-import { SlashCreator, CommandContext, CommandOptionType, ComponentType, Message, ComponentSelectMenu } from 'slash-create'
+import { SlashCreator, CommandContext, ComponentType, Message, ComponentSelectMenu } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
 import { NPC } from '../types/NPCs'
 import { dailyQuests } from '../resources/quests'
-import { allLocations } from '../resources/locations'
+import { isValidLocation, locations } from '../resources/locations'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { Item, Stimulant } from '../types/Items'
@@ -31,18 +31,7 @@ class ScavengeCommand extends CustomSlashCommand {
 			description: 'Explore areas for loot. You may encounter threats, so be prepared!',
 			longDescription: 'Select an area to explore. Different areas have different loot and enemies. Some areas may also require you to use a key to scavenge them.' +
 				' As you level up, more locations will become available to you to explore.',
-			options: [
-				{
-					type: CommandOptionType.STRING,
-					name: 'location',
-					description: 'Location to scavenge.',
-					required: true,
-					choices: allLocations.sort((a, b) => a.requirements.minLevel - b.requirements.minLevel).map(loc => ({
-						name: `${loc.display} (Level ${loc.requirements.minLevel}+)`,
-						value: loc.id
-					}))
-				}
-			],
+			options: [],
 			category: 'info',
 			guildModsOnly: false,
 			worksInDMs: false,
@@ -58,25 +47,16 @@ class ScavengeCommand extends CustomSlashCommand {
 			throw new Error('Member not attached to interaction')
 		}
 
-		const locationChoice = allLocations.find(loc => loc.id === ctx.options.location)
-
-		if (!locationChoice) {
-			await ctx.send({
-				content: `${icons.warning} You need to specify a location you want to scavenge. The following locations are available:`,
-				embeds: [this.getLocationsEmbed().embed]
-			})
-			return
-		}
-
 		const preUserData = (await getUserRow(query, ctx.user.id))!
 
-		if (locationChoice.requirements.minLevel > preUserData.level) {
+		if (!isValidLocation(preUserData.currentLocation)) {
 			await ctx.send({
-				content: `${icons.warning} **${locationChoice.display}** is too dangerous for you to explore at your current level (your level: **${preUserData.level}**, required: **${locationChoice.requirements.minLevel}+**).`
+				content: `${icons.warning} You need to travel to a location. Use the \`/travel\` command to travel to a location you want to scavenge.`
 			})
 			return
 		}
 
+		const locationChoice = locations[preUserData.currentLocation]
 		const components: ComponentSelectMenu[] = [
 			{
 				type: ComponentType.SELECT,
@@ -895,18 +875,6 @@ class ScavengeCommand extends CustomSlashCommand {
 			.setFooter(`Turn #${turnNumber} / 20 max · 40 seconds to make selection`)
 
 		return duelEmb
-	}
-
-	getLocationsEmbed (): Embed {
-		const locationsEmb = new Embed()
-			.setTitle('Available Locations')
-			.setDescription(`${icons.warning} The bot is in early access, expect more locations to be added.`)
-
-		for (const loc of allLocations.sort((a, b) => a.requirements.minLevel - b.requirements.minLevel)) {
-			locationsEmb.addField(loc.display, `Level **${loc.requirements.minLevel}+**`, true)
-		}
-
-		return locationsEmb
 	}
 
 	getRandomSpecialItem (area: Area): { item: Item, xp: number } {

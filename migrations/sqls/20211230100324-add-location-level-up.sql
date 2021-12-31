@@ -1,0 +1,2 @@
+ALTER TABLE users ADD COLUMN locationLevel INT NOT NULL DEFAULT 1 AFTER stashSlots;
+ALTER TABLE users ADD COLUMN currentLocation VARCHAR(255) NOT NULL DEFAULT 'suburbs' AFTER stashSlots;

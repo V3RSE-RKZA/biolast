@@ -34,6 +34,17 @@ export interface UserRow {
 	deaths: number
 	questsCompleted: number
 	fighting: 0 | 1
+
+	/**
+	 * The max location level this user has achieved,
+	 * allows them to travel to locations of equal or lower locationLevel
+	 */
+	locationLevel: number
+
+	/**
+	 * The id of the location user is currently located at
+	 */
+	currentLocation: string
 }
 
 export interface Cooldown {

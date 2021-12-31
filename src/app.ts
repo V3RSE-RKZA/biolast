@@ -10,7 +10,7 @@ import path from 'path'
 import { query } from './utils/db/mysql'
 import { addItemToBackpack, createItem } from './utils/db/items'
 import CustomSlashCommand from './structures/CustomSlashCommand'
-import { createAccount, getUserRow, increaseLevel, setMaxHealth, setStashSlots } from './utils/db/players'
+import { createAccount, getUserRow, increaseLevel, setStashSlots } from './utils/db/players'
 import { items } from './resources/items'
 import { getPlayerXp } from './utils/playerUtils'
 import { getItemDisplay } from './utils/itemUtils'
@@ -357,14 +357,11 @@ class App {
 					}
 
 					if (userData.level !== newLevel) {
-						const newMaxHealth = 100 + ((newLevel - 1) * 5)
 						const newStashSlots = 15 + ((newLevel - 1) * 5)
 						await increaseLevel(query, ctx.user.id, newLevel - userData.level)
-						await setMaxHealth(query, ctx.user.id, newMaxHealth)
 						await setStashSlots(query, ctx.user.id, newStashSlots)
 
 						userLeveledUpMessage = `**You leveled up!** (Lvl **${userData.level}** → **${newLevel}**)` +
-							`\n\n💗 Max Health: **${newMaxHealth - 5}** → **${newMaxHealth}** HP` +
 							`\n💼 Stash Space: **${newStashSlots - 5}** → **${newStashSlots}** slots`
 					}
 				}

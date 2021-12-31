@@ -172,11 +172,10 @@ const theManyBoss: NPC = {
 }
 
 export const mall: Location = {
-	id: 'mall',
 	display: 'The Mall',
-	requirements: {
-		minLevel: 8
-	},
+	icon: '🏪',
+	locationLevel: 3,
+	boss: theManyBoss,
 	areas: [
 		{
 			display: 'Antique Store',

@@ -94,11 +94,10 @@ const daveTheRedneckBoss: NPC = {
 }
 
 export const farm: Location = {
-	id: 'farm',
 	display: 'The Farm',
-	requirements: {
-		minLevel: 3
-	},
+	icon: '🚜',
+	locationLevel: 2,
+	boss: daveTheRedneckBoss,
 	areas: [
 		{
 			display: 'Fields',

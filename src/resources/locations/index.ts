@@ -13,4 +13,10 @@ export const locations = locationsObject({
 	station
 })
 
+export type LocationName = keyof typeof locations
+
+export function isValidLocation (l: string): l is LocationName {
+	return l in locations
+}
+
 export const allLocations = Object.values(locations)

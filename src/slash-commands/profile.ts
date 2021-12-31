@@ -7,10 +7,11 @@ import Embed from '../structures/Embed'
 import { BackpackItemRow, ItemRow, UserRow } from '../types/mysql'
 import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
-import { formatHealth, formatMoney, formatNumber } from '../utils/stringUtils'
+import { combineArrayWithAnd, formatHealth, formatMoney, formatNumber } from '../utils/stringUtils'
 import { getPlayerXp } from '../utils/playerUtils'
 import { getItemPrice, getItems } from '../utils/itemUtils'
 import { getUserBackpack, getUserStash } from '../utils/db/items'
+import { allLocations, isValidLocation, locations } from '../resources/locations'
 
 class ProfileCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -78,15 +79,22 @@ class ProfileCommand extends CustomSlashCommand {
 		const playerValue = backpackData.items.reduce((prev, curr) => prev + (getItemPrice(curr.item, curr.row) * this.app.shopSellMultiplier), 0) +
 			stashData.items.reduce((prev, curr) => prev + (getItemPrice(curr.item, curr.row) * this.app.shopSellMultiplier), 0) +
 			userData.money
+		const currentLocation = isValidLocation(userData.currentLocation) ? locations[userData.currentLocation] : undefined
+		const maxLocations = allLocations.filter(l => l.locationLevel === userData.locationLevel) || allLocations.filter(l => l.locationLevel === userData.locationLevel - 1)
 
 		const embed = new Embed()
 			.setAuthor(`${userDisplay}'s Profile`, user.avatarURL)
 			.setThumbnail(user.avatarURL)
 			.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP\n${formatHealth(userData.health, userData.maxHealth)}`)
 			.addField('__Experience__', `**Level**: ${userData.level}\n**XP**: ${formatNumber(playerXp.relativeLevelXp)} / ${formatNumber(playerXp.levelTotalXpNeeded)} xp`)
-			.addField('__Stats__', `**Player Kills**: ${formatNumber(userData.kills)}\n**Mob Kills (bosses count)**: ${formatNumber(userData.npcKills)}` +
+			.addField('__Stats__', `**Highest Level Location Unlocked**: ${maxLocations.length ? combineArrayWithAnd(maxLocations.map(l => `${l.icon} ${l.display}`)) : 'Unknown...'}` +
+				`\n**Player Kills**: ${formatNumber(userData.kills)}\n**Mob Kills (bosses count)**: ${formatNumber(userData.npcKills)}` +
 				`\n**Boss Kills**: ${formatNumber(userData.bossKills)}\n**Deaths**: ${formatNumber(userData.deaths)} (${formatNumber(kdRatio, true)} K/D ratio)` +
 				`\n**Quests Completed**: ${formatNumber(userData.questsCompleted)}\n**Player Value**: ${formatMoney(playerValue)}`)
+
+		if (currentLocation) {
+			embed.setDescription(`Currently scavenging ${currentLocation.icon} **${currentLocation.display}** (Location Level **${currentLocation.locationLevel}**)`)
+		}
 
 		return embed
 	}
