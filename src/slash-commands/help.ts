@@ -84,18 +84,18 @@ class HelpCommand extends CustomSlashCommand {
 				' is entirely dependent on the ammo used**.\n\nArmor may also affect how much damage you deal, **if the ammo your using has a lower penetration level than the armor level the target is wearing, your damage will' +
 				' be reduced**. If your ammo has a higher penetration level than the armor level your target is wearing, you will deal full damage.\n\nHitting certain body parts will also determine your damage. A hit to the target\'s head' +
 				' will deal 1.5x damage (assuming they aren\'t wearing a helmet) but is obviously harder to hit. A hit to the chest will deal normal damage and is the easiest body part to hit.' +
-				' A hit to the arms or legs deals half damage but you also avoid hitting any armor the target is wearing. **Your ability to successfully hit a targeted limb when using the `attack` command is dependent on your' +
+				' A hit to the arms or legs deals half damage but you also avoid hitting any armor the target is wearing. **Your ability to successfully hit a targeted limb is dependent on your' +
 				' weapon\'s accuracy.**')
 
 		const healEmbed = new Embed()
 			.setTitle('How do I heal?')
 			.setDescription('While in a duel, you can click the "Use Medical Item" to use a healing item from your inventory.' +
-				' If you aren\'t in a duel, you will heal passively for **5 health** every **5 minutes**.')
+				'\n\nIf you aren\'t in a duel, you can use a medical item to heal with `/heal <item id>`. You will also heal passively for **5 health** every **5 minutes**.')
 
 		const storageEmbed = new Embed()
 			.setTitle('How do I increase storage space?')
 			.setDescription('You can equip a backpack to increase your inventory space. Backpacks of varying levels can be found from scavenging or bought from the shop.' +
-				' Once you have one, simply do `/equip <item id>` to equip the backpack. Your stash space cannot be altered with backpacks, instead stash space will increase as you level up.')
+				' Once you have one, simply do `/equip <item id>` to equip the backpack.\n\nStash space cannot be altered with backpacks, instead stash space will increase by **5** each time you level up.')
 
 
 		const botMessage = await ctx.send({

@@ -89,7 +89,7 @@ class InventoryCommand extends CustomSlashCommand {
 		const sortedItems = sortItemsByName(itemData.items, true)
 		const pages = []
 		const maxPage = Math.ceil(sortedItems.length / ITEMS_PER_PAGE) || 1
-		const invValue = itemData.items.reduce((prev, curr) => prev + (getItemPrice(curr.item, curr.row) * this.app.shopSellMultiplier), 0)
+		const invValue = itemData.items.reduce((prev, curr) => prev + Math.floor(getItemPrice(curr.item, curr.row) * this.app.shopSellMultiplier), 0)
 
 		for (let i = 1; i < maxPage + 1; i++) {
 			const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
