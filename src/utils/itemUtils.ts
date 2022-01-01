@@ -325,20 +325,21 @@ export function sortItemsByType (arr: (Item | ItemWithRow<ItemRow>)[], containsR
 }
 
 /**
- * Sorts an array of items by their item level DESCENDING
+ * Sorts an array of items by their item level
  * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
  * @param containsRows Whether or not the function is sorting items with rows
+ * @param descending Whether the items should be sorted by level descending or not
  */
-export function sortItemsByLevel (arr: Item[], containsRows?: false): Item[]
-export function sortItemsByLevel<T extends ItemRow> (arr: ItemWithRow<T>[], containsRows: true): ItemWithRow<T>[]
-export function sortItemsByLevel (arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean): (Item | ItemWithRow<ItemRow>)[] {
+export function sortItemsByLevel (arr: Item[], containsRows?: false, descending?: boolean): Item[]
+export function sortItemsByLevel<T extends ItemRow> (arr: ItemWithRow<T>[], containsRows: true, descending?: boolean): ItemWithRow<T>[]
+export function sortItemsByLevel (arr: (Item | ItemWithRow<ItemRow>)[], containsRows?: boolean, descending = true): (Item | ItemWithRow<ItemRow>)[] {
 	if (containsRows) {
 		return (arr as ItemWithRow<ItemRow>[]).sort((a, b) => {
 			if (a.item.itemLevel === b.item.itemLevel) {
 				return a.item.name.localeCompare(b.item.name)
 			}
 
-			return b.item.itemLevel - a.item.itemLevel
+			return descending ? b.item.itemLevel - a.item.itemLevel : a.item.itemLevel - b.item.itemLevel
 		})
 	}
 
@@ -347,6 +348,6 @@ export function sortItemsByLevel (arr: (Item | ItemWithRow<ItemRow>)[], contains
 			return a.name.localeCompare(b.name)
 		}
 
-		return b.itemLevel - a.itemLevel
+		return descending ? b.itemLevel - a.itemLevel : a.itemLevel - b.itemLevel
 	})
 }

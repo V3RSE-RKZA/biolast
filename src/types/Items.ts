@@ -1,16 +1,18 @@
+export type ItemType = 'Ranged Weapon'
+	| 'Melee Weapon'
+	| 'Helmet'
+	| 'Body Armor'
+	| 'Ammunition'
+	| 'Medical'
+	| 'Stimulant'
+	| 'Backpack'
+	| 'Key'
+	| 'Collectible'
+	| 'Throwable Weapon'
+	| 'Food'
+
 interface BaseItem {
-	type: 'Ranged Weapon'
-		| 'Melee Weapon'
-		| 'Helmet'
-		| 'Body Armor'
-		| 'Ammunition'
-		| 'Medical'
-		| 'Stimulant'
-		| 'Backpack'
-		| 'Key'
-		| 'Collectible'
-		| 'Throwable Weapon'
-		| 'Food'
+	type: ItemType
 	name: string
 	aliases: string[]
 	icon: string

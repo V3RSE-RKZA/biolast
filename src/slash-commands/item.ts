@@ -1,21 +1,24 @@
-import { CommandOptionType, SlashCreator, CommandContext, AutocompleteContext, Message, ComponentType } from 'slash-create'
+import { CommandOptionType, SlashCreator, CommandContext, AutocompleteContext, Message, ComponentType, ComponentActionRow } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
 import { allItems } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { Ammunition, Item } from '../types/Items'
+import { Ammunition, Item, ItemType } from '../types/Items'
 import { getItem, getNumber } from '../utils/argParsers'
 import { getUserBackpack } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
 import { combineArrayWithOr, formatMoney } from '../utils/stringUtils'
-import { getItemDisplay, getItems, sortItemsByAmmo } from '../utils/itemUtils'
+import { getItemDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from '../utils/itemUtils'
 import { allLocations } from '../resources/locations'
 import { getEffectsDisplay } from '../utils/playerUtils'
-import { GRAY_BUTTON } from '../utils/constants'
+import { GRAY_BUTTON, NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
+import { logger } from '../utils/logger'
+import { getUserRow } from '../utils/db/players'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
+const ITEMS_PER_PAGE = 10
 
 class ItemCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -23,13 +26,28 @@ class ItemCommand extends CustomSlashCommand {
 			name: 'item',
 			description: 'View information about an item.',
 			longDescription: 'View information about an item.',
-			options: [{
-				type: CommandOptionType.STRING,
-				name: 'item',
-				description: 'Name of the item.',
-				required: true,
-				autocomplete: true
-			}],
+			options: [
+				{
+					type: CommandOptionType.SUB_COMMAND,
+					name: 'list',
+					description: 'View a list of all the items you\'ve discovered.',
+					options: []
+				},
+				{
+					type: CommandOptionType.SUB_COMMAND,
+					name: 'info',
+					description: 'View information about a specific item.',
+					options: [
+						{
+							type: CommandOptionType.STRING,
+							name: 'item',
+							description: 'Name of the item.',
+							required: true,
+							autocomplete: true
+						}
+					]
+				}
+			],
 			category: 'info',
 			guildModsOnly: false,
 			worksInDMs: true,
@@ -41,14 +59,133 @@ class ItemCommand extends CustomSlashCommand {
 	}
 
 	async run (ctx: CommandContext): Promise<void> {
-		let item = getItem([ctx.options.item])
+		if (ctx.options.list) {
+			const userData = (await getUserRow(query, ctx.user.id))!
+			const categorySelectMenu: ComponentActionRow = {
+				type: ComponentType.ACTION_ROW,
+				components: [
+					{
+						type: ComponentType.SELECT,
+						custom_id: 'category',
+						placeholder: 'Filter items by category.',
+						options: Array.from(new Set(allItems.map(i => i.type))).sort().map(c => ({
+							label: c,
+							value: c,
+							description: this.getCategoryDescription(c)
+						}))
+					}
+				]
+			}
+			let pages = this.generatePages(allItems.filter(i => i.itemLevel <= userData.level))
+			let page = 0
+
+			const botMessage = await ctx.send({
+				embeds: [pages[0].embed],
+				components: [
+					categorySelectMenu,
+					{
+						type: ComponentType.ACTION_ROW,
+						components: [
+							PREVIOUS_BUTTON(true),
+							NEXT_BUTTON(false)
+						]
+					}
+				]
+			}) as Message
+
+			const { collector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 80000)
+
+			collector.on('collect', async buttonCtx => {
+				try {
+					await buttonCtx.acknowledge()
+
+					if (buttonCtx.customID === 'previous' && page !== 0) {
+						page--
+
+						await buttonCtx.editParent({
+							embeds: [pages[page].embed],
+							components: [
+								categorySelectMenu,
+								{
+									type: ComponentType.ACTION_ROW,
+									components: [
+										PREVIOUS_BUTTON(page === 0),
+										NEXT_BUTTON(false)
+									]
+								}
+							]
+						})
+					}
+					else if (buttonCtx.customID === 'next' && page !== (pages.length - 1)) {
+						page++
+
+						await buttonCtx.editParent({
+							embeds: [pages[page].embed],
+							components: [
+								categorySelectMenu,
+								{
+									type: ComponentType.ACTION_ROW,
+									components: [
+										PREVIOUS_BUTTON(false),
+										NEXT_BUTTON(page === (pages.length - 1))
+									]
+								}
+							]
+						})
+					}
+					else if (buttonCtx.customID === 'category') {
+						const newComponents: ComponentActionRow[] = [categorySelectMenu]
+						pages = this.generatePages(allItems.filter(i => i.itemLevel <= userData.level && i.type === buttonCtx.values[0]), buttonCtx.values[0])
+						page = 0
+
+						if (pages.length > 1) {
+							newComponents.push({
+								type: ComponentType.ACTION_ROW,
+								components: [
+									PREVIOUS_BUTTON(true),
+									NEXT_BUTTON(false)
+								]
+							})
+						}
+
+						await buttonCtx.editParent({
+							embeds: [pages[0].embed],
+							components: newComponents
+						})
+					}
+				}
+				catch (err) {
+					// continue
+				}
+			})
+
+			collector.on('end', async msg => {
+				try {
+					if (msg === 'time') {
+						await botMessage.edit({
+							content: `${icons.warning} Buttons timed out.`,
+							embeds: [pages[page].embed],
+							components: []
+						})
+					}
+				}
+				catch (err) {
+					logger.warn(err)
+				}
+			})
+
+			return
+		}
+
+		// item info command
+		let item = getItem([ctx.options.info.item])
 
 		if (!item) {
 			// check if user was specifying an item ID
-			const itemID = getNumber(ctx.options.item)
+			const itemID = getNumber(ctx.options.info.item)
 
 			if (!itemID) {
-				const related = itemCorrector.getWord(ctx.options.item, 5)
+				const related = itemCorrector.getWord(ctx.options.info.item, 5)
 				const relatedItem = related && allItems.find(i => i.name.toLowerCase() === related || i.aliases.map(a => a.toLowerCase()).includes(related))
 
 				await ctx.send({
@@ -127,7 +264,7 @@ class ItemCommand extends CustomSlashCommand {
 					const placesFound = Object.keys(obtainedFrom).reduce((prev, curr) => prev + obtainedFrom[curr].length, 0)
 					if (!placesFound) {
 						await buttonCtx.send({
-							content: `${getItemDisplay(itemFixed)} cannot found anywhere!`,
+							content: `${getItemDisplay(itemFixed)} cannot be found from scavenging!`,
 							ephemeral: true
 						})
 						return
@@ -152,6 +289,32 @@ class ItemCommand extends CustomSlashCommand {
 				})
 			}
 		})
+	}
+
+	generatePages (items: Item[], category?: string): Embed[] {
+		const pages = []
+		const maxPage = Math.ceil(items.length / ITEMS_PER_PAGE) || 1
+		const sortedItems = sortItemsByLevel(items, false, false)
+
+		for (let i = 1; i < maxPage + 1; i++) {
+			const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
+			const indexLast = ITEMS_PER_PAGE * i
+			const filteredItems = sortedItems.slice(indexFirst, indexLast)
+
+			const embed = new Embed()
+				.setDescription(`${icons.information} This list only includes items you are a high enough level to discover. Level up to expand this list.` +
+					`\n\n__**${category ? `${category} Item List**__ (${items.length} total)` : `Item List**__ (${items.length} total)`}` +
+					`\n${filteredItems.map(itm => `${getItemDisplay(itm)} (Level **${itm.itemLevel}** item)`).join('\n') ||
+					`You are not a high enough level to discover any ${category ? `**${category}**` : ''} items`}`)
+
+			if (maxPage > 1) {
+				embed.setFooter(`Page ${i}/${maxPage}`)
+			}
+
+			pages.push(embed)
+		}
+
+		return pages
 	}
 
 	getItemEmbed (item: Item): Embed {
@@ -283,8 +446,47 @@ class ItemCommand extends CustomSlashCommand {
 		return itemEmbed
 	}
 
+	getCategoryDescription (category: ItemType): string {
+		switch (category) {
+			case 'Ammunition': {
+				return 'Items that are used to fire Ranged Weapons.'
+			}
+			case 'Backpack': {
+				return 'Equippable items that increase inventory space.'
+			}
+			case 'Helmet':
+			case 'Body Armor': {
+				return 'Equippable items that reduce damage from attacks.'
+			}
+			case 'Collectible': {
+				return 'Rare items worth collecting.'
+			}
+			case 'Food': {
+				return 'Items used to feed your companion.'
+			}
+			case 'Key': {
+				return 'Items used to scavenge locked areas.'
+			}
+			case 'Medical': {
+				return 'Items used to heal yourself'
+			}
+			case 'Melee Weapon': {
+				return 'Weapons that can be used without ammunition.'
+			}
+			case 'Ranged Weapon': {
+				return 'Weapons that fire ammunition.'
+			}
+			case 'Throwable Weapon': {
+				return 'Weapons such as grenades that can be thrown.'
+			}
+			case 'Stimulant': {
+				return 'Injectors used for temporary stat boosts during fights.'
+			}
+		}
+	}
+
 	async autocomplete (ctx: AutocompleteContext): Promise<void> {
-		const search = ctx.options[ctx.focused].replace(/ +/g, '_').toLowerCase()
+		const search = ctx.options.info[ctx.focused].replace(/ +/g, '_').toLowerCase()
 		const items = allItems.filter(itm => itm.name.toLowerCase().includes(search) || itm.type.toLowerCase().includes(search))
 
 		if (items.length) {
