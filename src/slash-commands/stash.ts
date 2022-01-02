@@ -35,120 +35,6 @@ class StashCommand extends CustomSlashCommand {
 	}
 
 	async run (ctx: CommandContext): Promise<void> {
-		if (ctx.options.put) {
-			const items: number[] = [ctx.options.put.item, ctx.options.put['item-2'], ctx.options.put['item-3']].filter(Boolean)
-
-			if ((new Set(items)).size !== items.length) {
-				await ctx.send({
-					content: `${icons.danger} You specified the same item multiple times! Are you trying to break me?? >:(`
-				})
-				return
-			}
-
-			const transaction = await beginTransaction()
-			const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
-			const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
-			const stashRows = await getUserStash(transaction.query, ctx.user.id, true)
-			const userStashData = getItems(stashRows)
-			const userBackpackData = getItems(backpackRows)
-			const itemsToDeposit = []
-
-			for (const i of items) {
-				const foundItem = userBackpackData.items.find(itm => itm.row.id === i)
-
-				// make sure user has item
-				if (foundItem) {
-					itemsToDeposit.push(foundItem)
-				}
-				else {
-					await transaction.commit()
-
-					await ctx.send({
-						content: `${icons.warning} You don't have an item with the ID **${i}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
-					})
-					return
-				}
-			}
-
-			const slotsNeeded = itemsToDeposit.reduce((prev, curr) => prev + curr.item.slotsUsed, 0)
-			if (userStashData.slotsUsed + slotsNeeded > userData.stashSlots) {
-				await transaction.commit()
-
-				await ctx.send({
-					content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`
-				})
-				return
-			}
-
-			for (const i of itemsToDeposit) {
-				await removeItemFromBackpack(transaction.query, i.row.id)
-				await addItemToStash(transaction.query, ctx.user.id, i.row.id)
-			}
-
-			await transaction.commit()
-
-			await ctx.send({
-				content: `${icons.checkmark} Successfully moved the following from your inventory to your stash:\n\n${itemsToDeposit.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`
-			})
-			return
-		}
-		else if (ctx.options.take) {
-			const items: number[] = [ctx.options.take.item, ctx.options.take['item-2'], ctx.options.take['item-3']].filter(Boolean)
-
-			if ((new Set(items)).size !== items.length) {
-				await ctx.send({
-					content: `${icons.danger} You specified the same item multiple times! Are you trying to break me?? >:(`
-				})
-				return
-			}
-
-			const transaction = await beginTransaction()
-			const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
-			const stashRows = await getUserStash(transaction.query, ctx.user.id, true)
-			const userStashData = getItems(stashRows)
-			const itemsToWithdraw = []
-			let spaceNeeded = 0
-
-			for (const i of items) {
-				const foundItem = userStashData.items.find(itm => itm.row.id === i)
-
-				// make sure user has item
-				if (foundItem) {
-					itemsToWithdraw.push(foundItem)
-					spaceNeeded += foundItem.item.slotsUsed
-				}
-				else {
-					await transaction.commit()
-
-					await ctx.send({
-						content: `${icons.warning} You don't have an item with the ID **${i}** in your stash. You can find the IDs of items in your \`/stash\`.`
-					})
-					return
-				}
-			}
-
-			if (!backpackHasSpace(backpackRows, spaceNeeded)) {
-				await transaction.commit()
-
-				await ctx.send({
-					content: `${icons.danger} You don't have enough space in your inventory. You need **${spaceNeeded}** open slots in your inventory. Sell items to clear up some space.`
-				})
-				return
-			}
-
-			for (const i of itemsToWithdraw) {
-				await removeItemFromStash(transaction.query, i.row.id)
-				await addItemToBackpack(transaction.query, ctx.user.id, i.row.id)
-			}
-
-			await transaction.commit()
-
-			await ctx.send({
-				content: `${icons.checkmark} Successfully moved the following from your stash to your inventory:\n\n${itemsToWithdraw.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`
-			})
-			return
-		}
-
 		// view player stash
 		const member = ctx.members.get(ctx.options.view && ctx.options.view.user)
 
@@ -430,7 +316,7 @@ class StashCommand extends CustomSlashCommand {
 					`\n**Number of Items**: ${itemData.items.length}` +
 					`\n**Stash Value**: ${formatMoney(stashValue)}`)
 				.addField(`__Items in Stash__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})`,
-					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your inventory to your stash with \`/stash put <item id>\`.`)
+					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your inventory to your stash with \`/inventory\`.`)
 
 			if (isSelf) {
 				embed.setFooter('Stashed items will NOT be lost when you die')

@@ -326,7 +326,8 @@ class InventoryCommand extends CustomSlashCommand {
 					`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Body Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row, { showEquipped: false, showID: false }) : 'None'}`)
-				.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})`, filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || 'No items found. Move items from your stash to your inventory with `/stash take <item id>`.')
+				.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})`,
+					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your stash to your inventory with \`/stash\`.`)
 
 			if (isSelf) {
 				embed.setFooter('Inventory items WILL be lost when you die, put items in your stash for safekeeping')
