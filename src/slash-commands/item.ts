@@ -67,7 +67,7 @@ class ItemCommand extends CustomSlashCommand {
 					{
 						type: ComponentType.SELECT,
 						custom_id: 'category',
-						placeholder: 'Filter items by category.',
+						placeholder: 'Filter items by category:',
 						options: Array.from(new Set(allItems.map(i => i.type))).sort().map(c => ({
 							label: c,
 							value: c,
@@ -434,12 +434,12 @@ class ItemCommand extends CustomSlashCommand {
 				for (const location of allLocations) {
 					for (const area of location.areas) {
 						if (area.requiresKey?.includes(item)) {
-							usableAreas.push(area)
+							usableAreas.push(`${area.display} (${location.display})`)
 						}
 					}
 				}
 
-				itemEmbed.addField('Used to Scavenge', usableAreas.map(chan => chan.display).join('\n'), true)
+				itemEmbed.addField('Used to Scavenge', usableAreas.join('\n'), true)
 			}
 		}
 
@@ -449,7 +449,7 @@ class ItemCommand extends CustomSlashCommand {
 	getCategoryDescription (category: ItemType): string {
 		switch (category) {
 			case 'Ammunition': {
-				return 'Items that are used to fire Ranged Weapons.'
+				return 'Ammo used to fire Ranged Weapons.'
 			}
 			case 'Backpack': {
 				return 'Equippable items that increase inventory space.'

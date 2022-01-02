@@ -561,7 +561,7 @@ class DuelCommand extends CustomSlashCommand {
 										min_values: 1,
 										max_values: maxPossibleItemsToPick,
 										custom_id: 'items',
-										placeholder: 'Select up to 5 items to keep.',
+										placeholder: 'Select up to 5 items to keep:',
 										options: sortItemsByValue(victimLoot, true).slice(0, 25).map(itm => {
 											const iconID = itm.item.icon.match(/:([0-9]*)>/)
 

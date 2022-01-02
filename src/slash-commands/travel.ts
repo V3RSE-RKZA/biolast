@@ -5,7 +5,7 @@ import { allLocations, isValidLocation, LocationName, locations } from '../resou
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow, setLocation } from '../utils/db/players'
-import { combineArrayWithOr } from '../utils/stringUtils'
+import { combineArrayWithAnd, combineArrayWithOr } from '../utils/stringUtils'
 
 class TravelCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -59,7 +59,9 @@ class TravelCommand extends CustomSlashCommand {
 
 		const botMessage = await ctx.send({
 			content: `Current Location: **${currentLocation ? `${currentLocation.icon} ${currentLocation.display}` : 'Unknown'}**.` +
-				` ${maxLocations.length && nextLocations.length ? `Defeat the boss of ${combineArrayWithOr(maxLocations.map(l => `**${l.icon} ${l.display}**`))} to unlock a new location.` : 'You have unlocked all locations.'}` +
+				(` ${maxLocations.length && nextLocations.length ?
+					`(Defeat the boss of ${combineArrayWithOr(maxLocations.map(l => `**${l.display}**`))} to unlock ${combineArrayWithAnd(nextLocations.map(l => `**${l.display}**`))})` :
+					'(You have unlocked all locations)'}`) +
 				'\n\n**Where where you like to travel to?**:',
 			components: [
 				{

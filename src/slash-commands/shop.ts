@@ -83,7 +83,7 @@ class ShopCommand extends CustomSlashCommand {
 					{
 						type: ComponentType.SELECT,
 						custom_id: 'buy',
-						placeholder: 'Select items to purchase.',
+						placeholder: 'Select items to purchase:',
 						min_values: 1,
 						max_values: pages[0].items.length,
 						options: pages[0].items.map(i => {
@@ -92,7 +92,7 @@ class ShopCommand extends CustomSlashCommand {
 							return {
 								label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
 								value: i.row.id.toString(),
-								description: `Price: ${formatMoney(i.row.price, false, false)}`,
+								description: `Price: ${formatMoney(i.row.price, false, false)}. Uses ${i.item.slotsUsed} slots.`,
 								emoji: iconID ? {
 									id: iconID[1],
 									name: i.item.name
@@ -120,264 +120,277 @@ class ShopCommand extends CustomSlashCommand {
 			components: preComponents
 		}) as Message
 
-		const { collector, stopCollector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 80000)
+		if (preComponents.length) {
+			const { collector, stopCollector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 80000)
 
-		collector.on('collect', async c => {
-			try {
-				await c.acknowledge()
+			collector.on('collect', async c => {
+				try {
+					await c.acknowledge()
 
-				const newComponents: ComponentActionRow[] = []
+					const newComponents: ComponentActionRow[] = []
 
-				if (c.customID === 'previous' && page !== 0) {
-					page--
+					if (c.customID === 'previous' && page !== 0) {
+						page--
 
-					newComponents.push({
-						type: ComponentType.ACTION_ROW,
-						components: [
-							{
-								type: ComponentType.SELECT,
-								custom_id: 'buy',
-								placeholder: 'Select items to purchase.',
-								min_values: 1,
-								max_values: fixedPages[page].items.length,
-								options: fixedPages[page].items.map(i => {
-									const iconID = i.item.icon.match(/:([0-9]*)>/)
+						newComponents.push({
+							type: ComponentType.ACTION_ROW,
+							components: [
+								{
+									type: ComponentType.SELECT,
+									custom_id: 'buy',
+									placeholder: 'Select items to purchase:',
+									min_values: 1,
+									max_values: fixedPages[page].items.length,
+									options: fixedPages[page].items.map(i => {
+										const iconID = i.item.icon.match(/:([0-9]*)>/)
 
-									return {
-										label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
-										value: i.row.id.toString(),
-										description: `Price: ${formatMoney(i.row.price, false, false)}`,
-										emoji: iconID ? {
-											id: iconID[1],
-											name: i.item.name
-										} : undefined
-									}
-								})
-							}
-						]
-					})
-					newComponents.push({
-						type: ComponentType.ACTION_ROW,
-						components: [
-							PREVIOUS_BUTTON(page === 0),
-							NEXT_BUTTON(false)
-						]
-					})
-
-					await c.editParent({
-						embeds: [fixedPages[page].page.embed],
-						components: newComponents
-					})
-				}
-				else if (c.customID === 'next' && page !== (fixedPages.length - 1)) {
-					page++
-
-					newComponents.push({
-						type: ComponentType.ACTION_ROW,
-						components: [
-							{
-								type: ComponentType.SELECT,
-								custom_id: 'buy',
-								placeholder: 'Select items to purchase.',
-								min_values: 1,
-								max_values: fixedPages[page].items.length,
-								options: fixedPages[page].items.map(i => {
-									const iconID = i.item.icon.match(/:([0-9]*)>/)
-
-									return {
-										label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
-										value: i.row.id.toString(),
-										description: `Price: ${formatMoney(i.row.price, false, false)}`,
-										emoji: iconID ? {
-											id: iconID[1],
-											name: i.item.name
-										} : undefined
-									}
-								})
-							}
-						]
-					})
-					newComponents.push({
-						type: ComponentType.ACTION_ROW,
-						components: [
-							PREVIOUS_BUTTON(false),
-							NEXT_BUTTON(page === (fixedPages.length - 1))
-						]
-					})
-
-					await c.editParent({
-						embeds: [fixedPages[page].page.embed],
-						components: newComponents
-					})
-				}
-				else if (c.customID === 'buy') {
-					const items = fixedPages[page].items.filter(i => c.values.includes(i.row.id.toString()))
-					const userData = (await getUserRow(query, ctx.user.id))!
-					const stashRows = await getUserStash(query, ctx.user.id)
-					const userStashData = getItems(stashRows)
-					const itemsToBuy = []
-					let price = 0
-
-					if (userData.shopSales >= shopDailyBuyLimit) {
-						await c.editParent({
-							content: `${icons.danger} You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`
+										return {
+											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											value: i.row.id.toString(),
+											description: `Price: ${formatMoney(i.row.price, false, false)}. Uses ${i.item.slotsUsed} slots.`,
+											emoji: iconID ? {
+												id: iconID[1],
+												name: i.item.name
+											} : undefined
+										}
+									})
+								}
+							]
 						})
-						return
+						newComponents.push({
+							type: ComponentType.ACTION_ROW,
+							components: [
+								PREVIOUS_BUTTON(page === 0),
+								NEXT_BUTTON(false)
+							]
+						})
+
+						await c.editParent({
+							embeds: [fixedPages[page].page.embed],
+							components: newComponents
+						})
 					}
+					else if (c.customID === 'next' && page !== (fixedPages.length - 1)) {
+						page++
 
-					for (const i of items) {
-						const shopItemRow = await getShopItem(query, i.row.id)
-						const shopItem = allItems.find(itm => itm.name === shopItemRow?.item)
+						newComponents.push({
+							type: ComponentType.ACTION_ROW,
+							components: [
+								{
+									type: ComponentType.SELECT,
+									custom_id: 'buy',
+									placeholder: 'Select items to purchase:',
+									min_values: 1,
+									max_values: fixedPages[page].items.length,
+									options: fixedPages[page].items.map(i => {
+										const iconID = i.item.icon.match(/:([0-9]*)>/)
 
-						if (!shopItemRow || !shopItem) {
-							await c.editParent({
-								content: `${icons.warning} ${getItemDisplay(i.item, i.row, { showDurability: false })} has already been purchased by someone else! Select a different item to purchase.`
-							})
-							return
-						}
-						else if (userData.level < shopItem.itemLevel) {
-							await c.editParent({
-								content: `${icons.warning} You must be at least level **${shopItem.itemLevel}** to purchase ${getItemDisplay(shopItem, shopItemRow, { showDurability: false })}.`
+										return {
+											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											value: i.row.id.toString(),
+											description: `Price: ${formatMoney(i.row.price, false, false)}. Uses ${i.item.slotsUsed} slots.`,
+											emoji: iconID ? {
+												id: iconID[1],
+												name: i.item.name
+											} : undefined
+										}
+									})
+								}
+							]
+						})
+						newComponents.push({
+							type: ComponentType.ACTION_ROW,
+							components: [
+								PREVIOUS_BUTTON(false),
+								NEXT_BUTTON(page === (fixedPages.length - 1))
+							]
+						})
+
+						await c.editParent({
+							embeds: [fixedPages[page].page.embed],
+							components: newComponents
+						})
+					}
+					else if (c.customID === 'buy') {
+						const items = fixedPages[page].items.filter(i => c.values.includes(i.row.id.toString()))
+						const userData = (await getUserRow(query, ctx.user.id))!
+						const stashRows = await getUserStash(query, ctx.user.id)
+						const userStashData = getItems(stashRows)
+						const itemsToBuy = []
+						let price = 0
+
+						if (userData.shopSales >= shopDailyBuyLimit) {
+							await c.send({
+								content: `${icons.danger} You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today.` +
+									' This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!',
+								ephemeral: true
 							})
 							return
 						}
 
-						itemsToBuy.push({ item: shopItem, row: shopItemRow })
-						price += shopItemRow.price
-					}
+						for (const i of items) {
+							const shopItemRow = await getShopItem(query, i.row.id)
+							const shopItem = allItems.find(itm => itm.name === shopItemRow?.item)
 
-					if (userData.money < price) {
+							if (!shopItemRow || !shopItem) {
+								await c.send({
+									content: `${icons.warning} ${getItemDisplay(i.item, i.row, { showDurability: false })} has already been purchased by someone else! Select a different item to purchase.`,
+									ephemeral: true
+								})
+								return
+							}
+							else if (userData.level < shopItem.itemLevel) {
+								await c.send({
+									content: `${icons.warning} You must be at least level **${shopItem.itemLevel}** to purchase ${getItemDisplay(shopItem, shopItemRow, { showDurability: false })}.`,
+									ephemeral: true
+								})
+								return
+							}
+
+							itemsToBuy.push({ item: shopItem, row: shopItemRow })
+							price += shopItemRow.price
+						}
+
+						if (userData.money < price) {
+							await c.send({
+								content: `${icons.danger} You don't have enough money. You need **${formatMoney(price)}** but you only have **${formatMoney(userData.money)}**.`,
+								ephemeral: true
+							})
+							return
+						}
+						else if (userData.shopSales + itemsToBuy.length > shopDailyBuyLimit) {
+							await c.send({
+								content: `${icons.danger} You have already purchased **${userData.shopSales}** items from the shop and can only purchase **${shopDailyBuyLimit - userData.shopSales}** more today.` +
+									'This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!',
+								ephemeral: true
+							})
+							return
+						}
+
+						const slotsNeeded = itemsToBuy.reduce((prev, curr) => prev + curr.item.slotsUsed, 0)
+						if (userStashData.slotsUsed + slotsNeeded > userData.stashSlots) {
+							const slotsAvailable = Math.max(0, userData.stashSlots - userStashData.slotsUsed)
+
+							await c.send({
+								content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash but you only have **${slotsAvailable}** slots available.` +
+									'\n\nSell items to clear up some space.',
+								ephemeral: true
+							})
+							return
+						}
+
 						await c.editParent({
-							content: `${icons.danger} You don't have enough money. You need **${formatMoney(price)}** but you only have **${formatMoney(userData.money)}**.`
-						})
-						return
-					}
-					else if (userData.shopSales + itemsToBuy.length > shopDailyBuyLimit) {
-						await c.editParent({
-							content: `${icons.danger} You have already purchased **${userData.shopSales}** items from the shop and can only purchase **${shopDailyBuyLimit - userData.shopSales}** more today. This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!`
-						})
-						return
-					}
+							content: `Purchase **${itemsToBuy.length}x** items for **${formatMoney(price)}**?\n\n` +
+								`${itemsToBuy.map(i => itemsToBuy.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(i.row.price)}**` : getItemDisplay(i.item, i.row)).join('\n')}`,
+							embeds: [],
+							components: CONFIRM_BUTTONS
+						}) as Message
 
-					const slotsNeeded = itemsToBuy.reduce((prev, curr) => prev + curr.item.slotsUsed, 0)
-					if (userStashData.slotsUsed + slotsNeeded > userData.stashSlots) {
-						await c.editParent({
-							content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`
-						})
-						return
-					}
+						try {
+							stopCollector()
+							const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id))[0]
 
-					await c.editParent({
-						content: `Purchase **${itemsToBuy.length}x** items for **${formatMoney(price)}**?\n\n` +
-							`${itemsToBuy.map(i => itemsToBuy.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(i.row.price)}**` : getItemDisplay(i.item, i.row)).join('\n')}`,
-						embeds: [],
-						components: CONFIRM_BUTTONS
-					}) as Message
+							if (confirmed.customID === 'confirmed') {
+								// using transaction because users data will be updated
+								const transaction = await beginTransaction()
+								const userDataV = (await getUserRow(transaction.query, ctx.user.id, true))!
+								const stashRowsV = await getUserStash(transaction.query, ctx.user.id, true)
+								const userStashDataV = getItems(stashRowsV)
 
-					try {
-						stopCollector()
-						const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id))[0]
+								for (const i of itemsToBuy) {
+									const shopItemRow = await getShopItem(transaction.query, i.row.id, true)
 
-						if (confirmed.customID === 'confirmed') {
-							// using transaction because users data will be updated
-							const transaction = await beginTransaction()
-							const userDataV = (await getUserRow(transaction.query, ctx.user.id, true))!
-							const stashRowsV = await getUserStash(transaction.query, ctx.user.id, true)
-							const userStashDataV = getItems(stashRowsV)
+									if (!shopItemRow || i.row.price !== shopItemRow.price) {
+										await transaction.commit()
 
-							for (const i of itemsToBuy) {
-								const shopItemRow = await getShopItem(transaction.query, i.row.id, true)
+										await confirmed.editParent({
+											content: `${icons.warning} ${getItemDisplay(i.item, i.row, { showDurability: false })} has already been purchased by someone else!`,
+											components: []
+										})
+										return
+									}
+								}
 
-								if (!shopItemRow || i.row.price !== shopItemRow.price) {
+								if (userDataV.money < price) {
 									await transaction.commit()
 
 									await confirmed.editParent({
-										content: `${icons.warning} ${getItemDisplay(i.item, i.row, { showDurability: false })} has already been purchased by someone else!`,
+										content: `${icons.danger} You don't have enough money. You need **${formatMoney(price)}** but you only have **${formatMoney(userDataV.money)}**.`,
 										components: []
 									})
 									return
 								}
-							}
+								else if (userDataV.shopSales + itemsToBuy.length > shopDailyBuyLimit) {
+									await transaction.commit()
 
-							if (userDataV.money < price) {
+									await confirmed.editParent({
+										content: `${icons.danger} You have already purchased **${userDataV.shopSales}** items from the shop and can only purchase **${shopDailyBuyLimit - userDataV.shopSales}** more today.` +
+											' This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!',
+										components: []
+									})
+									return
+								}
+								else if (userStashDataV.slotsUsed + slotsNeeded > userDataV.stashSlots) {
+									await transaction.commit()
+
+									await confirmed.editParent({
+										content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`,
+										components: []
+									})
+									return
+								}
+
+								// verified shop has items, continue buy
+								for (const i of itemsToBuy) {
+									await removeItemFromShop(transaction.query, i.row.id)
+									await addItemToStash(transaction.query, ctx.user.id, i.row.id)
+								}
+
+								await increaseShopSales(transaction.query, ctx.user.id, itemsToBuy.length)
+								await removeMoney(transaction.query, ctx.user.id, price)
 								await transaction.commit()
 
 								await confirmed.editParent({
-									content: `${icons.danger} You don't have enough money. You need **${formatMoney(price)}** but you only have **${formatMoney(userDataV.money)}**.`,
+									content: `${icons.checkmark} Purchased **${itemsToBuy.length}x** items for **${formatMoney(price)}**. You can find purchased items in your stash.\n\n${itemsToBuy.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
+										`${icons.information} You now have **${formatMoney(userDataV.money - price)}**.`,
 									components: []
 								})
-								return
 							}
-							else if (userDataV.shopSales + itemsToBuy.length > shopDailyBuyLimit) {
-								await transaction.commit()
-
-								await confirmed.editParent({
-									content: `${icons.danger} You have already purchased **${userDataV.shopSales}** items from the shop and can only purchase **${shopDailyBuyLimit - userDataV.shopSales}** more today.` +
-										' This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!',
+							else {
+								await botMessage.edit({
+									content: `${icons.checkmark} Purchase canceled.`,
 									components: []
 								})
-								return
 							}
-							else if (userStashDataV.slotsUsed + slotsNeeded > userDataV.stashSlots) {
-								await transaction.commit()
-
-								await confirmed.editParent({
-									content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`,
-									components: []
-								})
-								return
-							}
-
-							// verified shop has items, continue buy
-							for (const i of itemsToBuy) {
-								await removeItemFromShop(transaction.query, i.row.id)
-								await addItemToStash(transaction.query, ctx.user.id, i.row.id)
-							}
-
-							await increaseShopSales(transaction.query, ctx.user.id, itemsToBuy.length)
-							await removeMoney(transaction.query, ctx.user.id, price)
-							await transaction.commit()
-
-							await confirmed.editParent({
-								content: `${icons.checkmark} Purchased **${itemsToBuy.length}x** items for **${formatMoney(price)}**. You can find purchased items in your stash.\n\n${itemsToBuy.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
-									`${icons.information} You now have **${formatMoney(userDataV.money - price)}**.`,
-								components: []
-							})
 						}
-						else {
+						catch (err) {
 							await botMessage.edit({
-								content: `${icons.checkmark} Purchase canceled.`,
+								content: `${icons.danger} Purchase timed out.`,
 								components: []
 							})
 						}
 					}
-					catch (err) {
+				}
+				catch (err) {
+					// continue
+				}
+			})
+
+			collector.on('end', async msg => {
+				try {
+					if (msg === 'time') {
 						await botMessage.edit({
-							content: `${icons.danger} Purchase timed out.`,
+							content: `${icons.warning} Buttons timed out.`,
+							embeds: [fixedPages[page].page.embed],
 							components: []
 						})
 					}
 				}
-			}
-			catch (err) {
-				// continue
-			}
-		})
-
-		collector.on('end', async msg => {
-			try {
-				if (msg === 'time') {
-					await botMessage.edit({
-						content: `${icons.warning} Buttons timed out.`,
-						embeds: [fixedPages[page].page.embed],
-						components: []
-					})
+				catch (err) {
+					logger.warn(err)
 				}
-			}
-			catch (err) {
-				logger.warn(err)
-			}
-		})
+			})
+		}
 	}
 
 	getItemShopPrice (item: Item, itemRow: ItemRow): number {

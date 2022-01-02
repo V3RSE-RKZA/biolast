@@ -1,15 +1,17 @@
-import { CommandOptionType, SlashCreator, CommandContext, User } from 'slash-create'
+import { SlashCreator, CommandContext, User, ComponentActionRow, ComponentType, Message } from 'slash-create'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import App from '../app'
 import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { ItemRow, UserRow } from '../types/mysql'
+import { ItemRow, ItemWithRow, UserRow } from '../types/mysql'
 import { addItemToBackpack, addItemToStash, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { backpackHasSpace, getItemDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
+import { backpackHasSpace, getBackpackLimit, getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
+import { logger } from '../utils/logger'
+import { NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
 
 const ITEMS_PER_PAGE = 10
 
@@ -17,72 +19,11 @@ class StashCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'stash',
-			description: 'View the items in your stash or transfer items to it using the put/take sub-commands.',
-			longDescription: 'View the items in your stash. Your stash holds much more than your inventory. ' +
-				'You can put items from your inventory into your stash using `/stash put <item id>` or take items from your stash and put them into your inventory with `/stash take <item id>`.',
-			options: [
-				{
-					type: CommandOptionType.SUB_COMMAND,
-					name: 'put',
-					description: 'Move an item from your inventory into your stash.',
-					options: [
-						{
-							type: CommandOptionType.INTEGER,
-							name: 'item',
-							description: 'ID of item to put in stash.',
-							required: true
-						},
-						{
-							type: CommandOptionType.INTEGER,
-							name: 'item-2',
-							description: 'ID of item to put in stash.',
-							required: false
-						},
-						{
-							type: CommandOptionType.INTEGER,
-							name: 'item-3',
-							description: 'ID of item to put in stash.',
-							required: false
-						}
-					]
-				},
-				{
-					type: CommandOptionType.SUB_COMMAND,
-					name: 'take',
-					description: 'Move an item from your stash into your inventory.',
-					options: [
-						{
-							type: CommandOptionType.INTEGER,
-							name: 'item',
-							description: 'ID of item to take from stash.',
-							required: true
-						},
-						{
-							type: CommandOptionType.INTEGER,
-							name: 'item-2',
-							description: 'ID of item to take from stash.',
-							required: false
-						},
-						{
-							type: CommandOptionType.INTEGER,
-							name: 'item-3',
-							description: 'ID of item to take from stash.',
-							required: false
-						}
-					]
-				},
-				{
-					type: CommandOptionType.SUB_COMMAND,
-					name: 'view',
-					description: 'View the items in your stash.',
-					options: [{
-						type: CommandOptionType.USER,
-						name: 'user',
-						description: 'User to check stash of.',
-						required: false
-					}]
-				}
-			],
+			description: 'View the items in your stash (or transfer items to your inventory).',
+			longDescription: 'View the items in your stash. Your stash holds much more than your inventory.' +
+				' You can put items from your stash into your inventory using the dropdown. Simply select the items you want to transfer to your inventory.' +
+				' Use the `/inventory` command to transfer items from your inventory to your stash.',
+			options: [],
 			category: 'info',
 			guildModsOnly: false,
 			worksInDMs: false,
@@ -226,30 +167,250 @@ class StashCommand extends CustomSlashCommand {
 
 			if (pages.length === 1) {
 				await ctx.send({
-					embeds: [pages[0].embed]
+					embeds: [pages[0].page.embed]
 				})
 			}
 			else {
-				await this.app.componentCollector.paginateEmbeds(ctx, pages)
+				await this.app.componentCollector.paginateEmbeds(ctx, pages.map(p => p.page))
 			}
 			return
 		}
 
-		const userData = (await getUserRow(query, ctx.user.id))!
-		const userStash = await getUserStash(query, ctx.user.id)
-		const pages = this.generatePages(ctx.member || ctx.user, userStash, userData, true)
+		const preUserData = (await getUserRow(query, ctx.user.id))!
+		const preUserStash = await getUserStash(query, ctx.user.id)
+		const pages = this.generatePages(ctx.member || ctx.user, preUserStash, preUserData, true)
+		const preComponents: ComponentActionRow[] = []
+		let page = 0
 
-		if (pages.length === 1) {
-			await ctx.send({
-				embeds: [pages[0].embed]
+		if (pages[0].items.length && !preUserData.fighting) {
+			preComponents.push({
+				type: ComponentType.ACTION_ROW,
+				components: [
+					{
+						type: ComponentType.SELECT,
+						custom_id: 'transfer',
+						placeholder: 'Transfer items to your inventory:',
+						min_values: 1,
+						max_values: pages[0].items.length,
+						options: pages[0].items.map(i => {
+							const iconID = i.item.icon.match(/:([0-9]*)>/)
+
+							return {
+								label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+								value: i.row.id.toString(),
+								description: `Uses ${i.item.slotsUsed} slots.`,
+								emoji: iconID ? {
+									id: iconID[1],
+									name: i.item.name
+								} : undefined
+							}
+						})
+					}
+				]
 			})
 		}
-		else {
-			await this.app.componentCollector.paginateEmbeds(ctx, pages)
+
+		if (pages.length > 1) {
+			preComponents.push({
+				type: ComponentType.ACTION_ROW,
+				components: [
+					PREVIOUS_BUTTON(true),
+					NEXT_BUTTON(false)
+				]
+			})
+		}
+
+		const fixedPages = pages
+		const botMessage = await ctx.send({
+			embeds: [pages[0].page.embed],
+			components: preComponents
+		}) as Message
+
+		if (preComponents.length) {
+			const { collector, stopCollector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 80000)
+
+			collector.on('collect', async c => {
+				try {
+					await c.acknowledge()
+
+					const newComponents: ComponentActionRow[] = []
+
+					if (c.customID === 'previous' && page !== 0) {
+						page--
+
+						newComponents.push({
+							type: ComponentType.ACTION_ROW,
+							components: [
+								{
+									type: ComponentType.SELECT,
+									custom_id: 'transfer',
+									placeholder: 'Transfer items to your inventory:',
+									min_values: 1,
+									max_values: fixedPages[page].items.length,
+									options: fixedPages[page].items.map(i => {
+										const iconID = i.item.icon.match(/:([0-9]*)>/)
+
+										return {
+											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											value: i.row.id.toString(),
+											description: `Uses ${i.item.slotsUsed} slots.`,
+											emoji: iconID ? {
+												id: iconID[1],
+												name: i.item.name
+											} : undefined
+										}
+									})
+								}
+							]
+						})
+						newComponents.push({
+							type: ComponentType.ACTION_ROW,
+							components: [
+								PREVIOUS_BUTTON(page === 0),
+								NEXT_BUTTON(false)
+							]
+						})
+
+						await c.editParent({
+							embeds: [fixedPages[page].page.embed],
+							components: newComponents
+						})
+					}
+					else if (c.customID === 'next' && page !== (fixedPages.length - 1)) {
+						page++
+
+						newComponents.push({
+							type: ComponentType.ACTION_ROW,
+							components: [
+								{
+									type: ComponentType.SELECT,
+									custom_id: 'transfer',
+									placeholder: 'Transfer items to your inventory:',
+									min_values: 1,
+									max_values: fixedPages[page].items.length,
+									options: fixedPages[page].items.map(i => {
+										const iconID = i.item.icon.match(/:([0-9]*)>/)
+
+										return {
+											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											value: i.row.id.toString(),
+											description: `Uses ${i.item.slotsUsed} slots.`,
+											emoji: iconID ? {
+												id: iconID[1],
+												name: i.item.name
+											} : undefined
+										}
+									})
+								}
+							]
+						})
+						newComponents.push({
+							type: ComponentType.ACTION_ROW,
+							components: [
+								PREVIOUS_BUTTON(false),
+								NEXT_BUTTON(page === (fixedPages.length - 1))
+							]
+						})
+
+						await c.editParent({
+							embeds: [fixedPages[page].page.embed],
+							components: newComponents
+						})
+					}
+					else if (c.customID === 'transfer') {
+						// using transaction because users data will be updated
+						const transaction = await beginTransaction()
+						const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
+
+						if (userData.fighting) {
+							await transaction.commit()
+
+							await c.send({
+								content: `${icons.danger} You cannot transfer items while in a duel!`,
+								ephemeral: true
+							})
+							return
+						}
+
+						const items = fixedPages[page].items.filter(i => c.values.includes(i.row.id.toString()))
+						const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
+						const stashRows = await getUserStash(transaction.query, ctx.user.id, true)
+						const userStashData = getItems(stashRows)
+						const itemsToWithdraw = []
+						let spaceNeeded = 0
+
+						for (const i of items) {
+							const foundItem = userStashData.items.find(itm => itm.row.id === i.row.id)
+
+							// make sure user has item
+							if (foundItem) {
+								itemsToWithdraw.push(foundItem)
+								spaceNeeded += foundItem.item.slotsUsed
+							}
+							else {
+								await transaction.commit()
+
+								await c.send({
+									content: `${icons.warning} You don't have an item with the ID **${i.row.id}** in your stash. Did you already transfer it to your inventory?`,
+									ephemeral: true
+								})
+								return
+							}
+						}
+
+						if (!backpackHasSpace(backpackRows, spaceNeeded)) {
+							await transaction.commit()
+
+							const userBackpackData = getItems(backpackRows)
+							const equips = getEquips(backpackRows)
+							const slotsAvailable = Math.max(0, getBackpackLimit(equips.backpack?.item) - userBackpackData.slotsUsed)
+
+							await c.send({
+								content: `${icons.danger} You don't have enough space in your inventory. You need **${spaceNeeded}** open slots in your inventory but you only have **${slotsAvailable}** slots available.` +
+									'\n\nSell items to clear up some space.',
+								ephemeral: true
+							})
+							return
+						}
+
+						for (const i of itemsToWithdraw) {
+							await removeItemFromStash(transaction.query, i.row.id)
+							await addItemToBackpack(transaction.query, ctx.user.id, i.row.id)
+						}
+
+						await transaction.commit()
+						stopCollector()
+
+						await c.editParent({
+							content: `${icons.checkmark} Successfully moved the following from your stash to your inventory:\n\n${itemsToWithdraw.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`,
+							embeds: [],
+							components: []
+						})
+					}
+				}
+				catch (err) {
+					// continue
+				}
+			})
+
+			collector.on('end', async msg => {
+				try {
+					if (msg === 'time') {
+						await botMessage.edit({
+							content: `${icons.warning} Buttons timed out.`,
+							embeds: [fixedPages[page].page.embed],
+							components: []
+						})
+					}
+				}
+				catch (err) {
+					logger.warn(err)
+				}
+			})
 		}
 	}
 
-	generatePages (member: ResolvedMember | User, rows: ItemRow[], userData: UserRow, isSelf: boolean): Embed[] {
+	generatePages (member: ResolvedMember | User, rows: ItemRow[], userData: UserRow, isSelf: boolean): { page: Embed, items: ItemWithRow<ItemRow>[] }[] {
 		const user = 'user' in member ? member.user : member
 		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
 		const itemData = getItems(rows)
@@ -275,7 +436,7 @@ class StashCommand extends CustomSlashCommand {
 				embed.setFooter('Stashed items will NOT be lost when you die')
 			}
 
-			pages.push(embed)
+			pages.push({ page: embed, items: filteredItems })
 		}
 
 		return pages

@@ -252,7 +252,7 @@ export function awaitPlayerChoices (
 						{
 							type: ComponentType.SELECT,
 							custom_id: 'weapon',
-							placeholder: 'Select a weapon from your inventory to use.',
+							placeholder: 'Select a weapon from your inventory to use:',
 							options: [
 								...(sortItemsByLevel(preSelectPlayerInventory.items, true).filter(i => ['Melee Weapon', 'Ranged Weapon', 'Throwable Weapon'].includes(i.item.type))).slice(0, 24).map(i => {
 									const iconID = i.item.icon.match(/:([0-9]*)>/)
@@ -354,7 +354,7 @@ export function awaitPlayerChoices (
 										components = [{
 											type: ComponentType.SELECT,
 											custom_id: 'ammo',
-											placeholder: 'Select an ammunition from your inventory to use.',
+											placeholder: 'Select an ammunition from your inventory to use:',
 											options: ammoSortedByBest.map(i => {
 												const ammoItem = i.item as Ammunition
 												const iconID = i.item.icon.match(/:([0-9]*)>/)
@@ -417,7 +417,7 @@ export function awaitPlayerChoices (
 									{
 										type: ComponentType.SELECT,
 										custom_id: 'limb',
-										placeholder: 'Select a limb to target.',
+										placeholder: 'Select a limb to target:',
 										options: [
 											{
 												label: 'Head',
@@ -542,7 +542,7 @@ export function awaitPlayerChoices (
 						{
 							type: ComponentType.SELECT,
 							custom_id: 'item',
-							placeholder: 'Select a medical item from your inventory to use.',
+							placeholder: 'Select a medical item from your inventory to use:',
 							options: [
 								...sortItemsByLevel(possibleHealItems, true).slice(0, 25).map(i => {
 									const iconID = i.item.icon.match(/:([0-9]*)>/)
@@ -676,7 +676,7 @@ export function awaitPlayerChoices (
 						{
 							type: ComponentType.SELECT,
 							custom_id: 'item',
-							placeholder: 'Select a stimulant from your inventory to use.',
+							placeholder: 'Select a stimulant from your inventory to use:',
 							options: [
 								...sortItemsByLevel(playerStimItems, true).slice(0, 25).map(i => {
 									const item = i.item as Stimulant
