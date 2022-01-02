@@ -63,19 +63,14 @@ interface AreaBase {
 	loot: Loot
 
 	/**
-	 * Whether or not NPCs can be encountered here
+	 * Cooldown in seconds user won't be able to scavenge this area after a successful scavenge
 	 */
-	npcSpawns?: {
-		/**
-		 * Chance to encounter NPC when scavenging here (0 - 100)
-		 */
-		chance: number
+	scavengeCooldown: number
 
-		/**
-		 * NPCs that can spawn in this channel
-		 */
-		npcs: NPC[]
-	}
+	/**
+	 * NPCs that can spawn in this channel
+	 */
+	npcSpawns?: NPC[]
 
 	/**
 	 * Key/item's user must have in order to scavenge this area. If you specify multiple items, the user must have at least 1 of them to scavenge.

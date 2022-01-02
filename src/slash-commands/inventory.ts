@@ -20,7 +20,7 @@ class InventoryCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'inventory',
-			description: 'View your player inventory (or transfer items to your stash).',
+			description: 'View your player inventory (and transfer items to your stash).',
 			longDescription: 'View your player inventory. Your inventory is different from your stash in that the items in your inventory are taken with you into duels.' +
 				' If you die in a duel, you will lose the items in your inventory. You can use this command to transfer items to your stash but only when you are not in a duel',
 			options: [{

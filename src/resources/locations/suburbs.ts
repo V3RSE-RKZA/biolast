@@ -23,7 +23,8 @@ const walkerWeak: NPC = {
 	xp: 20,
 	chanceToBite: 15,
 	attackPenetration: 0.6,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const raiderWeak: NPC = {
 	type: 'raider',
@@ -44,7 +45,8 @@ const raiderWeak: NPC = {
 	armor: items.cloth_armor,
 	helmet: items.cloth_helmet,
 	xp: 40,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const crawlerWeak: NPC = {
 	type: 'walker',
@@ -63,7 +65,8 @@ const crawlerWeak: NPC = {
 	xp: 20,
 	chanceToBite: 20,
 	attackPenetration: 0.9,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const cainTheGravekeeperBoss: NPC = {
 	type: 'raider',
@@ -88,7 +91,8 @@ const cainTheGravekeeperBoss: NPC = {
 	armor: items.wooden_armor,
 	helmet: items.wooden_helmet,
 	xp: 100,
-	boss: true
+	boss: true,
+	respawnTime: 60 * 10
 }
 
 export const suburbs: Location = {
@@ -113,7 +117,8 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 1
-			}
+			},
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Red House',
@@ -132,10 +137,8 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 30,
-				npcs: [walkerWeak]
-			}
+			npcSpawns: [walkerWeak],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Apartments',
@@ -154,10 +157,8 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 40,
-				npcs: [raiderWeak]
-			}
+			npcSpawns: [raiderWeak],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Backyard Shed',
@@ -177,7 +178,8 @@ export const suburbs: Location = {
 				rolls: 2
 			},
 			requiresKey: [items.shed_key],
-			keyIsOptional: false
+			keyIsOptional: false,
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Park',
@@ -195,7 +197,8 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 1
-			}
+			},
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Cedar Lake',
@@ -214,10 +217,8 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 40,
-				npcs: [crawlerWeak]
-			}
+			npcSpawns: [crawlerWeak],
+			scavengeCooldown: 60
 		}
 	]
 }

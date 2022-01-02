@@ -24,7 +24,8 @@ const bloatedWalker: NPC = {
 	xp: 50,
 	chanceToBite: 15,
 	attackPenetration: 1.3,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const mediumRaider: NPC = {
 	type: 'raider',
@@ -45,7 +46,8 @@ const mediumRaider: NPC = {
 	armor: items.wooden_armor,
 	helmet: items.wooden_helmet,
 	xp: 125,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const psychoRaider: NPC = {
 	type: 'raider',
@@ -65,7 +67,8 @@ const psychoRaider: NPC = {
 	],
 	helmet: items.psycho_mask,
 	xp: 125,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const mediumCrawler: NPC = {
 	type: 'walker',
@@ -84,7 +87,8 @@ const mediumCrawler: NPC = {
 	xp: 60,
 	chanceToBite: 25,
 	attackPenetration: 1.9,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const gameNGoRaider: NPC = {
 	type: 'raider',
@@ -105,7 +109,8 @@ const gameNGoRaider: NPC = {
 	armor: items.wooden_armor,
 	helmet: items.wooden_helmet,
 	xp: 125,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const securityOfficerWalker: NPC = {
 	type: 'walker',
@@ -126,7 +131,8 @@ const securityOfficerWalker: NPC = {
 	xp: 80,
 	chanceToBite: 10,
 	attackPenetration: 1.5,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 
 export const station: Location = {
@@ -151,7 +157,8 @@ export const station: Location = {
 					xp: 25
 				},
 				rolls: 1
-			}
+			},
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Evidence Locker',
@@ -170,10 +177,8 @@ export const station: Location = {
 				},
 				rolls: 1
 			},
-			npcSpawns: {
-				chance: 30,
-				npcs: [bloatedWalker]
-			}
+			npcSpawns: [bloatedWalker],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Pathway Park',
@@ -192,10 +197,8 @@ export const station: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 50,
-				npcs: [mediumRaider, psychoRaider]
-			}
+			npcSpawns: [mediumRaider, psychoRaider],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Uniform Area',
@@ -215,7 +218,8 @@ export const station: Location = {
 				rolls: 2
 			},
 			requiresKey: [items.dome_depot_key, items.security_key],
-			keyIsOptional: false
+			keyIsOptional: false,
+			scavengeCooldown: 60
 		},
 		{
 			display: 'District Office',
@@ -238,10 +242,8 @@ export const station: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 30,
-				npcs: [mediumCrawler]
-			}
+			npcSpawns: [mediumCrawler],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Weapons and Ammunition Room',
@@ -261,7 +263,8 @@ export const station: Location = {
 				rolls: 3
 			},
 			requiresKey: [items.dereks_shop_key, items.security_key],
-			keyIsOptional: false
+			keyIsOptional: false,
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Jail Cell-1',
@@ -280,10 +283,8 @@ export const station: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 50,
-				npcs: [gameNGoRaider, psychoRaider]
-			}
+			npcSpawns: [gameNGoRaider, psychoRaider],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Jail Cell-2',
@@ -303,7 +304,8 @@ export const station: Location = {
 				rolls: 2
 			},
 			requiresKey: [items.florreds_pharmacy_key, items.security_key],
-			keyIsOptional: false
+			keyIsOptional: false,
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Security Room',
@@ -322,10 +324,8 @@ export const station: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 40,
-				npcs: [securityOfficerWalker]
-			}
+			npcSpawns: [securityOfficerWalker],
+			scavengeCooldown: 60
 		}
 	]
 }

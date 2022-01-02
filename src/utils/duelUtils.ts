@@ -642,7 +642,7 @@ export function awaitPlayerChoices (
 					const preHealBackpackRows = await getUserBackpack(query, actionCtx.user.id)
 					const preHealInventory = getItems(preHealBackpackRows)
 					const playerStimulants = players.find(p => p.member.id === actionCtx.user.id)?.stims
-					const playerStimItems = preHealInventory.items.filter(i => i.item.type === 'Medical')
+					const playerStimItems = preHealInventory.items.filter(i => i.item.type === 'Stimulant')
 					const possibleStimulants = playerStimItems.filter(i => !playerStimulants?.some(stim => stim.name === i.item.name))
 
 					if (!playerStimItems.length || !playerStimulants) {

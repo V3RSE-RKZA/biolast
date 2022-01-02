@@ -244,7 +244,7 @@ class ItemCommand extends CustomSlashCommand {
 							}
 
 							if (area.npcSpawns) {
-								for (const npc of area.npcSpawns.npcs) {
+								for (const npc of area.npcSpawns) {
 									if (
 										(npc.armor && npc.armor.name === itemFixed.name) ||
 										(npc.helmet && npc.helmet.name === itemFixed.name) ||

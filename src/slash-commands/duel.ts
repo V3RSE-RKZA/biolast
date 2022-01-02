@@ -13,7 +13,7 @@ import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDu
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addHealth, addXp, getUserRow, increaseDeaths, increaseKills, lowerHealth, setFighting } from '../utils/db/players'
 import { getUserQuests, increaseProgress } from '../utils/db/quests'
-import { getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByValue } from '../utils/itemUtils'
+import { backpackHasSpace, getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByValue } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
@@ -121,6 +121,22 @@ class DuelCommand extends CustomSlashCommand {
 				await preTransaction.commit()
 				await confirmed.editParent({
 					content: `${icons.warning} **${member.displayName}** is in another fight right now!`,
+					components: []
+				})
+				return
+			}
+			else if (!backpackHasSpace(player1Inventory, 0)) {
+				await preTransaction.commit()
+				await confirmed.editParent({
+					content: `${icons.warning} **${ctx.member.displayName}** has too many items in their inventory and is overweight!`,
+					components: []
+				})
+				return
+			}
+			else if (!backpackHasSpace(player2Inventory, 0)) {
+				await preTransaction.commit()
+				await confirmed.editParent({
+					content: `${icons.warning} **${member.displayName}** has too many items in their inventory and is overweight!`,
 					components: []
 				})
 				return

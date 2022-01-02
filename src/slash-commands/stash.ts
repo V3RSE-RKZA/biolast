@@ -5,7 +5,7 @@ import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { ItemRow, ItemWithRow, UserRow } from '../types/mysql'
-import { addItemToBackpack, addItemToStash, getUserBackpack, getUserStash, removeItemFromBackpack, removeItemFromStash } from '../utils/db/items'
+import { addItemToBackpack, getUserBackpack, getUserStash, removeItemFromStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
@@ -19,7 +19,7 @@ class StashCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'stash',
-			description: 'View the items in your stash (or transfer items to your inventory).',
+			description: 'View the items in your stash (and transfer items to your inventory).',
 			longDescription: 'View the items in your stash. Your stash holds much more than your inventory.' +
 				' You can put items from your stash into your inventory using the dropdown. Simply select the items you want to transfer to your inventory.' +
 				' Use the `/inventory` command to transfer items from your inventory to your stash.',

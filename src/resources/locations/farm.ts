@@ -25,7 +25,8 @@ const raiderWeak: NPC = {
 	armor: items.cloth_armor,
 	helmet: items.cloth_helmet,
 	xp: 40,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const feralAnimal: NPC = {
 	type: 'walker',
@@ -45,7 +46,8 @@ const feralAnimal: NPC = {
 	xp: 35,
 	chanceToBite: 30,
 	attackPenetration: 1.6,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const bloatedWalker: NPC = {
 	type: 'walker',
@@ -65,7 +67,8 @@ const bloatedWalker: NPC = {
 	xp: 50,
 	chanceToBite: 15,
 	attackPenetration: 1.3,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const daveTheRedneckBoss: NPC = {
 	type: 'raider',
@@ -90,7 +93,8 @@ const daveTheRedneckBoss: NPC = {
 	armor: items.cloth_armor,
 	helmet: items.sauce_pan,
 	xp: 500,
-	boss: true
+	boss: true,
+	respawnTime: 60 * 10
 }
 
 export const farm: Location = {
@@ -115,7 +119,8 @@ export const farm: Location = {
 					xp: 20
 				},
 				rolls: 1
-			}
+			},
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Cellar',
@@ -134,10 +139,8 @@ export const farm: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 50,
-				npcs: [raiderWeak, feralAnimal]
-			}
+			npcSpawns: [raiderWeak, feralAnimal],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Barn',
@@ -156,10 +159,8 @@ export const farm: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 50,
-				npcs: [bloatedWalker]
-			}
+			npcSpawns: [bloatedWalker],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Warehouse',
@@ -179,7 +180,8 @@ export const farm: Location = {
 				rolls: 2
 			},
 			requiresKey: [items.warehouse_key],
-			keyIsOptional: false
+			keyIsOptional: false,
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Bedroom',
@@ -199,7 +201,8 @@ export const farm: Location = {
 				rolls: 4
 			},
 			requiresKey: [items.gunsafe_code],
-			keyIsOptional: false
+			keyIsOptional: false,
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Drug Room',
@@ -219,7 +222,8 @@ export const farm: Location = {
 				rolls: 2
 			},
 			requiresKey: [items.daves_drug_key],
-			keyIsOptional: false
+			keyIsOptional: false,
+			scavengeCooldown: 60
 		}
 	]
 }

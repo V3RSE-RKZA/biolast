@@ -24,7 +24,8 @@ const bloatedWalker: NPC = {
 	xp: 50,
 	chanceToBite: 15,
 	attackPenetration: 1.3,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const mediumRaider: NPC = {
 	type: 'raider',
@@ -45,7 +46,8 @@ const mediumRaider: NPC = {
 	armor: items.wooden_armor,
 	helmet: items.wooden_helmet,
 	xp: 125,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const psychoRaider: NPC = {
 	type: 'raider',
@@ -65,7 +67,8 @@ const psychoRaider: NPC = {
 	],
 	helmet: items.psycho_mask,
 	xp: 125,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const mediumCrawler: NPC = {
 	type: 'walker',
@@ -84,7 +87,8 @@ const mediumCrawler: NPC = {
 	xp: 60,
 	chanceToBite: 25,
 	attackPenetration: 1.9,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const gameNGoRaider: NPC = {
 	type: 'raider',
@@ -105,7 +109,8 @@ const gameNGoRaider: NPC = {
 	armor: items.wooden_armor,
 	helmet: items.wooden_helmet,
 	xp: 125,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const derekBoss: NPC = {
 	type: 'raider',
@@ -126,7 +131,8 @@ const derekBoss: NPC = {
 	],
 	armor: items.aramid_armor,
 	xp: 550,
-	boss: true
+	boss: true,
+	respawnTime: 60 * 2
 }
 const securityOfficerWalker: NPC = {
 	type: 'walker',
@@ -147,7 +153,8 @@ const securityOfficerWalker: NPC = {
 	xp: 80,
 	chanceToBite: 10,
 	attackPenetration: 1.5,
-	boss: false
+	boss: false,
+	respawnTime: 60 * 2
 }
 const theManyBoss: NPC = {
 	type: 'walker',
@@ -168,7 +175,8 @@ const theManyBoss: NPC = {
 	xp: 1000,
 	attackPenetration: 2.8,
 	chanceToBite: 15,
-	boss: true
+	boss: true,
+	respawnTime: 60 * 10
 }
 
 export const mall: Location = {
@@ -193,7 +201,8 @@ export const mall: Location = {
 					xp: 25
 				},
 				rolls: 1
-			}
+			},
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Food Court',
@@ -212,10 +221,8 @@ export const mall: Location = {
 				},
 				rolls: 1
 			},
-			npcSpawns: {
-				chance: 50,
-				npcs: [bloatedWalker]
-			}
+			npcSpawns: [bloatedWalker],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Pathway Park',
@@ -234,10 +241,8 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 50,
-				npcs: [mediumRaider, psychoRaider]
-			}
+			npcSpawns: [mediumRaider, psychoRaider],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Dome Depot',
@@ -257,7 +262,8 @@ export const mall: Location = {
 				rolls: 2
 			},
 			requiresKey: [items.dome_depot_key, items.security_key],
-			keyIsOptional: false
+			keyIsOptional: false,
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Plaza',
@@ -280,10 +286,8 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 50,
-				npcs: [mediumCrawler]
-			}
+			npcSpawns: [mediumCrawler],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Dereks Hunting Shop',
@@ -303,7 +307,8 @@ export const mall: Location = {
 				rolls: 3
 			},
 			requiresKey: [items.dereks_shop_key, items.security_key],
-			keyIsOptional: false
+			keyIsOptional: false,
+			scavengeCooldown: 120
 		},
 		{
 			display: 'Game N Go',
@@ -322,10 +327,8 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 50,
-				npcs: [gameNGoRaider, psychoRaider]
-			}
+			npcSpawns: [gameNGoRaider, psychoRaider],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Staff Break Room',
@@ -344,10 +347,8 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 80,
-				npcs: [derekBoss]
-			}
+			npcSpawns: [derekBoss],
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Florreds Pharmacy',
@@ -367,7 +368,8 @@ export const mall: Location = {
 				rolls: 2
 			},
 			requiresKey: [items.florreds_pharmacy_key, items.security_key],
-			keyIsOptional: false
+			keyIsOptional: false,
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Security Room',
@@ -386,10 +388,10 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: {
-				chance: 50,
-				npcs: [securityOfficerWalker]
-			}
+			npcSpawns: [securityOfficerWalker],
+			requiresKey: [items.florreds_pharmacy_key, items.security_key],
+			keyIsOptional: false,
+			scavengeCooldown: 60
 		}
 	]
 }

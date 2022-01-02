@@ -15,7 +15,7 @@ import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import getRandomInt from '../utils/randomInt'
-import { combineArrayWithAnd, combineArrayWithOr, formatHealth, getBodyPartEmoji, getRarityDisplay } from '../utils/stringUtils'
+import { combineArrayWithAnd, combineArrayWithOr, formatHealth, formatNumber, getBodyPartEmoji, getRarityDisplay } from '../utils/stringUtils'
 import { BackpackItemRow, ItemRow, ItemWithRow, UserRow } from '../types/mysql'
 import { Affliction, afflictions } from '../resources/afflictions'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
@@ -23,6 +23,7 @@ import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
 import { GRAY_BUTTON, RED_BUTTON } from '../utils/constants'
 import { attackPlayer, getMobChoice, getMobDrop } from '../utils/npcUtils'
+import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 
 class ScavengeCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -57,17 +58,77 @@ class ScavengeCommand extends CustomSlashCommand {
 		}
 
 		const locationChoice = locations[preUserData.currentLocation]
+		const areasDescription = []
+		const availableAreas: Area[] = []
+		const areasGuardedByNPC: Area[] = []
+		const areasEmbed = new Embed()
+			.setAuthor(`You scout around ${locationChoice.display.toLowerCase()} and spot ${locationChoice.areas.length} points of interest.`, ctx.user.avatarURL)
+			.addField(`__**Location Boss**__: ${locationChoice.boss.display}`,
+				`Use \`/boss\` to fight the location boss.\n${this.getBossDescription(locationChoice.boss).join('\n')}`)
+
+		for (const area of locationChoice.areas) {
+			const areaCD = await getCooldown(query, ctx.user.id, `scavenge-${locationChoice.display}-${area.display}`)
+			const areaDescription = []
+
+			if (!areaCD) {
+				availableAreas.push(area)
+			}
+			else {
+				areaDescription.push(`${icons.timer} Recently scavenged, you can scavenge this area in **${areaCD}**.`)
+			}
+
+			if (area.requiresKey) {
+				areaDescription.push(`Requires a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))} to be scavenged.`)
+			}
+
+			if (area.npcSpawns) {
+				const mobKilledCD = await getCooldown(query, ctx.user.id, `npcdead-${locationChoice.display}-${area.display}`)
+
+				if (!mobKilledCD) {
+					areasGuardedByNPC.push(area)
+
+					const npcsInArea = Array.from(new Set(area.npcSpawns.map(npc => npc.boss ? `**powerful ${npc.type}**` : `**${npc.type}**`)))
+
+					areaDescription.push(`Guarded by a ${combineArrayWithOr(npcsInArea)}. You can scavenge this area after defeating the patrolling mob.`)
+				}
+				else {
+					areaDescription.push(`The mob guarding this area has been defeated (**${mobKilledCD}** until they return)`)
+				}
+			}
+
+			if (!areaCD && !area.requiresKey && !area.npcSpawns) {
+				areaDescription.push('No enemies spotted in this area. Looks safe!')
+			}
+
+			areasDescription.push(`**${area.display}**\n${areaDescription.join(' ')}`)
+		}
+
+		areasEmbed.addField(`__**Areas**__ (${locationChoice.areas.length})`, areasDescription.join('\n\n'))
+
 		const components: ComponentSelectMenu[] = [
 			{
 				type: ComponentType.SELECT,
 				custom_id: 'areas',
-				options: locationChoice.areas.map(area => {
-					const iconID = area.requiresKey ? icons.key.match(/:([0-9]*)>/) : area.npcSpawns && area.npcSpawns.chance > 10 ? icons.warning.match(/:([0-9]*)>/) : icons.checkmark.match(/:([0-9]*)>/)
+				placeholder: 'Select an area to scavenge:',
+				options: availableAreas.map(area => {
+					const iconID = area.requiresKey ? icons.key.match(/:([0-9]*)>/) : area.npcSpawns && areasGuardedByNPC.includes(area) ? icons.warning.match(/:([0-9]*)>/) : icons.checkmark.match(/:([0-9]*)>/)
+					const description = []
+
+					if (area.requiresKey) {
+						description.push('Requires key.')
+					}
+					if (area.npcSpawns && areasGuardedByNPC.includes(area)) {
+						const npcsInArea = Array.from(new Set(area.npcSpawns.map(npc => npc.boss ? `powerful ${npc.type}` : npc.type)))
+						description.push(`Guarded by a ${combineArrayWithOr(npcsInArea)}.`)
+					}
+					else {
+						description.push('No enemies spotted in this area.')
+					}
 
 					return {
 						label: area.display,
 						value: area.display,
-						description: `${area.requiresKey ? 'Requires key. ' : ''}${area.npcSpawns ? `${area.npcSpawns.chance}% chance of encountering mob.` : 'No mobs spotted in this area.'}`,
+						description: description.join(' '),
 						emoji: iconID ? {
 							id: iconID[1],
 							name: 'warning'
@@ -77,7 +138,8 @@ class ScavengeCommand extends CustomSlashCommand {
 			}
 		]
 		let botMessage = await ctx.send({
-			content: `You look around **${locationChoice.display}** and spot **${locationChoice.areas.length}** points of interest. Which area do you want to scavenge?`,
+			content: 'Which area do you want to scavenge?',
+			embeds: [areasEmbed.embed],
 			components: [
 				{
 					type: ComponentType.ACTION_ROW,
@@ -87,7 +149,7 @@ class ScavengeCommand extends CustomSlashCommand {
 		}) as Message
 
 		try {
-			const areaCtx = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id, 20000))[0]
+			const areaCtx = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id, 30000))[0]
 			const areaChoice = locationChoice.areas.find(a => a.display === areaCtx.values[0])
 			const transaction = await beginTransaction()
 			const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
@@ -97,7 +159,8 @@ class ScavengeCommand extends CustomSlashCommand {
 
 				await areaCtx.editParent({
 					content: `${icons.danger} Could not find area.`,
-					components: []
+					components: [],
+					embeds: []
 				})
 				return
 			}
@@ -106,7 +169,32 @@ class ScavengeCommand extends CustomSlashCommand {
 
 				await areaCtx.editParent({
 					content: `${icons.danger} You cannot scavenge while in a duel.`,
-					components: []
+					components: [],
+					embeds: []
+				})
+				return
+			}
+
+			const areaCD = await getCooldown(transaction.query, ctx.user.id, `scavenge-${locationChoice.display}-${areaChoice.display}`, true)
+			const mobKilledCD = await getCooldown(transaction.query, ctx.user.id, `npcdead-${locationChoice.display}-${areaChoice.display}`, true)
+
+			if (areaCD) {
+				await transaction.commit()
+
+				await areaCtx.editParent({
+					content: `${icons.timer} You recently scavenged **${areaChoice.display}**, you can scavenge this area in **${areaCD}**.`,
+					components: [],
+					embeds: []
+				})
+				return
+			}
+			else if (areaChoice.npcSpawns && !areasGuardedByNPC.includes(areaChoice) && !mobKilledCD) {
+				await transaction.commit()
+
+				await areaCtx.editParent({
+					content: `${icons.timer} Unfortunately, a mob arrived to **${areaChoice.display}** while you were deciding which area to scavenge.`,
+					components: [],
+					embeds: []
 				})
 				return
 			}
@@ -123,7 +211,8 @@ class ScavengeCommand extends CustomSlashCommand {
 
 				await areaCtx.editParent({
 					content: `${icons.information} You need a ${combineArrayWithOr(keysRequired.map(key => getItemDisplay(key)))} to scavenge **${areaChoice.display}**.`,
-					components: []
+					components: [],
+					embeds: []
 				})
 				return
 			}
@@ -138,7 +227,8 @@ class ScavengeCommand extends CustomSlashCommand {
 
 				await areaCtx.editParent({
 					content: `${icons.danger} You don't have enough space in your inventory to scavenge **${areaChoice.display}**. Sell items to clear up some space.`,
-					components: []
+					components: [],
+					embeds: []
 				})
 				return
 			}
@@ -152,10 +242,12 @@ class ScavengeCommand extends CustomSlashCommand {
 
 				if (questRow.progress < questRow.progressGoal) {
 					if (
-						(quest &&
-						quest.questType === 'Scavenge With A Key' &&
-						hasRequiredKey &&
-						quest.key.name === hasRequiredKey.item.name) ||
+						(
+							quest &&
+							quest.questType === 'Scavenge With A Key' &&
+							hasRequiredKey &&
+							quest.key.name === hasRequiredKey.item.name
+						) ||
 						questRow.questType === 'Scavenge'
 					) {
 						await increaseProgress(transaction.query, questRow.id, 1)
@@ -174,7 +266,7 @@ class ScavengeCommand extends CustomSlashCommand {
 			}
 
 			// player scavenges without encountering mob
-			if (!areaChoice.npcSpawns || getRandomInt(1, 100) > areaChoice.npcSpawns.chance) {
+			if (!areaChoice.npcSpawns || mobKilledCD) {
 				const scavengedLoot = []
 				let xpEarned = 0
 
@@ -209,6 +301,7 @@ class ScavengeCommand extends CustomSlashCommand {
 					}
 				}
 
+				await createCooldown(transaction.query, ctx.user.id, `scavenge-${locationChoice.display}-${areaChoice.display}`, areaChoice.scavengeCooldown)
 				await addXp(transaction.query, ctx.user.id, xpEarned)
 				await transaction.commit()
 
@@ -219,7 +312,8 @@ class ScavengeCommand extends CustomSlashCommand {
 				if (!scavengedLoot.length) {
 					await areaCtx.editParent({
 						content: finalMessage,
-						components: []
+						components: [],
+						embeds: []
 					})
 					return
 				}
@@ -227,7 +321,8 @@ class ScavengeCommand extends CustomSlashCommand {
 				await areaCtx.editParent({
 					content: `${finalMessage}\n\n` +
 						`${icons.checkmark} These items were added to your inventory.`,
-					components: []
+					components: [],
+					embeds: []
 				})
 				return
 			}
@@ -236,7 +331,7 @@ class ScavengeCommand extends CustomSlashCommand {
 			await setFighting(transaction.query, ctx.user.id, true)
 			await transaction.commit()
 
-			const npc = areaChoice.npcSpawns.npcs[Math.floor(Math.random() * areaChoice.npcSpawns.npcs.length)]
+			const npc = areaChoice.npcSpawns[Math.floor(Math.random() * areaChoice.npcSpawns.length)]
 			const finalMessage = `${icons.danger} You ${hasRequiredKey ?
 				`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
 				''}try and scavenge **${areaChoice.display}** but **ENCOUNTER A ${npc.type.toUpperCase()}!**`
@@ -295,6 +390,7 @@ class ScavengeCommand extends CustomSlashCommand {
 					const messages: string[][] = [[], []]
 					const npcDisplayName = npc.boss ? `**${npc.display}**` : `the **${npc.type}**`
 					const npcDisplayCapitalized = npc.boss ? `**${npc.display}**` : `The **${npc.type}**`
+					let lootEmbed
 
 					for (let i = 0; i < orderedChoices.length; i++) {
 						const choiceType = orderedChoices[i]
@@ -326,6 +422,15 @@ class ScavengeCommand extends CustomSlashCommand {
 								if (playerRow.health - attackResult.damage <= 0) {
 									// end the duel
 									duelIsActive = false
+
+									lootEmbed = new Embed()
+										.setTitle('__Loot Lost__')
+										.setColor(16734296)
+										.setDescription(attackResult.lostItems.length ?
+											`${sortItemsByLevel(attackResult.lostItems, true).slice(0, 15).map(victimItem => getItemDisplay(victimItem.item, victimItem.row, { showEquipped: false, showDurability: false })).join('\n')}` +
+											`${attackResult.lostItems.length > 15 ? `\n...and **${attackResult.lostItems.length - 15}** other item${attackResult.lostItems.length - 15 > 1 ? 's' : ''}` : ''}` :
+											'You had no items.')
+
 									// break out of the loop to prevent other players turn
 									break
 								}
@@ -722,6 +827,8 @@ class ScavengeCommand extends CustomSlashCommand {
 									}
 								}
 
+								await setFighting(atkTransaction.query, ctx.user.id, false)
+								await createCooldown(transaction.query, ctx.user.id, `npcdead-${locationChoice.display}-${areaChoice.display}`, npc.respawnTime)
 								await increaseKills(atkTransaction.query, ctx.user.id, npc.boss ? 'boss' : 'npc', 1)
 								await addXp(atkTransaction.query, ctx.user.id, npc.xp)
 
@@ -737,18 +844,21 @@ class ScavengeCommand extends CustomSlashCommand {
 									}
 								}
 
-								messages[i].push(
-									`☠️ ${npcDisplayCapitalized} **DIED!** <@${ctx.user.id}> earned 🌟 ***+${npc.xp}*** xp for this kill.`,
-									`\n__Loot Received__\n${(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
-										.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : `${getRarityDisplay('Common')} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}`
-								)
+								messages[i].push(`☠️ ${npcDisplayCapitalized} **DIED!**`)
+
+								// have to put loot in a separate embed to avoid character limit issues (up to 18 mob drops can be displayed by using an embed description)
+								lootEmbed = new Embed()
+									.setTitle('__Loot Received__')
+									.setColor(9043800)
+									.setDescription(`🌟 ***+${npc.xp}** xp!*` +
+										`\n${(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
+											.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : `${getRarityDisplay('Common')} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}`)
 							}
 							else if (!missedPartChoice) {
 								messages[i].push(`${npcDisplayCapitalized} is left with ${formatHealth(npcHealth, npc.health)} **${npcHealth}** health.`)
 							}
 
 							// commit changes
-							await setFighting(atkTransaction.query, ctx.user.id, false)
 							await atkTransaction.commit()
 
 							if (!missedPartChoice && npcHealth <= 0) {
@@ -769,7 +879,7 @@ class ScavengeCommand extends CustomSlashCommand {
 					}
 
 					await areaCtx.sendFollowUp({
-						embeds: [actionsEmbed.embed]
+						embeds: lootEmbed ? [actionsEmbed.embed, lootEmbed.embed] : [actionsEmbed.embed]
 					})
 				}
 				catch (err) {
@@ -925,6 +1035,38 @@ class ScavengeCommand extends CustomSlashCommand {
 			xp: xpEarned,
 			rarityDisplay
 		}
+	}
+
+	getBossDescription (boss: NPC): string[] {
+		const bossDescripion = [
+			`**Health**: ${formatHealth(boss.health, boss.health)} **${boss.health}** HP`,
+			`**Kill XP**: 🌟 ${formatNumber(boss.xp)}`
+		]
+
+		if (boss.type === 'raider') {
+			if ('ammo' in boss) {
+				bossDescripion.push(`**Weapon**: ${getItemDisplay(boss.weapon)} (ammo: ${getItemDisplay(boss.ammo)})`)
+			}
+			else {
+				bossDescripion.push(`**Weapon**: ${getItemDisplay(boss.weapon)}`)
+			}
+		}
+
+		if (boss.helmet) {
+			bossDescripion.push(`**Helmet**: ${getItemDisplay(boss.helmet)}`)
+		}
+		if (boss.armor) {
+			bossDescripion.push(`**Helmet**: ${getItemDisplay(boss.armor)}`)
+		}
+
+		bossDescripion.push(`**Damage**: ${boss.damage}`)
+		bossDescripion.push(`**Armor Penetration**: ${'ammo' in boss ?
+			boss.ammo.penetration :
+			'weapon' in boss ?
+				boss.weapon.penetration :
+				boss.attackPenetration}`)
+
+		return bossDescripion
 	}
 }
 

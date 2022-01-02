@@ -3,11 +3,11 @@ import { icons } from '../config'
 import { Affliction, afflictions } from '../resources/afflictions'
 import { NPC } from '../types/NPCs'
 import { Ammunition, Medical, Item, MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon, Weapon } from '../types/Items'
-import { BackpackItemRow, Query, UserRow } from '../types/mysql'
+import { BackpackItemRow, ItemWithRow, Query, UserRow } from '../types/mysql'
 import { deleteItem, lowerItemDurability } from './db/items'
 import { lowerHealth, setFighting } from './db/players'
 import { BodyPart, getAttackDamage, getAttackString, getBodyPartHit } from './duelUtils'
-import { getEquips, getItemDisplay, getItems, sortItemsByLevel } from './itemUtils'
+import { getEquips, getItemDisplay, getItems } from './itemUtils'
 import { addStatusEffects, getEffectsDisplay } from './playerUtils'
 import { combineArrayWithAnd, formatHealth, getBodyPartEmoji, getRarityDisplay } from './stringUtils'
 
@@ -133,7 +133,7 @@ export async function attackPlayer (
 	playerAfflictions: Affliction[],
 	npcStimulants: Stimulant[],
 	npcAfflictions: Affliction[]
-): Promise<{ messages: string[], damage: number }> {
+): Promise<{ messages: string[], damage: number, lostItems: ItemWithRow<BackpackItemRow>[] }> {
 	const messages = []
 	const userBackpackData = getItems(userBackpack)
 	const userEquips = getEquips(userBackpack)
@@ -145,6 +145,7 @@ export async function attackPlayer (
 	const removedItems: number[] = []
 	let totalDamage
 	let npcAttackPenetration
+	let victimLoot: ItemWithRow<BackpackItemRow>[] = []
 
 	if (npc.type === 'raider') {
 		if ('ammo' in npc) {
@@ -277,7 +278,7 @@ export async function attackPlayer (
 
 	if (userRow.health - totalDamage <= 0) {
 		// have to filter out the removed armor/helmet to prevent sql reference errors
-		const victimLoot = userBackpackData.items.filter(i => !removedItems.includes(i.row.id))
+		victimLoot = userBackpackData.items.filter(i => !removedItems.includes(i.row.id))
 
 		for (const victimItem of victimLoot) {
 			await deleteItem(transactionQuery, victimItem.row.id)
@@ -285,13 +286,7 @@ export async function attackPlayer (
 
 		await setFighting(transactionQuery, member.id, false)
 
-		messages.push(
-			`☠️ **${member.displayName}** DIED and lost **${victimLoot.length}** items.`,
-			`\n__Loot Lost__\n${victimLoot.length ?
-				`${sortItemsByLevel(victimLoot, true).slice(0, 10).map(victimItem => getItemDisplay(victimItem.item, victimItem.row, { showEquipped: false, showDurability: false })).join('\n')}` +
-					`${victimLoot.length > 10 ? `\n...and **${victimLoot.length - 10}** other item${victimLoot.length - 10 > 1 ? 's' : ''}` : ''}` :
-				'No items were dropped.'}`
-		)
+		messages.push(`☠️ **${member.displayName}** DIED and lost **${victimLoot.length}** items.`)
 	}
 	else {
 		await lowerHealth(transactionQuery, member.id, totalDamage)
@@ -301,6 +296,7 @@ export async function attackPlayer (
 
 	return {
 		messages,
-		damage: totalDamage
+		damage: totalDamage,
+		lostItems: victimLoot
 	}
 }
