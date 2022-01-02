@@ -1,4 +1,4 @@
-import { SlashCreator, CommandContext, User, ComponentActionRow, ComponentType, Message } from 'slash-create'
+import { SlashCreator, CommandContext, User, ComponentActionRow, ComponentType, Message, CommandOptionType } from 'slash-create'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import App from '../app'
 import { icons } from '../config'
@@ -23,7 +23,12 @@ class StashCommand extends CustomSlashCommand {
 			longDescription: 'View the items in your stash. Your stash holds much more than your inventory.' +
 				' You can put items from your stash into your inventory using the dropdown. Simply select the items you want to transfer to your inventory.' +
 				' Use the `/inventory` command to transfer items from your inventory to your stash.',
-			options: [],
+			options: [{
+				type: CommandOptionType.USER,
+				name: 'user',
+				description: 'User to check stash of.',
+				required: false
+			}],
 			category: 'info',
 			guildModsOnly: false,
 			worksInDMs: false,
@@ -36,7 +41,7 @@ class StashCommand extends CustomSlashCommand {
 
 	async run (ctx: CommandContext): Promise<void> {
 		// view player stash
-		const member = ctx.members.get(ctx.options.view && ctx.options.view.user)
+		const member = ctx.members.get(ctx.options.user)
 
 		if (member) {
 			const userData = await getUserRow(query, member.id)
@@ -319,7 +324,7 @@ class StashCommand extends CustomSlashCommand {
 					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your inventory to your stash with \`/inventory\`.`)
 
 			if (isSelf) {
-				embed.setFooter('Stashed items will NOT be lost when you die')
+				embed.setFooter(`Page ${i}/${maxPage} · Stashed items will not be lost if you die`)
 			}
 
 			pages.push({ page: embed, items: filteredItems })

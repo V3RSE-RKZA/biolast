@@ -74,7 +74,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				availableAreas.push(area)
 			}
 			else {
-				areaDescription.push(`${icons.timer} Recently scavenged, you can scavenge this area in **${areaCD}**.`)
+				areaDescription.push(`${icons.timer} Recently scavenged, you can scavenge this area again in **${areaCD}**.`)
 			}
 
 			if (area.requiresKey) {
@@ -182,7 +182,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await areaCtx.editParent({
-					content: `${icons.timer} You recently scavenged **${areaChoice.display}**, you can scavenge this area in **${areaCD}**.`,
+					content: `${icons.timer} You recently scavenged **${areaChoice.display}**, you can scavenge this area again in **${areaCD}**.`,
 					components: [],
 					embeds: []
 				})
