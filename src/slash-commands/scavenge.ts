@@ -23,7 +23,7 @@ import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
 import { GRAY_BUTTON, RED_BUTTON } from '../utils/constants'
 import { attackPlayer, getMobChoice, getMobDrop } from '../utils/npcUtils'
-import { createCooldown, getCooldown } from '../utils/db/cooldowns'
+import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 
 class ScavengeCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -558,8 +558,8 @@ class ScavengeCommand extends CustomSlashCommand {
 							})
 
 							messages[i].push(`<@${ctx.user.id}> uses a ${itemDisplay} to heal for **${maxHeal}** health.` +
-								`\n<@${ctx.user.id}> now has ${formatHealth(playerData.health + maxHeal, playerData.maxHealth)} **${playerData.health + maxHeal} / ${playerData.maxHealth}** health.` +
-								`${curedAfflictions.length ? `\n<@${ctx.user.id}> cured the following afflictions: ${combineArrayWithAnd(curedAfflictions.map(a => a.name))}` : ''}`)
+								`\n**${ctx.member.displayName}** now has ${formatHealth(playerData.health + maxHeal, playerData.maxHealth)} **${playerData.health + maxHeal} / ${playerData.maxHealth}** health.` +
+								`${curedAfflictions.length ? `\n**${ctx.member.displayName}** cured the following afflictions: ${combineArrayWithAnd(curedAfflictions.map(a => a.name))}` : ''}`)
 						}
 						else if (playerChoice.choice === 'use a stimulant') {
 							const choice = playerChoice
@@ -733,12 +733,12 @@ class ScavengeCommand extends CustomSlashCommand {
 
 							// remove weapon
 							if (playerChoice.weapon.row && (!playerChoice.weapon.row.durability || playerChoice.weapon.row.durability - 1 <= 0)) {
-								messages[i].push(`${icons.danger} <@${ctx.user.id}>'s ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
+								messages[i].push(`${icons.danger} **${ctx.member.displayName}**'s ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
 
 								await deleteItem(atkTransaction.query, playerChoice.weapon.row.id)
 							}
 							else if (playerChoice.weapon.row && playerChoice.weapon.row.durability) {
-								messages[i].push(`<@${ctx.user.id}>'s ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row, { showDurability: false, showEquipped: false })} now has **${playerChoice.weapon.row.durability - 1}** durability.`)
+								messages[i].push(`**${ctx.member.displayName}**'s ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row, { showDurability: false, showEquipped: false })} now has **${playerChoice.weapon.row.durability - 1}** durability.`)
 
 								await lowerItemDurability(atkTransaction.query, playerChoice.weapon.row.id, 1)
 							}
@@ -856,7 +856,7 @@ class ScavengeCommand extends CustomSlashCommand {
 									}
 								}
 
-								messages[i].push(`☠️ ${npcDisplayCapitalized} **DIED!**`)
+								messages[i].push(`☠️ ${npcDisplayCapitalized} **DIED!** You have **${formatTime(npc.respawnTime * 1000)}** to scavenge **${areaChoice.display}** before the enemy respawns.`)
 
 								// have to put loot in a separate embed to avoid character limit issues (up to 18 mob drops can be displayed by using an embed description)
 								lootEmbed = new Embed()

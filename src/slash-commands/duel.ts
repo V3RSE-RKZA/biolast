@@ -182,7 +182,7 @@ class DuelCommand extends CustomSlashCommand {
 
 					const player1Choice = playerChoices.get(ctx.user.id)
 					const player2Choice = playerChoices.get(member.id)
-					const orderedChoices = [{ user: ctx.user.id, action: player1Choice, speed: player1Choice?.speed || 0 }, { user: member.id, action: player2Choice, speed: player2Choice?.speed || 0 }]
+					const orderedChoices = [{ member: ctx.member, action: player1Choice, speed: player1Choice?.speed || 0 }, { member, action: player2Choice, speed: player2Choice?.speed || 0 }]
 						.map(c => ({ ...c, random: Math.random() }))
 						.sort((a, b) => {
 							if (a.speed > b.speed) {
@@ -194,14 +194,14 @@ class DuelCommand extends CustomSlashCommand {
 
 							return b.random - a.random
 						})
-						.map(c => ({ user: c.user, action: c.action }))
+						.map(c => ({ member: c.member, action: c.action }))
 					const messages: string[][] = [[], []]
 
 					for (let i = 0; i < orderedChoices.length; i++) {
 						const userChoice = orderedChoices[i]
 
 						if (!userChoice.action) {
-							messages[i].push(`<@${userChoice.user}> did not select an action.`)
+							messages[i].push(`<@${userChoice.member.id}> did not select an action.`)
 						}
 						else if (userChoice.action.choice === 'try to flee') {
 							const chance = 0.1
@@ -209,27 +209,27 @@ class DuelCommand extends CustomSlashCommand {
 							if (Math.random() <= chance) {
 								// success
 								duelIsActive = false
-								messages[i].push(`<@${userChoice.user}> flees from the duel! The duel has ended.`)
+								messages[i].push(`<@${userChoice.member.id}> flees from the duel! The duel has ended.`)
 								await setFighting(query, ctx.user.id, false)
 								await setFighting(query, member.id, false)
 								break
 							}
 							else {
-								messages[i].push(`${icons.danger} <@${userChoice.user}> tries to flee from the duel (10% chance) but fails!`)
+								messages[i].push(`${icons.danger} <@${userChoice.member.id}> tries to flee from the duel (10% chance) but fails!`)
 							}
 						}
 						else if (userChoice.action.choice === 'use a medical item') {
 							const choice = userChoice.action
 							const healTransaction = await beginTransaction()
-							const playerData = (await getUserRow(healTransaction.query, userChoice.user, true))!
-							const playerBackpackRows = await getUserBackpack(healTransaction.query, userChoice.user, true)
+							const playerData = (await getUserRow(healTransaction.query, userChoice.member.id, true))!
+							const playerBackpackRows = await getUserBackpack(healTransaction.query, userChoice.member.id, true)
 							const playerInventory = getItems(playerBackpackRows)
 
 							const hasItem = playerInventory.items.find(itm => itm.row.id === choice.itemRow.row.id)
 
 							if (!hasItem) {
 								await healTransaction.commit()
-								messages[i].push(`${icons.danger} <@${userChoice.user}> did not have the item they wanted to heal with. Their turn has been skipped.`)
+								messages[i].push(`${icons.danger} <@${userChoice.member.id}> did not have the item they wanted to heal with. Their turn has been skipped.`)
 								continue
 							}
 
@@ -244,7 +244,7 @@ class DuelCommand extends CustomSlashCommand {
 							}
 
 							if (choice.itemRow.item.curesBitten || choice.itemRow.item.curesBrokenArm || choice.itemRow.item.curesBurning) {
-								const playerAfflictions = userChoice.user === ctx.user.id ? player1Afflictions : player2Afflictions
+								const playerAfflictions = userChoice.member.id === ctx.user.id ? player1Afflictions : player2Afflictions
 
 								for (let affIndex = playerAfflictions.length - 1; affIndex >= 0; affIndex--) {
 									const affliction = playerAfflictions[affIndex]
@@ -264,7 +264,7 @@ class DuelCommand extends CustomSlashCommand {
 								}
 							}
 
-							await addHealth(healTransaction.query, userChoice.user, maxHeal)
+							await addHealth(healTransaction.query, userChoice.member.id, maxHeal)
 							await healTransaction.commit()
 
 							const itemDisplay = getItemDisplay(choice.itemRow.item, {
@@ -274,21 +274,21 @@ class DuelCommand extends CustomSlashCommand {
 								showID: false
 							})
 
-							messages[i].push(`<@${userChoice.user}> uses a ${itemDisplay} to heal for **${maxHeal}** health.` +
-								`\n<@${userChoice.user}> now has ${formatHealth(playerData.health + maxHeal, playerData.maxHealth)} **${playerData.health + maxHeal} / ${playerData.maxHealth}** health.` +
-								`${curedAfflictions.length ? `\n<@${userChoice.user}> cured the following afflictions: ${combineArrayWithAnd(curedAfflictions.map(a => a.name))}` : ''}`)
+							messages[i].push(`<@${userChoice.member.id}> uses a ${itemDisplay} to heal for **${maxHeal}** health.` +
+								`\n**${userChoice.member.displayName}** now has ${formatHealth(playerData.health + maxHeal, playerData.maxHealth)} **${playerData.health + maxHeal} / ${playerData.maxHealth}** health.` +
+								`${curedAfflictions.length ? `\n**${userChoice.member.displayName}** cured the following afflictions: ${combineArrayWithAnd(curedAfflictions.map(a => a.name))}` : ''}`)
 						}
 						else if (userChoice.action.choice === 'use a stimulant') {
 							const choice = userChoice.action
 							const stimTransaction = await beginTransaction()
-							const playerBackpackRows = await getUserBackpack(stimTransaction.query, userChoice.user, true)
+							const playerBackpackRows = await getUserBackpack(stimTransaction.query, userChoice.member.id, true)
 							const playerInventory = getItems(playerBackpackRows)
 
 							const hasItem = playerInventory.items.find(itm => itm.row.id === choice.itemRow.row.id)
 
 							if (!hasItem) {
 								await stimTransaction.commit()
-								messages[i].push(`${icons.danger} <@${userChoice.user}> did not have the stimulant they wanted to use. Their turn has been skipped.`)
+								messages[i].push(`${icons.danger} <@${userChoice.member.id}> did not have the stimulant they wanted to use. Their turn has been skipped.`)
 								continue
 							}
 
@@ -299,7 +299,7 @@ class DuelCommand extends CustomSlashCommand {
 								await lowerItemDurability(stimTransaction.query, choice.itemRow.row.id, 1)
 							}
 
-							const playerStimulants = userChoice.user === ctx.user.id ? player1Stimulants : player2Stimulants
+							const playerStimulants = userChoice.member.id === ctx.user.id ? player1Stimulants : player2Stimulants
 
 							// ensure multiple of the same stimulant don't stack
 							if (!playerStimulants.includes(choice.itemRow.item)) {
@@ -316,28 +316,28 @@ class DuelCommand extends CustomSlashCommand {
 							})
 							const effectsDisplay = getEffectsDisplay(choice.itemRow.item.effects)
 
-							messages[i].push(`<@${userChoice.user}> injects themself with ${itemDisplay}.` +
+							messages[i].push(`<@${userChoice.member.id}> injects themself with ${itemDisplay}.` +
 								`\n\n__Effects Received__\n${effectsDisplay.join('\n')}`)
 						}
 						else {
 							// user chose to attack
-							const otherPlayerID = userChoice.user === ctx.user.id ? member.id : ctx.user.id
+							const otherPlayerMember = userChoice.member.id === ctx.user.id ? member : ctx.member
 							const atkTransaction = await beginTransaction()
 
 							// fetch user row to prevent changes during attack
-							await getUserRow(atkTransaction.query, userChoice.user, true)
+							await getUserRow(atkTransaction.query, userChoice.member.id, true)
 
 							const choice = userChoice.action
-							const playerBackpackRows = await getUserBackpack(atkTransaction.query, userChoice.user, true)
-							const victimData = (await getUserRow(atkTransaction.query, otherPlayerID, true))!
-							const victimBackpackRows = await getUserBackpack(atkTransaction.query, otherPlayerID, true)
+							const playerBackpackRows = await getUserBackpack(atkTransaction.query, userChoice.member.id, true)
+							const victimData = (await getUserRow(atkTransaction.query, otherPlayerMember.id, true))!
+							const victimBackpackRows = await getUserBackpack(atkTransaction.query, otherPlayerMember.id, true)
 							const playerInventory = getItems(playerBackpackRows)
 							const victimInventory = getItems(victimBackpackRows)
 							const victimEquips = getEquips(victimBackpackRows)
-							const playerStimulants = userChoice.user === ctx.user.id ? player1Stimulants : player2Stimulants
-							const playerAfflictions = userChoice.user === ctx.user.id ? player1Afflictions : player2Afflictions
-							const victimStimulants = userChoice.user === ctx.user.id ? player2Stimulants : player1Stimulants
-							const victimAfflictions = userChoice.user === ctx.user.id ? player2Afflictions : player1Afflictions
+							const playerStimulants = userChoice.member.id === ctx.user.id ? player1Stimulants : player2Stimulants
+							const playerAfflictions = userChoice.member.id === ctx.user.id ? player1Afflictions : player2Afflictions
+							const victimStimulants = userChoice.member.id === ctx.user.id ? player2Stimulants : player1Stimulants
+							const victimAfflictions = userChoice.member.id === ctx.user.id ? player2Afflictions : player1Afflictions
 							const stimulantEffects = addStatusEffects(playerStimulants, playerAfflictions)
 							const victimEffects = addStatusEffects(victimStimulants, victimAfflictions)
 							const stimulantDamageMulti = (1 + (stimulantEffects.damageBonus / 100) - ((victimEffects.damageTaken * -1) / 100))
@@ -354,13 +354,13 @@ class DuelCommand extends CustomSlashCommand {
 							// verify user has weapon they want to attack with
 							if (!hasWeapon || !choice.weapon) {
 								await atkTransaction.commit()
-								messages[i].push(`${icons.danger} <@${userChoice.user}> did not have the weapon they wanted to use. Their turn has been skipped.`)
+								messages[i].push(`${icons.danger} <@${userChoice.member.id}> did not have the weapon they wanted to use. Their turn has been skipped.`)
 								continue
 							}
 							else if (choice.weapon.item.type === 'Ranged Weapon') {
 								if (!hasAmmo || !choice.ammo) {
 									await atkTransaction.commit()
-									messages[i].push(`${icons.danger} <@${userChoice.user}> did not have the ammunition they wanted to use. Their turn has been skipped.`)
+									messages[i].push(`${icons.danger} <@${userChoice.member.id}> did not have the ammunition they wanted to use. Their turn has been skipped.`)
 									continue
 								}
 
@@ -396,10 +396,10 @@ class DuelCommand extends CustomSlashCommand {
 								totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 								if (missedPartChoice) {
-									messages[i].push(`<@${userChoice.user}> tries to shoot <@${otherPlayerID}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item)} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
+									messages[i].push(`<@${userChoice.member.id}> tries to shoot <@${otherPlayerMember.id}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item)} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
 								}
 								else {
-									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.user}>`, `<@${otherPlayerID}>`, limbsHit, totalDamage, choice.ammo.item))
+									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage, choice.ammo.item))
 								}
 							}
 							else if (choice.weapon.item.type === 'Throwable Weapon') {
@@ -433,15 +433,15 @@ class DuelCommand extends CustomSlashCommand {
 								totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 								if (missedPartChoice) {
-									messages[i].push(`${icons.danger} <@${userChoice.user}> tries to throw a ${getItemDisplay(choice.weapon.item)} at <@${otherPlayerID}>'s ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** **BUT MISSES!**\n`)
+									messages[i].push(`${icons.danger} <@${userChoice.member.id}> tries to throw a ${getItemDisplay(choice.weapon.item)} at <@${otherPlayerMember.id}>'s ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** **BUT MISSES!**\n`)
 								}
 								else {
-									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.user}>`, `<@${otherPlayerID}>`, limbsHit, totalDamage))
+									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage))
 
 									if (choice.weapon.item.subtype === 'Incendiary Grenade') {
-										messages[i].push(`${icons.debuff} <@${otherPlayerID}> is Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
+										messages[i].push(`${icons.debuff} <@${otherPlayerMember.id}> is Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
 
-										if (userChoice.user === ctx.user.id) {
+										if (userChoice.member.id === ctx.user.id) {
 											player2Afflictions.push(afflictions.Burning)
 										}
 										else {
@@ -459,21 +459,21 @@ class DuelCommand extends CustomSlashCommand {
 								totalDamage = limbsHit[0].damage.total
 
 								if (missedPartChoice) {
-									messages[i].push(`${icons.danger} <@${userChoice.user}> tries to hit <@${otherPlayerID}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item)} **BUT MISSES!**\n`)
+									messages[i].push(`${icons.danger} <@${userChoice.member.id}> tries to hit <@${otherPlayerMember.id}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item)} **BUT MISSES!**\n`)
 								}
 								else {
-									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.user}>`, `<@${otherPlayerID}>`, limbsHit, totalDamage))
+									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage))
 								}
 							}
 
 							// remove weapon annd ammo
 							if (choice.weapon.row && (!choice.weapon.row.durability || choice.weapon.row.durability - 1 <= 0)) {
-								messages[i].push(`${icons.danger} <@${userChoice.user}>'s ${getItemDisplay(choice.weapon.item, choice.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
+								messages[i].push(`${icons.danger} **${userChoice.member.displayName}**'s ${getItemDisplay(choice.weapon.item, choice.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
 
 								await deleteItem(atkTransaction.query, choice.weapon.row.id)
 							}
 							else if (choice.weapon.row && choice.weapon.row.durability) {
-								messages[i].push(`<@${userChoice.user}>'s ${getItemDisplay(choice.weapon.item, choice.weapon.row, { showDurability: false, showEquipped: false })} now has **${choice.weapon.row.durability - 1}** durability.`)
+								messages[i].push(`**${userChoice.member.displayName}**'s ${getItemDisplay(choice.weapon.item, choice.weapon.row, { showDurability: false, showEquipped: false })} now has **${choice.weapon.row.durability - 1}** durability.`)
 
 								await lowerItemDurability(atkTransaction.query, choice.weapon.row.id, 1)
 							}
@@ -481,10 +481,10 @@ class DuelCommand extends CustomSlashCommand {
 							if (!missedPartChoice) {
 								for (const result of limbsHit) {
 									if (result.limb === 'head' && victimEquips.helmet) {
-										messages[i].push(`<@${otherPlayerID}>'s helmet (${getItemDisplay(victimEquips.helmet.item)}) reduced the damage by **${result.damage.reduced}**.`)
+										messages[i].push(`**${otherPlayerMember.displayName}**'s helmet (${getItemDisplay(victimEquips.helmet.item)}) reduced the damage by **${result.damage.reduced}**.`)
 
 										if (victimEquips.helmet.row.durability - 1 <= 0) {
-											messages[i].push(`<@${otherPlayerID}>'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
+											messages[i].push(`**${otherPlayerMember.displayName}**'s ${getItemDisplay(victimEquips.helmet.item)} broke from this attack!`)
 
 											await deleteItem(atkTransaction.query, victimEquips.helmet.row.id)
 											victimItemsRemoved.push(victimEquips.helmet.row.id)
@@ -494,10 +494,10 @@ class DuelCommand extends CustomSlashCommand {
 										}
 									}
 									else if (result.limb === 'chest' && victimEquips.armor) {
-										messages[i].push(`<@${otherPlayerID}>'s armor (${getItemDisplay(victimEquips.armor.item)}) reduced the damage by **${result.damage.reduced}**.`)
+										messages[i].push(`**${otherPlayerMember.displayName}**'s armor (${getItemDisplay(victimEquips.armor.item)}) reduced the damage by **${result.damage.reduced}**.`)
 
 										if (victimEquips.armor.row.durability - 1 <= 0) {
-											messages[i].push(`<@${otherPlayerID}>'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
+											messages[i].push(`**${otherPlayerMember.displayName}**'s ${getItemDisplay(victimEquips.armor.item)} broke from this attack!`)
 
 											await deleteItem(atkTransaction.query, victimEquips.armor.row.id)
 											victimItemsRemoved.push(victimEquips.armor.row.id)
@@ -507,9 +507,9 @@ class DuelCommand extends CustomSlashCommand {
 										}
 									}
 									else if (result.limb === 'arm' && Math.random() <= 0.2) {
-										messages[i].push(`${icons.debuff} <@${otherPlayerID}>'s arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
+										messages[i].push(`${icons.debuff} **${otherPlayerMember.displayName}**'s arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
 
-										if (userChoice.user === ctx.user.id) {
+										if (userChoice.member.id === ctx.user.id) {
 											player2Afflictions.push(afflictions['Broken Arm'])
 										}
 										else {
@@ -523,7 +523,7 @@ class DuelCommand extends CustomSlashCommand {
 							const victimLoot = victimInventory.items.filter(itm => !victimItemsRemoved.includes(itm.row.id))
 
 							if (!missedPartChoice && victimData.health - totalDamage <= 0) {
-								const killQuests = (await getUserQuests(atkTransaction.query, userChoice.user, true)).filter(q => q.questType === 'Player Kills' || q.questType === 'Any Kills')
+								const killQuests = (await getUserQuests(atkTransaction.query, userChoice.member.id, true)).filter(q => q.questType === 'Player Kills' || q.questType === 'Any Kills')
 								let xpEarned = 15
 
 								for (const victimItem of victimLoot) {
@@ -534,8 +534,7 @@ class DuelCommand extends CustomSlashCommand {
 								}
 
 								// create dog tags for victim
-								const otherPlayerUser = userChoice.user === ctx.user.id ? member.user : ctx.user
-								const dogTagsRow = await createItem(atkTransaction.query, items.dog_tags.name, { displayName: `${otherPlayerUser.username.replace(/`/g, '')}#${otherPlayerUser.discriminator}'s dog tags` })
+								const dogTagsRow = await createItem(atkTransaction.query, items.dog_tags.name, { displayName: `${otherPlayerMember.user.username.replace(/`/g, '')}#${otherPlayerMember.user.discriminator}'s dog tags` })
 								victimLoot.push({
 									item: items.dog_tags,
 									row: { ...dogTagsRow, equipped: 0 }
@@ -543,9 +542,9 @@ class DuelCommand extends CustomSlashCommand {
 
 								await setFighting(atkTransaction.query, ctx.user.id, false)
 								await setFighting(atkTransaction.query, member.id, false)
-								await increaseKills(atkTransaction.query, userChoice.user, 'player', 1)
-								await increaseDeaths(atkTransaction.query, otherPlayerID, 1)
-								await addXp(atkTransaction.query, userChoice.user, xpEarned)
+								await increaseKills(atkTransaction.query, userChoice.member.id, 'player', 1)
+								await increaseDeaths(atkTransaction.query, otherPlayerMember.id, 1)
+								await addXp(atkTransaction.query, userChoice.member.id, xpEarned)
 
 								// check if user has any kill quests
 								for (const quest of killQuests) {
@@ -554,12 +553,12 @@ class DuelCommand extends CustomSlashCommand {
 									}
 								}
 
-								messages[i].push(`☠️ <@${otherPlayerID}> **DIED!** They dropped **${victimLoot.length}** items.`, `**<@${userChoice.user}> wins** and earned 🌟 ***+${xpEarned}*** xp for this kill.`)
+								messages[i].push(`☠️ **${otherPlayerMember.displayName} DIED!** They dropped **${victimLoot.length}** items.`, `**${userChoice.member.displayName} wins** and earned 🌟 ***+${xpEarned}*** xp for this kill.`)
 							}
 							else if (!missedPartChoice) {
-								await lowerHealth(atkTransaction.query, otherPlayerID, totalDamage)
+								await lowerHealth(atkTransaction.query, otherPlayerMember.id, totalDamage)
 
-								messages[i].push(`<@${otherPlayerID}> is left with ${formatHealth(victimData.health - totalDamage, victimData.maxHealth)} **${victimData.health - totalDamage}** health.`)
+								messages[i].push(`**${otherPlayerMember.displayName}** is left with ${formatHealth(victimData.health - totalDamage, victimData.maxHealth)} **${victimData.health - totalDamage}** health.`)
 							}
 
 							// commit changes
@@ -600,7 +599,7 @@ class DuelCommand extends CustomSlashCommand {
 										try {
 											const itemSelectMessage = await playerAttackCtx.sendFollowUp({
 												ephemeral: true,
-												content: `<@${userChoice.user}>, **You won the duel!** Select up to **5** items from <@${otherPlayerID}>'s inventory to keep.`,
+												content: `<@${userChoice.member.id}>, **You won the duel!** Select up to **5** items from <@${otherPlayerMember.id}>'s inventory to keep.`,
 												components: [{
 													type: ComponentType.ACTION_ROW,
 													components
@@ -609,7 +608,7 @@ class DuelCommand extends CustomSlashCommand {
 											let itemsPicked: ItemWithRow<BackpackItemRow>[] = []
 
 											try {
-												const itemChoices = (await this.app.componentCollector.awaitClicks(itemSelectMessage.id, int => int.user.id === userChoice.user, 60000))[0]
+												const itemChoices = (await this.app.componentCollector.awaitClicks(itemSelectMessage.id, int => int.user.id === userChoice.member.id, 60000))[0]
 												itemsPicked = victimLoot.filter(itm => itemChoices.values.includes(itm.row.id.toString()))
 
 												try {
@@ -622,7 +621,7 @@ class DuelCommand extends CustomSlashCommand {
 												try {
 													for (const victimItem of victimLoot) {
 														if (itemsPicked.some(itm => itm.row.id === victimItem.row.id)) {
-															await addItemToBackpack(query, userChoice.user, victimItem.row.id)
+															await addItemToBackpack(query, userChoice.member.id, victimItem.row.id)
 														}
 														else {
 															await deleteItem(query, victimItem.row.id)
@@ -663,7 +662,7 @@ class DuelCommand extends CustomSlashCommand {
 
 												try {
 													await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-														content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed **${member.user.username}#${member.user.discriminator}** using their ${getItemDisplay(choice.weapon.item)}` +
+														content: `☠️ **${userChoice.member.user.username}#${userChoice.member.user.discriminator}** killed **${otherPlayerMember.user.username}#${otherPlayerMember.user.discriminator}** using their ${getItemDisplay(choice.weapon.item)}` +
 															`${choice.ammo ? ` (ammo: ${getItemDisplay(choice.ammo.item)})` : ''}.`,
 														embeds: [lootEmbed.embed]
 													})
@@ -684,7 +683,7 @@ class DuelCommand extends CustomSlashCommand {
 								}
 								else {
 									// this shouldn't happen but JUST IN CASE IT DOES
-									logger.error(`User ${userChoice.user} attack context not set after attack selection`)
+									logger.error(`User ${userChoice.member.user.username}#${userChoice.member.user.discriminator} (${userChoice.member.id}) attack context not set after attack selection`)
 
 									for (const victimItem of victimLoot) {
 										await deleteItem(query, victimItem.row.id)
