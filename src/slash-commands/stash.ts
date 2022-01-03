@@ -324,7 +324,12 @@ class StashCommand extends CustomSlashCommand {
 					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your inventory to your stash with \`/inventory\`.`)
 
 			if (isSelf) {
-				embed.setFooter(`Page ${i}/${maxPage} · Stashed items will not be lost if you die`)
+				if (maxPage > 1) {
+					embed.setFooter(`Page ${i}/${maxPage} · Stashed items will not be lost if you die`)
+				}
+				else {
+					embed.setFooter('Stashed items will not be lost if you die')
+				}
 			}
 
 			pages.push({ page: embed, items: filteredItems })
