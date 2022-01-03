@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events'
 import { ComponentContext, ComponentButton, ComponentType, CommandContext, Message } from 'slash-create'
 import App from '../app'
+import { icons } from '../config'
 import Embed from '../structures/Embed'
 import { NEXT_BUTTON, PREVIOUS_BUTTON } from './constants'
 
@@ -44,7 +45,10 @@ class ComponentCollector {
 
 		if (colObj) {
 			if (!colObj.filter(ctx)) {
-				await ctx.acknowledge()
+				await ctx.send({
+					ephemeral: true,
+					content: `${icons.danger} This button is meant for someone else.`
+				})
 				return
 			}
 

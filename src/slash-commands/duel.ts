@@ -1,19 +1,19 @@
 import { CommandOptionType, SlashCreator, CommandContext, ComponentType, Message, ComponentSelectMenu } from 'slash-create'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import App from '../app'
-import { icons } from '../config'
+import { icons, webhooks } from '../config'
 import { Affliction, afflictions } from '../resources/afflictions'
 import { items } from '../resources/items'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { Stimulant } from '../types/Items'
-import { BackpackItemRow, UserRow } from '../types/mysql'
+import { BackpackItemRow, ItemWithRow, UserRow } from '../types/mysql'
 import { GRAY_BUTTON, GREEN_BUTTON, RED_BUTTON } from '../utils/constants'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addHealth, addXp, getUserRow, increaseDeaths, increaseKills, lowerHealth, setFighting } from '../utils/db/players'
 import { getUserQuests, increaseProgress } from '../utils/db/quests'
-import { backpackHasSpace, getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByValue } from '../utils/itemUtils'
+import { backpackHasSpace, getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByLevel, sortItemsByValue } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
@@ -606,10 +606,11 @@ class DuelCommand extends CustomSlashCommand {
 													components
 												}]
 											})
+											let itemsPicked: ItemWithRow<BackpackItemRow>[] = []
 
 											try {
 												const itemChoices = (await this.app.componentCollector.awaitClicks(itemSelectMessage.id, int => int.user.id === userChoice.user, 60000))[0]
-												const itemsPicked = victimLoot.filter(itm => itemChoices.values.includes(itm.row.id.toString()))
+												itemsPicked = victimLoot.filter(itm => itemChoices.values.includes(itm.row.id.toString()))
 
 												try {
 													await itemChoices.acknowledge()
@@ -650,6 +651,26 @@ class DuelCommand extends CustomSlashCommand {
 														components: components.map(c => ({ ...c, disabled: true }))
 													}]
 												})
+											}
+
+											if (webhooks.pvp.id && webhooks.pvp.token) {
+												const lootEmbed = new Embed()
+													.setTitle('__Loot Stolen__')
+													.setDescription(itemsPicked.length ?
+														`${sortItemsByLevel(itemsPicked, true).slice(0, 15).map(victimItem => getItemDisplay(victimItem.item, victimItem.row, { showEquipped: false, showDurability: false })).join('\n')}` +
+														`${itemsPicked.length > 15 ? `\n...and **${itemsPicked.length - 15}** other item${itemsPicked.length - 15 > 1 ? 's' : ''}` : ''}` :
+														'No items were stolen.')
+
+												try {
+													await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
+														content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed **${member.user.username}#${member.user.discriminator}** using their ${getItemDisplay(choice.weapon.item)}` +
+															`${choice.ammo ? ` (ammo: ${getItemDisplay(choice.ammo.item)})` : ''}.`,
+														embeds: [lootEmbed.embed]
+													})
+												}
+												catch (err) {
+													logger.warn(err)
+												}
 											}
 										}
 										catch (err) {

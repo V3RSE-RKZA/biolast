@@ -328,7 +328,7 @@ export function sortItemsByType (arr: (Item | ItemWithRow<ItemRow>)[], containsR
  * Sorts an array of items by their item level
  * @param arr Array of items or items with rows, if its an array of items with rows, containsRows must be true
  * @param containsRows Whether or not the function is sorting items with rows
- * @param descending Whether the items should be sorted by level descending or not
+ * @param descending Whether the items should be sorted by level descending or not, default true
  */
 export function sortItemsByLevel (arr: Item[], containsRows?: false, descending?: boolean): Item[]
 export function sortItemsByLevel<T extends ItemRow> (arr: ItemWithRow<T>[], containsRows: true, descending?: boolean): ItemWithRow<T>[]

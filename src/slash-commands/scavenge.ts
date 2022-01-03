@@ -1,6 +1,6 @@
 import { SlashCreator, CommandContext, ComponentType, Message, ComponentSelectMenu } from 'slash-create'
 import App from '../app'
-import { icons } from '../config'
+import { icons, webhooks } from '../config'
 import { NPC } from '../types/NPCs'
 import { dailyQuests } from '../resources/quests'
 import { isValidLocation, locations } from '../resources/locations'
@@ -430,6 +430,18 @@ class ScavengeCommand extends CustomSlashCommand {
 											`${sortItemsByLevel(attackResult.lostItems, true).slice(0, 15).map(victimItem => getItemDisplay(victimItem.item, victimItem.row, { showEquipped: false, showDurability: false })).join('\n')}` +
 											`${attackResult.lostItems.length > 15 ? `\n...and **${attackResult.lostItems.length - 15}** other item${attackResult.lostItems.length - 15 > 1 ? 's' : ''}` : ''}` :
 											'You had no items.')
+
+									if (webhooks.pvp.id && webhooks.pvp.token) {
+										try {
+											await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
+												content: `☠️ ${npc.boss ? `**${npc.display}**` : `A **${npc.display}**`} killed **${ctx.user.username}#${ctx.user.discriminator}**!`,
+												embeds: [lootEmbed.embed]
+											})
+										}
+										catch (err) {
+											logger.warn(err)
+										}
+									}
 
 									// break out of the loop to prevent other players turn
 									break
@@ -864,6 +876,20 @@ class ScavengeCommand extends CustomSlashCommand {
 							if (!missedPartChoice && npcHealth <= 0) {
 								// end the duel
 								duelIsActive = false
+
+								if (webhooks.pvp.id && webhooks.pvp.token) {
+									try {
+										await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
+											content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed ${npc.boss ? `**${npc.display}**` : `a **${npc.display}**`} using their ${getItemDisplay(playerChoice.weapon.item)}` +
+												`${playerChoice.ammo ? ` (ammo: ${getItemDisplay(playerChoice.ammo.item)})` : ''}.`,
+											embeds: lootEmbed ? [lootEmbed.embed] : undefined
+										})
+									}
+									catch (err) {
+										logger.warn(err)
+									}
+								}
+
 								// break out of the loop to prevent other players turn
 								break
 							}
