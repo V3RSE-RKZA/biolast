@@ -957,7 +957,8 @@ class ScavengeCommand extends CustomSlashCommand {
 		catch (err) {
 			await botMessage.edit({
 				content: `${icons.danger} You decide against scavenging (ran out of time to select an area).`,
-				components: []
+				components: [],
+				embeds: []
 			})
 		}
 	}

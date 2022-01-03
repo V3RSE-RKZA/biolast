@@ -59,6 +59,13 @@ class ComponentCollector {
 				this.stopCollector(colObj, colObj.collected)
 			}
 		}
+		else {
+			// in case bot restarts or button wasn't removed from the message
+			await ctx.send({
+				ephemeral: true,
+				content: `${icons.danger} This button has expired. Please re-run the command.`
+			})
+		}
 	}
 
 	/**

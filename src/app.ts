@@ -26,10 +26,6 @@ class App {
 	componentCollector: ComponentCollector
 	msgCollector: MessageCollector
 	cronJobs: CronJobs
-	activeRaids: {
-		userID: string
-		timeout: NodeJS.Timeout
-	}[]
 	acceptingCommands: boolean
 	/**
 	 * The current multiplier for selling items to the shop (changes every hour)
@@ -57,7 +53,6 @@ class App {
 		this.componentCollector = new ComponentCollector(this)
 		this.msgCollector = new MessageCollector(this)
 		this.cronJobs = new CronJobs(this)
-		this.activeRaids = []
 		this.acceptingCommands = false
 		this.shopSellMultiplier = getRandomInt(90, 110) / 100
 		this.tutorialHandler = new TutorialHandler(this)
