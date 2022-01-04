@@ -4,6 +4,7 @@ import { adminUsers, icons } from '../config'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
+import { logger } from '../utils/logger'
 
 class HelpCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -169,12 +170,17 @@ class HelpCommand extends CustomSlashCommand {
 			}
 		})
 
-		collector.on('end', msg => {
-			if (msg === 'time') {
-				botMessage.edit({
-					content: 'Help menu expired.',
-					components: []
-				})
+		collector.on('end', async msg => {
+			try {
+				if (msg === 'time') {
+					await botMessage.edit({
+						content: 'Help menu expired.',
+						components: []
+					})
+				}
+			}
+			catch (err) {
+				logger.warn(err)
 			}
 		})
 	}

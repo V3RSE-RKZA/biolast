@@ -1,3 +1,4 @@
+import { Guild } from 'eris'
 import { LocationName } from '../../resources/locations'
 import { Query, UserRow } from '../../types/mysql'
 
@@ -181,4 +182,20 @@ export async function setLocationLevel (query: Query, userID: string, locationLe
  */
 export async function createAccount (query: Query, userID: string): Promise<void> {
 	await query('INSERT INTO users (userId) VALUES (?)', [userID])
+}
+
+/**
+ * @param query Query to use
+ * @param category Column to get best players of
+ * @param guild Eris guild object to fetch top players in guild
+ * @returns User rows of top players in order DESC
+ */
+export async function getTopPlayers (query: Query, category: 'money' | 'level' | 'questsCompleted' | 'kills' | 'npcKills' | 'bossKills', guild?: Guild): Promise<UserRow[]> {
+	if (guild) {
+		const guildMembers = guild.members.map(m => m.id)
+
+		return query(`SELECT * FROM users WHERE userId IN (${guildMembers.join(', ') || '\'\''}) ORDER BY ${category} DESC LIMIT 20`)
+	}
+
+	return query(`SELECT * FROM users ORDER BY ${category} DESC LIMIT 10`)
 }
