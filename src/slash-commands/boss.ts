@@ -899,7 +899,8 @@ class BossCommand extends CustomSlashCommand {
 	getAgreementEmbed (location: Location, users: ResolvedMember[], agreedUsers: string[]): Embed {
 		const embed = new Embed()
 			.setTitle(`${location.display} Boss Fight`)
-			.setDescription(`${icons.warning} If you die, you will lose everything in your inventory.` +
+			.setDescription(`${users.length === 1 ? `${icons.warning} It is highly recommended to invite at least **1** other player to help you fight this boss!\n` : ''}` +
+				`${icons.warning} If you die, you will lose everything in your inventory.` +
 				`\n${icons.information} All participants who **survive** the fight will progress and receive some loot + xp.` +
 				' The weapon, helmet, and armor will be split randomly between survivors.')
 			.addField(location.boss.display, getMobDisplay(location.boss, location.boss.health).join('\n'), true)

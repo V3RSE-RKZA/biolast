@@ -63,8 +63,7 @@ class ScavengeCommand extends CustomSlashCommand {
 		const areasGuardedByNPC: Area[] = []
 		const areasEmbed = new Embed()
 			.setAuthor(`You scout around ${locationChoice.display.toLowerCase()} and spot ${locationChoice.areas.length} points of interest.`, ctx.user.avatarURL)
-			.addField(`__**Location Boss**__: ${locationChoice.boss.display}`,
-				`Use \`/boss\` to fight the location boss.\n${getMobDisplay(locationChoice.boss, locationChoice.boss.health).join('\n')}`)
+			.addField('__**Boss**__', `**${locationChoice.boss.display}**\nUse \`/boss\` to view stats and fight the boss. Defeating the boss will unlock a new region for you to travel to.`)
 
 		for (const area of locationChoice.areas) {
 			const areaCD = await getCooldown(query, ctx.user.id, `scavenge-${locationChoice.display}-${area.display}`)
