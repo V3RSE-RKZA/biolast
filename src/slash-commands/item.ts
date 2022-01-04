@@ -350,7 +350,7 @@ class ItemCommand extends CustomSlashCommand {
 				min: Math.floor(potentialSell.min * (shopBuyMultiplier.min / 100)),
 				max: Math.floor(potentialSell.max * (shopBuyMultiplier.max / 100))
 			}
-			itemEmbed.addField('Buy Price', `Mint conditions seen in the market ranging from ${formatMoney(potentialCost.min)} to\n${formatMoney(potentialCost.max)}`, true)
+			itemEmbed.addField('Buy Price', `Mint conditions seen in the market ranging from **${formatMoney(potentialCost.min)}** to **${formatMoney(potentialCost.max)}**`, true)
 
 			itemEmbed.addField('Sell Price', formatMoney(Math.floor(item.sellPrice * this.app.currentShopSellMultiplier)), true)
 		}

@@ -7,43 +7,15 @@ export function formatNumber (number: number, decimals = false): string {
 
 /**
  * @param number Number to convert into money string
- * @param showAll Whether to show icons for gold and silver even if there is 0
  * @param showEmojis Whether to show icons or not, default true
  * @returns A string showing the currency with icons
  */
-export function formatMoney (number: number, showAll = false, showEmojis = true): string {
-	const copper = number % 100
-	const silver = ((number - copper) / 100) % 100
-	const gold = (number - copper - (silver * 100)) / 10000
-	const display = []
-
-	if (showAll || gold > 0) {
-		if (showEmojis) {
-			display.push(`${icons.tier3_currency} ${formatNumber(gold)}`)
-		}
-		else {
-			display.push(`${formatNumber(gold)} gold`)
-		}
-	}
-	if (showAll || silver > 0) {
-		if (showEmojis) {
-			display.push(`${icons.tier2_currency} ${formatNumber(silver)}`)
-		}
-		else {
-			display.push(`${formatNumber(silver)} silver`)
-		}
+export function formatMoney (number: number, showEmojis = true): string {
+	if (showEmojis) {
+		return `${icons.copper} ${formatNumber(number)}`
 	}
 
-	if (showAll || copper > 0 || !display.length) {
-		if (showEmojis) {
-			display.push(`${icons.tier1_currency} ${formatNumber(copper)}`)
-		}
-		else {
-			display.push(`${formatNumber(copper)} copper`)
-		}
-	}
-
-	return display.join(' ')
+	return `${formatNumber(number)} copper`
 }
 
 /**

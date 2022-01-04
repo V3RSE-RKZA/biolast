@@ -580,7 +580,7 @@ class DuelCommand extends CustomSlashCommand {
 											return {
 												label: `${itm.row.displayName ? itm.row.displayName : itm.item.name.replace(/_/g, ' ')} (ID: ${itm.row.id})`,
 												value: itm.row.id.toString(),
-												description: `${itm.row.durability ? `${itm.row.durability} uses left. ` : ''}Worth ${formatMoney(getItemPrice(itm.item, itm.row), false, false)}`,
+												description: `${itm.row.durability ? `${itm.row.durability} uses left. ` : ''}Worth ${formatMoney(getItemPrice(itm.item, itm.row), false)}`,
 												emoji: iconID ? {
 													id: iconID[1],
 													name: itm.item.name

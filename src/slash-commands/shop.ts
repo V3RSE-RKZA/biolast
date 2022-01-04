@@ -92,7 +92,7 @@ class ShopCommand extends CustomSlashCommand {
 							return {
 								label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
 								value: i.row.id.toString(),
-								description: `Price: ${formatMoney(i.row.price, false, false)}. Uses ${i.item.slotsUsed} slots.`,
+								description: `Price: ${formatMoney(i.row.price, false)}. Uses ${i.item.slotsUsed} slots.`,
 								emoji: iconID ? {
 									id: iconID[1],
 									name: i.item.name
@@ -147,7 +147,7 @@ class ShopCommand extends CustomSlashCommand {
 										return {
 											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
 											value: i.row.id.toString(),
-											description: `Price: ${formatMoney(i.row.price, false, false)}. Uses ${i.item.slotsUsed} slots.`,
+											description: `Price: ${formatMoney(i.row.price, false)}. Uses ${i.item.slotsUsed} slots.`,
 											emoji: iconID ? {
 												id: iconID[1],
 												name: i.item.name
@@ -188,7 +188,7 @@ class ShopCommand extends CustomSlashCommand {
 										return {
 											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
 											value: i.row.id.toString(),
-											description: `Price: ${formatMoney(i.row.price, false, false)}. Uses ${i.item.slotsUsed} slots.`,
+											description: `Price: ${formatMoney(i.row.price, false)}. Uses ${i.item.slotsUsed} slots.`,
 											emoji: iconID ? {
 												id: iconID[1],
 												name: i.item.name

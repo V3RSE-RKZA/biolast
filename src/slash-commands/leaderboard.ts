@@ -8,7 +8,7 @@ import { formatMoney } from '../utils/stringUtils'
 import Embed from '../structures/Embed'
 
 const lbCategories = [
-	{ icon: icons.tier1_currency, category: 'Richest Users', description: 'View the richest players.' },
+	{ icon: icons.copper, category: 'Richest Users', description: 'View the richest players.' },
 	{ icon: '🌟', category: 'Highest Level', description: 'View players with the highest level.' },
 	{ icon: '🔖', category: 'Quest Completions', description: 'View players who have completed the most quests.' },
 	{ icon: icons.crosshair, category: 'Player Kills', description: 'View players who have killed the most players.' },

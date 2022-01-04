@@ -42,9 +42,7 @@ class BalanceCommand extends CustomSlashCommand {
 			}
 
 			await ctx.send({
-				content: `**${member.displayName}** currently has **${formatMoney(userData.money)}**.\n\n` +
-					`${icons.tier1_currency} 100 copper = ${icons.tier2_currency} 1 silver\n` +
-					`${icons.tier2_currency} 100 silver = ${icons.tier3_currency} 1 gold`
+				content: `**${member.displayName}** currently has **${formatMoney(userData.money)}**.`
 			})
 			return
 		}
@@ -52,9 +50,7 @@ class BalanceCommand extends CustomSlashCommand {
 		const userData = (await getUserRow(query, ctx.user.id))!
 
 		await ctx.send({
-			content: `You currently have **${formatMoney(userData.money)}**.\n\n` +
-				`${icons.tier1_currency} 100 copper = ${icons.tier2_currency} 1 silver\n` +
-				`${icons.tier2_currency} 100 silver = ${icons.tier3_currency} 1 gold`
+			content: `You currently have **${formatMoney(userData.money)}**.`
 		})
 	}
 }
