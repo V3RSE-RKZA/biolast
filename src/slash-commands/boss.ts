@@ -161,6 +161,8 @@ class BossCommand extends CustomSlashCommand {
 			const memberData = await getUserRow(preTransaction.query, player.member.id, true)
 
 			if (!memberData) {
+				await preTransaction.commit()
+
 				await botMessage.edit({
 					content: `${icons.warning} **${player.member.displayName}** does not have an account!`,
 					components: []
@@ -168,6 +170,8 @@ class BossCommand extends CustomSlashCommand {
 				return
 			}
 			else if (memberData.fighting) {
+				await preTransaction.commit()
+
 				await botMessage.edit({
 					content: `${icons.warning} **${player.member.displayName}** is in another fight right now!`,
 					components: []
@@ -175,7 +179,9 @@ class BossCommand extends CustomSlashCommand {
 				return
 			}
 			else if (!isValidLocation(memberData.currentLocation) || memberData.currentLocation !== preUserData.currentLocation) {
-				await ctx.send({
+				await preTransaction.commit()
+
+				await botMessage.edit({
 					content: `${icons.warning} **${player.member.displayName}** traveled to a different region, they need to \`/travel\` to **${location.display}**.`,
 					components: []
 				})
@@ -869,13 +875,18 @@ class BossCommand extends CustomSlashCommand {
 		const npcEffectsDisplay = getEffectsDisplay(npcEffects)
 
 		const duelEmb = new Embed()
-			.addField(`${mob.display} (Boss Fight)`, `__**Health**__\n**${npcHealth} / ${mob.health}** HP\n${formatHealth(npcHealth, mob.health, { emojisLength: 17 })}`)
+			.setTitle(`${mob.display} (Boss Fight)`)
+			.addField('__**Health**__', `**${npcHealth} / ${mob.health}** HP\n${formatHealth(npcHealth, mob.health, { emojisLength: 17 })}`)
 			.addField('\u200b', getMobDisplay(mob, npcHealth, { showHealth: false }).join('\n'), true)
 			.addField('\u200b', `__**Stimulants**__\n${npcStimulants.length ? npcStimulants.map(i => getItemDisplay(i)).join('\n') : 'None'}` +
 				`\n\n__**Afflictions**__\n${npcAfflictions.length ? combineArrayWithAnd(npcAfflictions.map(a => a.name)) : 'None'}` +
 				`${npcEffectsDisplay.length ? `\n\n__**Effects**__\n${npcEffectsDisplay.join('\n')}` : ''}`, true)
 			.addBlankField()
 			.setFooter(`Turn #${turnNumber} / 20 max · 40 seconds to make selection`)
+
+		if (mob.quotes && mob.quotes.length) {
+			duelEmb.setDescription(mob.quotes[Math.floor(Math.random() * mob.quotes.length)])
+		}
 
 		for (const player of players) {
 			const playerEquips = getEquips(player.inventory)

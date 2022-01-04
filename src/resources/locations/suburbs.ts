@@ -16,10 +16,6 @@ const walkerWeak: NPC = {
 		rare: [items['9mm_FMJ_bullet']],
 		rolls: 1
 	},
-	quotes: [
-		'~*You hear footsteps nearby*~',
-		'~*You hear a deep growl close by*~'
-	],
 	xp: 20,
 	chanceToBite: 15,
 	attackPenetration: 0.6,
@@ -39,9 +35,6 @@ const raiderWeak: NPC = {
 	},
 	weapon: items.luger,
 	ammo: items['.22LR_bullet'],
-	quotes: [
-		'~*You hear footsteps nearby*~'
-	],
 	armor: items.cloth_armor,
 	helmet: items.cloth_helmet,
 	xp: 40,
@@ -59,9 +52,6 @@ const crawlerWeak: NPC = {
 		rare: [items.walker_goop],
 		rolls: 1
 	},
-	quotes: [
-		'~*You hear a deep growl close by*~'
-	],
 	xp: 20,
 	chanceToBite: 20,
 	attackPenetration: 0.9,
@@ -82,7 +72,6 @@ const cainTheGravekeeperBoss: NPC = {
 	weapon: items['glock-17'],
 	ammo: items['9mm_FMJ_bullet'],
 	quotes: [
-		'~*You hear footsteps nearby*~',
 		'~*Cain: Life is suffering.*~',
 		'~*Cain: I have a plot specifically made for you.*~',
 		'~*Cain: Do not be afraid of death. Welcome it.*~',

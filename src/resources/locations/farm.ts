@@ -19,9 +19,6 @@ const raiderWeak: NPC = {
 	},
 	weapon: items.luger,
 	ammo: items['.22LR_bullet'],
-	quotes: [
-		'~*You hear footsteps nearby*~'
-	],
 	armor: items.cloth_armor,
 	helmet: items.cloth_helmet,
 	xp: 40,
@@ -39,10 +36,6 @@ const feralAnimal: NPC = {
 		rare: [items.corn],
 		rolls: 1
 	},
-	quotes: [
-		'~*You hear hiss nearby*~',
-		'~*You hear a deep growl close by*~'
-	],
 	xp: 35,
 	chanceToBite: 30,
 	attackPenetration: 1.6,
@@ -60,10 +53,6 @@ const bloatedWalker: NPC = {
 		rare: [items.fire_axe],
 		rolls: 1
 	},
-	quotes: [
-		'~*You hear footsteps nearby*~',
-		'~*You hear a deep growl close by*~'
-	],
 	xp: 50,
 	chanceToBite: 15,
 	attackPenetration: 1.3,
@@ -84,7 +73,7 @@ const daveTheRedneckBoss: NPC = {
 	weapon: items.saiga_MK,
 	ammo: items['5.45x39mm_FMJ_bullet'],
 	quotes: [
-		'~*You hear the giggles and crackles of a man...*~',
+		'~*You hear giggles and crackles...*~',
 		'~*Dave: Did I hear somebody?*~',
 		'~*Dave: buUUUUuUrP*~',
 		'~*Dave: What do you mean, zombies?*~',

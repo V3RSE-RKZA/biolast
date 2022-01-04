@@ -74,7 +74,7 @@ export function formatHealth (curentHP: number, maxHP: number, options: Partial<
 			}
 		}
 		else if (i === emojisLength - 1) {
-			if (barPerc >= 1) {
+			if (barPerc >= 0.9) {
 				hpStr += icons.health.end_full
 			}
 			else if (barPerc > 0) {

@@ -7,7 +7,7 @@ interface NPCBase {
 	display: string
 	health: number
 	damage: number
-	quotes: string[]
+	quotes?: string[]
 	drops: {
 		/**
 		 * Common item drops from this NPC

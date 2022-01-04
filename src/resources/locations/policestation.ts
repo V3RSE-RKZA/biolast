@@ -17,10 +17,6 @@ const bloatedWalker: NPC = {
 		rare: [items.fire_axe],
 		rolls: 1
 	},
-	quotes: [
-		'~*You hear footsteps nearby*~',
-		'~*You hear a deep growl close by*~'
-	],
 	xp: 50,
 	chanceToBite: 15,
 	attackPenetration: 1.3,
@@ -40,9 +36,6 @@ const mediumRaider: NPC = {
 	},
 	weapon: items['glock-17'],
 	ammo: items['9mm_HP_bullet'],
-	quotes: [
-		'~*You hear footsteps nearby*~'
-	],
 	armor: items.wooden_armor,
 	helmet: items.wooden_helmet,
 	xp: 125,
@@ -61,10 +54,6 @@ const psychoRaider: NPC = {
 		rolls: 1
 	},
 	weapon: items.chainsaw,
-	quotes: [
-		'~*You hear footsteps nearby*~',
-		'~*You hear someone cackling maniacally*~'
-	],
 	helmet: items.psycho_mask,
 	xp: 125,
 	boss: false,
@@ -81,9 +70,6 @@ const mediumCrawler: NPC = {
 		rare: [items.walker_goop],
 		rolls: 1
 	},
-	quotes: [
-		'~*You hear a deep growl close by*~'
-	],
 	xp: 60,
 	chanceToBite: 25,
 	attackPenetration: 1.9,
@@ -103,9 +89,6 @@ const gameNGoRaider: NPC = {
 	},
 	weapon: items['glock-17'],
 	ammo: items['9mm_HP_bullet'],
-	quotes: [
-		'~*You hear footsteps nearby*~'
-	],
 	armor: items.wooden_armor,
 	helmet: items.wooden_helmet,
 	xp: 125,
@@ -123,10 +106,6 @@ const securityOfficerWalker: NPC = {
 		rare: [items['glock-17'], items.security_key],
 		rolls: 1
 	},
-	quotes: [
-		'~*You hear footsteps nearby*~',
-		'~*You hear a deep growl close by*~'
-	],
 	armor: items.aramid_armor,
 	xp: 80,
 	chanceToBite: 10,

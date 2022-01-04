@@ -52,7 +52,7 @@ class ScavengeCommand extends CustomSlashCommand {
 
 		if (!isValidLocation(preUserData.currentLocation)) {
 			await ctx.send({
-				content: `${icons.warning} You need to travel to a location. Use the \`/travel\` command to travel to a location you want to scavenge.`
+				content: `${icons.warning} You need to travel to a region. Use the \`/travel\` command to travel to a region you want to scavenge.`
 			})
 			return
 		}
@@ -63,7 +63,7 @@ class ScavengeCommand extends CustomSlashCommand {
 		const areasGuardedByNPC: Area[] = []
 		const areasEmbed = new Embed()
 			.setAuthor(`You scout around ${locationChoice.display.toLowerCase()} and spot ${locationChoice.areas.length} points of interest.`, ctx.user.avatarURL)
-			.addField('__**Boss**__', `**${locationChoice.boss.display}**\nUse \`/boss\` to view stats and fight the boss. Defeating the boss will unlock a new region for you to travel to.`)
+			.addField('__**Region Boss**__', `**${locationChoice.boss.display}**\nUse \`/boss\` to view stats and fight the boss. Defeating the boss will unlock a new region for you to travel to.`)
 
 		for (const area of locationChoice.areas) {
 			const areaCD = await getCooldown(query, ctx.user.id, `scavenge-${locationChoice.display}-${area.display}`)
@@ -999,6 +999,10 @@ class ScavengeCommand extends CustomSlashCommand {
 				`${npcEffectsDisplay.length ? `\n\n__**Effects**__\n${npcEffectsDisplay.join('\n')}` : ''}`,
 				true)
 			.setFooter(`Turn #${turnNumber} / 20 max · 40 seconds to make selection`)
+
+		if (mob.quotes && mob.quotes.length) {
+			duelEmb.setDescription(mob.quotes[Math.floor(Math.random() * mob.quotes.length)])
+		}
 
 		return duelEmb
 	}

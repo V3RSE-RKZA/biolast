@@ -228,16 +228,16 @@ class ItemCommand extends CustomSlashCommand {
 					for (const loc of allLocations) {
 						for (const area of loc.areas) {
 							if (area.loot.common.items.find(i => i.name === itemFixed.name)) {
-								obtainedFrom[loc.display].push(`Commonly found from scavenging **${area.display}**`)
+								obtainedFrom[loc.display].push(`Commonly found from scavenging **${area.display}**.`)
 							}
 							else if (area.loot.uncommon.items.find(i => i.name === itemFixed.name)) {
-								obtainedFrom[loc.display].push(`Uncommonly found from scavenging **${area.display}**`)
+								obtainedFrom[loc.display].push(`Uncommonly found from scavenging **${area.display}**.`)
 							}
 							else if (area.loot.rare.items.find(i => i.name === itemFixed.name)) {
-								obtainedFrom[loc.display].push(`Rarely found from scavenging **${area.display}**`)
+								obtainedFrom[loc.display].push(`Rarely found from scavenging **${area.display}**.`)
 							}
 							else if (area.loot.rarest?.items.find(i => i.name === itemFixed.name)) {
-								obtainedFrom[loc.display].push(`Very rarely found from scavenging **${area.display}**`)
+								obtainedFrom[loc.display].push(`Very rarely found from scavenging **${area.display}**.`)
 							}
 							else if (area.requiresKey && area.keyIsOptional && area.specialLoot.items.find(i => i.name === itemFixed.name)) {
 								obtainedFrom[loc.display].push(`Commonly found from scavenging **${area.display}** if you have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))}.`)
@@ -254,10 +254,22 @@ class ItemCommand extends CustomSlashCommand {
 										(npc.drops.uncommon.find(i => i.name === itemFixed.name)) ||
 										(npc.drops.rare.find(i => i.name === itemFixed.name))
 									) {
-										obtainedFrom[loc.display].push(`${npc.boss ? `**${npc.display}**` : `A **${npc.display}**`} was spotted at **${area.display}** with this item`)
+										obtainedFrom[loc.display].push(`${npc.boss ? `**${npc.display}**` : `A **${npc.display}**`} was spotted at **${area.display}** with this item.`)
 									}
 								}
 							}
+						}
+
+						if (
+							(loc.boss.armor && loc.boss.armor.name === itemFixed.name) ||
+							(loc.boss.helmet && loc.boss.helmet.name === itemFixed.name) ||
+							(loc.boss.type === 'raider' && loc.boss.weapon.name === itemFixed.name) ||
+							(loc.boss.type === 'raider' && 'ammo' in loc.boss && loc.boss.ammo.name === itemFixed.name) ||
+							(loc.boss.drops.common.find(i => i.name === itemFixed.name)) ||
+							(loc.boss.drops.uncommon.find(i => i.name === itemFixed.name)) ||
+							(loc.boss.drops.rare.find(i => i.name === itemFixed.name))
+						) {
+							obtainedFrom[loc.display].push(`**${loc.boss.display}** was spotted with this item, good luck trying to get it.`)
 						}
 					}
 
