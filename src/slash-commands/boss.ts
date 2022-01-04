@@ -51,10 +51,10 @@ class BossCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'boss',
-			description: 'Fight the boss of your current location! You can team up with up to 2 friends to help you.',
-			longDescription: 'Fight the boss of the location you are currently at! It\'s recommended that you invite some friends to help' +
+			description: 'Fight the boss of your current region! You can team up with up to 2 friends to help you.',
+			longDescription: 'Fight the boss of the region you are currently at! It\'s recommended that you invite some friends to help' +
 				' you, as bosses are significantly stronger than the mobs you encounter while scavenging.' +
-				'\n\n**Defeating a boss will unlock a new location for you to travel to, which will contain better loot and stronger enemies.**',
+				'\n\n**Defeating a boss will unlock a new region for you to travel to, which will contain better loot and stronger enemies.**',
 			options: [
 				{
 					type: CommandOptionType.USER,
@@ -90,7 +90,7 @@ class BossCommand extends CustomSlashCommand {
 
 		if (!isValidLocation(preUserData.currentLocation)) {
 			await ctx.send({
-				content: `${icons.warning} You need to travel to a location. Use the \`/travel\` command to travel to a location you want to scavenge.`
+				content: `${icons.warning} You need to travel to a region. Use the \`/travel\` command to travel to a region you want to fight the boss of.`
 			})
 			return
 		}
