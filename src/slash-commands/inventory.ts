@@ -130,31 +130,34 @@ class InventoryCommand extends CustomSlashCommand {
 					if (c.customID === 'previous' && page !== 0) {
 						page--
 
-						newComponents.push({
-							type: ComponentType.ACTION_ROW,
-							components: [
-								{
-									type: ComponentType.SELECT,
-									custom_id: 'transfer',
-									placeholder: 'Transfer items to your stash:',
-									min_values: 1,
-									max_values: fixedPages[page].items.length,
-									options: fixedPages[page].items.map(i => {
-										const iconID = i.item.icon.match(/:([0-9]*)>/)
+						if (!preUserData.fighting) {
+							newComponents.push({
+								type: ComponentType.ACTION_ROW,
+								components: [
+									{
+										type: ComponentType.SELECT,
+										custom_id: 'transfer',
+										placeholder: 'Transfer items to your stash:',
+										min_values: 1,
+										max_values: fixedPages[page].items.length,
+										options: fixedPages[page].items.map(i => {
+											const iconID = i.item.icon.match(/:([0-9]*)>/)
 
-										return {
-											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
-											value: i.row.id.toString(),
-											description: `Uses ${i.item.slotsUsed} slots.`,
-											emoji: iconID ? {
-												id: iconID[1],
-												name: i.item.name
-											} : undefined
-										}
-									})
-								}
-							]
-						})
+											return {
+												label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+												value: i.row.id.toString(),
+												description: `Uses ${i.item.slotsUsed} slots.`,
+												emoji: iconID ? {
+													id: iconID[1],
+													name: i.item.name
+												} : undefined
+											}
+										})
+									}
+								]
+							})
+						}
+
 						newComponents.push({
 							type: ComponentType.ACTION_ROW,
 							components: [
@@ -171,31 +174,34 @@ class InventoryCommand extends CustomSlashCommand {
 					else if (c.customID === 'next' && page !== (fixedPages.length - 1)) {
 						page++
 
-						newComponents.push({
-							type: ComponentType.ACTION_ROW,
-							components: [
-								{
-									type: ComponentType.SELECT,
-									custom_id: 'transfer',
-									placeholder: 'Transfer items to your stash:',
-									min_values: 1,
-									max_values: fixedPages[page].items.length,
-									options: fixedPages[page].items.map(i => {
-										const iconID = i.item.icon.match(/:([0-9]*)>/)
+						if (!preUserData.fighting) {
+							newComponents.push({
+								type: ComponentType.ACTION_ROW,
+								components: [
+									{
+										type: ComponentType.SELECT,
+										custom_id: 'transfer',
+										placeholder: 'Transfer items to your stash:',
+										min_values: 1,
+										max_values: fixedPages[page].items.length,
+										options: fixedPages[page].items.map(i => {
+											const iconID = i.item.icon.match(/:([0-9]*)>/)
 
-										return {
-											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
-											value: i.row.id.toString(),
-											description: `Uses ${i.item.slotsUsed} slots.`,
-											emoji: iconID ? {
-												id: iconID[1],
-												name: i.item.name
-											} : undefined
-										}
-									})
-								}
-							]
-						})
+											return {
+												label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+												value: i.row.id.toString(),
+												description: `Uses ${i.item.slotsUsed} slots.`,
+												emoji: iconID ? {
+													id: iconID[1],
+													name: i.item.name
+												} : undefined
+											}
+										})
+									}
+								]
+							})
+						}
+
 						newComponents.push({
 							type: ComponentType.ACTION_ROW,
 							components: [
