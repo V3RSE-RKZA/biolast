@@ -816,7 +816,11 @@ class BossCommand extends CustomSlashCommand {
 				if (duelIsActive) {
 					if (turnNumber >= 20) {
 						duelIsActive = false
-						await setFighting(query, ctx.user.id, true)
+
+						for (const player of players) {
+							await setFighting(query, player.member.id, false)
+						}
+
 						await ctx.sendFollowUp({
 							content: `${icons.danger} ${players.map(p => `<@${p.member.id}>`).join(' ')}, **The max turn limit (20) has been reached!** The boss fight ends in a tie.`
 						})
