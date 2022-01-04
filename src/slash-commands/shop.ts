@@ -394,7 +394,7 @@ class ShopCommand extends CustomSlashCommand {
 	}
 
 	getItemShopPrice (item: Item, itemRow: ItemRow): number {
-		return Math.floor(getItemPrice(item, itemRow) * this.app.shopSellMultiplier)
+		return Math.floor(getItemPrice(item, itemRow) * this.app.currentShopSellMultiplier)
 	}
 
 	generatePages (rows: ShopItemRow[], searchedItem?: Item): { page: Embed, items: ItemWithRow<ShopItemRow>[] }[] {

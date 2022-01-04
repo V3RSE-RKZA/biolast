@@ -76,8 +76,8 @@ class ProfileCommand extends CustomSlashCommand {
 		const kdRatio = totalKills / (userData.deaths || 1)
 		const backpackData = getItems(backpackRows)
 		const stashData = getItems(stashRows)
-		const playerValue = backpackData.items.reduce((prev, curr) => prev + Math.floor(getItemPrice(curr.item, curr.row) * this.app.shopSellMultiplier), 0) +
-			stashData.items.reduce((prev, curr) => prev + Math.floor(getItemPrice(curr.item, curr.row) * this.app.shopSellMultiplier), 0) +
+		const playerValue = backpackData.items.reduce((prev, curr) => prev + Math.floor(getItemPrice(curr.item, curr.row) * this.app.currentShopSellMultiplier), 0) +
+			stashData.items.reduce((prev, curr) => prev + Math.floor(getItemPrice(curr.item, curr.row) * this.app.currentShopSellMultiplier), 0) +
 			userData.money
 		const currentLocation = isValidLocation(userData.currentLocation) ? locations[userData.currentLocation] : undefined
 		const maxLocations = allLocations.filter(l => l.locationLevel === userData.locationLevel) || allLocations.filter(l => l.locationLevel === userData.locationLevel - 1)

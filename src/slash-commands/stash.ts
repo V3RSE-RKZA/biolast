@@ -308,7 +308,7 @@ class StashCommand extends CustomSlashCommand {
 		const sortedItems = sortItemsByName(itemData.items, true)
 		const pages = []
 		const maxPage = Math.ceil(itemData.items.length / ITEMS_PER_PAGE) || 1
-		const stashValue = itemData.items.reduce((prev, curr) => prev + Math.floor(getItemPrice(curr.item, curr.row) * this.app.shopSellMultiplier), 0)
+		const stashValue = itemData.items.reduce((prev, curr) => prev + Math.floor(getItemPrice(curr.item, curr.row) * this.app.currentShopSellMultiplier), 0)
 
 		for (let i = 1; i < maxPage + 1; i++) {
 			const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE

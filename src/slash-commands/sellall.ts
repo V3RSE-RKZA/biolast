@@ -1,6 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext, Message } from 'slash-create'
 import App from '../app'
-import { icons } from '../config'
+import { icons, shopBuyMultiplier } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { Item } from '../types/Items'
 import { ItemRow } from '../types/mysql'
@@ -104,13 +104,13 @@ class ShopCommand extends CustomSlashCommand {
 							let sellPrice = 0
 
 							if (i.row.durability && i.item.durability) {
-								sellPrice += Math.floor((i.row.durability / i.item.durability) * (i.item.sellPrice * this.app.shopSellMultiplier))
+								sellPrice += Math.floor((i.row.durability / i.item.durability) * (i.item.sellPrice * this.app.currentShopSellMultiplier))
 							}
 							else {
-								sellPrice += Math.floor(i.item.sellPrice * this.app.shopSellMultiplier)
+								sellPrice += Math.floor(i.item.sellPrice * this.app.currentShopSellMultiplier)
 							}
 
-							await addItemToShop(transaction.query, i.row.id, getRandomInt(sellPrice * 2, sellPrice * 3))
+							await addItemToShop(transaction.query, i.row.id, getRandomInt(sellPrice * (shopBuyMultiplier.min / 100), sellPrice * (shopBuyMultiplier.max / 100)))
 						}
 					}
 
@@ -199,13 +199,13 @@ class ShopCommand extends CustomSlashCommand {
 							let sellPrice = 0
 
 							if (i.row.durability && i.item.durability) {
-								sellPrice += Math.floor((i.row.durability / i.item.durability) * (i.item.sellPrice * this.app.shopSellMultiplier))
+								sellPrice += Math.floor((i.row.durability / i.item.durability) * (i.item.sellPrice * this.app.currentShopSellMultiplier))
 							}
 							else {
-								sellPrice += Math.floor(i.item.sellPrice * this.app.shopSellMultiplier)
+								sellPrice += Math.floor(i.item.sellPrice * this.app.currentShopSellMultiplier)
 							}
 
-							await addItemToShop(transaction.query, i.row.id, getRandomInt(sellPrice * 2, sellPrice * 3))
+							await addItemToShop(transaction.query, i.row.id, getRandomInt(sellPrice * (shopBuyMultiplier.min / 100), sellPrice * (shopBuyMultiplier.max / 100)))
 						}
 					}
 
@@ -234,7 +234,7 @@ class ShopCommand extends CustomSlashCommand {
 	}
 
 	getItemShopPrice (item: Item, itemRow: ItemRow): number {
-		return Math.floor(getItemPrice(item, itemRow) * this.app.shopSellMultiplier)
+		return Math.floor(getItemPrice(item, itemRow) * this.app.currentShopSellMultiplier)
 	}
 }
 

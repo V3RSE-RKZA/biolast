@@ -12,7 +12,7 @@ export const armor = armorObject({
 		sellPrice: 8061,
 		durability: 7,
 		level: 5,
-		slotsUsed: 3,
+		slotsUsed: 2,
 		itemLevel: 12
 	},
 	steel_armor: {

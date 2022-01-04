@@ -1,6 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext, AutocompleteContext, Message, ComponentType, ComponentActionRow } from 'slash-create'
 import App from '../app'
-import { icons } from '../config'
+import { icons, shopBuyMultiplier, shopSellMultiplier } from '../config'
 import { allItems } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -341,12 +341,18 @@ class ItemCommand extends CustomSlashCommand {
 
 		itemEmbed.addField('Item Weight', `Uses **${item.slotsUsed}** slot${item.slotsUsed === 1 ? '' : 's'}`, true)
 
-		if (item.buyPrice) {
-			itemEmbed.addField('Buy Price', formatMoney(item.buyPrice), true)
-		}
-
 		if (item.sellPrice) {
-			itemEmbed.addField('Sell Price', formatMoney(Math.floor(item.sellPrice * this.app.shopSellMultiplier)), true)
+			const potentialSell = {
+				min: Math.floor(item.sellPrice * (shopSellMultiplier.min / 100)),
+				max: Math.floor(item.sellPrice * (shopSellMultiplier.max / 100))
+			}
+			const potentialCost = {
+				min: Math.floor(potentialSell.min * (shopBuyMultiplier.min / 100)),
+				max: Math.floor(potentialSell.max * (shopBuyMultiplier.max / 100))
+			}
+			itemEmbed.addField('Buy Price', `Mint conditions seen in the market ranging from ${formatMoney(potentialCost.min)} to\n${formatMoney(potentialCost.max)}`, true)
+
+			itemEmbed.addField('Sell Price', formatMoney(Math.floor(item.sellPrice * this.app.currentShopSellMultiplier)), true)
 		}
 
 		if (item.durability) {
@@ -404,11 +410,11 @@ class ItemCommand extends CustomSlashCommand {
 				break
 			}
 			case 'Body Armor': {
-				itemEmbed.addField('Armor Level', `Level **${item.level}** protection.\n\n${icons.information} Reduces damage from weapons/ammo with a penetration below **${item.level.toFixed(2)}**`, true)
+				itemEmbed.addField('Armor Level', `Level **${item.level}** protection.\n\n${icons.information} Reduces damage from weapons/ammo with a penetration below **${item.level.toFixed(2)}**`)
 				break
 			}
 			case 'Helmet': {
-				itemEmbed.addField('Armor Level', `Level **${item.level}** protection.\n\n${icons.information} Reduces damage from weapons/ammo with a penetration below **${item.level.toFixed(2)}**`, true)
+				itemEmbed.addField('Armor Level', `Level **${item.level}** protection.\n\n${icons.information} Reduces damage from weapons/ammo with a penetration below **${item.level.toFixed(2)}**`)
 				break
 			}
 			case 'Stimulant': {

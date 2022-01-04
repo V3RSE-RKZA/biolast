@@ -3,6 +3,7 @@ import cron from 'node-cron'
 import { query } from './db/mysql'
 import { logger } from './logger'
 import getRandomInt from './randomInt'
+import { shopSellMultiplier } from '../config'
 
 class CronJobs {
 	private app: App
@@ -31,7 +32,7 @@ class CronJobs {
 	private async hourlyTasks (): Promise<void> {
 		logger.info('[CRONJOBS] Running hourly tasks')
 
-		this.app.shopSellMultiplier = getRandomInt(90, 110) / 100
+		this.app.currentShopSellMultiplier = getRandomInt(shopSellMultiplier.min, shopSellMultiplier.max) / 100
 	}
 
 	private async hungerTask (): Promise<void> {

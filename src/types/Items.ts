@@ -18,7 +18,6 @@ interface BaseItem {
 	icon: string
 	description?: string
 	sellPrice?: number
-	buyPrice?: number
 	durability?: number
 	slotsUsed: number
 

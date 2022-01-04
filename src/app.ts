@@ -4,7 +4,7 @@ import { TextCommand } from './types/Commands'
 import MessageCollector from './utils/MessageCollector'
 import ComponentCollector from './utils/ComponentCollector'
 import CronJobs from './utils/CronJobs'
-import { clientId, botToken, adminUsers, icons } from './config'
+import { clientId, botToken, adminUsers, icons, shopSellMultiplier } from './config'
 import fs from 'fs'
 import path from 'path'
 import { query } from './utils/db/mysql'
@@ -30,7 +30,7 @@ class App {
 	/**
 	 * The current multiplier for selling items to the shop (changes every hour)
 	 */
-	shopSellMultiplier: number
+	currentShopSellMultiplier: number
 	tutorialHandler: TutorialHandler
 
 	constructor (token: string, options: Eris.ClientOptions) {
@@ -54,7 +54,7 @@ class App {
 		this.msgCollector = new MessageCollector(this)
 		this.cronJobs = new CronJobs(this)
 		this.acceptingCommands = false
-		this.shopSellMultiplier = getRandomInt(90, 110) / 100
+		this.currentShopSellMultiplier = getRandomInt(shopSellMultiplier.min, shopSellMultiplier.max) / 100
 		this.tutorialHandler = new TutorialHandler(this)
 	}
 

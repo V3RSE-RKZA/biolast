@@ -58,6 +58,19 @@ export const icons = {
 // How many items a single user can buy from the shop each day
 export const shopDailyBuyLimit = 10
 
+// Multiplier of the sell price when you sell an item to the shop (ranging from min% to max%).
+// If you sold an item worth 100 coins and the multiplier was set to 95%, you would receive 95 coins.
+export const shopSellMultiplier = {
+	min: 90,
+	max: 110
+}
+// Multiplier for the cost of an item when it's listed on the global shop.
+// If a player sells an item for 100 coins, it would be listed on global shop for 200 - 300 coins
+export const shopBuyMultiplier = {
+	min: 200,
+	max: 300
+}
+
 export const baseBackpackLimit = 15
 
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
