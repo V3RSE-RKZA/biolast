@@ -13,7 +13,8 @@ const lbCategories = [
 	{ icon: '🔖', category: 'Quest Completions', description: 'View players who have completed the most quests.' },
 	{ icon: icons.crosshair, category: 'Player Kills', description: 'View players who have killed the most players.' },
 	{ icon: '💀', category: 'Mob Kills', description: 'View players who have killed the most mobs (including bosses).' },
-	{ icon: '☠️', category: 'Boss Kills', description: 'View players who have killed the most bosses.' }
+	{ icon: '☠️', category: 'Boss Kills', description: 'View players who have killed the most bosses.' },
+	{ icon: icons.panic, category: 'Most Deaths', description: 'View players who have died the most (sad).' }
 ]
 
 class LeaderboardCommand extends CustomSlashCommand {
@@ -179,6 +180,17 @@ class LeaderboardCommand extends CustomSlashCommand {
 						components: []
 					})
 				}
+				else if (selection.values.includes('Most Deaths')) {
+					const top = await getTopPlayers(query, 'deaths', erisGuild)
+					lbEmbed.setTitle('Most Deaths (Server)')
+					lbEmbed.setDescription(top.map((p, i) => `${i + 1}. <@${p.userId}> **${p.bossKills}** deaths`).join('\n'))
+
+					await selection.editParent({
+						content: '',
+						embeds: [lbEmbed.embed],
+						components: []
+					})
+				}
 			}
 			catch (err) {
 				await botMessage.edit({
@@ -307,6 +319,21 @@ class LeaderboardCommand extends CustomSlashCommand {
 					})))
 					lbEmbed.setTitle('Most Boss Kills (Global)')
 					lbEmbed.setDescription(users.map((u, i) => `${i + 1}. ${u.user ? `\`${u.user.username}#${u.user.discriminator}\`` : `<@${u.row.userId}>`} **${u.row.bossKills}** bosses killed`).join('\n'))
+
+					await selection.editParent({
+						content: '',
+						embeds: [lbEmbed.embed],
+						components: []
+					})
+				}
+				else if (selection.values.includes('Most Deaths')) {
+					const top = await getTopPlayers(query, 'deaths')
+					const users = await Promise.all(top.map(async p => ({
+						row: p,
+						user: await this.app.fetchUser(p.userId)
+					})))
+					lbEmbed.setTitle('Most Deaths (Global)')
+					lbEmbed.setDescription(users.map((u, i) => `${i + 1}. ${u.user ? `\`${u.user.username}#${u.user.discriminator}\`` : `<@${u.row.userId}>`} **${u.row.bossKills}** deaths`).join('\n'))
 
 					await selection.editParent({
 						content: '',

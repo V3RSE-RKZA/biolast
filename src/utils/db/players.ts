@@ -190,7 +190,7 @@ export async function createAccount (query: Query, userID: string): Promise<void
  * @param guild Eris guild object to fetch top players in guild
  * @returns User rows of top players in order DESC
  */
-export async function getTopPlayers (query: Query, category: 'money' | 'level' | 'questsCompleted' | 'kills' | 'npcKills' | 'bossKills', guild?: Guild): Promise<UserRow[]> {
+export async function getTopPlayers (query: Query, category: 'money' | 'level' | 'questsCompleted' | 'kills' | 'npcKills' | 'bossKills' | 'deaths', guild?: Guild): Promise<UserRow[]> {
 	if (guild) {
 		const guildMembers = guild.members.map(m => m.id)
 

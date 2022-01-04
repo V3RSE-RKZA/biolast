@@ -52,7 +52,8 @@ export const icons = {
 	key: '<:U_key:870786870852874260>',
 	burning: '🔥',
 	debuff: '<:debuff:902746707794726942>',
-	buff: '<:buff:902746707622776832>'
+	buff: '<:buff:902746707622776832>',
+	panic: '<:panic:928046269061021806>'
 }
 
 // How many items a single user can buy from the shop each day
