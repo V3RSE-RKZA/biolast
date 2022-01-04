@@ -38,6 +38,19 @@ export type PlayerChoice = (AttackChoice | HealChoice | StimulantChoice | FleeCh
 
 export type BodyPart = 'arm' | 'leg' | 'chest' | 'head'
 
+export function isAttackChoice (choice: PlayerChoice): choice is AttackChoice & { speed: number } {
+	return choice.choice === 'attack'
+}
+export function isHealChoice (choice: PlayerChoice): choice is HealChoice & { speed: number } {
+	return choice.choice === 'use a medical item'
+}
+export function isStimulantChoice (choice: PlayerChoice): choice is StimulantChoice & { speed: number } {
+	return choice.choice === 'use a stimulant'
+}
+export function isFleeChoice (choice: PlayerChoice): choice is FleeChoice & { speed: number } {
+	return choice.choice === 'try to flee'
+}
+
 const maxStimulantsPerDuel = 4
 
 /**

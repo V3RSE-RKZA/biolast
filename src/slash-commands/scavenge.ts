@@ -15,14 +15,14 @@ import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import getRandomInt from '../utils/randomInt'
-import { combineArrayWithAnd, combineArrayWithOr, formatHealth, formatNumber, getBodyPartEmoji, getRarityDisplay } from '../utils/stringUtils'
+import { combineArrayWithAnd, combineArrayWithOr, formatHealth, getBodyPartEmoji, getRarityDisplay } from '../utils/stringUtils'
 import { BackpackItemRow, ItemRow, ItemWithRow, UserRow } from '../types/mysql'
 import { Affliction, afflictions } from '../resources/afflictions'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
 import { GRAY_BUTTON, RED_BUTTON } from '../utils/constants'
-import { attackPlayer, getMobChoice, getMobDrop } from '../utils/npcUtils'
+import { attackPlayer, getMobChoice, getMobDisplay, getMobDrop } from '../utils/npcUtils'
 import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 
 class ScavengeCommand extends CustomSlashCommand {
@@ -64,7 +64,7 @@ class ScavengeCommand extends CustomSlashCommand {
 		const areasEmbed = new Embed()
 			.setAuthor(`You scout around ${locationChoice.display.toLowerCase()} and spot ${locationChoice.areas.length} points of interest.`, ctx.user.avatarURL)
 			.addField(`__**Location Boss**__: ${locationChoice.boss.display}`,
-				`Use \`/boss\` to fight the location boss.\n${this.getBossDescription(locationChoice.boss).join('\n')}`)
+				`Use \`/boss\` to fight the location boss.\n${getMobDisplay(locationChoice.boss, locationChoice.boss.health).join('\n')}`)
 
 		for (const area of locationChoice.areas) {
 			const areaCD = await getCooldown(query, ctx.user.id, `scavenge-${locationChoice.display}-${area.display}`)
@@ -429,7 +429,7 @@ class ScavengeCommand extends CustomSlashCommand {
 										.setDescription(attackResult.lostItems.length ?
 											`${sortItemsByLevel(attackResult.lostItems, true).slice(0, 15).map(victimItem => getItemDisplay(victimItem.item, victimItem.row, { showEquipped: false, showDurability: false })).join('\n')}` +
 											`${attackResult.lostItems.length > 15 ? `\n...and **${attackResult.lostItems.length - 15}** other item${attackResult.lostItems.length - 15 > 1 ? 's' : ''}` : ''}` :
-											'You had no items.')
+											'No items were lost.')
 
 									if (webhooks.pvp.id && webhooks.pvp.token) {
 										try {
@@ -496,7 +496,7 @@ class ScavengeCommand extends CustomSlashCommand {
 								// success
 								duelIsActive = false
 								messages[i].push(`<@${ctx.user.id}> flees from the duel! The duel has ended.`)
-								await setFighting(query, ctx.user.id, true)
+								await setFighting(query, ctx.user.id, false)
 								break
 							}
 							else {
@@ -708,7 +708,7 @@ class ScavengeCommand extends CustomSlashCommand {
 								else {
 									messages[i].push(getAttackString(playerChoice.weapon.item, `<@${ctx.user.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
 
-									if (playerChoice.weapon.item.subtype === 'Incendiary Grenade') {
+									if (playerChoice.weapon.item.subtype === 'Incendiary Grenade' && !npcAfflictions.includes(afflictions.Burning)) {
 										messages[i].push(`${icons.debuff} ${npcDisplayCapitalized} is Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
 
 										npcAfflictions.push(afflictions.Burning)
@@ -751,7 +751,7 @@ class ScavengeCommand extends CustomSlashCommand {
 									else if (result.limb === 'chest' && npc.armor) {
 										messages[i].push(`${npcDisplayCapitalized}'s armor (${getItemDisplay(npc.armor)}) reduced the damage by **${result.damage.reduced}**.`)
 									}
-									else if (result.limb === 'arm' && Math.random() <= 0.2) {
+									else if (result.limb === 'arm' && Math.random() <= 0.2 && !npcAfflictions.includes(afflictions['Broken Arm'])) {
 										messages[i].push(`${icons.debuff} ${npcDisplayCapitalized}'s arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
 
 										npcAfflictions.push(afflictions['Broken Arm'])
@@ -840,7 +840,7 @@ class ScavengeCommand extends CustomSlashCommand {
 								}
 
 								await setFighting(atkTransaction.query, ctx.user.id, false)
-								await createCooldown(transaction.query, ctx.user.id, `npcdead-${locationChoice.display}-${areaChoice.display}`, npc.respawnTime)
+								await createCooldown(atkTransaction.query, ctx.user.id, `npcdead-${locationChoice.display}-${areaChoice.display}`, npc.respawnTime)
 								await increaseKills(atkTransaction.query, ctx.user.id, npc.boss ? 'boss' : 'npc', 1)
 								await addXp(atkTransaction.query, ctx.user.id, npc.xp)
 
@@ -900,8 +900,9 @@ class ScavengeCommand extends CustomSlashCommand {
 						.setTitle(`Duel - ${ctx.member.displayName} vs ${npc.display} (${npc.boss ? 'boss' : 'mob'})`)
 						.setFooter(`Turn #${turnNumber} · actions are ordered by speed (higher speed action goes first)`)
 
-					for (const msg of messages.filter(m => m.length)) {
-						actionsEmbed.addField('\u200b', msg.join('\n'))
+					const filteredMessages = messages.filter(m => m.length)
+					for (let i = 0; i < filteredMessages.length; i++) {
+						actionsEmbed.addField('\u200b', `${i + 1}. ${filteredMessages[i].join('\n')}`)
 					}
 
 					await areaCtx.sendFollowUp({
@@ -918,7 +919,7 @@ class ScavengeCommand extends CustomSlashCommand {
 					if (duelIsActive) {
 						if (turnNumber >= 20) {
 							duelIsActive = false
-							await setFighting(query, ctx.user.id, true)
+							await setFighting(query, ctx.user.id, false)
 							await areaCtx.sendFollowUp({
 								content: `${icons.danger} <@${ctx.user.id}>, **The max turn limit (20) has been reached!** The duel ends in a tie.`
 							})
@@ -980,11 +981,6 @@ class ScavengeCommand extends CustomSlashCommand {
 		const npcEffects = addStatusEffects(npcStimulants, npcAfflictions)
 		const playerEffectsDisplay = getEffectsDisplay(playerEffects)
 		const npcEffectsDisplay = getEffectsDisplay(npcEffects)
-		const npcPenetration = 'ammo' in mob ?
-			mob.ammo.penetration :
-			'weapon' in mob ?
-				mob.weapon.penetration :
-				mob.attackPenetration
 
 		const duelEmb = new Embed()
 			.setTitle(`Duel - ${player.displayName} vs ${mob.display} (${mob.boss ? 'boss' : 'mob'})`)
@@ -998,13 +994,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				`${playerEffectsDisplay.length ? `\n\n__**Effects**__\n${playerEffectsDisplay.join('\n')}` : ''}`,
 				true)
 			.addField(`${mob.display} (${mob.boss ? 'boss' : 'mob'})`,
-				`__**Health**__\n**${npcHealth} / ${mob.health}** HP\n${formatHealth(npcHealth, mob.health)}` +
-				`\n\n__**Gear**__\n**Weapon**: ${mob.type === 'raider' ? getItemDisplay(mob.weapon) : 'None'}` +
-				`${'ammo' in mob ? `\n**Ammo**: ${getItemDisplay(mob.ammo)}` : ''}` +
-				`\n**Helmet**: ${mob.helmet ? getItemDisplay(mob.helmet) : 'None'}` +
-				`\n**Body Armor**: ${mob.armor ? getItemDisplay(mob.armor) : 'None'}` +
-				`\n**Damage**: ${mob.damage}` +
-				`\n**Armor Penetration**: ${npcPenetration}` +
+				`${getMobDisplay(mob, npcHealth).join('\n')}` +
 				`\n\n__**Stimulants**__\n${npcStimulants.length ? npcStimulants.map(i => getItemDisplay(i)).join('\n') : 'None'}` +
 				`\n\n__**Afflictions**__\n${npcAfflictions.length ? combineArrayWithAnd(npcAfflictions.map(a => a.name)) : 'None'}` +
 				`${npcEffectsDisplay.length ? `\n\n__**Effects**__\n${npcEffectsDisplay.join('\n')}` : ''}`,
@@ -1062,38 +1052,6 @@ class ScavengeCommand extends CustomSlashCommand {
 			xp: xpEarned,
 			rarityDisplay
 		}
-	}
-
-	getBossDescription (boss: NPC): string[] {
-		const bossDescripion = [
-			`**Health**: ${formatHealth(boss.health, boss.health)} **${boss.health}** HP`,
-			`**Kill XP**: 🌟 ${formatNumber(boss.xp)}`
-		]
-
-		if (boss.type === 'raider') {
-			if ('ammo' in boss) {
-				bossDescripion.push(`**Weapon**: ${getItemDisplay(boss.weapon)} (ammo: ${getItemDisplay(boss.ammo)})`)
-			}
-			else {
-				bossDescripion.push(`**Weapon**: ${getItemDisplay(boss.weapon)}`)
-			}
-		}
-
-		if (boss.helmet) {
-			bossDescripion.push(`**Helmet**: ${getItemDisplay(boss.helmet)}`)
-		}
-		if (boss.armor) {
-			bossDescripion.push(`**Helmet**: ${getItemDisplay(boss.armor)}`)
-		}
-
-		bossDescripion.push(`**Damage**: ${boss.damage}`)
-		bossDescripion.push(`**Armor Penetration**: ${'ammo' in boss ?
-			boss.ammo.penetration :
-			'weapon' in boss ?
-				boss.weapon.penetration :
-				boss.attackPenetration}`)
-
-		return bossDescripion
 	}
 }
 

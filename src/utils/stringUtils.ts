@@ -50,13 +50,16 @@ export function formatMoney (number: number, showAll = false, showEmojis = true)
  * Format health and max health into an emote health bar
  * @param curentHP Current health
  * @param maxHP Max health
+ * @param options Options for the display
+ * @param options.emojisLength How many emojis to expand the health bar to, defaults 5 emojis
  * @returns A health bar
  */
-export function formatHealth (curentHP: number, maxHP: number): string {
-	const hpPerBar = maxHP / 5
+export function formatHealth (curentHP: number, maxHP: number, options: Partial<{ emojisLength: number }> = {}): string {
+	const { emojisLength = 5 } = options
+	const hpPerBar = maxHP / emojisLength
 	let hpStr = ''
 
-	for (let i = 0; i < 5; i++) {
+	for (let i = 0; i < emojisLength; i++) {
 		const barPerc = (curentHP - (hpPerBar * i)) / hpPerBar
 
 		if (i === 0) {
@@ -70,7 +73,7 @@ export function formatHealth (curentHP: number, maxHP: number): string {
 				hpStr += icons.health.start_empty
 			}
 		}
-		else if (i === 4) {
+		else if (i === emojisLength - 1) {
 			if (barPerc >= 1) {
 				hpStr += icons.health.end_full
 			}

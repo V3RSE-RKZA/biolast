@@ -1,4 +1,4 @@
-import { CommandOptionType, SlashCreator, CommandContext, ComponentType, Message, ComponentSelectMenu } from 'slash-create'
+import { CommandOptionType, SlashCreator, CommandContext, ComponentType, ComponentSelectMenu } from 'slash-create'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import App from '../app'
 import { icons, webhooks } from '../config'
@@ -36,7 +36,7 @@ class DuelCommand extends CustomSlashCommand {
 			worksInDMs: false,
 			worksDuringDuel: false,
 			guildIDs: [],
-			deferEphemeral: true
+			noDefer: true
 		})
 
 		this.filePath = __filename
@@ -77,16 +77,13 @@ class DuelCommand extends CustomSlashCommand {
 		}
 
 		await ctx.send({
-			content: 'Sending duel request...'
-		})
-
-		let botMessage = await ctx.sendFollowUp({
 			content: `<@${member.id}>, **${ctx.member.displayName}** would like to fight you!`,
 			components: [{
 				type: ComponentType.ACTION_ROW,
 				components: [GREEN_BUTTON('Accept Duel', 'confirmed'), RED_BUTTON('Decline', 'canceled')]
 			}]
-		}) as Message
+		})
+		let botMessage = await ctx.fetch()
 
 		try {
 			const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === member.id))[0]
@@ -707,8 +704,9 @@ class DuelCommand extends CustomSlashCommand {
 						.setTitle(`Duel - ${ctx.member.displayName} vs ${member.displayName}`)
 						.setFooter(`Turn #${turnNumber} · actions are ordered by speed (higher speed action goes first)`)
 
-					for (const msg of messages.filter(m => m.length)) {
-						actionsEmbed.addField('\u200b', msg.join('\n'))
+					const filteredMessages = messages.filter(m => m.length)
+					for (let i = 0; i < filteredMessages.length; i++) {
+						actionsEmbed.addField('\u200b', `${i + 1}. ${filteredMessages[i].join('\n')}`)
 					}
 
 					await confirmed.sendFollowUp({

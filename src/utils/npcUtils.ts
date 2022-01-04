@@ -1,4 +1,3 @@
-import { Member } from 'slash-create'
 import { icons } from '../config'
 import { Affliction, afflictions } from '../resources/afflictions'
 import { NPC } from '../types/NPCs'
@@ -10,6 +9,7 @@ import { BodyPart, getAttackDamage, getAttackString, getBodyPartHit } from './du
 import { getEquips, getItemDisplay, getItems } from './itemUtils'
 import { addStatusEffects, getEffectsDisplay } from './playerUtils'
 import { combineArrayWithAnd, formatHealth, getBodyPartEmoji, getRarityDisplay } from './stringUtils'
+import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 
 interface MobAttackChoice {
 	choice: 'attack'
@@ -83,6 +83,46 @@ export function getMobChoice (npc: NPC, npcStimulants: Stimulant[], currentHealt
 	}
 }
 
+/**
+ * @param npc NPC to display
+ * @param currentHealth Health the NPC has
+ * @param options Options for the display
+ * @param options.showHealth Show the NPCs health
+ */
+export function getMobDisplay (npc: NPC, currentHealth: number, options: Partial<{ showHealth: boolean }> = {}): string[] {
+	const { showHealth = true } = options
+	const npcDescription = showHealth ? [
+		`__**Health**__\n**${currentHealth} / ${npc.health}** HP\n${formatHealth(currentHealth, npc.health)}`
+	] : []
+	const npcPenetration = 'ammo' in npc ?
+		npc.ammo.penetration :
+		'weapon' in npc ?
+			npc.weapon.penetration :
+			npc.attackPenetration
+
+	npcDescription.push('\n__**Gear**__')
+
+	if ('weapon' in npc) {
+		npcDescription.push(`**Weapon**: ${getItemDisplay(npc.weapon)}`)
+	}
+	else {
+		npcDescription.push('**Weapon**: None')
+	}
+
+	if ('ammo' in npc) {
+		npcDescription.push(`**Ammo**: ${getItemDisplay(npc.ammo)}`)
+	}
+
+	npcDescription.push(
+		`**Helmet**: ${npc.helmet ? getItemDisplay(npc.helmet) : 'None'}`,
+		`**Body Armor**: ${npc.armor ? getItemDisplay(npc.armor) : 'None'}`,
+		`**Damage**: ${npc.damage}`,
+		`**Armor Penetration**: ${npcPenetration}`
+	)
+
+	return npcDescription
+}
+
 export function getMobAttackString (npc: NPC, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number): string
 export function getMobAttackString (npc: NPC, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, weapon: MeleeWeapon | ThrowableWeapon): string
 export function getMobAttackString (npc: NPC, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, weapon: RangedWeapon, ammo: Ammunition): string
@@ -125,7 +165,7 @@ export function getMobAttackString (npc: NPC, victimName: string, limbsHit: { da
  */
 export async function attackPlayer (
 	transactionQuery: Query,
-	member: Member,
+	member: ResolvedMember,
 	userRow: UserRow,
 	userBackpack: BackpackItemRow[],
 	npc: NPC,
@@ -217,7 +257,7 @@ export async function attackPlayer (
 
 			messages.push(getMobAttackString(npc, `<@${member.id}>`, limbsHit, totalDamage, npc.weapon))
 
-			if (npc.weapon.type === 'Throwable Weapon' && npc.weapon.subtype === 'Incendiary Grenade') {
+			if (npc.weapon.type === 'Throwable Weapon' && npc.weapon.subtype === 'Incendiary Grenade' && !playerAfflictions.includes(afflictions.Burning)) {
 				messages.push(`${icons.debuff} **${member.displayName}** is Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
 
 				playerAfflictions.push(afflictions.Burning)
@@ -235,7 +275,7 @@ export async function attackPlayer (
 
 		messages.push(getMobAttackString(npc, `<@${member.id}>`, limbsHit, totalDamage))
 
-		if (Math.random() <= (npc.chanceToBite / 100)) {
+		if (Math.random() <= (npc.chanceToBite / 100) && !playerAfflictions.includes(afflictions.Bitten)) {
 			messages.push(`${icons.debuff} **${member.displayName}** was ${icons.biohazard} Bitten! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Bitten.effects))})`)
 
 			playerAfflictions.push(afflictions.Bitten)
@@ -269,10 +309,10 @@ export async function attackPlayer (
 				await lowerItemDurability(transactionQuery, userEquips.armor.row.id, 1)
 			}
 		}
-		else if (result.limb === 'arm' && Math.random() <= 0.2) {
-			messages.push(`${icons.debuff} **${member.displayName}**'s arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Bitten.effects))})`)
+		else if (result.limb === 'arm' && Math.random() <= 0.2 && !playerAfflictions.includes(afflictions['Broken Arm'])) {
+			messages.push(`${icons.debuff} **${member.displayName}**'s arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
 
-			playerAfflictions.push(afflictions.Bitten)
+			playerAfflictions.push(afflictions['Broken Arm'])
 		}
 	}
 
