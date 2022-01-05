@@ -8,7 +8,7 @@ import { allItems } from '../resources/items'
 import { getPlayerXp } from '../utils/playerUtils'
 import { createQuest } from '../utils/db/quests'
 import { dailyQuests } from '../resources/quests'
-import { addItemToBackpack, createItem } from '../utils/db/items'
+import { addItemToBackpack, createItem, addAttachmentToWeapon, deleteItem, getAttachments, getUserBackpack } from '../utils/db/items'
 import { createCooldown } from '../utils/db/cooldowns'
 
 
@@ -26,7 +26,11 @@ export const command: TextCommand = {
 			dailyQuests,
 			createItem,
 			addItemToBackpack,
-			createCooldown
+			createCooldown,
+			addAttachmentToWeapon,
+			deleteItem,
+			getAttachments,
+			getUserBackpack
 		}
 		let commandInput = message.content.substring(5 + prefix.length)
 

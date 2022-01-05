@@ -67,24 +67,43 @@ export interface ItemRow {
 	item: string
 	durability?: number
 	displayName?: string
+
+	/**
+	 * The date the item was originally created at
+	 */
+	itemCreatedAt: Date
 }
 
 export interface BackpackItemRow extends ItemRow {
+	/**
+	 * Whether the user currently has this item equipped
+	 */
 	equipped: 0 | 1
 }
 
 export interface GroundItemRow extends ItemRow {
+	/**
+	 * The date this item was added to ground
+	 */
 	createdAt: Date
 }
 
 export interface ShopItemRow extends ItemRow {
+	/**
+	 * The date this item was added to shop
+	 */
 	createdAt: Date
 	price: number
 }
 
-export type ItemWithRow<T extends ItemRow> = { item: Item, row: T }
+export interface AttachmentItemRow extends ItemRow {
+	/**
+	 * The id of the weapon this item is attached to
+	 */
+	weaponId: number
+}
 
-export type ItemWithBackpackRowOfType<T extends Item> = ItemWithRow<BackpackItemRow> & { item: T }
+export type ItemWithRow<T extends ItemRow, I extends Item = Item> = { item: I, row: T }
 
 export interface NPCRow {
 	channelId: string

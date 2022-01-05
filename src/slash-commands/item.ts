@@ -6,8 +6,8 @@ import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { Ammunition, Item, ItemType } from '../types/Items'
-import { getItem, getNumber } from '../utils/argParsers'
-import { getUserBackpack } from '../utils/db/items'
+import { getItem } from '../utils/argParsers'
+import { getAttachments, getItemByID, getUserBackpack, getUserStash } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
 import { combineArrayWithOr, formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from '../utils/itemUtils'
@@ -16,6 +16,7 @@ import { getEffectsDisplay } from '../utils/playerUtils'
 import { GRAY_BUTTON, NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
 import { logger } from '../utils/logger'
 import { getUserRow } from '../utils/db/players'
+import { formatTime } from '../utils/db/cooldowns'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 const ITEMS_PER_PAGE = 10
@@ -36,7 +37,7 @@ class ItemCommand extends CustomSlashCommand {
 				{
 					type: CommandOptionType.SUB_COMMAND,
 					name: 'info',
-					description: 'View information about a specific item.',
+					description: 'View stats and general information about an item.',
 					options: [
 						{
 							type: CommandOptionType.STRING,
@@ -44,6 +45,19 @@ class ItemCommand extends CustomSlashCommand {
 							description: 'Name of the item.',
 							required: true,
 							autocomplete: true
+						}
+					]
+				},
+				{
+					type: CommandOptionType.SUB_COMMAND,
+					name: 'details',
+					description: 'View details about a specific item using the item ID.',
+					options: [
+						{
+							type: CommandOptionType.INTEGER,
+							name: 'id',
+							description: 'ID of the item.',
+							required: true
 						}
 					]
 				}
@@ -176,36 +190,63 @@ class ItemCommand extends CustomSlashCommand {
 
 			return
 		}
-
-		// item info command
-		let item = getItem([ctx.options.info.item])
-
-		if (!item) {
-			// check if user was specifying an item ID
-			const itemID = getNumber(ctx.options.info.item)
-
-			if (!itemID) {
-				const related = itemCorrector.getWord(ctx.options.info.item, 5)
-				const relatedItem = related && allItems.find(i => i.name.toLowerCase() === related || i.aliases.map(a => a.toLowerCase()).includes(related))
-
-				await ctx.send({
-					content: relatedItem ? `${icons.information} Could not find an item matching that name. Did you mean ${getItemDisplay(relatedItem)}?` : `${icons.warning} Could not find an item matching that name.`
-				})
-				return
-			}
-
+		if (ctx.options.details) {
+			const itemID = ctx.options.details.id
 			const backpackRows = await getUserBackpack(query, ctx.user.id)
+			const stashRows = await getUserStash(query, ctx.user.id)
 			const userBackpackData = getItems(backpackRows)
-			const itemToCheck = userBackpackData.items.find(itm => itm.row.id === itemID)
+			const userStashData = getItems(stashRows)
+			let attachments
+			let itemToCheck = userBackpackData.items.find(itm => itm.row.id === itemID) || userStashData.items.find(itm => itm.row.id === itemID)
 
 			if (!itemToCheck) {
-				await ctx.send({
-					content: `${icons.warning} You don't have an item with the ID **${itemID}** in your inventory. You can find the IDs of items in your \`/inventory\`.`
-				})
-				return
+				const itemRow = await getItemByID(query, itemID)
+
+				if (!itemRow || !getItems([itemRow]).items.length) {
+					await ctx.send({
+						content: `${icons.warning} An item with the ID **${itemID}** does not exist.`
+					})
+					return
+				}
+
+				itemToCheck = getItems([itemRow]).items[0]
 			}
 
-			item = itemToCheck.item
+			const attachmentRows = await getAttachments(query, [itemToCheck.row])
+			if (attachmentRows.length) {
+				attachments = getItems(attachmentRows)
+			}
+
+			const detailsEmbed = new Embed()
+				.setDescription(getItemDisplay(itemToCheck.item, itemToCheck.row, { showDurability: false }))
+				.addField('Item Type', itemToCheck.item.type === 'Throwable Weapon' ? `${itemToCheck.item.type} (${itemToCheck.item.subtype})` : itemToCheck.item.type)
+				.addField('Created', `${formatTime(Date.now() - itemToCheck.row.itemCreatedAt.getTime())} ago`, true)
+
+			if (itemToCheck.row.durability) {
+				detailsEmbed.addField('Durability', `Can be used **${itemToCheck.row.durability}** more times.`, true)
+			}
+
+			if (attachments && attachments.items.length) {
+				detailsEmbed.addField('Attachments', attachments.items.map(a => getItemDisplay(a.item)).join('\n'))
+			}
+
+			await ctx.send({
+				embeds: [detailsEmbed.embed]
+			})
+			return
+		}
+
+		// item info command
+		const item = getItem([ctx.options.info.item])
+
+		if (!item) {
+			const related = itemCorrector.getWord(ctx.options.info.item, 5)
+			const relatedItem = related && allItems.find(i => i.name.toLowerCase() === related || i.aliases.map(a => a.toLowerCase()).includes(related))
+
+			await ctx.send({
+				content: relatedItem ? `${icons.information} Could not find an item matching that name. Did you mean ${getItemDisplay(relatedItem)}?` : `${icons.warning} Could not find an item matching that name.`
+			})
+			return
 		}
 
 		const itemFixed = item

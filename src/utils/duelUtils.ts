@@ -4,7 +4,7 @@ import { icons } from '../config'
 import { Affliction } from '../resources/afflictions'
 import { allItems } from '../resources/items'
 import { Ammunition, Armor, Medical, Helmet, MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon, Weapon } from '../types/Items'
-import { ItemWithBackpackRowOfType } from '../types/mysql'
+import { BackpackItemRow, ItemWithRow } from '../types/mysql'
 import ComponentCollector, { CollectorObject } from './ComponentCollector'
 import { GRAY_BUTTON, RED_BUTTON } from './constants'
 import { getUserBackpack } from './db/items'
@@ -17,18 +17,18 @@ import { combineArrayWithAnd, getBodyPartEmoji } from './stringUtils'
 
 interface AttackChoice {
 	choice: 'attack'
-	weapon: ItemWithBackpackRowOfType<Weapon> | { item: Weapon, row: undefined }
-	ammo?: ItemWithBackpackRowOfType<Ammunition>
+	weapon: ItemWithRow<BackpackItemRow, Weapon> | { item: Weapon, row: undefined }
+	ammo?: ItemWithRow<BackpackItemRow, Ammunition>
 	limbTarget?: BodyPart
 	attackCtx?: ComponentContext
 }
 interface HealChoice {
 	choice: 'use a medical item'
-	itemRow: ItemWithBackpackRowOfType<Medical>
+	itemRow: ItemWithRow<BackpackItemRow, Medical>
 }
 interface StimulantChoice {
 	choice: 'use a stimulant'
-	itemRow: ItemWithBackpackRowOfType<Stimulant>
+	itemRow: ItemWithRow<BackpackItemRow, Stimulant>
 }
 interface FleeChoice {
 	choice: 'try to flee'
@@ -307,8 +307,8 @@ export function awaitPlayerChoices (
 						}]
 					})
 					const attackCollector = componentCollector.createCollector(attackMessage.id, i => i.user.id === actionCtx.user.id, 60000)
-					let weapon: ItemWithBackpackRowOfType<Weapon> | { item: Weapon, row?: undefined }
-					let ammo: ItemWithBackpackRowOfType<Ammunition> | undefined
+					let weapon: ItemWithRow<BackpackItemRow, Weapon> | { item: Weapon, row?: undefined }
+					let ammo: ItemWithRow<BackpackItemRow, Ammunition> | undefined
 					let limbTarget: BodyPart | undefined
 
 					actionCollectors.push(attackCollector)
@@ -396,7 +396,7 @@ export function awaitPlayerChoices (
 										})
 									}
 
-									weapon = weaponItemRow as ItemWithBackpackRowOfType<Weapon>
+									weapon = weaponItemRow as ItemWithRow<BackpackItemRow, Weapon>
 								}
 							}
 							else if (attackCtx.customID === 'ammo') {
@@ -408,7 +408,7 @@ export function awaitPlayerChoices (
 									})
 								}
 
-								ammo = ammoItemRow as ItemWithBackpackRowOfType<Ammunition>
+								ammo = ammoItemRow as ItemWithRow<BackpackItemRow, Ammunition>
 							}
 
 							if (attackCtx.customID === 'limb') {
@@ -585,7 +585,7 @@ export function awaitPlayerChoices (
 						}]
 					})
 					const healCollector = componentCollector.createCollector(healMessage.id, i => i.user.id === actionCtx.user.id, 60000)
-					let healItem: ItemWithBackpackRowOfType<Medical>
+					let healItem: ItemWithRow<BackpackItemRow, Medical>
 
 					actionCollectors.push(healCollector)
 
@@ -602,7 +602,7 @@ export function awaitPlayerChoices (
 								return
 							}
 
-							healItem = healItemRow as ItemWithBackpackRowOfType<Medical>
+							healItem = healItemRow as ItemWithRow<BackpackItemRow, Medical>
 							healCollector.stopCollector()
 
 							await healMessage.edit({
@@ -718,7 +718,7 @@ export function awaitPlayerChoices (
 						}]
 					})
 					const stimCollector = componentCollector.createCollector(stimMessage.id, i => i.user.id === actionCtx.user.id, 60000)
-					let stimItem: ItemWithBackpackRowOfType<Stimulant>
+					let stimItem: ItemWithRow<BackpackItemRow, Stimulant>
 
 					actionCollectors.push(stimCollector)
 
@@ -735,7 +735,7 @@ export function awaitPlayerChoices (
 								return
 							}
 
-							stimItem = stimItemRow as ItemWithBackpackRowOfType<Stimulant>
+							stimItem = stimItemRow as ItemWithRow<BackpackItemRow, Stimulant>
 							stimCollector.stopCollector()
 
 							await stimMessage.edit({
