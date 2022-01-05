@@ -1,6 +1,7 @@
 import { QueryOptions } from 'mysql'
 import { QuestType } from './Quests'
 import { Item } from './Items'
+import { ItemSkin } from '../resources/skins'
 
 export type Query = (sql: string | QueryOptions, args?: any[]) => Promise<any>
 
@@ -72,6 +73,11 @@ export interface ItemRow {
 	 * The date the item was originally created at
 	 */
 	itemCreatedAt: Date
+
+	/**
+	 * The name of the skin equipped to this item
+	 */
+	skin?: string
 }
 
 export interface BackpackItemRow extends ItemRow {
@@ -105,12 +111,18 @@ export interface AttachmentItemRow extends ItemRow {
 
 export type ItemWithRow<T extends ItemRow, I extends Item = Item> = { item: I, row: T }
 
-export interface NPCRow {
-	channelId: string
-	createdAt: Date
-	id: string
-	health: number
+export interface SkinRow {
+	id: number
+	userId: string
+	skin: string
+
+	/**
+	 * The date the skin was originally created at
+	 */
+	skinCreatedAt: Date
 }
+
+export type SkinWithRow = { skin: ItemSkin, row: SkinRow }
 
 export interface QuestRow {
 	id: number

@@ -3,21 +3,21 @@ import { OkPacket } from 'mysql'
 
 /**
  * @param query Query to use
+ * @param itemID ID of item to get row of
+ * @returns Item row of item with ID
+ */
+export async function getItemByID (query: Query, itemID: string): Promise<ItemRow | undefined> {
+	return (await query('SELECT items.id, items.skin, items.item, items.durability, items.displayName, items.itemCreatedAt FROM items WHERE id = ?', [itemID]))[0]
+}
+
+/**
+ * @param query Query to use
  * @param userID ID of user to get items of
  * @param forUpdate Whether this is used in an SQL transaction
  * @returns Users items
  */
 export async function getUserBackpack (query: Query, userID: string, forUpdate = false): Promise<BackpackItemRow[]> {
-	return query(`SELECT items.id, items.item, backpack_items.equipped, items.durability, items.displayName, items.itemCreatedAt FROM backpack_items INNER JOIN items ON items.id = backpack_items.itemId WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID])
-}
-
-/**
- * @param query Query to use
- * @param itemID ID of item to get row of
- * @returns Item row of item with ID
- */
-export async function getItemByID (query: Query, itemID: string): Promise<ItemRow | undefined> {
-	return (await query('SELECT items.id, items.item, items.durability, items.displayName, items.itemCreatedAt FROM items WHERE id = ?', [itemID]))[0]
+	return query(`SELECT items.id, items.skin, items.item, backpack_items.equipped, items.durability, items.displayName, items.itemCreatedAt FROM backpack_items INNER JOIN items ON items.id = backpack_items.itemId WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID])
 }
 
 /**
@@ -27,7 +27,7 @@ export async function getItemByID (query: Query, itemID: string): Promise<ItemRo
  * @returns Users items
  */
 export async function getUserStash (query: Query, userID: string, forUpdate = false): Promise<ItemRow[]> {
-	return query(`SELECT items.id, items.item, items.durability, items.displayName, items.itemCreatedAt FROM stash_items INNER JOIN items ON items.id = stash_items.itemId WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID])
+	return query(`SELECT items.id, items.skin, items.item, items.durability, items.displayName, items.itemCreatedAt FROM stash_items INNER JOIN items ON items.id = stash_items.itemId WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID])
 }
 
 /**
@@ -38,7 +38,7 @@ export async function getUserStash (query: Query, userID: string, forUpdate = fa
  * @returns Attachments belonging to the items
  */
 export async function getAttachments (query: Query, items: ItemRow[], forUpdate = false): Promise<AttachmentItemRow[]> {
-	return query(`SELECT items.id, items.item, items.durability, items.displayName, attachment_items.weaponId, items.itemCreatedAt FROM attachment_items INNER JOIN items ON items.id = attachment_items.itemId WHERE attachment_items.weaponId IN (${items.map(i => i.id).join(', ') || '\'\''})${forUpdate ? ' FOR UPDATE' : ''}`)
+	return query(`SELECT items.id, items.skin, items.item, items.durability, items.displayName, attachment_items.weaponId, items.itemCreatedAt FROM attachment_items INNER JOIN items ON items.id = attachment_items.itemId WHERE attachment_items.weaponId IN (${items.map(i => i.id).join(', ') || '\'\''})${forUpdate ? ' FOR UPDATE' : ''}`)
 }
 
 /**
@@ -48,7 +48,7 @@ export async function getAttachments (query: Query, items: ItemRow[], forUpdate 
  * @returns Items dropped on ground in channel
  */
 export async function getGroundItems (query: Query, channelID: string, forUpdate = false): Promise<GroundItemRow[]> {
-	return query(`SELECT items.id, items.item, items.durability, items.displayName, ground_items.createdAt, items.itemCreatedAt FROM ground_items INNER JOIN items ON items.id = ground_items.itemId WHERE channelId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [channelID])
+	return query(`SELECT items.id, items.skin, items.item, items.durability, items.displayName, ground_items.createdAt, items.itemCreatedAt FROM ground_items INNER JOIN items ON items.id = ground_items.itemId WHERE channelId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [channelID])
 }
 
 /**
@@ -57,7 +57,7 @@ export async function getGroundItems (query: Query, channelID: string, forUpdate
  * @returns Available shop items
  */
 export async function getAllShopItems (query: Query): Promise<ShopItemRow[]> {
-	return query('SELECT items.id, items.item, items.durability, items.displayName, shop_items.createdAt, shop_items.price, items.itemCreatedAt FROM shop_items INNER JOIN items ON items.id = shop_items.itemId ORDER BY shop_items.createdAt DESC LIMIT 50')
+	return query('SELECT items.id, items.skin, items.item, items.durability, items.displayName, shop_items.createdAt, shop_items.price, items.itemCreatedAt FROM shop_items INNER JOIN items ON items.id = shop_items.itemId ORDER BY shop_items.createdAt DESC LIMIT 50')
 }
 
 /**
@@ -68,7 +68,7 @@ export async function getAllShopItems (query: Query): Promise<ShopItemRow[]> {
  * @returns A shop item
  */
 export async function getShopItem (query: Query, itemID: number, forUpdate = false): Promise<ShopItemRow | undefined> {
-	return (await query(`SELECT items.id, items.item, items.durability, items.displayName, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId WHERE items.id = ?${forUpdate ? ' FOR UPDATE' : ''}`, [itemID]))[0]
+	return (await query(`SELECT items.id, items.skin, items.item, items.durability, items.displayName, shop_items.createdAt, shop_items.price FROM shop_items INNER JOIN items ON items.id = shop_items.itemId WHERE items.id = ?${forUpdate ? ' FOR UPDATE' : ''}`, [itemID]))[0]
 }
 
 /**
@@ -182,6 +182,26 @@ export async function addAttachmentToWeapon (query: Query, weaponID: string, ite
  */
 export async function removeAttachment (query: Query, itemID: number): Promise<void> {
 	await query('DELETE FROM attachment_items WHERE itemId = ?', [itemID])
+}
+
+/**
+ * Sets an items durability
+ * @param query Query to use
+ * @param itemID ID of the item
+ * @param durability Durability to set item to
+ */
+export async function setDurability (query: Query, itemID: number, durability: number): Promise<void> {
+	await query('UPDATE items SET durability = ? WHERE id = ?', [durability, itemID])
+}
+
+/**
+ * Sets an items skin
+ * @param query Query to use
+ * @param itemID ID of the item
+ * @param skin Name of the skin
+ */
+export async function setSkin (query: Query, itemID: number, skin: string): Promise<void> {
+	await query('UPDATE items SET skin = ? WHERE id = ?', [skin, itemID])
 }
 
 /**

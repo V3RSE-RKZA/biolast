@@ -2,8 +2,10 @@ import { Guild, Member } from 'eris'
 import Corrector from '../structures/Corrector'
 import { allItems } from '../resources/items'
 import { Item } from '../types/Items'
+import { ItemSkin, skins } from '../resources/skins'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
+const skinCorrector = new Corrector([...skins.map(skn => skn.name.toLowerCase()), ...skins.map(skn => skn.aliases.map(a => a.toLowerCase())).flat(1)])
 
 /**
  * Uses spell correction to find an item from given arguments
@@ -25,6 +27,30 @@ export function getItem (args: string[]): Item | undefined {
 
 		if (item) {
 			return item
+		}
+	}
+}
+
+/**
+ * Uses spell correction to find a skin from given arguments
+ * @param args Array of arguments to search for skin
+ * @returns Skin data
+ */
+export function getSkin (args: string[]): ItemSkin | undefined {
+	if (args[0] && args.length === 1) {
+		args = args[0].split(/ +/)
+	}
+
+	for (let i = 0; i < args.slice(0, 6).length; i++) {
+		// get the args that come after this one
+		const afterArgs = args.slice(i, 6)
+
+		const correctedSkin = skinCorrector.getWord(afterArgs.join('_').toLowerCase())
+
+		const skin = skins.find(skn => skn.name.toLowerCase() === correctedSkin || (correctedSkin && skn.aliases.map(a => a.toLowerCase()).includes(correctedSkin)))
+
+		if (skin) {
+			return skin
 		}
 	}
 }

@@ -2,6 +2,7 @@ import { ItemRow, BackpackItemRow, ItemWithRow } from '../types/mysql'
 import { allItems } from '../resources/items'
 import { baseBackpackLimit } from '../config'
 import { Ammunition, Armor, Backpack, Helmet, Item } from '../types/Items'
+import { skins } from '../resources/skins'
 
 function instanceOfBackpackRow (itemRow: ItemRow | BackpackItemRow): itemRow is BackpackItemRow {
 	return 'equipped' in itemRow
@@ -17,10 +18,16 @@ export function getItems<T extends ItemRow> (itemRows: T[]): { items: ItemWithRo
 	let slotsUsed = 0
 
 	for (const row of itemRows) {
-		const item = allItems.find(i => i.name === row.item)
+		let item = allItems.find(i => i.name === row.item)
 
 		if (item) {
+			const skin = row.skin && skins.find(s => s.name === row.skin)
 			slotsUsed += item.slotsUsed
+
+			if (skin) {
+				item = Object.assign({}, item, { icon: skin.icon })
+			}
+
 			inventory.push({ row, item })
 		}
 	}
@@ -44,10 +51,19 @@ export function getItems<T extends ItemRow> (itemRows: T[]): { items: ItemWithRo
 export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<{ showEquipped: boolean, showID: boolean, showDurability: boolean, showDisplayName: boolean }> = {}): string {
 	const { showEquipped = true, showID = true, showDurability = true, showDisplayName = true } = options
 	const itemDisplayName = item.name.replace(/_/g, ' ')
+	let icon = item.icon
+
+	if (itemRow && itemRow.skin !== undefined) {
+		const skin = skins.find(s => s.name === itemRow.skin)
+
+		if (skin) {
+			icon = skin.icon
+		}
+	}
 
 	if (itemRow) {
 		const attributes = []
-		const display = `${item.icon}\`${showDisplayName && itemRow.displayName ? itemRow.displayName : itemDisplayName}\``
+		const display = `${icon}\`${showDisplayName && itemRow.displayName ? itemRow.displayName : itemDisplayName}\``
 
 		if (showDurability && itemRow.durability) {
 			attributes.push(`**${itemRow.durability}** uses left`)
@@ -64,7 +80,7 @@ export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<
 		return `${display}${attributes.length ? ` (${attributes.join(', ')})` : ''}`
 	}
 
-	return `${item.icon}\`${itemDisplayName}\``
+	return `${icon}\`${itemDisplayName}\``
 }
 
 /**
