@@ -11,7 +11,7 @@ import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDu
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addHealth, addXp, getUserRow, increaseKills, setFighting, setLocationLevel } from '../utils/db/players'
 import { getUserQuests, increaseProgress } from '../utils/db/quests'
-import { getEquips, getItemDisplay, getItems, sortItemsByLevel } from '../utils/itemUtils'
+import { backpackHasSpace, getEquips, getItemDisplay, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import getRandomInt from '../utils/randomInt'
 import { combineArrayWithAnd, formatHealth, getBodyPartEmoji, getRarityDisplay } from '../utils/stringUtils'
@@ -87,10 +87,17 @@ class BossCommand extends CustomSlashCommand {
 
 		const teammates = [ctx.members.get(ctx.options.user), ctx.members.get(ctx.options['user-2'])].filter(Boolean) as ResolvedMember[]
 		const preUserData = (await getUserRow(query, ctx.user.id))!
+		const preUserBackpack = await getUserBackpack(query, ctx.user.id)
 
 		if (!isValidLocation(preUserData.currentLocation)) {
 			await ctx.send({
 				content: `${icons.warning} You need to travel to a region. Use the \`/travel\` command to travel to a region you want to fight the boss of.`
+			})
+			return
+		}
+		else if (!backpackHasSpace(preUserBackpack, 0)) {
+			await ctx.send({
+				content: `${icons.warning} You are overweight, you will need to clear some space in your inventory to start a boss fight.`
 			})
 			return
 		}
@@ -126,6 +133,17 @@ class BossCommand extends CustomSlashCommand {
 				await ctx.send({
 					content: `${icons.warning} **${member.displayName}** is not located in the same region, they need to \`/travel\` to **${location.display}**.`,
 					components: []
+				})
+				return
+			}
+
+			const memberBackpack = await getUserBackpack(query, member.id)
+
+			if (!backpackHasSpace(memberBackpack, 0)) {
+				await ctx.send({
+					content: `${icons.warning} **${member.displayName}** is overweight, they will need to clear some space in their inventory.`,
+					components: [],
+					embeds: []
 				})
 				return
 			}
@@ -188,7 +206,18 @@ class BossCommand extends CustomSlashCommand {
 				return
 			}
 
-			const memberBackpack = await getUserBackpack(preTransaction.query, player.member.id)
+			const memberBackpack = await getUserBackpack(preTransaction.query, player.member.id, true)
+
+			if (!backpackHasSpace(memberBackpack, 0)) {
+				await preTransaction.commit()
+
+				await botMessage.edit({
+					content: `${icons.warning} **${player.member.displayName}** is overweight, they will need to clear some space in their inventory.`,
+					components: [],
+					embeds: []
+				})
+				return
+			}
 
 			await setFighting(preTransaction.query, player.member.id, true)
 			players.push({ member: player.member, data: memberData, stimulants: [], afflictions: [], inventory: memberBackpack })

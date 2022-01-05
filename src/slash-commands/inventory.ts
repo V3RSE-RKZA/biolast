@@ -321,18 +321,20 @@ class InventoryCommand extends CustomSlashCommand {
 			const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
 			const indexLast = ITEMS_PER_PAGE * i
 			const filteredItems = sortedItems.slice(indexFirst, indexLast)
+			const backpackLimit = getBackpackLimit(equips.backpack?.item)
 
 			const embed = new Embed()
 				.setAuthor(`${userDisplay}'s Inventory`, user.avatarURL)
 				.setDescription(`**Number of Items**: ${itemData.items.length}` +
-					`\n**Inventory Value**: ${formatMoney(invValue)}`)
+					`\n**Inventory Value**: ${formatMoney(invValue)}` +
+					`${isSelf && itemData.slotsUsed > backpackLimit ? `\n\n${icons.warning} You are currently overweight, you should sell items to clear space.` : ''}`)
 				.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP (+5HP/5 mins)\n${formatHealth(userData.health, userData.maxHealth)}`, true)
 				.addField('__Experience__', `**Level**: ${userData.level}\n**XP**: ${playerXp.relativeLevelXp} / ${playerXp.levelTotalXpNeeded} xp`, true)
 				.addField('__Equips__', 'Equip an item with `/equip <item id>`.\n' +
 					`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Body Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row, { showEquipped: false, showID: false }) : 'None'}`)
-				.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed} / ${getBackpackLimit(equips.backpack?.item)})`,
+				.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed} / ${backpackLimit})`,
 					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your stash to your inventory with \`/stash\`.`)
 
 			if (isSelf) {
