@@ -22,7 +22,7 @@ import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, isFleeChoice, isHealChoice, isStimulantChoice, PlayerChoice } from '../utils/duelUtils'
 import { GRAY_BUTTON, GREEN_BUTTON, RED_BUTTON } from '../utils/constants'
 import { attackPlayer, getMobChoice, getMobDisplay, getMobDrop } from '../utils/npcUtils'
-import { createCooldown } from '../utils/db/cooldowns'
+import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { EmbedOptions } from 'eris'
 
 interface Player {
@@ -105,6 +105,14 @@ class BossCommand extends CustomSlashCommand {
 		const location = locations[preUserData.currentLocation]
 		const nextLocation = allLocations.filter(l => l.locationLevel === location.locationLevel + 1)
 		const preMembersData: { member: ResolvedMember, data: UserRow }[] = [{ member: ctx.member, data: preUserData }]
+		const preBossCD = await getCooldown(query, ctx.user.id, `boss-${location.display}`)
+
+		if (preBossCD) {
+			await ctx.send({
+				content: `${icons.warning} You recently fought **${location.boss.display}**, you can attempt the boss fight again in **${preBossCD}**.`
+			})
+			return
+		}
 
 		for (const member of teammates) {
 			if (member.id === ctx.user.id) {
@@ -123,16 +131,23 @@ class BossCommand extends CustomSlashCommand {
 			}
 			else if (memberData.fighting) {
 				await ctx.send({
-					content: `${icons.warning} **${member.displayName}** is in another fight right now!`,
-					components: []
+					content: `${icons.warning} **${member.displayName}** is in another fight right now!`
 				})
 				return
 			}
 
 			if (!isValidLocation(memberData.currentLocation) || memberData.currentLocation !== preUserData.currentLocation) {
 				await ctx.send({
-					content: `${icons.warning} **${member.displayName}** is not located in the same region, they need to \`/travel\` to **${location.display}**.`,
-					components: []
+					content: `${icons.warning} **${member.displayName}** is not located in the same region, they need to \`/travel\` to **${location.display}**.`
+				})
+				return
+			}
+
+			const memberBossCD = await getCooldown(query, member.id, `boss-${location.display}`)
+
+			if (memberBossCD) {
+				await ctx.send({
+					content: `${icons.warning} **${member.displayName}** recently fought **${location.boss.display}**, they can attempt the boss fight again in **${memberBossCD}**.`
 				})
 				return
 			}
@@ -141,9 +156,7 @@ class BossCommand extends CustomSlashCommand {
 
 			if (!backpackHasSpace(memberBackpack, 0)) {
 				await ctx.send({
-					content: `${icons.warning} **${member.displayName}** is overweight, they will need to clear some space in their inventory.`,
-					components: [],
-					embeds: []
+					content: `${icons.warning} **${member.displayName}** is overweight, they will need to clear some space in their inventory.`
 				})
 				return
 			}
@@ -182,7 +195,7 @@ class BossCommand extends CustomSlashCommand {
 				await preTransaction.commit()
 
 				await botMessage.edit({
-					content: `${icons.warning} **${player.member.displayName}** does not have an account!`,
+					content: `${icons.danger} **${player.member.displayName}** does not have an account!`,
 					components: []
 				})
 				return
@@ -206,6 +219,18 @@ class BossCommand extends CustomSlashCommand {
 				return
 			}
 
+			const memberBossCD = await getCooldown(preTransaction.query, player.member.id, `boss-${location.display}`)
+
+			if (memberBossCD) {
+				await preTransaction.commit()
+
+				await botMessage.edit({
+					content: `${icons.warning} **${player.member.displayName}** recently fought **${location.boss.display}**, they can attempt the boss fight again in **${memberBossCD}**.`,
+					components: []
+				})
+				return
+			}
+
 			const memberBackpack = await getUserBackpack(preTransaction.query, player.member.id, true)
 
 			if (!backpackHasSpace(memberBackpack, 0)) {
@@ -213,13 +238,13 @@ class BossCommand extends CustomSlashCommand {
 
 				await botMessage.edit({
 					content: `${icons.warning} **${player.member.displayName}** is overweight, they will need to clear some space in their inventory.`,
-					components: [],
-					embeds: []
+					components: []
 				})
 				return
 			}
 
 			await setFighting(preTransaction.query, player.member.id, true)
+			await createCooldown(preTransaction.query, player.member.id, `boss-${location.display}`, location.boss.respawnTime)
 			players.push({ member: player.member, data: memberData, stimulants: [], afflictions: [], inventory: memberBackpack })
 		}
 
@@ -758,7 +783,6 @@ class BossCommand extends CustomSlashCommand {
 								}
 
 								await setFighting(atkTransaction.query, player.member.id, false)
-								await createCooldown(atkTransaction.query, player.member.id, `npcdead-${location.display}`, location.boss.respawnTime)
 								await increaseKills(atkTransaction.query, player.member.id, 'boss', 1)
 								await addXp(atkTransaction.query, player.member.id, location.boss.xp)
 
