@@ -81,7 +81,7 @@ const cainTheGravekeeperBoss: NPC = {
 	helmet: items.wooden_helmet,
 	xp: 100,
 	boss: true,
-	respawnTime: 60 * 10
+	respawnTime: 60 * 60
 }
 
 export const suburbs: Location = {
