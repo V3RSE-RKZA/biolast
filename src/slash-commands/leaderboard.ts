@@ -194,7 +194,7 @@ class LeaderboardCommand extends CustomSlashCommand {
 			}
 			catch (err) {
 				await botMessage.edit({
-					content: `${icons.danger} Buttons timed out.`,
+					content: `${icons.warning} Buttons timed out.`,
 					components: []
 				})
 			}
@@ -344,7 +344,7 @@ class LeaderboardCommand extends CustomSlashCommand {
 			}
 			catch (err) {
 				await botMessage.edit({
-					content: `${icons.danger} Buttons timed out.`,
+					content: `${icons.warning} Buttons timed out.`,
 					components: []
 				})
 			}
