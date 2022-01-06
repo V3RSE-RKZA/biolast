@@ -8,9 +8,6 @@ declare namespace NodeJS {
 		PREFIX?: string
 		BOT_TOKEN?: string
 		BOT_CLIENT_ID?: string
-		SUBURBS_GUILDS?: string
-		FARM_GUILDS?: string
-		MALL_GUILDS?: string
 		TESTING_GUILD_ID?: string
 		LOG_LEVEL?: string
 		GLOBAL_PVP_KILLFEED_WEBHOOK_ID?: string
