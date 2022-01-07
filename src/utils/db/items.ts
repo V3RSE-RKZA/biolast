@@ -1,4 +1,4 @@
-import { Query, ItemRow, BackpackItemRow, GroundItemRow, ShopItemRow, AttachmentItemRow } from '../../types/mysql'
+import { Query, ItemRow, BackpackItemRow, ShopItemRow, AttachmentItemRow } from '../../types/mysql'
 import { OkPacket } from 'mysql'
 
 /**
@@ -39,16 +39,6 @@ export async function getUserStash (query: Query, userID: string, forUpdate = fa
  */
 export async function getAttachments (query: Query, items: ItemRow[], forUpdate = false): Promise<AttachmentItemRow[]> {
 	return query(`SELECT items.id, items.skin, items.item, items.durability, items.displayName, attachment_items.weaponId, items.itemCreatedAt FROM attachment_items INNER JOIN items ON items.id = attachment_items.itemId WHERE attachment_items.weaponId IN (${items.map(i => i.id).join(', ') || '\'\''})${forUpdate ? ' FOR UPDATE' : ''}`)
-}
-
-/**
- * @param query Query to use
- * @param channelID ID of channel to get items in
- * @param forUpdate Whether this is used in an SQL transaction
- * @returns Items dropped on ground in channel
- */
-export async function getGroundItems (query: Query, channelID: string, forUpdate = false): Promise<GroundItemRow[]> {
-	return query(`SELECT items.id, items.skin, items.item, items.durability, items.displayName, ground_items.createdAt, items.itemCreatedAt FROM ground_items INNER JOIN items ON items.id = ground_items.itemId WHERE channelId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [channelID])
 }
 
 /**
@@ -137,16 +127,6 @@ export async function removeAllItemsFromBackpack (query: Query, userID: string):
 }
 
 /**
- * Drops item on ground, items on the ground will be deleted after 20 minutes
- * @param query Query to use
- * @param channelID ID of channel to drop item in
- * @param itemID ID of the item, you can get the id by using createItem()
- */
-export async function dropItemToGround (query: Query, channelID: string, itemID: number): Promise<void> {
-	await query('INSERT INTO ground_items (itemId, channelId) VALUES (?, ?)', [itemID, channelID])
-}
-
-/**
  * Adds item to the shop, shop items are removed after 1 day
  * @param query Query to use
  * @param itemID ID of the item, you can get the id by using createItem()
@@ -154,15 +134,6 @@ export async function dropItemToGround (query: Query, channelID: string, itemID:
  */
 export async function addItemToShop (query: Query, itemID: number, price: number): Promise<void> {
 	await query('INSERT INTO shop_items (itemId, price) VALUES (?, ?)', [itemID, price])
-}
-
-/**
- * Removes item from ground (so if it was picked up)
- * @param query Query to use
- * @param itemID ID of the item
- */
-export async function removeItemFromGround (query: Query, itemID: number): Promise<void> {
-	await query('DELETE FROM ground_items WHERE itemId = ?', [itemID])
 }
 
 /**

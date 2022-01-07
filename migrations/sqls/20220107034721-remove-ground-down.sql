@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS ground_items (
+	itemId BIGINT NOT NULL,
+	channelId VARCHAR(255) NOT NULL,
+	createdAt DATETIME NOT NULL DEFAULT NOW(),
+	KEY (channelId),
+	PRIMARY KEY (itemId),
+	FOREIGN KEY (itemId) REFERENCES items (id) ON DELETE CASCADE
+) ENGINE = InnoDB;

@@ -87,13 +87,6 @@ export interface BackpackItemRow extends ItemRow {
 	equipped: 0 | 1
 }
 
-export interface GroundItemRow extends ItemRow {
-	/**
-	 * The date this item was added to ground
-	 */
-	createdAt: Date
-}
-
 export interface ShopItemRow extends ItemRow {
 	/**
 	 * The date this item was added to shop

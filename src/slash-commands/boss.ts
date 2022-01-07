@@ -729,8 +729,6 @@ class BossCommand extends CustomSlashCommand {
 								}
 
 								if (location.boss.type === 'raider') {
-									// drop weapon and ammo on ground
-
 									if ('ammo' in location.boss) {
 										// drop random amount of bullets
 										const ammoToDrop = getRandomInt(1, 2)

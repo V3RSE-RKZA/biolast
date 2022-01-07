@@ -787,8 +787,6 @@ class ScavengeCommand extends CustomSlashCommand {
 								}
 
 								if (npc.type === 'raider') {
-									// drop weapon and ammo on ground
-
 									if ('ammo' in npc) {
 										// drop random amount of bullets
 										const ammoToDrop = getRandomInt(1, 3)

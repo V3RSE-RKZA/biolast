@@ -10,7 +10,7 @@ function instanceOfBackpackRow (itemRow: ItemRow | BackpackItemRow): itemRow is 
 
 /**
  * Returns the amount of slots the items are taking up and the item data given rows of items
- * @param itemRows Rows of items, can be rows of ground items, stash items, or backpack items
+ * @param itemRows Rows of items, can be rows of shop items, stash items, or backpack items
  * @returns The itemRows along with the item data
  */
 export function getItems<T extends ItemRow> (itemRows: T[]): { items: ItemWithRow<T>[], slotsUsed: number } {

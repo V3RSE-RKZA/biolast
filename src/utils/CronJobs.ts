@@ -43,9 +43,6 @@ class CronJobs {
 	private async oftenTasks (): Promise<void> {
 		logger.info('[CRONJOBS] Running often tasks (5 minutes)')
 
-		// remove ground items that have been on the ground for 10+ minutes
-		await query('DELETE items FROM items INNER JOIN ground_items ON items.id = ground_items.itemId WHERE NOW() > ground_items.createdAt + INTERVAL 10 MINUTE')
-
 		// remove items from the shop that are older than 1 day
 		await query('DELETE items FROM items INNER JOIN shop_items ON items.id = shop_items.itemId WHERE NOW() > shop_items.createdAt + INTERVAL 1 DAY')
 
