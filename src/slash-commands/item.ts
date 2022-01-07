@@ -274,7 +274,16 @@ class ItemCommand extends CustomSlashCommand {
 		collector.on('collect', async buttonCtx => {
 			try {
 				if (buttonCtx.customID === 'find') {
+					const userData = await getUserRow(query, buttonCtx.user.id)
 					const obtainedFrom: { [key: string]: string[] } = allLocations.reduce((prev, curr) => ({ ...prev, [curr.display]: [] }), {})
+
+					if (!userData) {
+						await buttonCtx.send({
+							ephemeral: true,
+							content: `${icons.danger} It looks like you've never played before... What are you waiting for? Use \`/help\` to learn how to play.`
+						})
+						return
+					}
 
 					for (const loc of allLocations) {
 						for (const area of loc.areas) {
@@ -335,7 +344,15 @@ class ItemCommand extends CustomSlashCommand {
 
 					await buttonCtx.send({
 						content: `${getItemDisplay(itemFixed)} can be found in the following areas:\n\n` +
-							`${Object.keys(obtainedFrom).filter(loc => obtainedFrom[loc].length).map(loc => `__${loc}__\n${obtainedFrom[loc].join('\n')}`).join('\n\n')}`,
+							`${Object.keys(obtainedFrom).filter(loc => obtainedFrom[loc].length).map(loc => {
+								const location = allLocations.find(l => l.display === loc)
+
+								if (location && userData.locationLevel < location.locationLevel) {
+									return `__${loc.replace(/\w/g, '?')} (Level ${location.locationLevel} region)__\nSpotted in a region you haven't discovered yet.`
+								}
+
+								return `__${loc}__\n${obtainedFrom[loc].join('\n')}`
+							}).join('\n\n')}`,
 						ephemeral: true
 					})
 				}
