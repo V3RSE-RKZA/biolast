@@ -94,3 +94,11 @@ export function getEffectsDisplay (effects: StatusEffects, showAll = false): str
 
 	return display
 }
+
+/**
+ * Gets the date users discord was created
+ * @param userID ID of user to get age of
+ */
+export function getDiscordUserAge (userID: string): Date {
+	return new Date(Math.floor((parseInt(userID) / 4194304) + 1420070400000))
+}

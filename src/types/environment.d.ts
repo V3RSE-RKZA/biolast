@@ -12,5 +12,7 @@ declare namespace NodeJS {
 		LOG_LEVEL?: string
 		GLOBAL_PVP_KILLFEED_WEBHOOK_ID?: string
 		GLOBAL_PVP_KILLFEED_WEBHOOK_TOKEN?: string
+		BOT_LOGS_WEBHOOK_ID?: string
+		BOT_LOGS_WEBHOOK_TOKEN?: string
 	}
 }

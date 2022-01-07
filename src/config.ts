@@ -51,7 +51,8 @@ export const icons = {
 	burning: '🔥',
 	debuff: '<:debuff:902746707794726942>',
 	buff: '<:buff:902746707622776832>',
-	panic: '<:panic:928046269061021806>'
+	panic: '<:panic:928046269061021806>',
+	loading: '<a:loading:928735911196381224>'
 }
 
 // How many items a single user can buy from the shop each day
@@ -72,6 +73,9 @@ export const shopBuyMultiplier = {
 
 export const baseBackpackLimit = 15
 
+// how often a user can accept a trade (in seconds, cooldown only applies if user accepts trade)
+export const tradeCooldown = 60 * 60
+
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
 export const adminUsers = ['168958344361541633', '319897342415470592', '622437218744664120', '596841923508174849']
 
@@ -80,6 +84,10 @@ export const webhooks = {
 	pvp: {
 		id: process.env.GLOBAL_PVP_KILLFEED_WEBHOOK_ID,
 		token: process.env.GLOBAL_PVP_KILLFEED_WEBHOOK_TOKEN
+	},
+	bot_logs: {
+		id: process.env.BOT_LOGS_WEBHOOK_ID,
+		token: process.env.BOT_LOGS_WEBHOOK_TOKEN
 	}
 }
 
