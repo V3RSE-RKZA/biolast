@@ -20,7 +20,7 @@ import { disableAllComponents } from '../utils/messageUtils'
 const ITEMS_PER_PAGE = 5
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
-class ShopCommand extends CustomSlashCommand {
+class MarketCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'market',
@@ -446,4 +446,4 @@ class ShopCommand extends CustomSlashCommand {
 	}
 }
 
-export default ShopCommand
+export default MarketCommand
