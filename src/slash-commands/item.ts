@@ -52,8 +52,8 @@ class ItemCommand extends CustomSlashCommand {
 				},
 				{
 					type: CommandOptionType.SUB_COMMAND,
-					name: 'details',
-					description: 'View details about a specific item using the item ID.',
+					name: 'inspect',
+					description: 'Inspect a specific item using the item ID.',
 					options: [
 						{
 							type: CommandOptionType.INTEGER,
@@ -192,8 +192,8 @@ class ItemCommand extends CustomSlashCommand {
 
 			return
 		}
-		if (ctx.options.details) {
-			const itemID = ctx.options.details.id
+		if (ctx.options.inspect) {
+			const itemID = ctx.options.inspect.id
 			const backpackRows = await getUserBackpack(query, ctx.user.id)
 			const stashRows = await getUserStash(query, ctx.user.id)
 			const userBackpackData = getItems(backpackRows)
