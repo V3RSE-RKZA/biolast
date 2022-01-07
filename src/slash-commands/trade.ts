@@ -694,7 +694,7 @@ class TradeCommand extends CustomSlashCommand {
 
 	async awaitMoneyInput (channelID: string, userID: string, usersMoneyInTrade: number, tradeMoneyLimit: number): Promise<number> {
 		return new Promise((resolve, reject) => {
-			const { collector, stopCollector } = this.app.msgCollector.createChannelCollector(channelID, m => m.author.id === userID, 15000)
+			const { collector, stopCollector } = this.app.msgCollector.createChannelCollector(channelID, m => m.author.id === userID, 30000)
 
 			collector.on('collect', async m => {
 				try {
@@ -746,7 +746,7 @@ class TradeCommand extends CustomSlashCommand {
 
 	async awaitItemInput (channelID: string, userID: string, usersItemsInTrade: ItemRow[]): Promise<ItemWithRow<ItemRow>> {
 		return new Promise((resolve, reject) => {
-			const { collector, stopCollector } = this.app.msgCollector.createChannelCollector(channelID, m => m.author.id === userID, 15000)
+			const { collector, stopCollector } = this.app.msgCollector.createChannelCollector(channelID, m => m.author.id === userID, 30000)
 
 			collector.on('collect', async m => {
 				try {
