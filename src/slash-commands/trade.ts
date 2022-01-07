@@ -230,7 +230,7 @@ class TradeCommand extends CustomSlashCommand {
 								embeds: [this.getTradeEmbed(ctx.member, member, player1Money, player2Money, player1Items, player2Items, prePlayer1Data, prePlayer2Data).embed],
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: disableAllComponents(TRADE_BUTTONS())
+									components: TRADE_BUTTONS()
 								}]
 							})
 						}
@@ -247,7 +247,7 @@ class TradeCommand extends CustomSlashCommand {
 								embeds: [this.getTradeEmbed(ctx.member, member, player1Money, player2Money, player1Items, player2Items, prePlayer1Data, prePlayer2Data).embed],
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: disableAllComponents(TRADE_BUTTONS())
+									components: TRADE_BUTTONS()
 								}]
 							})
 						}
@@ -320,7 +320,7 @@ class TradeCommand extends CustomSlashCommand {
 								embeds: [this.getTradeEmbed(ctx.member, member, player1Money, player2Money, player1Items, player2Items, prePlayer1Data, prePlayer2Data).embed],
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: disableAllComponents(TRADE_BUTTONS())
+									components: TRADE_BUTTONS()
 								}]
 							})
 						}
@@ -337,7 +337,7 @@ class TradeCommand extends CustomSlashCommand {
 								embeds: [this.getTradeEmbed(ctx.member, member, player1Money, player2Money, player1Items, player2Items, prePlayer1Data, prePlayer2Data).embed],
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: disableAllComponents(TRADE_BUTTONS())
+									components: TRADE_BUTTONS()
 								}]
 							})
 						}
