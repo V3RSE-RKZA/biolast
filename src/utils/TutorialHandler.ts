@@ -93,7 +93,7 @@ class TutorialHandler {
 							' will remain in your stash (you won\'t lose these items if you were to die in a raid).' +
 							' You can use `/stash put <item id>` to move items from your inventory to your stash, and `stash take <item id>` to take items from your stash' +
 							` and move them to your inventory.\n\n${icons.information} With \`/stash put\`/\`take\`, you can specify up to 3 items to transfer at a time.` +
-							'\n\nWhen you buy an item from the shop, it will be placed into your **stash**. **Check out the shop with `/shop view`.**',
+							'\n\nWhen you buy an item from the shop, it will be placed into your **stash**. **Check out the shop with `/market view`.**',
 						flags: InteractionResponseFlags.EPHEMERAL
 					})
 
@@ -119,8 +119,8 @@ class TutorialHandler {
 					await ctx.sendFollowUp({
 						content: `Tutorial Step 4/10:\n\n${icons.checkmark} This is the item shop! Items can be purchased using coins, the currency of this post-apocalyptic world.` +
 							' You can gain money by selling some of your items to the shop. When you sell something, it will be available for other' +
-							' players to purchase. All of the items you are seeing here were sold to the shop by another player. To sell an item, use `/shop sell <item id>` or use' +
-							' `/shop buy <item id>` to purchase an item from the shop.\n\nIt\'s time for you to learn how to get more items.' +
+							' players to purchase. All of the items you are seeing here were sold to the shop by another player. To sell an item, use `/market sell <item id>` or use' +
+							' `/market buy <item id>` to purchase an item from the shop.\n\nIt\'s time for you to learn how to get more items.' +
 							' The game is based around entering **raids** filled with monsters, raiders, other players, and loot to fight over.' +
 							' **To enter a raid, use the `/raid` command.**',
 						flags: InteractionResponseFlags.EPHEMERAL
@@ -130,7 +130,7 @@ class TutorialHandler {
 				}
 				else {
 					const botMessage = await ctx.sendFollowUp({
-						content: `Tutorial Step 4/10:\n\n${icons.warning} Wrong command, try using the \`/shop view\` command to view the item shop!`,
+						content: `Tutorial Step 4/10:\n\n${icons.warning} Wrong command, try using the \`/market view\` command to view the item shop!`,
 						flags: InteractionResponseFlags.EPHEMERAL,
 						components: [{
 							type: ComponentType.ACTION_ROW,

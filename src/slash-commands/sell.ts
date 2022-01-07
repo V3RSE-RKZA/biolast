@@ -92,7 +92,7 @@ class SellCommand extends CustomSlashCommand {
 		}
 
 		const botMessage = await ctx.send({
-			content: `Sell **${itemsToSell.length}x** items to the \`/shop\` for **${formatMoney(price)}**?\n\n` +
+			content: `Sell **${itemsToSell.length}x** items to the \`/market\` for **${formatMoney(price)}**?\n\n` +
 				`${itemsToSell.map(i => itemsToSell.length > 1 ? `${getItemDisplay(i.item, i.row)} for **${formatMoney(this.getItemShopPrice(i.item, i.row))}**` : getItemDisplay(i.item, i.row)).join('\n')}`,
 			components: CONFIRM_BUTTONS
 		}) as Message
@@ -152,7 +152,7 @@ class SellCommand extends CustomSlashCommand {
 				await transaction.commit()
 
 				await confirmed.editParent({
-					content: `${icons.checkmark} Sold **${itemsToSell.length}x** items to the \`/shop\` for **${formatMoney(price)}**.\n\n${itemsToSell.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
+					content: `${icons.checkmark} Sold **${itemsToSell.length}x** items to the \`/market\` for **${formatMoney(price)}**.\n\n${itemsToSell.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
 						`${icons.information} You now have **${formatMoney(userDataV.money + price)}**.`,
 					components: []
 				})

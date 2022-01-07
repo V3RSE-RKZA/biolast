@@ -22,9 +22,9 @@ const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase
 class ShopCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
-			name: 'shop',
-			description: 'View and purchase items from the item shop.',
-			longDescription: 'Used to view and purchase items from the item shop. When you sell an item, it appears in the shop for sale! Prices may vary.',
+			name: 'market',
+			description: 'View and purchase items from the global item market.',
+			longDescription: 'Used to view and purchase items from the global item market. When a player sells an item, it appears in the market for sale! Prices may vary.',
 			options: [
 				{
 					type: CommandOptionType.STRING,
@@ -221,8 +221,8 @@ class ShopCommand extends CustomSlashCommand {
 
 						if (userData.shopSales >= shopDailyBuyLimit) {
 							await c.send({
-								content: `${icons.danger} You have already purchased **${shopDailyBuyLimit}** items from the shop and cannot purchase any more today.` +
-									' This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!',
+								content: `${icons.danger} You have already purchased **${shopDailyBuyLimit}** items from the market and cannot purchase any more today.` +
+									' This limit helps prevent a single user from buying every item in the market. Try again tomorrow!',
 								ephemeral: true
 							})
 							return
@@ -260,8 +260,8 @@ class ShopCommand extends CustomSlashCommand {
 						}
 						else if (userData.shopSales + itemsToBuy.length > shopDailyBuyLimit) {
 							await c.send({
-								content: `${icons.danger} You have already purchased **${userData.shopSales}** items from the shop and can only purchase **${shopDailyBuyLimit - userData.shopSales}** more today.` +
-									'This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!',
+								content: `${icons.danger} You have already purchased **${userData.shopSales}** items from the market and can only purchase **${shopDailyBuyLimit - userData.shopSales}** more today.` +
+									'This limit helps prevent a single user from buying every item in the market. Try again tomorrow!',
 								ephemeral: true
 							})
 							return
@@ -324,8 +324,8 @@ class ShopCommand extends CustomSlashCommand {
 									await transaction.commit()
 
 									await confirmed.editParent({
-										content: `${icons.danger} You have already purchased **${userDataV.shopSales}** items from the shop and can only purchase **${shopDailyBuyLimit - userDataV.shopSales}** more today.` +
-											' This limit helps prevent a single user from buying every item in the shop. Try again tomorrow!',
+										content: `${icons.danger} You have already purchased **${userDataV.shopSales}** items from the market and can only purchase **${shopDailyBuyLimit - userDataV.shopSales}** more today.` +
+											' This limit helps prevent a single user from buying every item in the market. Try again tomorrow!',
 										components: []
 									})
 									return
@@ -412,7 +412,7 @@ class ShopCommand extends CustomSlashCommand {
 					`\n\n${icons.information} Use the selection menu to purchase items.\n${icons.warning} These deals will expire after 1 day.` +
 					'\n\n__**Items Available**__ (Sorted newest to oldest)' +
 					`\n${filteredItems.map(itm => `**Item**: ${getItemDisplay(itm.item, itm.row)}\n**Listed**: <t:${itm.row.createdAt.getTime() / 1000}:R>\n**Price**: ${formatMoney(itm.row.price)}`).join('\n\n') ||
-					`There no ${searchedItem ? `${getItemDisplay(searchedItem)}'s` : 'items'} available right now. When a player sells an item, you will see it for sale here.`}`)
+					`There are no ${searchedItem ? `${getItemDisplay(searchedItem)}'s` : 'items'} available right now. When a player sells an item, you will see it for sale here.`}`)
 
 			if (maxPage > 1) {
 				embed.setFooter(`Page ${i}/${maxPage}`)
