@@ -173,7 +173,7 @@ class CompanionCommand extends CustomSlashCommand {
 			catch (err) {
 				await botMessage.edit({
 					content: `${icons.danger} Command timed out.`,
-					components: []
+					components: disableAllComponents(botMessage.components)
 				})
 			}
 		}

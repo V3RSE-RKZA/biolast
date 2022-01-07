@@ -15,6 +15,7 @@ import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { allItems } from '../resources/items'
 import { DailyQuest, SideQuest } from '../types/Quests'
+import { disableAllComponents } from '../utils/messageUtils'
 
 // how long a user should have to complete their quests before they receive a new one
 const dailyQuestCooldown = 24 * 60 * 60
@@ -341,7 +342,7 @@ class QuestsCommand extends CustomSlashCommand {
 					await ctx.editOriginal({
 						content: 'Quest buttons timed out.',
 						embeds: [questsEmbed.embed],
-						components: []
+						components: disableAllComponents(botMessage.components)
 					})
 				}
 			}

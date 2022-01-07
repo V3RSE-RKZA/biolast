@@ -4,6 +4,8 @@ import App from '../app'
 import { icons } from '../config'
 import Embed from '../structures/Embed'
 import { NEXT_BUTTON, PREVIOUS_BUTTON } from './constants'
+import { logger } from './logger'
+import { disableAllComponents } from './messageUtils'
 
 interface Collector {
 	messageID: string
@@ -195,14 +197,19 @@ class ComponentCollector {
 			}
 		})
 
-		collector.on('end', msg => {
-			if (msg === 'time') {
-				embeds[page].setFooter(`Page ${page + 1} · Page buttons timed out`)
+		collector.on('end', async msg => {
+			try {
+				if (msg === 'time') {
+					embeds[page].setFooter(`Page ${page + 1} · Page buttons timed out`)
 
-				botMessage.edit({
-					embeds: [embeds[page].embed],
-					components: []
-				})
+					botMessage.edit({
+						embeds: [embeds[page].embed],
+						components: disableAllComponents(botMessage.components)
+					})
+				}
+			}
+			catch (err) {
+				logger.warn(err)
 			}
 		})
 	}

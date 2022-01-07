@@ -12,6 +12,7 @@ import { formatMoney } from '../utils/stringUtils'
 import { backpackHasSpace, getBackpackLimit, getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
+import { disableAllComponents } from '../utils/messageUtils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -290,7 +291,7 @@ class StashCommand extends CustomSlashCommand {
 						await botMessage.edit({
 							content: `${icons.warning} Buttons timed out.`,
 							embeds: [fixedPages[page].page.embed],
-							components: []
+							components: disableAllComponents(botMessage.components)
 						})
 					}
 				}

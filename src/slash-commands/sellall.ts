@@ -11,6 +11,7 @@ import { addMoney, getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItemPrice, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
+import { disableAllComponents } from '../utils/messageUtils'
 
 class ShopCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -132,7 +133,7 @@ class ShopCommand extends CustomSlashCommand {
 			catch (err) {
 				await botMessage.edit({
 					content: `${icons.danger} Command timed out.`,
-					components: []
+					components: disableAllComponents(botMessage.components)
 				})
 			}
 		}
@@ -227,7 +228,7 @@ class ShopCommand extends CustomSlashCommand {
 			catch (err) {
 				await botMessage.edit({
 					content: `${icons.danger} Command timed out.`,
-					components: []
+					components: disableAllComponents(botMessage.components)
 				})
 			}
 		}

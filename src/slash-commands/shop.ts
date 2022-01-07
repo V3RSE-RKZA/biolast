@@ -15,6 +15,7 @@ import { getUserRow, increaseShopSales, removeMoney } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItemPrice, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
+import { disableAllComponents } from '../utils/messageUtils'
 
 const ITEMS_PER_PAGE = 5
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
@@ -366,7 +367,7 @@ class ShopCommand extends CustomSlashCommand {
 						catch (err) {
 							await botMessage.edit({
 								content: `${icons.danger} Purchase timed out.`,
-								components: []
+								components: disableAllComponents(botMessage.components)
 							})
 						}
 					}
@@ -382,7 +383,7 @@ class ShopCommand extends CustomSlashCommand {
 						await botMessage.edit({
 							content: `${icons.warning} Buttons timed out.`,
 							embeds: [fixedPages[page].page.embed],
-							components: []
+							components: disableAllComponents(botMessage.components)
 						})
 					}
 				}

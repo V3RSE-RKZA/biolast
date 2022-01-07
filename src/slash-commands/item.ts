@@ -19,6 +19,7 @@ import { getUserRow } from '../utils/db/players'
 import { formatTime } from '../utils/db/cooldowns'
 import { skins } from '../resources/skins'
 import { getSkinDisplay } from '../utils/skinUtils'
+import { disableAllComponents } from '../utils/messageUtils'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 const ITEMS_PER_PAGE = 10
@@ -181,7 +182,7 @@ class ItemCommand extends CustomSlashCommand {
 						await botMessage.edit({
 							content: `${icons.warning} Buttons timed out.`,
 							embeds: [pages[page].embed],
-							components: []
+							components: disableAllComponents(botMessage.components)
 						})
 					}
 				}

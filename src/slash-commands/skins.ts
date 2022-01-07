@@ -15,6 +15,7 @@ import { skins } from '../resources/skins'
 import { getSkin } from '../utils/argParsers'
 import { getRarityDisplay } from '../utils/stringUtils'
 import { CONFIRM_BUTTONS } from '../utils/constants'
+import { disableAllComponents } from '../utils/messageUtils'
 
 const SKINS_PER_PAGE = 12
 
@@ -234,7 +235,7 @@ class SkinsCommand extends CustomSlashCommand {
 			catch (err) {
 				await botMessage.edit({
 					content: `${icons.danger} Command timed out.`,
-					components: []
+					components: disableAllComponents(botMessage.components)
 				})
 			}
 		}

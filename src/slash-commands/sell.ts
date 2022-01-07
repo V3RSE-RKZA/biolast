@@ -11,6 +11,7 @@ import { addMoney, getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
 import { getItemDisplay, getItemPrice, getItems } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
+import { disableAllComponents } from '../utils/messageUtils'
 
 class SellCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -164,7 +165,7 @@ class SellCommand extends CustomSlashCommand {
 		catch (err) {
 			await botMessage.edit({
 				content: `${icons.danger} Command timed out.`,
-				components: []
+				components: disableAllComponents(botMessage.components)
 			})
 		}
 	}
