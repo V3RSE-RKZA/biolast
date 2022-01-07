@@ -16,6 +16,7 @@ import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { CompanionRow } from '../types/mysql'
 import { allItems } from '../resources/items'
+import { disableAllComponents } from '../utils/messageUtils'
 
 // how much xp companion receives when played with
 const XP_PER_PLAY = 15
@@ -641,7 +642,7 @@ class CompanionCommand extends CustomSlashCommand {
 							content: 'Buttons timed out.',
 							components: [{
 								type: ComponentType.ACTION_ROW,
-								components: buttons.map(button => ({ ...button, disabled: true }))
+								components: disableAllComponents(buttons)
 							}]
 						})
 					}

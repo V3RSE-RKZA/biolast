@@ -13,7 +13,7 @@ import { backpackHasSpace, getItemDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { formatMoney, formatNumber } from '../utils/stringUtils'
 import { getNumber } from '../utils/argParsers'
-import { reply } from '../utils/messageUtils'
+import { disableAllComponents, reply } from '../utils/messageUtils'
 import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { getDiscordUserAge } from '../utils/playerUtils'
 
@@ -202,7 +202,7 @@ class TradeCommand extends CustomSlashCommand {
 							content: `${icons.loading} **${userDisplay}** is adding an item to the trade...`,
 							components: [{
 								type: ComponentType.ACTION_ROW,
-								components: TRADE_BUTTONS('item').map(b => ({ ...b, disabled: true }))
+								components: disableAllComponents(TRADE_BUTTONS('item'))
 							}]
 						})
 
@@ -222,7 +222,7 @@ class TradeCommand extends CustomSlashCommand {
 								content: '',
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: TRADE_BUTTONS('item').map(b => ({ ...b, disabled: true }))
+									components: disableAllComponents(TRADE_BUTTONS('item'))
 								}]
 							})
 							botMessage = await tradeChoice.sendFollowUp({
@@ -230,7 +230,7 @@ class TradeCommand extends CustomSlashCommand {
 								embeds: [this.getTradeEmbed(ctx.member, member, player1Money, player2Money, player1Items, player2Items, prePlayer1Data, prePlayer2Data).embed],
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: TRADE_BUTTONS()
+									components: disableAllComponents(TRADE_BUTTONS())
 								}]
 							})
 						}
@@ -239,7 +239,7 @@ class TradeCommand extends CustomSlashCommand {
 								content: '',
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: TRADE_BUTTONS('money').map(b => ({ ...b, disabled: true }))
+									components: disableAllComponents(TRADE_BUTTONS('money'))
 								}]
 							})
 							botMessage = await tradeChoice.sendFollowUp({
@@ -247,7 +247,7 @@ class TradeCommand extends CustomSlashCommand {
 								embeds: [this.getTradeEmbed(ctx.member, member, player1Money, player2Money, player1Items, player2Items, prePlayer1Data, prePlayer2Data).embed],
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: TRADE_BUTTONS()
+									components: disableAllComponents(TRADE_BUTTONS())
 								}]
 							})
 						}
@@ -288,7 +288,7 @@ class TradeCommand extends CustomSlashCommand {
 							content: `${icons.loading} **${userDisplay}** is adding some copper to the trade...`,
 							components: [{
 								type: ComponentType.ACTION_ROW,
-								components: TRADE_BUTTONS('money').map(b => ({ ...b, disabled: true }))
+								components: disableAllComponents(TRADE_BUTTONS('money'))
 							}]
 						})
 						await tradeChoice.send({
@@ -312,7 +312,7 @@ class TradeCommand extends CustomSlashCommand {
 								content: '',
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: TRADE_BUTTONS('money').map(b => ({ ...b, disabled: true }))
+									components: disableAllComponents(TRADE_BUTTONS('money'))
 								}]
 							})
 							botMessage = await tradeChoice.sendFollowUp({
@@ -320,7 +320,7 @@ class TradeCommand extends CustomSlashCommand {
 								embeds: [this.getTradeEmbed(ctx.member, member, player1Money, player2Money, player1Items, player2Items, prePlayer1Data, prePlayer2Data).embed],
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: TRADE_BUTTONS()
+									components: disableAllComponents(TRADE_BUTTONS())
 								}]
 							})
 						}
@@ -329,7 +329,7 @@ class TradeCommand extends CustomSlashCommand {
 								content: '',
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: TRADE_BUTTONS('money').map(b => ({ ...b, disabled: true }))
+									components: disableAllComponents(TRADE_BUTTONS('money'))
 								}]
 							})
 							botMessage = await tradeChoice.sendFollowUp({
@@ -337,7 +337,7 @@ class TradeCommand extends CustomSlashCommand {
 								embeds: [this.getTradeEmbed(ctx.member, member, player1Money, player2Money, player1Items, player2Items, prePlayer1Data, prePlayer2Data).embed],
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: TRADE_BUTTONS()
+									components: disableAllComponents(TRADE_BUTTONS())
 								}]
 							})
 						}
@@ -349,7 +349,7 @@ class TradeCommand extends CustomSlashCommand {
 							content: `${icons.cancel} **${userDisplay}** has canceled the trade.`,
 							components: [{
 								type: ComponentType.ACTION_ROW,
-								components: TRADE_BUTTONS('cancel').map(b => ({ ...b, disabled: true }))
+								components: disableAllComponents(TRADE_BUTTONS('cancel'))
 							}]
 						})
 					}
@@ -374,7 +374,7 @@ class TradeCommand extends CustomSlashCommand {
 						await botMessage.edit({
 							components: [{
 								type: ComponentType.ACTION_ROW,
-								components: TRADE_BUTTONS('complete').map(b => ({ ...b, disabled: true }))
+								components: disableAllComponents(TRADE_BUTTONS('complete'))
 							}]
 						})
 						const acceptedMessage = await tradeChoice.sendFollowUp({
@@ -389,7 +389,7 @@ class TradeCommand extends CustomSlashCommand {
 							if (accepted.customID !== 'confirmed') {
 								await accepted.editParent({
 									content: `${icons.danger} **${otherPlayer.displayName}** declined the trade.`,
-									components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return
 							}
@@ -403,7 +403,7 @@ class TradeCommand extends CustomSlashCommand {
 
 								await accepted.editParent({
 									content: `${icons.danger} **${ctx.member.displayName}** has completed a trade recently and must wait **${player1TradeCD}** before accepting another.`,
-									components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return
 							}
@@ -412,7 +412,7 @@ class TradeCommand extends CustomSlashCommand {
 
 								await accepted.editParent({
 									content: `${icons.danger} **${member.displayName}** has completed a trade recently and must wait **${player2TradeCD}** before accepting another.`,
-									components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return
 							}
@@ -426,7 +426,7 @@ class TradeCommand extends CustomSlashCommand {
 
 								await accepted.editParent({
 									content: `${icons.danger} **${ctx.member.displayName}** does not have the copper they tried to trade.`,
-									components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return
 							}
@@ -435,7 +435,7 @@ class TradeCommand extends CustomSlashCommand {
 
 								await accepted.editParent({
 									content: `${icons.danger} **${member.displayName}** does not have the copper they tried to trade.`,
-									components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return
 							}
@@ -445,7 +445,7 @@ class TradeCommand extends CustomSlashCommand {
 
 								await accepted.editParent({
 									content: `${icons.danger} **${ctx.member.displayName}** entered a duel while the trade was ongoing, the trade could not be completed.`,
-									components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return
 							}
@@ -454,7 +454,7 @@ class TradeCommand extends CustomSlashCommand {
 
 								await accepted.editParent({
 									content: `${icons.danger} **${member.displayName}** entered a duel while the trade was ongoing, the trade could not be completed.`,
-									components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return
 							}
@@ -474,7 +474,7 @@ class TradeCommand extends CustomSlashCommand {
 
 									await accepted.editParent({
 										content: `${icons.danger} **${ctx.member.displayName}** does not have the items they tried to trade.`,
-										components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+										components: disableAllComponents(CONFIRM_BUTTONS)
 									})
 									return
 								}
@@ -497,7 +497,7 @@ class TradeCommand extends CustomSlashCommand {
 
 									await accepted.editParent({
 										content: `${icons.danger} **${member.displayName}** does not have the items they tried to trade.`,
-										components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+										components: disableAllComponents(CONFIRM_BUTTONS)
 									})
 									return
 								}
@@ -512,7 +512,7 @@ class TradeCommand extends CustomSlashCommand {
 
 								await accepted.editParent({
 									content: `${icons.danger} **${ctx.member.displayName}** does not have enough storage in their inventory to complete this trade (required: **${player1SlotsNeeded}** slots).`,
-									components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return
 							}
@@ -523,7 +523,7 @@ class TradeCommand extends CustomSlashCommand {
 
 								await accepted.editParent({
 									content: `${icons.danger} **${member.displayName}** does not have enough storage in their inventory to complete this trade (required: **${player2SlotsNeeded}** slots).`,
-									components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return
 							}
@@ -563,7 +563,7 @@ class TradeCommand extends CustomSlashCommand {
 							await transaction.commit()
 							await accepted.editParent({
 								content: `${icons.checkmark} Trade completed!`,
-								components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+								components: disableAllComponents(CONFIRM_BUTTONS)
 							})
 
 							if (webhooks.bot_logs.id && webhooks.bot_logs.token) {
@@ -592,7 +592,7 @@ class TradeCommand extends CustomSlashCommand {
 						catch (err) {
 							await acceptedMessage.edit({
 								content: `${icons.danger} **${otherPlayer.displayName}** did not accept the trade.`,
-								components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+								components: disableAllComponents(CONFIRM_BUTTONS)
 							})
 						}
 					}
@@ -603,7 +603,7 @@ class TradeCommand extends CustomSlashCommand {
 						content: `${icons.danger} Trade timed out.`,
 						components: [{
 							type: ComponentType.ACTION_ROW,
-							components: TRADE_BUTTONS().map(b => ({ ...b, disabled: true }))
+							components: disableAllComponents(TRADE_BUTTONS())
 						}]
 					})
 				}
@@ -612,7 +612,7 @@ class TradeCommand extends CustomSlashCommand {
 		catch (err) {
 			await botMessage.edit({
 				content: `${icons.danger} **${member.displayName}** did not respond to the trade invite.`,
-				components: CONFIRM_BUTTONS.map(c => ({ ...c, components: c.components.map(b => ({ ...b, disabled: true })) }))
+				components: disableAllComponents(CONFIRM_BUTTONS)
 			})
 		}
 	}

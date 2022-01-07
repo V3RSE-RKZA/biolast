@@ -18,6 +18,7 @@ import { logger } from '../utils/logger'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
 import { combineArrayWithAnd, formatHealth, formatMoney, getBodyPartEmoji } from '../utils/stringUtils'
+import { disableAllComponents } from '../utils/messageUtils'
 
 class DuelCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -644,7 +645,7 @@ class DuelCommand extends CustomSlashCommand {
 													content: `${icons.danger} You ran out of time to select which items to keep.`,
 													components: [{
 														type: ComponentType.ACTION_ROW,
-														components: components.map(c => ({ ...c, disabled: true }))
+														components: disableAllComponents(components)
 													}]
 												})
 											}

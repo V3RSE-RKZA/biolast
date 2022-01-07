@@ -12,6 +12,7 @@ import { query } from './db/mysql'
 import { getUserRow } from './db/players'
 import { getItemDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from './itemUtils'
 import { logger } from './logger'
+import { disableAllComponents } from './messageUtils'
 import { getEffectsDisplay } from './playerUtils'
 import { combineArrayWithAnd, getBodyPartEmoji } from './stringUtils'
 
@@ -421,7 +422,7 @@ export function awaitPlayerChoices (
 									content: `${icons.checkmark} ${getItemDisplay(weapon!.item)} ${ammo ? `(ammo: ${getItemDisplay(ammo.item)})` : ''} selected as your weapon!`,
 									components: [{
 										type: ComponentType.ACTION_ROW,
-										components: components.map(c => ({ ...c, disabled: true }))
+										components: disableAllComponents(components)
 									}]
 								})
 							}
@@ -497,7 +498,7 @@ export function awaitPlayerChoices (
 									content: `${icons.timer} You ran out of time to complete this attack. Your turn has been skipped.`,
 									components: [{
 										type: ComponentType.ACTION_ROW,
-										components: components.map(c => ({ ...c, disabled: true }))
+										components: disableAllComponents(components)
 									}]
 								})
 								return
@@ -609,7 +610,7 @@ export function awaitPlayerChoices (
 								content: `${icons.checkmark} ${getItemDisplay(healItemRow.item)} selected!`,
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: components.map(c => ({ ...c, disabled: true }))
+									components: disableAllComponents(components)
 								}]
 							})
 						}
@@ -625,7 +626,7 @@ export function awaitPlayerChoices (
 									content: `${icons.timer} You ran out of time to select an item. Your turn has been skipped.`,
 									components: [{
 										type: ComponentType.ACTION_ROW,
-										components: components.map(c => ({ ...c, disabled: true }))
+										components: disableAllComponents(components)
 									}]
 								})
 								return
@@ -742,7 +743,7 @@ export function awaitPlayerChoices (
 								content: `${icons.checkmark} ${getItemDisplay(stimItemRow.item)} selected!`,
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: components.map(c => ({ ...c, disabled: true }))
+									components: disableAllComponents(components)
 								}]
 							})
 						}
@@ -758,7 +759,7 @@ export function awaitPlayerChoices (
 									content: `${icons.timer} You ran out of time to select an item. Your turn has been skipped.`,
 									components: [{
 										type: ComponentType.ACTION_ROW,
-										components: components.map(c => ({ ...c, disabled: true }))
+										components: disableAllComponents(components)
 									}]
 								})
 								return

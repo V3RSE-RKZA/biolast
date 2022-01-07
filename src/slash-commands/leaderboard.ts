@@ -6,6 +6,7 @@ import { query } from '../utils/db/mysql'
 import { getTopPlayers } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
 import Embed from '../structures/Embed'
+import { disableAllComponents } from '../utils/messageUtils'
 
 const lbCategories = [
 	{ icon: icons.copper, category: 'Richest Users', description: 'View the richest players.' },
@@ -195,7 +196,7 @@ class LeaderboardCommand extends CustomSlashCommand {
 			catch (err) {
 				await botMessage.edit({
 					content: `${icons.warning} Buttons timed out.`,
-					components: []
+					components: disableAllComponents(botMessage.components)
 				})
 			}
 		}
@@ -345,7 +346,7 @@ class LeaderboardCommand extends CustomSlashCommand {
 			catch (err) {
 				await botMessage.edit({
 					content: `${icons.warning} Buttons timed out.`,
-					components: []
+					components: disableAllComponents(botMessage.components)
 				})
 			}
 		}
