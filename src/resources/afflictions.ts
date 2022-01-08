@@ -34,4 +34,6 @@ export const afflictions = afflictionsObject({
 	}
 })
 
+export type AfflictionName = keyof typeof afflictions
+
 export const allAfflictions = Object.values(afflictions)

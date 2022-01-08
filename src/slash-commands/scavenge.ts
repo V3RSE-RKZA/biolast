@@ -15,9 +15,9 @@ import { getUserQuests, increaseProgress } from '../utils/db/quests'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import getRandomInt from '../utils/randomInt'
-import { combineArrayWithAnd, combineArrayWithOr, formatHealth, getBodyPartEmoji, getRarityDisplay } from '../utils/stringUtils'
+import { combineArrayWithAnd, combineArrayWithOr, formatHealth, getAfflictionEmoji, getBodyPartEmoji, getRarityDisplay } from '../utils/stringUtils'
 import { BackpackItemRow, ItemRow, ItemWithRow, UserRow } from '../types/mysql'
-import { Affliction, afflictions } from '../resources/afflictions'
+import { Affliction, AfflictionName, afflictions } from '../resources/afflictions'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
@@ -708,7 +708,7 @@ class ScavengeCommand extends CustomSlashCommand {
 									messages[i].push(getAttackString(playerChoice.weapon.item, `<@${ctx.user.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
 
 									if (playerChoice.weapon.item.subtype === 'Incendiary Grenade' && !npcAfflictions.includes(afflictions.Burning)) {
-										messages[i].push(`${icons.debuff} ${npcDisplayCapitalized} is Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
+										messages[i].push(`${icons.debuff} ${npcDisplayCapitalized} is ${getAfflictionEmoji('Burning')} Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
 
 										npcAfflictions.push(afflictions.Burning)
 									}
@@ -751,7 +751,7 @@ class ScavengeCommand extends CustomSlashCommand {
 										messages[i].push(`${npcDisplayCapitalized}'s armor (${getItemDisplay(npc.armor)}) reduced the damage by **${result.damage.reduced}**.`)
 									}
 									else if (result.limb === 'arm' && Math.random() <= 0.2 && !npcAfflictions.includes(afflictions['Broken Arm'])) {
-										messages[i].push(`${icons.debuff} ${npcDisplayCapitalized}'s arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
+										messages[i].push(`${icons.debuff} ${npcDisplayCapitalized}'s ${getAfflictionEmoji('Broken Arm')} arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
 
 										npcAfflictions.push(afflictions['Broken Arm'])
 									}
@@ -987,13 +987,13 @@ class ScavengeCommand extends CustomSlashCommand {
 				`\n**Helmet**: ${playerEquips.helmet ? getItemDisplay(playerEquips.helmet.item, playerEquips.helmet.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Body Armor**: ${playerEquips.armor ? getItemDisplay(playerEquips.armor.item, playerEquips.armor.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n\n__**Stimulants**__\n${playerStimulants.length ? playerStimulants.map(i => getItemDisplay(i)).join('\n') : 'None'}` +
-				`\n\n__**Afflictions**__\n${playerAfflictions.length ? combineArrayWithAnd(playerAfflictions.map(a => a.name)) : 'None'}` +
+				`\n\n__**Afflictions**__\n${playerAfflictions.length ? combineArrayWithAnd(playerAfflictions.map(a => `${getAfflictionEmoji(a.name as AfflictionName)} ${a.name}`)) : 'None'}` +
 				`${playerEffectsDisplay.length ? `\n\n__**Effects**__\n${playerEffectsDisplay.join('\n')}` : ''}`,
 				true)
 			.addField(`${mob.display} (${mob.boss ? 'boss' : 'mob'})`,
 				`${getMobDisplay(mob, npcHealth).join('\n')}` +
 				`\n\n__**Stimulants**__\n${npcStimulants.length ? npcStimulants.map(i => getItemDisplay(i)).join('\n') : 'None'}` +
-				`\n\n__**Afflictions**__\n${npcAfflictions.length ? combineArrayWithAnd(npcAfflictions.map(a => a.name)) : 'None'}` +
+				`\n\n__**Afflictions**__\n${npcAfflictions.length ? combineArrayWithAnd(npcAfflictions.map(a => `${getAfflictionEmoji(a.name as AfflictionName)} ${a.name}`)) : 'None'}` +
 				`${npcEffectsDisplay.length ? `\n\n__**Effects**__\n${npcEffectsDisplay.join('\n')}` : ''}`,
 				true)
 			.setFooter(`Turn #${turnNumber} / 20 max · 40 seconds to make selection`)

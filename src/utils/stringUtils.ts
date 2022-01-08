@@ -1,4 +1,5 @@
 import { icons } from '../config'
+import { AfflictionName } from '../resources/afflictions'
 import { BodyPart } from './duelUtils'
 
 export function formatNumber (number: number, decimals = false): string {
@@ -174,6 +175,14 @@ export function getRarityDisplay (rarity: 'Common' | 'Uncommon' | 'Rare' | 'Insa
 		case 'Uncommon': return icons.rarities.uncommon.join('')
 		case 'Rare': return icons.rarities.rare.join('')
 		case 'Insanely Rare': return `${icons.rarities.insanely.join('')}${icons.rarities.rare.join('')} `
+	}
+}
+
+export function getAfflictionEmoji (afflictionName: AfflictionName): string {
+	switch (afflictionName) {
+		case 'Bitten': return icons.biohazard
+		case 'Broken Arm': return '🦴'
+		case 'Burning': return '🔥'
 	}
 }
 

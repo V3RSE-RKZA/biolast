@@ -2,7 +2,7 @@ import { CommandOptionType, SlashCreator, CommandContext, ComponentType, Compone
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import App from '../app'
 import { icons, webhooks } from '../config'
-import { Affliction, afflictions } from '../resources/afflictions'
+import { Affliction, AfflictionName, afflictions } from '../resources/afflictions'
 import { items } from '../resources/items'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
@@ -17,7 +17,7 @@ import { backpackHasSpace, getEquips, getItemDisplay, getItemPrice, getItems, so
 import { logger } from '../utils/logger'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
-import { combineArrayWithAnd, formatHealth, formatMoney, getBodyPartEmoji } from '../utils/stringUtils'
+import { combineArrayWithAnd, formatHealth, formatMoney, getAfflictionEmoji, getBodyPartEmoji } from '../utils/stringUtils'
 import { disableAllComponents } from '../utils/messageUtils'
 
 class DuelCommand extends CustomSlashCommand {
@@ -437,7 +437,7 @@ class DuelCommand extends CustomSlashCommand {
 									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage))
 
 									if (choice.weapon.item.subtype === 'Incendiary Grenade') {
-										messages[i].push(`${icons.debuff} <@${otherPlayerMember.id}> is Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
+										messages[i].push(`${icons.debuff} <@${otherPlayerMember.id}> is ${getAfflictionEmoji('Burning')} Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
 
 										if (userChoice.member.id === ctx.user.id) {
 											player2Afflictions.push(afflictions.Burning)
@@ -505,7 +505,7 @@ class DuelCommand extends CustomSlashCommand {
 										}
 									}
 									else if (result.limb === 'arm' && Math.random() <= 0.2) {
-										messages[i].push(`${icons.debuff} **${otherPlayerMember.displayName}**'s arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
+										messages[i].push(`${icons.debuff} **${otherPlayerMember.displayName}**'s ${getAfflictionEmoji('Broken Arm')} arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
 
 										if (userChoice.member.id === ctx.user.id) {
 											player2Afflictions.push(afflictions['Broken Arm'])
@@ -800,7 +800,7 @@ class DuelCommand extends CustomSlashCommand {
 				`\n**Helmet**: ${player1Equips.helmet ? getItemDisplay(player1Equips.helmet.item, player1Equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Body Armor**: ${player1Equips.armor ? getItemDisplay(player1Equips.armor.item, player1Equips.armor.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n\n__**Stimulants**__\n${player1Stimulants.length ? player1Stimulants.map(i => getItemDisplay(i)).join('\n') : 'None'}` +
-				`\n\n__**Afflictions**__\n${player1Afflictions.length ? combineArrayWithAnd(player1Afflictions.map(a => a.name)) : 'None'}` +
+				`\n\n__**Afflictions**__\n${player1Afflictions.length ? combineArrayWithAnd(player1Afflictions.map(a => `${getAfflictionEmoji(a.name as AfflictionName)} ${a.name}`)) : 'None'}` +
 				`${player1EffectsDisplay.length ? `\n\n__**Effects**__\n${player1EffectsDisplay.join('\n')}` : ''}`,
 				true)
 			.addField(`${player2.user.username}#${player2.user.discriminator} (Level ${player2Data.level})`,
@@ -809,7 +809,7 @@ class DuelCommand extends CustomSlashCommand {
 				`\n**Helmet**: ${player2Equips.helmet ? getItemDisplay(player2Equips.helmet.item, player2Equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Body Armor**: ${player2Equips.armor ? getItemDisplay(player2Equips.armor.item, player2Equips.armor.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n\n__**Stimulants**__\n${player2Stimulants.length ? player2Stimulants.map(i => getItemDisplay(i)).join('\n') : 'None'}` +
-				`\n\n__**Afflictions**__\n${player2Afflictions.length ? combineArrayWithAnd(player2Afflictions.map(a => a.name)) : 'None'}` +
+				`\n\n__**Afflictions**__\n${player2Afflictions.length ? combineArrayWithAnd(player2Afflictions.map(a => `${getAfflictionEmoji(a.name as AfflictionName)} ${a.name}`)) : 'None'}` +
 				`${player2EffectsDisplay.length ? `\n\n__**Effects**__\n${player2EffectsDisplay.join('\n')}` : ''}`,
 				true)
 			.setFooter(`Turn #${turnNumber} / 20 max · 40 seconds to make selection`)

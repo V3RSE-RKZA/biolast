@@ -8,7 +8,7 @@ import { lowerHealth, setFighting } from './db/players'
 import { BodyPart, getAttackDamage, getAttackString, getBodyPartHit } from './duelUtils'
 import { getEquips, getItemDisplay, getItems } from './itemUtils'
 import { addStatusEffects, getEffectsDisplay } from './playerUtils'
-import { combineArrayWithAnd, formatHealth, getBodyPartEmoji, getRarityDisplay } from './stringUtils'
+import { combineArrayWithAnd, formatHealth, getAfflictionEmoji, getBodyPartEmoji, getRarityDisplay } from './stringUtils'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 
 interface MobAttackChoice {
@@ -258,7 +258,7 @@ export async function attackPlayer (
 			messages.push(getMobAttackString(npc, `<@${member.id}>`, limbsHit, totalDamage, npc.weapon))
 
 			if (npc.weapon.type === 'Throwable Weapon' && npc.weapon.subtype === 'Incendiary Grenade' && !playerAfflictions.includes(afflictions.Burning)) {
-				messages.push(`${icons.debuff} **${member.displayName}** is Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
+				messages.push(`${icons.debuff} **${member.displayName}** is ${getAfflictionEmoji('Burning')} Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
 
 				playerAfflictions.push(afflictions.Burning)
 			}
@@ -276,7 +276,7 @@ export async function attackPlayer (
 		messages.push(getMobAttackString(npc, `<@${member.id}>`, limbsHit, totalDamage))
 
 		if (Math.random() <= (npc.chanceToBite / 100) && !playerAfflictions.includes(afflictions.Bitten)) {
-			messages.push(`${icons.debuff} **${member.displayName}** was ${icons.biohazard} Bitten! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Bitten.effects))})`)
+			messages.push(`${icons.debuff} **${member.displayName}** was ${getAfflictionEmoji('Bitten')} Bitten! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Bitten.effects))})`)
 
 			playerAfflictions.push(afflictions.Bitten)
 		}
@@ -310,7 +310,7 @@ export async function attackPlayer (
 			}
 		}
 		else if (result.limb === 'arm' && Math.random() <= 0.2 && !playerAfflictions.includes(afflictions['Broken Arm'])) {
-			messages.push(`${icons.debuff} **${member.displayName}**'s arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
+			messages.push(`${icons.debuff} **${member.displayName}**'s ${getAfflictionEmoji('Broken Arm')} arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
 
 			playerAfflictions.push(afflictions['Broken Arm'])
 		}

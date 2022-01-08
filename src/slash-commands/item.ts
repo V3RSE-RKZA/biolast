@@ -9,7 +9,7 @@ import { Ammunition, Item, ItemType } from '../types/Items'
 import { getItem } from '../utils/argParsers'
 import { getAttachments, getItemByID, getUserBackpack, getUserStash } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
-import { combineArrayWithOr, formatMoney } from '../utils/stringUtils'
+import { combineArrayWithOr, formatMoney, getAfflictionEmoji } from '../utils/stringUtils'
 import { getItemDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from '../utils/itemUtils'
 import { allLocations } from '../resources/locations'
 import { getEffectsDisplay } from '../utils/playerUtils'
@@ -502,10 +502,13 @@ class ItemCommand extends CustomSlashCommand {
 				itemEmbed.addField('Heals For', `${item.healsFor} health`, true)
 
 				if (item.curesBitten) {
-					curesAfflictions.push(`${icons.biohazard} Bitten`)
+					curesAfflictions.push(`${getAfflictionEmoji('Bitten')} Bitten`)
 				}
 				if (item.curesBrokenArm) {
-					curesAfflictions.push('🦴 Broken Arm')
+					curesAfflictions.push(`${getAfflictionEmoji('Broken Arm')} Broken Arm`)
+				}
+				if (item.curesBurning) {
+					curesAfflictions.push(`${getAfflictionEmoji('Burning')} Burning`)
 				}
 
 				if (curesAfflictions.length) {
