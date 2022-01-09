@@ -433,7 +433,7 @@ class ScavengeCommand extends CustomSlashCommand {
 									if (webhooks.pvp.id && webhooks.pvp.token) {
 										try {
 											await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-												content: `☠️ ${npc.boss ? `**${npc.display}**` : `A **${npc.display}**`} killed **${ctx.user.username}#${ctx.user.discriminator}**!`,
+												content: `☠️ ${npc.boss ? `**${npc.display}**` : `A **${npc.display}**`} killed **${ctx.user.username}#${ctx.user.discriminator}** at **${locationChoice.display}**!`,
 												embeds: [lootEmbed.embed]
 											})
 										}
@@ -877,7 +877,7 @@ class ScavengeCommand extends CustomSlashCommand {
 								if (webhooks.pvp.id && webhooks.pvp.token) {
 									try {
 										await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-											content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed ${npc.boss ? `**${npc.display}**` : `a **${npc.display}**`} using their ${getItemDisplay(playerChoice.weapon.item)}` +
+											content: `☠️ **${ctx.user.username}#${ctx.user.discriminator}** killed ${npc.boss ? `**${npc.display}**` : `a **${npc.display}**`} at **${locationChoice.display}** using their ${getItemDisplay(playerChoice.weapon.item)}` +
 												`${playerChoice.ammo ? ` (ammo: ${getItemDisplay(playerChoice.ammo.item)})` : ''}.`,
 											embeds: lootEmbed ? [lootEmbed.embed] : undefined
 										})
