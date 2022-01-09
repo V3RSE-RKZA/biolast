@@ -13,7 +13,7 @@ import { addItemToStash, getAllShopItems, getShopItem, getUserStash, removeItemF
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow, increaseShopSales, removeMoney } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { getItemDisplay, getItemPrice, getItems } from '../utils/itemUtils'
+import { getItemDisplay, getItemPrice, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { disableAllComponents } from '../utils/messageUtils'
 
@@ -399,19 +399,19 @@ class MarketCommand extends CustomSlashCommand {
 	}
 
 	generatePages (rows: ShopItemRow[], searchedItem?: Item): { page: Embed, items: ItemWithRow<ShopItemRow>[] }[] {
-		const itemData = getItems(rows)
+		const itemData = sortItemsByLevel(getItems(rows).items, true)
 		const pages = []
-		const maxPage = Math.ceil(itemData.items.length / ITEMS_PER_PAGE) || 1
+		const maxPage = Math.ceil(itemData.length / ITEMS_PER_PAGE) || 1
 
 		for (let i = 1; i < maxPage + 1; i++) {
 			const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
 			const indexLast = ITEMS_PER_PAGE * i
-			const filteredItems = itemData.items.slice(indexFirst, indexLast)
+			const filteredItems = itemData.slice(indexFirst, indexLast)
 
 			const embed = new Embed()
 				.setDescription(`**${searchedItem ? `Market Results For: ${getItemDisplay(searchedItem)}` : 'Market'}**` +
 					`\n\n${icons.information} Use the selection menu to purchase items.\n${icons.warning} These deals will expire after 1 day.` +
-					'\n\n__**Items Available**__ (Sorted newest to oldest)' +
+					'\n\n__**Items Available**__ (Sorted best to worst)' +
 					`\n${filteredItems.map(itm => `**Item**: ${getItemDisplay(itm.item, itm.row)}\n**Listed**: <t:${itm.row.createdAt.getTime() / 1000}:R>\n**Price**: ${formatMoney(itm.row.price)}`).join('\n\n') ||
 					`There are no ${searchedItem ? `${getItemDisplay(searchedItem)}'s` : 'items'} available right now. When a player sells an item, you will see it for sale here.`}`)
 
