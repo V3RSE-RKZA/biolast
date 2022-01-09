@@ -34,7 +34,7 @@ export function getItems<T extends ItemRow> (itemRows: T[]): { items: ItemWithRo
 
 	return {
 		items: inventory,
-		slotsUsed
+		slotsUsed: Math.round(slotsUsed * 10) / 10
 	}
 }
 
