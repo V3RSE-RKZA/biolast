@@ -224,7 +224,7 @@ class SkinsCommand extends CustomSlashCommand {
 					}, { showEquipped: false, showDurability: false })
 
 					await confirmed.editParent({
-						content: `${icons.checkmark} Successfully applied the ${getSkinDisplay(skin)} skin to your ${itemDisplay}.`,
+						content: `${icons.checkmark} Applied the ${getSkinDisplay(skin)} skin to your ${itemDisplay}.`,
 						components: []
 					})
 				}

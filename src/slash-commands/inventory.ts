@@ -279,7 +279,7 @@ class InventoryCommand extends CustomSlashCommand {
 						stopCollector()
 
 						await c.editParent({
-							content: `${icons.checkmark} Successfully moved the following from your inventory to your stash:\n\n${itemsToDeposit.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`,
+							content: `${icons.checkmark} Moved the following from your inventory to your stash:\n\n${itemsToDeposit.map(i => getItemDisplay(i.item, i.row, { showEquipped: false })).join('\n')}`,
 							embeds: [],
 							components: []
 						})

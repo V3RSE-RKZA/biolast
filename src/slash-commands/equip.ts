@@ -77,8 +77,8 @@ class EquipCommand extends CustomSlashCommand {
 
 		await ctx.send({
 			content: unequippedItem ?
-				`${icons.checkmark} Successfully unequipped ${getItemDisplay(unequippedItem.item, unequippedItem.row, { showEquipped: false })} and equipped ${getItemDisplay(itemToEquip.item, itemToEquip.row)}` :
-				`${icons.checkmark} Successfully equipped ${getItemDisplay(itemToEquip.item, itemToEquip.row)}`
+				`${icons.checkmark} Unequipped ${getItemDisplay(unequippedItem.item, unequippedItem.row, { showEquipped: false })} and equipped ${getItemDisplay(itemToEquip.item, itemToEquip.row)}` :
+				`${icons.checkmark} Equipped ${getItemDisplay(itemToEquip.item, itemToEquip.row)}`
 		})
 	}
 }

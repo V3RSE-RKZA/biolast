@@ -222,7 +222,7 @@ class QuestsCommand extends CustomSlashCommand {
 						}
 
 						await buttonCtx.editParent({
-							content: `${icons.checkmark} Successfully turned in ${getItemDisplay(questItemToRemove.item, questItemToRemove.row, { showDurability: false, showEquipped: false })} for quest **#${completedQuestID}**.`,
+							content: `${icons.checkmark} Turned in ${getItemDisplay(questItemToRemove.item, questItemToRemove.row, { showDurability: false, showEquipped: false })} for quest **#${completedQuestID}**.`,
 							embeds: [questsEmbed.embed],
 							components: newQuestButtons.length ? [{
 								type: ComponentType.ACTION_ROW,

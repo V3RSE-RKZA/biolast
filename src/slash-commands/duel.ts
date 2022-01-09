@@ -627,7 +627,7 @@ class DuelCommand extends CustomSlashCommand {
 													}
 
 													await itemSelectMessage.edit({
-														content: `${icons.checkmark} Successfully transferred **${itemsPicked.length}** items to your inventory:` +
+														content: `${icons.checkmark} Transferred **${itemsPicked.length}** items to your inventory:` +
 															`\n\n${itemsPicked.map(itm => getItemDisplay(itm.item, itm.row, { showEquipped: false })).join('\n')}`,
 														components: []
 													})

@@ -78,7 +78,7 @@ class UnequipCommand extends CustomSlashCommand {
 		await transaction.commit()
 
 		await ctx.send({
-			content: `${icons.checkmark} Successfully unequipped ${getItemDisplay(unequippedItem.item, unequippedItem.row, { showEquipped: false })}.`
+			content: `${icons.checkmark} Unequipped ${getItemDisplay(unequippedItem.item, unequippedItem.row, { showEquipped: false })}.`
 		})
 	}
 }

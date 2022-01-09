@@ -161,7 +161,7 @@ class CompanionCommand extends CustomSlashCommand {
 					await transaction.commit()
 
 					await confirmed.editParent({
-						content: `${icons.checkmark} Successfully hired **${companion.name}** for **${formatMoney(companion.price)}**.\n\n` +
+						content: `${icons.checkmark} Hired **${companion.name}** for **${formatMoney(companion.price)}**.\n\n` +
 							`${icons.information} You now have **${formatMoney(userDataV.money - companion.price)}**.`,
 						components: []
 					})
