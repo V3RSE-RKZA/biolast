@@ -12,7 +12,7 @@ import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDu
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addHealth, addXp, getUserRow, increaseKills, setFighting } from '../utils/db/players'
 import { getUserQuests, increaseProgress } from '../utils/db/quests'
-import { getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability, sortItemsByLevel } from '../utils/itemUtils'
+import { backpackHasSpace, getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import getRandomInt from '../utils/randomInt'
 import { combineArrayWithAnd, combineArrayWithOr, formatHealth, getAfflictionEmoji, getBodyPartEmoji, getRarityDisplay } from '../utils/stringUtils'
@@ -53,6 +53,15 @@ class ScavengeCommand extends CustomSlashCommand {
 		if (!isValidLocation(preUserData.currentLocation)) {
 			await ctx.send({
 				content: `${icons.warning} You need to travel to a region. Use the \`/travel\` command to travel to a region you want to scavenge.`
+			})
+			return
+		}
+
+		const preBackpackRows = await getUserBackpack(query, ctx.user.id)
+
+		if (!backpackHasSpace(preBackpackRows, 0)) {
+			await ctx.send({
+				content: `${icons.warning} You are overweight, you will need to clear some space in your inventory before scavenging.`
 			})
 			return
 		}
@@ -220,7 +229,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				(
 					hasRequiredKey &&
 					(!hasRequiredKey.row.durability || hasRequiredKey.row.durability - 1 <= 0) ? hasRequiredKey.item.slotsUsed : 0
-				) >= backpackLimit
+				) > backpackLimit
 			) {
 				await transaction.commit()
 
