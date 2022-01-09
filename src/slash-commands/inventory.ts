@@ -72,11 +72,11 @@ class InventoryCommand extends CustomSlashCommand {
 		const preUserData = (await getUserRow(query, ctx.user.id))!
 		const preUserBackpack = await getUserBackpack(query, ctx.user.id)
 		const pages = this.generatePages(ctx.member || ctx.user, preUserBackpack, preUserData, true)
-		const preComponents: ComponentActionRow[] = []
+		let components: ComponentActionRow[] = []
 		let page = 0
 
 		if (pages[0].items.length && !preUserData.fighting) {
-			preComponents.push({
+			components.push({
 				type: ComponentType.ACTION_ROW,
 				components: [
 					{
@@ -104,7 +104,7 @@ class InventoryCommand extends CustomSlashCommand {
 		}
 
 		if (pages.length > 1) {
-			preComponents.push({
+			components.push({
 				type: ComponentType.ACTION_ROW,
 				components: [
 					PREVIOUS_BUTTON(true),
@@ -116,23 +116,23 @@ class InventoryCommand extends CustomSlashCommand {
 		const fixedPages = pages
 		const botMessage = await ctx.send({
 			embeds: [pages[0].page.embed],
-			components: preComponents
+			components
 		}) as Message
 
-		if (preComponents.length) {
+		if (components.length) {
 			const { collector, stopCollector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 80000)
 
 			collector.on('collect', async c => {
 				try {
 					await c.acknowledge()
 
-					const newComponents: ComponentActionRow[] = []
+					components = []
 
 					if (c.customID === 'previous' && page !== 0) {
 						page--
 
 						if (!preUserData.fighting) {
-							newComponents.push({
+							components.push({
 								type: ComponentType.ACTION_ROW,
 								components: [
 									{
@@ -159,7 +159,7 @@ class InventoryCommand extends CustomSlashCommand {
 							})
 						}
 
-						newComponents.push({
+						components.push({
 							type: ComponentType.ACTION_ROW,
 							components: [
 								PREVIOUS_BUTTON(page === 0),
@@ -169,14 +169,14 @@ class InventoryCommand extends CustomSlashCommand {
 
 						await c.editParent({
 							embeds: [fixedPages[page].page.embed],
-							components: newComponents
+							components
 						})
 					}
 					else if (c.customID === 'next' && page !== (fixedPages.length - 1)) {
 						page++
 
 						if (!preUserData.fighting) {
-							newComponents.push({
+							components.push({
 								type: ComponentType.ACTION_ROW,
 								components: [
 									{
@@ -203,7 +203,7 @@ class InventoryCommand extends CustomSlashCommand {
 							})
 						}
 
-						newComponents.push({
+						components.push({
 							type: ComponentType.ACTION_ROW,
 							components: [
 								PREVIOUS_BUTTON(false),
@@ -213,7 +213,7 @@ class InventoryCommand extends CustomSlashCommand {
 
 						await c.editParent({
 							embeds: [fixedPages[page].page.embed],
-							components: newComponents
+							components
 						})
 					}
 					else if (c.customID === 'transfer') {
@@ -296,7 +296,7 @@ class InventoryCommand extends CustomSlashCommand {
 						await botMessage.edit({
 							content: `${icons.warning} Buttons timed out.`,
 							embeds: [fixedPages[page].page.embed],
-							components: disableAllComponents(botMessage.components)
+							components: disableAllComponents(components)
 						})
 					}
 				}
