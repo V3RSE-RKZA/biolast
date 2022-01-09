@@ -349,7 +349,7 @@ class ItemCommand extends CustomSlashCommand {
 								const location = allLocations.find(l => l.display === loc)
 
 								if (location && userData.locationLevel < location.locationLevel) {
-									return `__${loc.replace(/\w/g, '?')} (Level ${location.locationLevel} region)__\nSpotted in a region you haven't discovered yet.`
+									return `__${loc.replace(/\w/g, '?')} (Tier ${location.locationLevel} region)__\nSpotted in a region you haven't discovered yet.`
 								}
 
 								return `__${loc}__\n${obtainedFrom[loc].join('\n')}`

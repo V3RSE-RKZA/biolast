@@ -93,7 +93,7 @@ class ProfileCommand extends CustomSlashCommand {
 				`\n**Quests Completed**: ${formatNumber(userData.questsCompleted)}\n**Player Value**: ${formatMoney(playerValue)}`)
 
 		if (currentLocation) {
-			embed.setDescription(`Currently scavenging ${currentLocation.icon} **${currentLocation.display}** (Region Level **${currentLocation.locationLevel}**)`)
+			embed.setDescription(`Currently scavenging ${currentLocation.icon} **${currentLocation.display}** (Tier **${currentLocation.locationLevel}** Region)`)
 		}
 
 		return embed

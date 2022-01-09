@@ -42,7 +42,7 @@ class TravelCommand extends CustomSlashCommand {
 					return {
 						label: `${locationData.locationLevel === preUserData.locationLevel ? `${locationData.display} (best region available)` : locationData.display}`,
 						value: locID,
-						description: `Level ${locationData.locationLevel} region.`,
+						description: `Tier ${locationData.locationLevel} region.`,
 						emoji: iconID ? {
 							id: iconID[1],
 							name: locationData.display
@@ -58,10 +58,10 @@ class TravelCommand extends CustomSlashCommand {
 		const nextLocations = allLocations.filter(l => l.locationLevel === preUserData.locationLevel + 1)
 		const locationsDisplay = allLocations.map(l => {
 			if (l === currentLocation) {
-				return `(Level ${l.locationLevel} Region) ${l.icon} **${l.display}**: Current region!`
+				return `(Tier ${l.locationLevel} Region) ${l.icon} **${l.display}**: Current region!`
 			}
 
-			return `(Level ${l.locationLevel} Region) **${l.locationLevel > preUserData.locationLevel + 1 ? l.display.replace(/\w/g, '?') : `${l.icon} ${l.display}`}**: ${preUserData.locationLevel >= l.locationLevel ? `${icons.checkmark} Available` : `${icons.cancel} Undiscovered`}`
+			return `(Tier ${l.locationLevel} Region) **${l.locationLevel > preUserData.locationLevel + 1 ? l.display.replace(/\w/g, '?') : `${l.icon} ${l.display}`}**: ${preUserData.locationLevel >= l.locationLevel ? `${icons.checkmark} Available` : `${icons.cancel} Undiscovered`}`
 		})
 
 		const botMessage = await ctx.send({
