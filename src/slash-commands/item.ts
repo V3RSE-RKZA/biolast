@@ -1,6 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext, AutocompleteContext, Message, ComponentType, ComponentActionRow } from 'slash-create'
 import App from '../app'
-import { icons, shopBuyMultiplier, shopSellMultiplier } from '../config'
+import { icons } from '../config'
 import { allItems } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -411,18 +411,6 @@ class ItemCommand extends CustomSlashCommand {
 		itemEmbed.addField('Item Weight', `Uses **${item.slotsUsed}** slot${item.slotsUsed === 1 ? '' : 's'}`, true)
 
 		if (item.sellPrice) {
-			if (item.type !== 'Collectible') {
-				const potentialSell = {
-					min: Math.floor(item.sellPrice * (shopSellMultiplier.min / 100)),
-					max: Math.floor(item.sellPrice * (shopSellMultiplier.max / 100))
-				}
-				const potentialCost = {
-					min: Math.floor(potentialSell.min * (shopBuyMultiplier.min / 100)),
-					max: Math.floor(potentialSell.max * (shopBuyMultiplier.max / 100))
-				}
-				itemEmbed.addField('Buy Price', `Mint conditions seen in the market ranging from **${formatMoney(potentialCost.min)}** to **${formatMoney(potentialCost.max)}**`, true)
-			}
-
 			itemEmbed.addField('Sell Price', formatMoney(Math.floor(item.sellPrice * this.app.currentShopSellMultiplier)), true)
 		}
 
