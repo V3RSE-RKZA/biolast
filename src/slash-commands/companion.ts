@@ -530,7 +530,11 @@ class CompanionCommand extends CustomSlashCommand {
 						// expand the item pool if there aren't many possible items, ensures that companion will find different a variety of items
 						while (possibleItems.length < 4 + companion.itemsFound) {
 							loopI++
-							possibleItems = allItems.filter(i => i.itemLevel <= completedCompanionRow.level + 1 && i.itemLevel > completedCompanionRow.level - (4 * loopI))
+							possibleItems = allItems.filter(i =>
+								i.name !== 'dog_tags' &&
+								i.itemLevel <= completedCompanionRow.level + 1 &&
+								i.itemLevel > completedCompanionRow.level - (4 * loopI)
+							)
 						}
 
 						for (let i = 0; i < companion.itemsFound; i++) {
