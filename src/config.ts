@@ -52,7 +52,8 @@ export const icons = {
 	debuff: '<:debuff:902746707794726942>',
 	buff: '<:buff:902746707622776832>',
 	panic: '<:panic:928046269061021806>',
-	loading: '<a:loading:928735911196381224>'
+	loading: '<a:loading:928735911196381224>',
+	merchant: '<:flurshed:928849729603907594>'
 }
 
 // How many items a single user can buy from the shop each day
