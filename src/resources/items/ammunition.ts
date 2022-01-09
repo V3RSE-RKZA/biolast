@@ -168,7 +168,7 @@ export const ammunition = ammoObject({
 		description: 'Hollow point ammunition for 9mm weapons. Hollow point bullets expand when they hit their target, causing more damage.',
 		damage: 40,
 		penetration: 1.2,
-		ammoFor: [ranged['glock-17'], ranged.mp5],
+		ammoFor: [ranged['glock-17'], ranged.mp5, ranged.P320],
 		sellPrice: 302,
 		slotsUsed: 1,
 		itemLevel: 6
@@ -195,7 +195,7 @@ export const ammunition = ammoObject({
 		description: 'Armor-piercing ammunition for 9mm weapons.',
 		damage: 36,
 		penetration: 2.9,
-		ammoFor: [ranged.P320, ranged.mp5],
+		ammoFor: [ranged.P320, ranged.mp5, ranged['glock-17']],
 		sellPrice: 1531,
 		slotsUsed: 1,
 		itemLevel: 12

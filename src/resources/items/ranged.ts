@@ -125,11 +125,11 @@ export const ranged = rangedObject({
 		icon: '<:U_weapon:601366669272678411>',
 		description: 'Semi-automatic pistol made by SIG Sauer.',
 		aliases: ['sig_p320', 'sig_p250', 'p250'],
-		sellPrice: 261,
-		durability: 4,
+		sellPrice: 265,
+		durability: 8,
 		slotsUsed: 2,
-		accuracy: 90,
-		itemLevel: 5,
+		accuracy: 70,
+		itemLevel: 6,
 		speed: 18
 	},
 	'luger': {
