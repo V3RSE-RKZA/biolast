@@ -417,7 +417,7 @@ class BossCommand extends CustomSlashCommand {
 						messages[i].push(`<@${choiceInfo.member.id}> did not select an action.`)
 					}
 					else if (isFleeChoice(choiceInfo.selection)) {
-						const chance = 0.1
+						const chance = 0.15
 
 						if (Math.random() <= chance) {
 							// success
@@ -432,7 +432,7 @@ class BossCommand extends CustomSlashCommand {
 							}
 						}
 						else {
-							messages[i].push(`${icons.danger} <@${choiceInfo.member.id}> tries to flee from the duel (10% chance) but fails!`)
+							messages[i].push(`${icons.danger} <@${choiceInfo.member.id}> tries to flee from the duel (15% chance) but fails!`)
 						}
 					}
 					else if (isHealChoice(choiceInfo.selection)) {

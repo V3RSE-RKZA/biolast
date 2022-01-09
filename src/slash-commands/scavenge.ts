@@ -498,7 +498,7 @@ class ScavengeCommand extends CustomSlashCommand {
 							messages[i].push(`<@${ctx.user.id}> did not select an action.`)
 						}
 						else if (playerChoice.choice === 'try to flee') {
-							const chance = 0.1
+							const chance = 0.15
 
 							if (Math.random() <= chance) {
 								// success
@@ -508,7 +508,7 @@ class ScavengeCommand extends CustomSlashCommand {
 								break
 							}
 							else {
-								messages[i].push(`${icons.danger} <@${ctx.user.id}> tries to flee from the duel (10% chance) but fails!`)
+								messages[i].push(`${icons.danger} <@${ctx.user.id}> tries to flee from the duel (15% chance) but fails!`)
 							}
 						}
 						else if (playerChoice.choice === 'use a medical item') {
