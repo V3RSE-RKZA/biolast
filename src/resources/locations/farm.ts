@@ -38,7 +38,7 @@ const feralAnimal: NPC = {
 	},
 	xp: 35,
 	chanceToBite: 30,
-	attackPenetration: 1.6,
+	attackPenetration: 1.2,
 	boss: false,
 	respawnTime: 60 * 2
 }

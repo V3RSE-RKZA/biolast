@@ -99,7 +99,7 @@ class SellCommand extends CustomSlashCommand {
 		}
 
 		const botMessage = await ctx.send({
-			content: `Select the item(s) from your ${ctx.options.inventory ? 'inventory' : 'stash'} that you wish to sell.`,
+			content: `Select the item(s) from your **${ctx.options.inventory ? 'inventory' : 'stash'}** that you wish to sell.`,
 			embeds: [pages[0].page.embed],
 			components
 		}) as Message
