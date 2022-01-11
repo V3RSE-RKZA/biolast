@@ -135,8 +135,20 @@ class BossCommand extends CustomSlashCommand {
 				})
 				return
 			}
-
-			if (!isValidLocation(memberData.currentLocation) || memberData.currentLocation !== preUserData.currentLocation) {
+			else if (memberData.locationLevel !== preUserData.locationLevel) {
+				if (memberData.locationLevel > preUserData.locationLevel) {
+					await ctx.send({
+						content: `${icons.warning} **${member.displayName}** has traveled to a higher tiered region than you. You can only invite players who are the same region tier as you (Region tier ${preUserData.locationLevel}).`
+					})
+				}
+				else {
+					await ctx.send({
+						content: `${icons.warning} You have traveled to a higher tiered region than **${member.displayName}** (Region tier ${memberData.locationLevel}). You can only invite players who are the same region tier as you (Region tier ${preUserData.locationLevel}).`
+					})
+				}
+				return
+			}
+			else if (!isValidLocation(memberData.currentLocation) || memberData.currentLocation !== preUserData.currentLocation) {
 				await ctx.send({
 					content: `${icons.warning} **${member.displayName}** is not located in the same region, they need to \`/travel\` to **${location.display}**.`
 				})
