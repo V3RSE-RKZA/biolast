@@ -1,6 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext, ComponentType, Message } from 'slash-create'
 import App from '../app'
-import { adminUsers, icons } from '../config'
+import { icons } from '../config'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
@@ -42,7 +42,7 @@ class HelpCommand extends CustomSlashCommand {
 				cmd = this.app.slashCreator.commands.find(c => c.commandName === correctedCmd) as CustomSlashCommand | undefined
 			}
 
-			if (!cmd || (cmd.customOptions.category === 'admin' && !adminUsers.includes(ctx.user.id))) {
+			if (!cmd) {
 				await ctx.send({
 					content: `${icons.danger} That command doesn't exist!`
 				})
@@ -74,7 +74,6 @@ class HelpCommand extends CustomSlashCommand {
 			.setTitle('What are the commands?')
 			.setDescription('Use `/help <command>` to see more about a specific command. You can also hover your mouse over the command for a short description.' +
 				`\n\n${this.app.slashCreator.commands
-					.filter(cmd => (cmd as CustomSlashCommand).customOptions.category !== 'admin')
 					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/hnVhYwYuqcM '${cmd.description}')`)
 					.join(', ')}`)
 

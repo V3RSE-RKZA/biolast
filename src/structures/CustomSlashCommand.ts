@@ -3,7 +3,7 @@ import App from '../app'
 import { debug, testingGuildIDs } from '../config'
 import { logger } from '../utils/logger'
 
-type CommandCategory = 'admin' | 'info' | 'items' | 'utility'
+type CommandCategory = 'info' | 'items' | 'utility'
 
 interface BaseCommandOptions {
 	guildModsOnly: boolean

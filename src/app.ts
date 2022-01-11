@@ -4,7 +4,7 @@ import { TextCommand } from './types/Commands'
 import MessageCollector from './utils/MessageCollector'
 import ComponentCollector from './utils/ComponentCollector'
 import CronJobs from './utils/CronJobs'
-import { clientId, botToken, adminUsers, icons, shopSellMultiplier } from './config'
+import { clientId, botToken, icons, shopSellMultiplier } from './config'
 import fs from 'fs'
 import path from 'path'
 import { query } from './utils/db/mysql'
@@ -285,15 +285,8 @@ class App {
 		try {
 			let userLeveledUpMessage
 
-			if (command.customOptions.category === 'admin' && !adminUsers.includes(ctx.user.id)) {
-				return ctx.send({
-					content: `${icons.danger} You don't have permission to run that command.`,
-					flags: InteractionResponseFlags.EPHEMERAL
-				})
-			}
-
 			// command was run in a server
-			else if (ctx.guildID) {
+			if (ctx.guildID) {
 				const userData = await getUserRow(query, ctx.user.id)
 
 				// check if user has manage server permission before running GuildModCommand
