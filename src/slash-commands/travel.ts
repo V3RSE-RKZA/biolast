@@ -58,10 +58,14 @@ class TravelCommand extends CustomSlashCommand {
 		const nextLocations = allLocations.filter(l => l.locationLevel === preUserData.locationLevel + 1)
 		const locationsDisplay = allLocations.map(l => {
 			if (l === currentLocation) {
-				return `(Tier ${l.locationLevel} Region) ${l.icon} **${l.display}**: Current region!`
+				return `${icons.checkmark} (Tier ${l.locationLevel} Region) ${l.icon} **${l.display}**: Current region!`
 			}
 
-			return `(Tier ${l.locationLevel} Region) **${l.locationLevel > preUserData.locationLevel + 1 ? l.display.replace(/\w/g, '?') : `${l.icon} ${l.display}`}**: ${preUserData.locationLevel >= l.locationLevel ? `${icons.checkmark} Available` : `${icons.cancel} Undiscovered`}`
+			if (preUserData.locationLevel >= l.locationLevel) {
+				return `${icons.checkmark} (Tier ${l.locationLevel} Region) **${l.icon} ${l.display}**: Available`
+			}
+
+			return `${icons.cancel} (Tier ${l.locationLevel} Region) **${l.locationLevel > preUserData.locationLevel + 1 ? l.display.replace(/\w/g, '?') : `${l.icon} ${l.display}`}**: Undiscovered`
 		})
 
 		const botMessage = await ctx.send({
