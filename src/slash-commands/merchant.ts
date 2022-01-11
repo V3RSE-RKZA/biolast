@@ -5,7 +5,7 @@ import { items } from '../resources/items'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { Collectible, Item } from '../types/Items'
-import { ItemRow, ItemWithRow, UserRow } from '../types/mysql'
+import { UserRow } from '../types/mysql'
 import { CONFIRM_BUTTONS, NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, getUserStash } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
@@ -31,18 +31,8 @@ interface CollectibleTrade {
 	}
 	price: Collectible
 }
-interface OtherMoneyTrade {
-	type: 'other-money'
-	offer: string
-	price: number
-}
-interface OtherCollectibleTrade {
-	type: 'other-collectible'
-	offer: string
-	price: Collectible
-}
 
-type Trade = (MoneyTrade | CollectibleTrade | OtherMoneyTrade | OtherCollectibleTrade) & { locationLevel: number }
+type Trade = (MoneyTrade | CollectibleTrade) & { locationLevel: number }
 
 const allTrades: Trade[] = [
 	{
@@ -83,7 +73,7 @@ const allTrades: Trade[] = [
 	}
 ]
 
-const DEALS_PER_PAGE = 2
+const DEALS_PER_PAGE = 10
 
 class MerchantCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -119,15 +109,15 @@ class MerchantCommand extends CustomSlashCommand {
 						placeholder: 'Select trade:',
 						options: pages[0].deals.map((d, i) => {
 							const iconID = (d.type === 'collectible' || d.type === 'money') && d.offer.item.icon.match(/:([0-9]*)>/)
-							const label = (d.type === 'collectible' || d.type === 'money') ?
-								`${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}` :
-								d.offer
-							const price = (d.type === 'collectible' || d.type === 'other-collectible') ?
-								`Costs 1x ${d.price.name.replace(/_/g, ' ')}` :
-								`Costs ${formatMoney(d.price, false)}`
+							const label = `${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}`
+							const price = 'price' in d ?
+								typeof d.price === 'number' ?
+									`Costs ${formatMoney(d.price, false)}` :
+									`Costs 1x ${d.price.name.replace(/_/g, ' ')}` :
+								undefined
 
 							return {
-								label: `I'd like to purchase ${label}`,
+								label: d.type === 'money' || d.type === 'collectible' ? `I'd like to purchase ${label}` : `I'd like to ${label}`,
 								description: price,
 								value: i.toString(),
 								emoji: iconID ? {
@@ -173,17 +163,17 @@ class MerchantCommand extends CustomSlashCommand {
 								type: ComponentType.SELECT,
 								custom_id: 'buy',
 								placeholder: 'Select trade:',
-								options: pages[page].deals.map((d, i) => {
+								options: pages[0].deals.map((d, i) => {
 									const iconID = (d.type === 'collectible' || d.type === 'money') && d.offer.item.icon.match(/:([0-9]*)>/)
-									const label = (d.type === 'collectible' || d.type === 'money') ?
-										`${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}` :
-										d.offer
-									const price = (d.type === 'collectible' || d.type === 'other-collectible') ?
-										`Costs 1x ${d.price.name.replace(/_/g, ' ')}` :
-										`Costs ${formatMoney(d.price, false)}`
+									const label = `${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}`
+									const price = 'price' in d ?
+										typeof d.price === 'number' ?
+											`Costs ${formatMoney(d.price, false)}` :
+											`Costs 1x ${d.price.name.replace(/_/g, ' ')}` :
+										undefined
 
 									return {
-										label,
+										label: d.type === 'money' || d.type === 'collectible' ? `I'd like to purchase ${label}` : `I'd like to ${label}`,
 										description: price,
 										value: i.toString(),
 										emoji: iconID ? {
@@ -219,17 +209,17 @@ class MerchantCommand extends CustomSlashCommand {
 									type: ComponentType.SELECT,
 									custom_id: 'buy',
 									placeholder: 'Select trade:',
-									options: pages[page].deals.map((d, i) => {
+									options: pages[0].deals.map((d, i) => {
 										const iconID = (d.type === 'collectible' || d.type === 'money') && d.offer.item.icon.match(/:([0-9]*)>/)
-										const label = (d.type === 'collectible' || d.type === 'money') ?
-											`${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}` :
-											d.offer
-										const price = (d.type === 'collectible' || d.type === 'other-collectible') ?
-											`Costs 1x ${d.price.name.replace(/_/g, ' ')}` :
-											`Costs ${formatMoney(d.price, false)}`
+										const label = `${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}`
+										const price = 'price' in d ?
+											typeof d.price === 'number' ?
+												`Costs ${formatMoney(d.price, false)}` :
+												`Costs 1x ${d.price.name.replace(/_/g, ' ')}` :
+											undefined
 
 										return {
-											label,
+											label: d.type === 'money' || d.type === 'collectible' ? `I'd like to purchase ${label}` : `I'd like to ${label}`,
 											description: price,
 											value: i.toString(),
 											emoji: iconID ? {
@@ -258,43 +248,103 @@ class MerchantCommand extends CustomSlashCommand {
 				}
 				else if (c.customID === 'buy') {
 					const deal = pages[page].deals[parseInt(c.values[0])]
-					let foundItem
 
 					if (!deal) {
 						throw new Error('No deal selected')
 					}
 
-					if (deal.type === 'money' || deal.type === 'other-money') {
-						const userData = (await getUserRow(query, ctx.user.id))!
+					if (deal.type === 'money') {
+						const preBuyUserData = (await getUserRow(query, ctx.user.id))!
 
-						if (userData.money < deal.price) {
+						if (preBuyUserData.money < deal.price) {
 							await c.send({
-								content: `${icons.warning} You need **${formatMoney(deal.price)}** to complete that trade. You only have **${formatMoney(userData.money)}**.`,
+								content: `${icons.warning} You need **${formatMoney(deal.price)}** to complete that trade. You only have **${formatMoney(preBuyUserData.money)}**.`,
 								ephemeral: true
 							})
 							return
 						}
 
-						if (deal.type === 'money') {
-							const backpackRows = await getUserBackpack(query, ctx.user.id)
-							const slotsNeeded = deal.offer.item.slotsUsed * deal.offer.amount
+						const preBackpackRows = await getUserBackpack(query, ctx.user.id)
+						const slotsNeeded = deal.offer.item.slotsUsed * deal.offer.amount
 
-							if (!backpackHasSpace(backpackRows, slotsNeeded)) {
-								await c.send({
-									content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory to complete that trade.` +
-										'\n\nSell items to clear up some space.',
-									ephemeral: true
+						if (!backpackHasSpace(preBackpackRows, slotsNeeded)) {
+							await c.send({
+								content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory to complete that trade.` +
+									'\n\nSell items to clear up some space.',
+								ephemeral: true
+							})
+							return
+						}
+
+						const buyMessage = await c.send({
+							content: `Give ${formatMoney(deal.price)} to the merchant in return for **${deal.offer.amount}x** ${getItemDisplay(deal.offer.item)}?`,
+							components: CONFIRM_BUTTONS
+						}) as Message
+
+						try {
+							const confirmed = (await this.app.componentCollector.awaitClicks(buyMessage.id, i => i.user.id === ctx.user.id))[0]
+
+							if (confirmed.customID !== 'confirmed') {
+								await confirmed.editParent({
+									content: `${icons.checkmark} Purchase canceled.`,
+									components: []
 								})
 								return
 							}
+
+							const transaction = await beginTransaction()
+							const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
+							const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
+
+							if (userData.money < deal.price) {
+								await transaction.commit()
+
+								await confirmed.editParent({
+									content: `${icons.warning} You need **${formatMoney(deal.price)}** to complete this trade. You only have **${formatMoney(userData.money)}**.`,
+									components: disableAllComponents(CONFIRM_BUTTONS)
+								})
+								return
+							}
+							else if (!backpackHasSpace(backpackRows, slotsNeeded)) {
+								await transaction.commit()
+
+								await confirmed.editParent({
+									content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory.` +
+										'\n\nSell items to clear up some space.',
+									components: disableAllComponents(CONFIRM_BUTTONS)
+								})
+								return
+							}
+
+							const itemsReceived: string[] = []
+							for (let i = 0; i < deal.offer.amount; i++) {
+								const dealItemRow = await createItem(transaction.query, deal.offer.item.name, { durability: deal.offer.item.durability })
+								await addItemToBackpack(transaction.query, ctx.user.id, dealItemRow.id)
+								itemsReceived.push(getItemDisplay(deal.offer.item, dealItemRow))
+							}
+
+							await removeMoney(transaction.query, ctx.user.id, deal.price)
+							await transaction.commit()
+
+							await confirmed.editParent({
+								content: `You hand over ${formatMoney(deal.price)} in exchange for:\n\n${itemsReceived.join('\n')}.` +
+								`\n\n${icons.merchant} thanks for the trade! best of luck out there.`,
+								components: []
+							})
+						}
+						catch (err) {
+							await buyMessage.edit({
+								content: `${icons.danger} Purchase timed out.`,
+								components: disableAllComponents(buyMessage.components)
+							})
 						}
 					}
-					else {
-						const stashRows = await getUserStash(query, ctx.user.id)
-						const backpackRows = await getUserBackpack(query, ctx.user.id)
-						const userStashData = getItems(stashRows)
-						const userBackpackData = getItems(backpackRows)
-						foundItem = userBackpackData.items.find(itm => itm.item.name === deal.price.name) || userStashData.items.find(itm => itm.item.name === deal.price.name)
+					else if (deal.type === 'collectible') {
+						const preStashRows = await getUserStash(query, ctx.user.id)
+						const preBackpackRows = await getUserBackpack(query, ctx.user.id)
+						const preStashData = getItems(preStashRows)
+						const preBackpackData = getItems(preBackpackRows)
+						const foundItem = preBackpackData.items.find(itm => itm.item.name === deal.price.name) || preStashData.items.find(itm => itm.item.name === deal.price.name)
 
 						if (!foundItem) {
 							await c.send({
@@ -303,135 +353,84 @@ class MerchantCommand extends CustomSlashCommand {
 							})
 							return
 						}
-						else if (deal.type === 'collectible') {
-							const slotsNeeded = (deal.offer.item.slotsUsed * deal.offer.amount) - foundItem.item.slotsUsed
 
-							if (!backpackHasSpace(backpackRows, slotsNeeded)) {
-								await c.send({
-									content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory to complete that trade.` +
-										'\n\nSell items to clear up some space.',
-									ephemeral: true
+						const slotsNeeded = (deal.offer.item.slotsUsed * deal.offer.amount) - foundItem.item.slotsUsed
+
+						if (!backpackHasSpace(preBackpackRows, slotsNeeded)) {
+							await c.send({
+								content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory to complete that trade.` +
+									'\n\nSell items to clear up some space.',
+								ephemeral: true
+							})
+							return
+						}
+
+						const buyMessage = await c.send({
+							content: `Give ${getItemDisplay(foundItem.item, foundItem.row)} to the merchant in return for **${deal.offer.amount}x** ${getItemDisplay(deal.offer.item)}?`,
+							components: CONFIRM_BUTTONS
+						}) as Message
+
+						try {
+							const confirmed = (await this.app.componentCollector.awaitClicks(buyMessage.id, i => i.user.id === ctx.user.id))[0]
+
+							if (confirmed.customID !== 'confirmed') {
+								await confirmed.editParent({
+									content: `${icons.checkmark} Purchase canceled.`,
+									components: []
 								})
 								return
 							}
-						}
-					}
 
-					const offer = (deal.type === 'collectible' || deal.type === 'money') ?
-						`${deal.offer.amount}x ${getItemDisplay(deal.offer.item)}` :
-						deal.offer
-					const price = (deal.type === 'collectible' || deal.type === 'other-collectible') ?
-						foundItem ? `${getItemDisplay(foundItem.item, foundItem.row)}` : `**1x** ${getItemDisplay(deal.price)}` :
-						`**${formatMoney(deal.price)}** copper`
-					const buyMessage = await c.send({
-						content: `Give ${price} to the merchant in return for **${offer}**?`,
-						components: CONFIRM_BUTTONS
-					}) as Message
-
-					try {
-						const confirmed = (await this.app.componentCollector.awaitClicks(buyMessage.id, i => i.user.id === ctx.user.id))[0]
-
-						if (confirmed.customID === 'confirmed') {
 							// using transaction because users data will be updated
 							const transaction = await beginTransaction()
-							const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
 							const stashRows = await getUserStash(transaction.query, ctx.user.id, true)
 							const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
 							const userStashData = getItems(stashRows)
 							const userBackpackData = getItems(backpackRows)
+							const hasItem = userBackpackData.items.find(itm => itm.row.id === foundItem.row.id) || userStashData.items.find(itm => itm.row.id === foundItem.row.id)
 
-							if (deal.type === 'money' || deal.type === 'other-money') {
-								if (userData.money < deal.price) {
-									await transaction.commit()
+							if (!hasItem) {
+								await transaction.commit()
 
-									await confirmed.editParent({
-										content: `${icons.warning} You need **${formatMoney(deal.price)}** to complete this trade. You only have **${formatMoney(userData.money)}**.`,
-										components: disableAllComponents(CONFIRM_BUTTONS)
-									})
-									return
-								}
-
-								if (deal.type === 'money') {
-									const slotsNeeded = deal.offer.item.slotsUsed * deal.offer.amount
-
-									if (!backpackHasSpace(backpackRows, slotsNeeded)) {
-										await transaction.commit()
-
-										await confirmed.editParent({
-											content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory.` +
-												'\n\nSell items to clear up some space.',
-											components: disableAllComponents(CONFIRM_BUTTONS)
-										})
-										return
-									}
-								}
-
-								await removeMoney(transaction.query, ctx.user.id, deal.price)
+								await confirmed.editParent({
+									content: `${icons.warning} You need **1x** ${getItemDisplay(deal.price)} in your inventory or stash to complete this trade.`,
+									components: disableAllComponents(CONFIRM_BUTTONS)
+								})
+								return
 							}
-							else {
-								const tradedItem = foundItem as ItemWithRow<ItemRow>
-								const hasItem = userBackpackData.items.find(itm => itm.row.id === tradedItem.row.id) || userStashData.items.find(itm => itm.row.id === tradedItem.row.id)
+							else if (!backpackHasSpace(backpackRows, slotsNeeded)) {
+								await transaction.commit()
 
-								if (!hasItem) {
-									await transaction.commit()
-
-									await confirmed.editParent({
-										content: `${icons.warning} You need **1x** ${getItemDisplay(deal.price)} in your inventory or stash to complete this trade.`,
-										components: disableAllComponents(CONFIRM_BUTTONS)
-									})
-									return
-								}
-								else if (deal.type === 'collectible') {
-									const slotsNeeded = (deal.offer.item.slotsUsed * deal.offer.amount) - tradedItem.item.slotsUsed
-
-									if (!backpackHasSpace(backpackRows, slotsNeeded)) {
-										await transaction.commit()
-
-										await confirmed.editParent({
-											content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory to complete this trade.` +
-												'\n\nSell items to clear up some space.',
-											components: disableAllComponents(CONFIRM_BUTTONS)
-										})
-										return
-									}
-								}
-
-								await deleteItem(transaction.query, tradedItem.row.id)
+								await confirmed.editParent({
+									content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory to complete this trade.` +
+										'\n\nSell items to clear up some space.',
+									components: disableAllComponents(CONFIRM_BUTTONS)
+								})
+								return
 							}
 
-							const offersReceived: string[] = []
-
-							if (deal.type === 'collectible' || deal.type === 'money') {
-								for (let i = 0; i < deal.offer.amount; i++) {
-									const dealItemRow = await createItem(transaction.query, deal.offer.item.name, { durability: deal.offer.item.durability })
-									await addItemToBackpack(transaction.query, ctx.user.id, dealItemRow.id)
-									offersReceived.push(getItemDisplay(deal.offer.item, dealItemRow))
-								}
-							}
-							else {
-								// handle other types of trades here
+							const itemsReceived: string[] = []
+							for (let i = 0; i < deal.offer.amount; i++) {
+								const dealItemRow = await createItem(transaction.query, deal.offer.item.name, { durability: deal.offer.item.durability })
+								await addItemToBackpack(transaction.query, ctx.user.id, dealItemRow.id)
+								itemsReceived.push(getItemDisplay(deal.offer.item, dealItemRow))
 							}
 
+							await deleteItem(transaction.query, foundItem.row.id)
 							await transaction.commit()
 
 							await confirmed.editParent({
-								content: `You hand over ${price} in exchange for:\n\n${offersReceived.join('\n')}.` +
+								content: `You hand over ${getItemDisplay(foundItem.item, foundItem.row)} in exchange for:\n\n${itemsReceived.join('\n')}.` +
 								`\n\n${icons.merchant} thanks for the trade! best of luck out there.`,
 								components: []
 							})
 						}
-						else {
-							await confirmed.editParent({
-								content: `${icons.checkmark} Purchase canceled.`,
-								components: []
+						catch (err) {
+							await buyMessage.edit({
+								content: `${icons.danger} Purchase timed out.`,
+								components: disableAllComponents(buyMessage.components)
 							})
 						}
-					}
-					catch (err) {
-						await buyMessage.edit({
-							content: `${icons.danger} Purchase timed out.`,
-							components: disableAllComponents(buyMessage.components)
-						})
 					}
 				}
 			}
@@ -475,23 +474,13 @@ class MerchantCommand extends CustomSlashCommand {
 
 	getTradeDisplay (trade: Trade, locked = false): string {
 		if (locked) {
-			if (trade.type === 'collectible' || trade.type === 'money') {
-				return `**${trade.offer.amount}x** ${getItemDisplay(trade.offer.item)} for *an unknown price*`
-			}
-
-			return `**${trade.offer}** for *an unknown price*`
+			return `**${trade.offer.amount}x** ${getItemDisplay(trade.offer.item)} for *an unknown price*`
 		}
 		else if (trade.type === 'collectible') {
 			return `**${trade.offer.amount}x** ${getItemDisplay(trade.offer.item)} for a ${getItemDisplay(trade.price)}`
 		}
-		else if (trade.type === 'money') {
-			return `**${trade.offer.amount}x** ${getItemDisplay(trade.offer.item)} for ${formatMoney(trade.price)}`
-		}
-		else if (trade.type === 'other-collectible') {
-			return `**${trade.offer}** for ${getItemDisplay(trade.price)}`
-		}
 
-		return `**${trade.offer}** for ${formatMoney(trade.price)}`
+		return `**${trade.offer.amount}x** ${getItemDisplay(trade.offer.item)} for ${formatMoney(trade.price)}`
 	}
 
 	generatePages (userData: UserRow): { page: Embed, deals: Trade[] }[] {
