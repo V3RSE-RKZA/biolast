@@ -56,7 +56,7 @@ const allTrades: Trade[] = [
 	{
 		type: 'collectible',
 		offer: {
-			item: items['.22LR_bullet'],
+			item: items.wooden_helmet,
 			amount: 1
 		},
 		price: items.farming_guide,
@@ -65,7 +65,7 @@ const allTrades: Trade[] = [
 	{
 		type: 'collectible',
 		offer: {
-			item: items['.303_FMJ_bullet'],
+			item: items.wooden_armor,
 			amount: 1
 		},
 		price: items.farming_guide,
