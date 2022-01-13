@@ -104,7 +104,7 @@ export const melee = meleeObject({
 	pitchfork: {
 		type: 'Melee Weapon',
 		name: 'pitchfork',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:pitchfork:930980133949550633>',
 		aliases: ['pitch'],
 		sellPrice: 158,
 		durability: 2,
