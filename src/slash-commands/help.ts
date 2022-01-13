@@ -1,10 +1,13 @@
 import { CommandOptionType, SlashCreator, CommandContext, ComponentType, Message } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
+import { allLocations } from '../resources/locations'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { logger } from '../utils/logger'
+import { disableAllComponents } from '../utils/messageUtils'
+import { combineArrayWithOr } from '../utils/stringUtils'
 
 class HelpCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -62,7 +65,17 @@ class HelpCommand extends CustomSlashCommand {
 			cmdEmbed.addField('Cooldown', formatTime(cmd.cooldown * 1000), true)
 			*/
 
-			cmdEmbed.addField('Can be used while in a duel?', cmd.customOptions.worksDuringDuel ? 'Yes' : 'No')
+			cmdEmbed.addField('Can be used while in a duel?', cmd.customOptions.worksDuringDuel ? 'Yes' : 'No', true)
+
+			if (cmd.customOptions.minimumLocationLevel) {
+				const locationUnlocked = allLocations.filter(l => l.locationLevel === (cmd!.customOptions.minimumLocationLevel))
+				const regionsDisplay = combineArrayWithOr(locationUnlocked.map(l => `**${l.display}**`))
+
+				cmdEmbed.addField('Region Requirement', `This command is unlocked once you discover ${regionsDisplay} (Region tier **${cmd.customOptions.minimumLocationLevel}**)`, true)
+			}
+			else {
+				cmdEmbed.addField('Region Requirement', 'This command is always unlocked.', true)
+			}
 
 			await ctx.send({
 				embeds: [cmdEmbed.embed]
@@ -174,7 +187,7 @@ class HelpCommand extends CustomSlashCommand {
 				if (msg === 'time') {
 					await botMessage.edit({
 						content: 'Help menu expired.',
-						components: []
+						components: disableAllComponents(botMessage.components)
 					})
 				}
 			}

@@ -26,6 +26,11 @@ interface BaseCommandOptions {
 	noDefer?: boolean
 
 	category: CommandCategory
+
+	/**
+	 * What location level user must be in order to use this command (1 = the suburbs, 2 = the farm)
+	 */
+	minimumLocationLevel?: number
 }
 
 interface DMCommandOptions extends BaseCommandOptions {
@@ -35,6 +40,8 @@ interface DMCommandOptions extends BaseCommandOptions {
 	guildModsOnly: false
 
 	worksDuringDuel: true
+
+	minimumLocationLevel?: undefined
 }
 
 interface GuildCommandOptions extends BaseCommandOptions {

@@ -107,6 +107,8 @@ export interface ThrowableWeapon extends BaseItem {
 	 * How fast this weapon attacks in duels (player who uses item with higher speed goes first)
 	 */
 	speed: number
+
+	durability: 1
 }
 
 export type Weapon = RangedWeapon | MeleeWeapon | ThrowableWeapon

@@ -254,7 +254,7 @@ class MarketCommand extends CustomSlashCommand {
 
 						if (userData.money < price) {
 							await c.send({
-								content: `${icons.danger} You don't have enough money. You need **${formatMoney(price)}** but you only have **${formatMoney(userData.money)}**.`,
+								content: `${icons.danger} You don't have enough copper. You need **${formatMoney(price)}** but you only have **${formatMoney(userData.money)}**.`,
 								ephemeral: true
 							})
 							return
@@ -316,7 +316,7 @@ class MarketCommand extends CustomSlashCommand {
 									await transaction.commit()
 
 									await confirmed.editParent({
-										content: `${icons.danger} You don't have enough money. You need **${formatMoney(price)}** but you only have **${formatMoney(userDataV.money)}**.`,
+										content: `${icons.danger} You don't have enough copper. You need **${formatMoney(price)}** but you only have **${formatMoney(userDataV.money)}**.`,
 										components: []
 									})
 									return

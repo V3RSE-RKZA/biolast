@@ -303,7 +303,10 @@ class SellCommand extends CustomSlashCommand {
 								})
 							}
 							else {
-								await botMessage.delete()
+								await confirmed.editParent({
+									content: `${icons.checkmark} Sell canceled.`,
+									components: disableAllComponents(botMessage.components)
+								})
 							}
 						}
 						catch (err) {

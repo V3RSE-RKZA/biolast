@@ -332,6 +332,13 @@ class App {
 						flags: InteractionResponseFlags.EPHEMERAL
 					})
 				}
+				else if (command.customOptions.minimumLocationLevel && userData.locationLevel < command.customOptions.minimumLocationLevel) {
+					return ctx.send({
+						content: `${icons.danger} You must reach region tier **${command.customOptions.minimumLocationLevel}** to use this command.` +
+							' **You must defeat the boss of your current region to be able to travel to the next.**',
+						flags: InteractionResponseFlags.EPHEMERAL
+					})
+				}
 
 				else {
 					// check if user has enough xp to level up

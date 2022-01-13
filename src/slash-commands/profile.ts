@@ -87,7 +87,7 @@ class ProfileCommand extends CustomSlashCommand {
 			.setThumbnail(user.avatarURL)
 			.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP\n${formatHealth(userData.health, userData.maxHealth)}`)
 			.addField('__Experience__', `**Level**: ${userData.level}\n**XP**: ${formatNumber(playerXp.relativeLevelXp)} / ${formatNumber(playerXp.levelTotalXpNeeded)} xp`)
-			.addField('__Stats__', `**Highest Level Region Unlocked**: ${maxLocations.length ? combineArrayWithAnd(maxLocations.map(l => `${l.icon} ${l.display}`)) : 'Unknown...'}` +
+			.addField('__Stats__', `**Highest Tier Region Unlocked**: ${maxLocations.length ? combineArrayWithAnd(maxLocations.map(l => `${l.icon} ${l.display}`)) : 'Unknown...'} (Region Tier **${userData.locationLevel}**)` +
 				`\n**Player Kills**: ${formatNumber(userData.kills)}\n**Mob Kills (bosses count)**: ${formatNumber(userData.npcKills)}` +
 				`\n**Boss Kills**: ${formatNumber(userData.bossKills)}\n**Deaths**: ${formatNumber(userData.deaths)} (${formatNumber(kdRatio, true)} K/D ratio)` +
 				`\n**Quests Completed**: ${formatNumber(userData.questsCompleted)}\n**Player Value**: ${formatMoney(playerValue)}`)

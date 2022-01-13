@@ -189,6 +189,15 @@ export async function lowerItemDurability (query: Query, itemID: number, amount 
 }
 
 /**
+ * @param query Query to use
+ * @param itemID ID of the item
+ * @param amount Amount to set items durability to
+ */
+export async function setItemDurability (query: Query, itemID: number, amount: number): Promise<void> {
+	await query('UPDATE items SET durability = ? WHERE id = ?', [amount, itemID])
+}
+
+/**
  * Create an item and returns the SQL row of it
  * @param query Query to use
  * @param name name of the item

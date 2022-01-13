@@ -120,7 +120,7 @@ class CompanionCommand extends CustomSlashCommand {
 
 			if (userData.money < companion.price) {
 				await ctx.send({
-					content: `${icons.danger} You don't have enough money. You need **${formatMoney(companion.price)}** but you only have **${formatMoney(userData.money)}**.`
+					content: `${icons.danger} You don't have enough copper. You need **${formatMoney(companion.price)}** but you only have **${formatMoney(userData.money)}**.`
 				})
 				return
 			}
@@ -146,7 +146,7 @@ class CompanionCommand extends CustomSlashCommand {
 						await transaction.commit()
 
 						await confirmed.editParent({
-							content: `${icons.danger} You don't have enough money. You need **${formatMoney(companion.price)}** but you only have **${formatMoney(userData.money)}**.`,
+							content: `${icons.danger} You don't have enough copper. You need **${formatMoney(companion.price)}** but you only have **${formatMoney(userData.money)}**.`,
 							components: []
 						})
 						return
