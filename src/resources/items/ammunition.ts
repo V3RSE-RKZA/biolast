@@ -318,7 +318,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.mossberg_500, ranged.benelli_M4],
 		sellPrice: 2654,
 		slotsUsed: 1,
-		itemLevel: 12
+		itemLevel: 14
 	},
 	'12-gauge_AP_slug': {
 		type: 'Ammunition',
