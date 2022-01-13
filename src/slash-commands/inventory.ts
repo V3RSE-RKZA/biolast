@@ -260,7 +260,7 @@ class InventoryCommand extends CustomSlashCommand {
 						if (userStashData.slotsUsed + slotsNeeded > userData.stashSlots) {
 							await transaction.commit()
 
-							const slotsAvailable = Math.max(0, userData.stashSlots - userStashData.slotsUsed)
+							const slotsAvailable = Math.max(0, userData.stashSlots - userStashData.slotsUsed).toFixed(1)
 
 							await c.send({
 								content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash but you only have **${slotsAvailable}** slots available.` +
@@ -335,7 +335,7 @@ class InventoryCommand extends CustomSlashCommand {
 					`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Body Armor**: ${equips.armor ? getItemDisplay(equips.armor.item, equips.armor.row, { showEquipped: false, showID: false }) : 'None'}`)
-				.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed} / ${backpackLimit})`,
+				.addField(`__Items in Inventory__ (Space: ${itemData.slotsUsed.toFixed(1)} / ${backpackLimit.toFixed(1)})`,
 					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your stash to your inventory with \`/stash\`.`)
 
 			if (isSelf) {

@@ -255,7 +255,7 @@ class StashCommand extends CustomSlashCommand {
 
 							const userBackpackData = getItems(backpackRows)
 							const equips = getEquips(backpackRows)
-							const slotsAvailable = Math.max(0, getBackpackLimit(equips.backpack?.item) - userBackpackData.slotsUsed)
+							const slotsAvailable = Math.max(0, getBackpackLimit(equips.backpack?.item) - userBackpackData.slotsUsed).toFixed(1)
 
 							await c.send({
 								content: `${icons.danger} You don't have enough space in your inventory. You need **${spaceNeeded}** open slots in your inventory but you only have **${slotsAvailable}** slots available.` +
@@ -321,7 +321,7 @@ class StashCommand extends CustomSlashCommand {
 				.setDescription(`**Coins**: ${formatMoney(userData.money)}` +
 					`\n**Number of Items**: ${itemData.items.length}` +
 					`\n**Stash Value**: ${formatMoney(stashValue)}`)
-				.addField(`__Items in Stash__ (Space: ${itemData.slotsUsed} / ${userData.stashSlots})`,
+				.addField(`__Items in Stash__ (Space: ${itemData.slotsUsed.toFixed(1)} / ${userData.stashSlots.toFixed(1)})`,
 					filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || `No items found.\n\n${icons.information} Move items from your inventory to your stash with \`/inventory\`.`)
 
 			if (isSelf) {
