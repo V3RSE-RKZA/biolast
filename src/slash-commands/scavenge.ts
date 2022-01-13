@@ -399,6 +399,7 @@ class ScavengeCommand extends CustomSlashCommand {
 					const npcDisplayName = npc.boss ? `**${npc.display}**` : `the **${npc.type}**`
 					const npcDisplayCapitalized = npc.boss ? `**${npc.display}**` : `The **${npc.type}**`
 					let lootEmbed
+					let msgContent
 
 					for (let i = 0; i < orderedChoices.length; i++) {
 						const choiceType = orderedChoices[i]
@@ -862,6 +863,7 @@ class ScavengeCommand extends CustomSlashCommand {
 									}
 								}
 
+								msgContent = `<@${ctx.user.id}>, You defeated ${npcDisplayName}!`
 								messages[i].push(`☠️ ${npcDisplayCapitalized} **DIED!** You have **${formatTime(npc.respawnTime * 1000)}** to scavenge **${areaChoice.display}** before the enemy respawns.`)
 
 								// have to put loot in a separate embed to avoid character limit issues (up to 18 mob drops can be displayed by using an embed description)
@@ -912,6 +914,7 @@ class ScavengeCommand extends CustomSlashCommand {
 					}
 
 					await areaCtx.sendFollowUp({
+						content: msgContent,
 						embeds: lootEmbed ? [actionsEmbed.embed, lootEmbed.embed] : [actionsEmbed.embed]
 					})
 				}
