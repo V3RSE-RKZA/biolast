@@ -33,7 +33,7 @@ export const ranged = rangedObject({
 		type: 'Ranged Weapon',
 		name: 'ak-47',
 		description: 'Assault rifle chambered for the 7.62×39mm cartridge. Rugged, can fire many rounds without issue.',
-		icon: '<:U_rifle:869647344344387624>',
+		icon: '<:ak47:930978080607076373>',
 		aliases: ['ak', 'ak47'],
 		sellPrice: 2242,
 		durability: 6,
@@ -135,7 +135,7 @@ export const ranged = rangedObject({
 	'luger': {
 		type: 'Ranged Weapon',
 		name: 'luger',
-		icon: '<:U_weapon:601366669272678411>',
+		icon: '<:luger:930978902074073138>',
 		aliases: [],
 		description: '.22 caliber pistol produced by Stoeger, based off of the German Luger from the early 1900s.',
 		sellPrice: 134,

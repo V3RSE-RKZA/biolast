@@ -76,7 +76,7 @@ export const melee = meleeObject({
 	sledgehammer: {
 		type: 'Melee Weapon',
 		name: 'sledgehammer',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:sledge_hammer:930978902057287750>',
 		aliases: ['sledge'],
 		sellPrice: 206,
 		durability: 4,
@@ -90,7 +90,7 @@ export const melee = meleeObject({
 	scythe: {
 		type: 'Melee Weapon',
 		name: 'scythe',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:scythe:930978902132789278>',
 		aliases: [],
 		sellPrice: 103,
 		durability: 2,
@@ -118,7 +118,7 @@ export const melee = meleeObject({
 	fire_axe: {
 		type: 'Melee Weapon',
 		name: 'fire_axe',
-		icon: '<:U_melee:601366669251575857>',
+		icon: ' <:fire_axe:930978902057287700>',
 		aliases: ['axe'],
 		sellPrice: 217,
 		durability: 3,
