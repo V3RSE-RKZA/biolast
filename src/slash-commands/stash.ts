@@ -90,7 +90,7 @@ class StashCommand extends CustomSlashCommand {
 							return {
 								label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
 								value: i.row.id.toString(),
-								description: `Uses ${i.item.slotsUsed} slots.`,
+								description: `Uses ${i.item.slotsUsed} slots.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
 								emoji: iconID ? {
 									id: iconID[1],
 									name: i.item.name
@@ -145,7 +145,7 @@ class StashCommand extends CustomSlashCommand {
 										return {
 											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
 											value: i.row.id.toString(),
-											description: `Uses ${i.item.slotsUsed} slots.`,
+											description: `Uses ${i.item.slotsUsed} slots.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
 											emoji: iconID ? {
 												id: iconID[1],
 												name: i.item.name
@@ -186,7 +186,7 @@ class StashCommand extends CustomSlashCommand {
 										return {
 											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
 											value: i.row.id.toString(),
-											description: `Uses ${i.item.slotsUsed} slots.`,
+											description: `Uses ${i.item.slotsUsed} slots.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
 											emoji: iconID ? {
 												id: iconID[1],
 												name: i.item.name
