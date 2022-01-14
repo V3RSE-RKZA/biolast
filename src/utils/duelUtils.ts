@@ -353,6 +353,8 @@ export function awaitPlayerChoices (
 											preSelectPlayerInventory.items.map(r => r.item.name).indexOf(row.item.name) === i
 										)
 
+										console.log(userPossibleAmmo.map(i => `${i.item.name} (${i.row.id})`))
+
 										if (!userPossibleAmmo.length) {
 											await attackMessage.edit({
 												content: `${icons.danger} You don't have any ammo for your ${getItemDisplay(weaponItemRow.item, weaponItemRow.row, { showEquipped: false, showDurability: false })}.` +
@@ -361,40 +363,44 @@ export function awaitPlayerChoices (
 											})
 											return
 										}
+										else if (userPossibleAmmo.length === 1) {
+											ammo = userPossibleAmmo[0] as ItemWithRow<BackpackItemRow, Ammunition>
+										}
+										else {
+											// user must select ammo
+											const ammoSortedByBest = sortItemsByAmmo(userPossibleAmmo, true)
 
-										// user must select ammo
-										const ammoSortedByBest = sortItemsByAmmo(userPossibleAmmo, true)
+											components = [{
+												type: ComponentType.SELECT,
+												custom_id: 'ammo',
+												placeholder: 'Select an ammunition from your inventory to use:',
+												options: ammoSortedByBest.map(i => {
+													const ammoItem = i.item as Ammunition
+													const iconID = i.item.icon.match(/:([0-9]*)>/)
+													const ammoDesc = ammoItem.spreadsDamageToLimbs ?
+														`${ammoItem.damage} (${Math.round(ammoItem.damage / ammoItem.spreadsDamageToLimbs)} x ${ammoItem.spreadsDamageToLimbs} limbs) damage. ${ammoItem.penetration.toFixed(1)} armor penetration.` :
+														`${ammoItem.damage} damage. ${ammoItem.penetration.toFixed(1)} armor penetration.`
 
-										components = [{
-											type: ComponentType.SELECT,
-											custom_id: 'ammo',
-											placeholder: 'Select an ammunition from your inventory to use:',
-											options: ammoSortedByBest.map(i => {
-												const ammoItem = i.item as Ammunition
-												const iconID = i.item.icon.match(/:([0-9]*)>/)
-												const ammoDesc = ammoItem.spreadsDamageToLimbs ?
-													`${ammoItem.damage} (${Math.round(ammoItem.damage / ammoItem.spreadsDamageToLimbs)} x ${ammoItem.spreadsDamageToLimbs} limbs) damage. ${ammoItem.penetration.toFixed(1)} armor penetration.` :
-													`${ammoItem.damage} damage. ${ammoItem.penetration.toFixed(1)} armor penetration.`
-
-												return {
-													label: i.item.name.replace(/_/g, ' '),
-													value: i.row.id.toString(),
-													description: ammoDesc,
-													emoji: iconID ? {
-														id: iconID[1],
-														name: i.item.name
-													} : undefined
-												}
-											})
-										}]
-
-										await attackMessage.edit({
-											content: `${icons.warning} Which ammo do you want to use with your ${getItemDisplay(weaponItemRow.item)}?`,
-											components: [{
-												type: ComponentType.ACTION_ROW,
-												components
+													return {
+														label: i.item.name.replace(/_/g, ' '),
+														value: i.row.id.toString(),
+														description: ammoDesc,
+														emoji: iconID ? {
+															id: iconID[1],
+															name: i.item.name
+														} : undefined
+													}
+												})
 											}]
-										})
+
+											await attackMessage.edit({
+												content: `${icons.warning} Which ammo do you want to use with your ${getItemDisplay(weaponItemRow.item)}?`,
+												components: [{
+													type: ComponentType.ACTION_ROW,
+													components
+												}]
+											})
+										}
 									}
 
 									weapon = weaponItemRow as ItemWithRow<BackpackItemRow, Weapon>
