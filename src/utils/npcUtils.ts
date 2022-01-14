@@ -4,7 +4,7 @@ import { NPC } from '../types/NPCs'
 import { Ammunition, Medical, Item, MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon, Weapon } from '../types/Items'
 import { BackpackItemRow, ItemWithRow, Query, UserRow } from '../types/mysql'
 import { deleteItem, lowerItemDurability } from './db/items'
-import { lowerHealth, setFighting } from './db/players'
+import { increaseDeaths, lowerHealth, setFighting } from './db/players'
 import { BodyPart, getAttackDamage, getAttackString, getBodyPartHit } from './duelUtils'
 import { getEquips, getItemDisplay, getItems } from './itemUtils'
 import { addStatusEffects, getEffectsDisplay } from './playerUtils'
@@ -324,6 +324,7 @@ export async function attackPlayer (
 			await deleteItem(transactionQuery, victimItem.row.id)
 		}
 
+		await increaseDeaths(transactionQuery, member.id, 1)
 		await setFighting(transactionQuery, member.id, false)
 
 		messages.push(`☠️ **${member.displayName}** DIED and lost **${victimLoot.length}** items.`)
