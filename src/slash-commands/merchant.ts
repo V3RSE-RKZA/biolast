@@ -68,7 +68,7 @@ const allTrades: Trade[] = [
 			item: items['9mm_HP_bullet'],
 			amount: 1
 		},
-		price: 2050,
+		price: 2975,
 		locationLevel: 2
 	},
 	{
@@ -106,6 +106,15 @@ const allTrades: Trade[] = [
 		},
 		price: items.farming_guide,
 		locationLevel: 2
+	},
+	{
+		type: 'money',
+		offer: {
+			item: items.duffle_bag,
+			amount: 1
+		},
+		price: 8500,
+		locationLevel: 3
 	}
 ]
 
