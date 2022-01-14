@@ -151,7 +151,7 @@ export const ranged = rangedObject({
 	'makeshift_pistol': {
 		type: 'Ranged Weapon',
 		name: 'makeshift_pistol',
-		icon: '<:U_weapon:601366669272678411>',
+		icon: '<:makeshift_pistol:931425215131549696>',
 		aliases: ['makeshift', 'pistol'],
 		description: 'Looks like it\'s being held together with some duct tape and glue.',
 		sellPrice: 48,
@@ -159,7 +159,8 @@ export const ranged = rangedObject({
 		slotsUsed: 2,
 		accuracy: 71,
 		itemLevel: 1,
-		speed: 15
+		speed: 15,
+		artist: '600383557038374913'
 	},
 	'makeshift_rifle': {
 		type: 'Ranged Weapon',
