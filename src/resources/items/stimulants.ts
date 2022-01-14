@@ -15,7 +15,7 @@ export const stimulants = stimulantsObject({
 		effects: {
 			damageBonus: 25,
 			accuracyBonus: 0,
-			damageTaken: 20
+			damageTaken: -15
 		},
 		speed: 30
 	},
@@ -30,8 +30,8 @@ export const stimulants = stimulantsObject({
 		durability: 1,
 		effects: {
 			damageBonus: 0,
-			accuracyBonus: -15,
-			damageTaken: 0
+			accuracyBonus: -25,
+			damageTaken: -30
 		},
 		speed: 30
 	},
@@ -46,8 +46,8 @@ export const stimulants = stimulantsObject({
 		durability: 1,
 		effects: {
 			damageBonus: 0,
-			accuracyBonus: 15,
-			damageTaken: 0
+			accuracyBonus: 35,
+			damageTaken: 10
 		},
 		speed: 30
 	},
@@ -61,9 +61,9 @@ export const stimulants = stimulantsObject({
 		itemLevel: 8,
 		durability: 1,
 		effects: {
-			damageBonus: -20,
+			damageBonus: -10,
 			accuracyBonus: 0,
-			damageTaken: -20
+			damageTaken: -30
 		},
 		speed: 30
 	},
@@ -73,13 +73,13 @@ export const stimulants = stimulantsObject({
 		icon: '<:syringe:886561670812549130>',
 		description: 'Dave must have made this stimulant himself, who knows what chemicals it contains.',
 		aliases: ['concoction'],
-		sellPrice: 1253,
+		sellPrice: 2053,
 		slotsUsed: 1,
 		itemLevel: 10,
 		durability: 2,
 		effects: {
-			damageBonus: -10,
-			accuracyBonus: 70,
+			damageBonus: 30,
+			accuracyBonus: 100,
 			damageTaken: 0
 		},
 		speed: 30
