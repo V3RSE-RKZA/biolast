@@ -62,7 +62,7 @@ export const melee = meleeObject({
 	fork: {
 		type: 'Melee Weapon',
 		name: 'fork',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:fork:931424880417726465>',
 		aliases: [],
 		sellPrice: 10,
 		durability: 2,
@@ -71,7 +71,8 @@ export const melee = meleeObject({
 		damage: 5,
 		penetration: 0.7,
 		itemLevel: 1,
-		speed: 9
+		speed: 9,
+		artist: '719365897458024558'
 	},
 	sledgehammer: {
 		type: 'Melee Weapon',
@@ -85,7 +86,8 @@ export const melee = meleeObject({
 		damage: 30,
 		penetration: 0.75,
 		itemLevel: 3,
-		speed: 3
+		speed: 3,
+		artist: '600383557038374913'
 	},
 	scythe: {
 		type: 'Melee Weapon',
@@ -99,7 +101,8 @@ export const melee = meleeObject({
 		damage: 15,
 		penetration: 0.5,
 		itemLevel: 2,
-		speed: 4
+		speed: 4,
+		artist: '600383557038374913'
 	},
 	pitchfork: {
 		type: 'Melee Weapon',
@@ -113,7 +116,8 @@ export const melee = meleeObject({
 		damage: 15,
 		penetration: 1.0,
 		itemLevel: 3,
-		speed: 4
+		speed: 4,
+		artist: '600383557038374913'
 	},
 	fire_axe: {
 		type: 'Melee Weapon',
@@ -127,7 +131,8 @@ export const melee = meleeObject({
 		damage: 20,
 		penetration: 1.4,
 		itemLevel: 4,
-		speed: 6
+		speed: 6,
+		artist: '600383557038374913'
 	},
 	chainsaw: {
 		type: 'Melee Weapon',

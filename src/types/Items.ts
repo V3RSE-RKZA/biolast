@@ -25,6 +25,11 @@ interface BaseItem {
 	 * The recommended level for this item. Used as level required to buy this item from the shop (helps prevent new players from buying and using end game items)
 	 */
 	itemLevel: number
+
+	/**
+	 * Discord ID of the user who drew the icon for this item
+	 */
+	artist?: string
 }
 
 type ArmorLevel = 1 | 2 | 3 | 4 | 5

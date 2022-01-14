@@ -29,13 +29,14 @@ export const armor = armorObject({
 	aramid_armor: {
 		type: 'Body Armor',
 		name: 'aramid_armor',
-		icon: '<:U_shield:601366669474136074>',
+		icon: '<:aramid_armor:931433099705860107>',
 		aliases: ['aramid'],
 		sellPrice: 336,
 		durability: 5,
 		level: 3,
 		slotsUsed: 2,
-		itemLevel: 9
+		itemLevel: 9,
+		artist: '719365897458024558'
 	},
 	cloth_armor: {
 		type: 'Body Armor',

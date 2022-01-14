@@ -7,10 +7,11 @@ export const collectible = questObject({
 		type: 'Collectible',
 		name: 'walker_goop',
 		aliases: ['goop'],
-		icon: '<:quest_item:886561850525896724>',
+		icon: '<:walker_goop:931425196466905088>',
 		sellPrice: 61,
 		slotsUsed: 2,
-		itemLevel: 1
+		itemLevel: 1,
+		artist: '719365897458024558'
 	},
 	walker_sludge: {
 		type: 'Collectible',
@@ -69,6 +70,7 @@ export const collectible = questObject({
 		icon: '<:dog_tags:930978901788864523>',
 		sellPrice: 50,
 		slotsUsed: 0.1,
-		itemLevel: 1
+		itemLevel: 1,
+		artist: '168958344361541633'
 	}
 })

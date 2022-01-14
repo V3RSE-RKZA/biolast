@@ -6,7 +6,7 @@ export const medical = medicalObject({
 	'bandage': {
 		type: 'Medical',
 		name: 'bandage',
-		icon: '<:medical:886561670745452554>',
+		icon: '<:bandage:931425265043783700>',
 		aliases: ['bandage'],
 		sellPrice: 37,
 		healsFor: 20,
@@ -16,7 +16,8 @@ export const medical = medicalObject({
 		durability: 2,
 		curesBitten: false,
 		curesBrokenArm: false,
-		curesBurning: false
+		curesBurning: false,
+		artist: '719365897458024558'
 	},
 	'ifak_medkit': {
 		type: 'Medical',

@@ -40,7 +40,8 @@ export const ranged = rangedObject({
 		slotsUsed: 4,
 		accuracy: 63,
 		itemLevel: 12,
-		speed: 29
+		speed: 29,
+		artist: '600383557038374913'
 	},
 	'awm': {
 		type: 'Ranged Weapon',
@@ -97,14 +98,15 @@ export const ranged = rangedObject({
 	'glock-17': {
 		type: 'Ranged Weapon',
 		name: 'glock-17',
-		icon: '<:U_weapon:601366669272678411>',
+		icon: '<:glock17:931424425851621417>',
 		aliases: ['glock'],
 		sellPrice: 251,
 		durability: 6,
 		slotsUsed: 2,
 		accuracy: 91,
 		itemLevel: 5,
-		speed: 20
+		speed: 20,
+		artist: '600383557038374913'
 	},
 	'mp5': {
 		type: 'Ranged Weapon',
@@ -143,7 +145,8 @@ export const ranged = rangedObject({
 		slotsUsed: 2,
 		accuracy: 86,
 		itemLevel: 3,
-		speed: 17
+		speed: 17,
+		artist: '600383557038374913'
 	},
 	'makeshift_pistol': {
 		type: 'Ranged Weapon',
@@ -174,7 +177,7 @@ export const ranged = rangedObject({
 	'makeshift_shotgun': {
 		type: 'Ranged Weapon',
 		name: 'makeshift_shotgun',
-		icon: '<:U_weapon:601366669272678411>',
+		icon: '<:makeshift_shotgun:931424880421904444>',
 		aliases: ['shotgun', 'shotty'],
 		description: 'A handmade shotgun that looks like it could break apart at any moment.',
 		sellPrice: 142,
@@ -182,7 +185,8 @@ export const ranged = rangedObject({
 		slotsUsed: 2,
 		accuracy: 71,
 		itemLevel: 3,
-		speed: 9
+		speed: 9,
+		artist: '600383557038374913'
 	},
 	'lee-enfield': {
 		type: 'Ranged Weapon',
