@@ -305,7 +305,7 @@ class SellCommand extends CustomSlashCommand {
 							else {
 								await confirmed.editParent({
 									content: `${icons.checkmark} Sell canceled.`,
-									components: disableAllComponents(botMessage.components)
+									components: []
 								})
 							}
 						}
