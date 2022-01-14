@@ -163,7 +163,7 @@ export const farm: Location = {
 					xp: 10
 				},
 				rare: {
-					items: [items.chainsaw, items.compression_bandage, items.truck_key],
+					items: [items.chainsaw, items.compression_bandage],
 					xp: 20
 				},
 				rolls: 2
@@ -176,7 +176,7 @@ export const farm: Location = {
 			display: 'Bedroom',
 			loot: {
 				common: {
-					items: [items.truck_key, items.warehouse_key, items.compression_bandage, items['9mm_HP_bullet']],
+					items: [items.warehouse_key, items.compression_bandage, items['9mm_HP_bullet']],
 					xp: 8
 				},
 				uncommon: {

@@ -5,39 +5,39 @@ import { items } from '../items'
 /*
 	npcs that appear in this location
 */
-const walkerWeak: NPC = {
+const redHouseWalker: NPC = {
 	type: 'walker',
 	display: 'Walker',
-	health: 30,
-	damage: 20,
+	health: 20,
+	damage: 15,
 	drops: {
 		common: [items.bandage],
-		uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.walker_goop],
-		rare: [items['9mm_FMJ_bullet']],
-		rolls: 1
+		uncommon: [items.makeshift_pistol_bullet, items.small_pouch],
+		rare: [items['9mm_FMJ_bullet'], items.walker_goop],
+		rolls: 2
 	},
 	xp: 20,
-	chanceToBite: 15,
-	attackPenetration: 0.6,
+	chanceToBite: 0,
+	attackPenetration: 0.1,
 	boss: false,
 	respawnTime: 60 * 2
 }
-const raiderWeak: NPC = {
-	type: 'raider',
-	display: 'Raider',
+const apartmentsWalker: NPC = {
+	type: 'walker',
+	display: 'Walker',
 	health: 30,
-	damage: 25,
+	damage: 10,
 	drops: {
-		common: [items.bandage],
-		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
-		rare: [items['5.45x39mm_FMJ_bullet'], items['9mm_FMJ_bullet'], items.small_pouch],
+		common: [items.bandage, items['.22LR_bullet']],
+		uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.luger],
+		rare: [items.walker_goop],
 		rolls: 1
 	},
-	weapon: items.luger,
-	ammo: items['.22LR_bullet'],
 	armor: items.cloth_armor,
 	helmet: items.cloth_helmet,
 	xp: 40,
+	chanceToBite: 0,
+	attackPenetration: 0.1,
 	boss: false,
 	respawnTime: 60 * 2
 }
@@ -45,24 +45,24 @@ const crawlerWeak: NPC = {
 	type: 'walker',
 	display: 'Crawler',
 	health: 20,
-	damage: 35,
+	damage: 25,
 	drops: {
-		common: [items.bandage],
+		common: [items.bandage, items['.22LR_bullet'], items.luger],
 		uncommon: [items.makeshift_pistol_bullet],
 		rare: [items.walker_goop],
-		rolls: 1
+		rolls: 2
 	},
 	xp: 20,
-	chanceToBite: 20,
-	attackPenetration: 0.9,
+	chanceToBite: 0,
+	attackPenetration: 0.3,
 	boss: false,
 	respawnTime: 60 * 2
 }
 const cainTheGravekeeperBoss: NPC = {
 	type: 'raider',
 	display: 'Cain, The Gravekeeper',
-	health: 125,
-	damage: 30,
+	health: 105,
+	damage: 15,
 	drops: {
 		common: [items.bandage],
 		uncommon: [items.ifak_medkit],
@@ -117,7 +117,7 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.makeshift_rifle, items.makeshift_rifle_bullet],
+					items: [items.makeshift_rifle_bullet],
 					xp: 10
 				},
 				rare: {
@@ -126,7 +126,7 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [walkerWeak],
+			npcSpawns: [redHouseWalker],
 			scavengeCooldown: 60
 		},
 		{
@@ -137,7 +137,7 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.metal_bat],
+					items: [items.metal_bat, items.knife],
 					xp: 15
 				},
 				rare: {
@@ -146,7 +146,7 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [raiderWeak],
+			npcSpawns: [apartmentsWalker],
 			scavengeCooldown: 60
 		},
 		{
@@ -157,11 +157,11 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.small_pouch, items.wooden_helmet],
+					items: [items.makeshift_rifle, items.wooden_helmet],
 					xp: 10
 				},
 				rare: {
-					items: [items.knife, items.ifak_medkit, items.wooden_armor],
+					items: [items.wooden_armor],
 					xp: 20
 				},
 				rolls: 2
@@ -178,11 +178,11 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.metal_bat, items.bandage],
+					items: [items.metal_bat, items.bandage, items.makeshift_pistol_bullet],
 					xp: 10
 				},
 				rare: {
-					items: [items.wooden_helmet, items.metal_bat],
+					items: [items.wooden_helmet, items.makeshift_pistol],
 					xp: 20
 				},
 				rolls: 1
@@ -193,7 +193,7 @@ export const suburbs: Location = {
 			display: 'Cedar Lake',
 			loot: {
 				common: {
-					items: [items.makeshift_rifle, items.makeshift_rifle_bullet, items['.22LR_bullet']],
+					items: [items.makeshift_rifle_bullet, items['.22LR_bullet']],
 					xp: 5
 				},
 				uncommon: {
@@ -201,7 +201,7 @@ export const suburbs: Location = {
 					xp: 10
 				},
 				rare: {
-					items: [items['glock-17'], items.P320, items.wooden_helmet, items.wooden_armor],
+					items: [items['glock-17'], items.wooden_helmet, items.wooden_armor, items.makeshift_rifle],
 					xp: 20
 				},
 				rolls: 2
