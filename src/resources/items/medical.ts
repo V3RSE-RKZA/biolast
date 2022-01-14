@@ -66,6 +66,22 @@ export const medical = medicalObject({
 		curesBurning: false,
 		speed: 3
 	},
+	'trauma_kit': {
+		type: 'Medical',
+		name: 'trauma_kit',
+		icon: '<:medical:886561670745452554>',
+		aliases: ['trauma'],
+		description: 'Large medkit consisting of bandages, splints, chest seals, and anti-biotics. Good for treating multiple people.',
+		sellPrice: 3121,
+		healsFor: 65,
+		slotsUsed: 1,
+		itemLevel: 15,
+		durability: 10,
+		curesBitten: true,
+		curesBrokenArm: true,
+		curesBurning: false,
+		speed: 1
+	},
 	'paracetamol': {
 		type: 'Medical',
 		name: 'paracetamol',
