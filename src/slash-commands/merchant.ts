@@ -41,7 +41,7 @@ const allTrades: Trade[] = [
 			item: items['glock-17'],
 			amount: 1
 		},
-		price: 1500,
+		price: 2000,
 		locationLevel: 1
 	},
 	{
@@ -51,6 +51,42 @@ const allTrades: Trade[] = [
 			amount: 2
 		},
 		price: 2000,
+		locationLevel: 1
+	},
+	{
+		type: 'money',
+		offer: {
+			item: items.bandage,
+			amount: 1
+		},
+		price: 200,
+		locationLevel: 1
+	},
+	{
+		type: 'money',
+		offer: {
+			item: items['9mm_HP_bullet'],
+			amount: 1
+		},
+		price: 2050,
+		locationLevel: 2
+	},
+	{
+		type: 'collectible',
+		offer: {
+			item: items.luger,
+			amount: 1
+		},
+		price: items.walker_goop,
+		locationLevel: 1
+	},
+	{
+		type: 'collectible',
+		offer: {
+			item: items['.22LR_bullet'],
+			amount: 1
+		},
+		price: items.walker_goop,
 		locationLevel: 1
 	},
 	{
@@ -484,7 +520,7 @@ class MerchantCommand extends CustomSlashCommand {
 	}
 
 	generatePages (userData: UserRow): { page: Embed, deals: Trade[] }[] {
-		const sortedTrades = allTrades.sort((a, b) => a.locationLevel - b.locationLevel)
+		const sortedTrades = allTrades.sort((a, b) => b.locationLevel - a.locationLevel)
 		const pages = []
 		const maxPage = Math.ceil((sortedTrades.length) / DEALS_PER_PAGE) || 1
 
