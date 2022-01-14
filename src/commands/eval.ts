@@ -4,12 +4,13 @@ import Embed from '../structures/Embed'
 import { inspect } from 'util'
 import { allLocations } from '../resources/locations'
 import { query } from '../utils/db/mysql'
-import { allItems } from '../resources/items'
+import { allItems, items } from '../resources/items'
 import { getPlayerXp } from '../utils/playerUtils'
 import { createQuest } from '../utils/db/quests'
 import { dailyQuests } from '../resources/quests'
 import { addItemToBackpack, createItem, addAttachmentToWeapon, deleteItem, getAttachments, getUserBackpack } from '../utils/db/items'
 import { createCooldown } from '../utils/db/cooldowns'
+import { getAttackDamage } from '../utils/duelUtils'
 
 
 export const command: TextCommand = {
@@ -30,7 +31,9 @@ export const command: TextCommand = {
 			addAttachmentToWeapon,
 			deleteItem,
 			getAttachments,
-			getUserBackpack
+			getUserBackpack,
+			getAttackDamage,
+			items
 		}
 		let commandInput = message.content.substring(5 + prefix.length)
 

@@ -5,6 +5,24 @@ import { items } from '../items'
 /*
 	npcs that appear in this location
 */
+const raider1: NPC = {
+	type: 'raider',
+	display: 'Raider',
+	health: 30,
+	damage: 15,
+	drops: {
+		common: [items.bandage, items.splint],
+		uncommon: [items['anti-biotics'], items.makeshift_rifle],
+		rare: [items.makeshift_shell, items.small_pouch],
+		rolls: 1
+	},
+	weapon: items.makeshift_pistol,
+	ammo: items.makeshift_pistol_bullet,
+	armor: items.cloth_armor,
+	xp: 30,
+	boss: false,
+	respawnTime: 60 * 2
+}
 const redHouseWalker: NPC = {
 	type: 'walker',
 	display: 'Walker',
@@ -22,7 +40,7 @@ const redHouseWalker: NPC = {
 	boss: false,
 	respawnTime: 60 * 2
 }
-const apartmentsWalker: NPC = {
+const lakeWalker: NPC = {
 	type: 'walker',
 	display: 'Walker',
 	health: 30,
@@ -69,8 +87,8 @@ const cainTheGravekeeperBoss: NPC = {
 		rare: [items.sledgehammer, items.bone_armor],
 		rolls: 1
 	},
-	weapon: items['glock-17'],
-	ammo: items['9mm_FMJ_bullet'],
+	weapon: items.luger,
+	ammo: items['.22LR_bullet'],
 	quotes: [
 		'~*Cain: Life is suffering.*~',
 		'~*Cain: I have a plot specifically made for you.*~',
@@ -146,7 +164,7 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [apartmentsWalker],
+			npcSpawns: [raider1],
 			scavengeCooldown: 60
 		},
 		{
@@ -163,6 +181,10 @@ export const suburbs: Location = {
 				rare: {
 					items: [items.wooden_armor],
 					xp: 20
+				},
+				rarest: {
+					items: [items.makeshift_shotgun],
+					xp: 25
 				},
 				rolls: 2
 			},
@@ -197,16 +219,16 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items['anti-biotics'], items.splint, items['9mm_FMJ_bullet']],
+					items: [items['anti-biotics'], items.splint, items.makeshift_rifle],
 					xp: 10
 				},
 				rare: {
-					items: [items['glock-17'], items.wooden_helmet, items.wooden_armor, items.makeshift_rifle],
+					items: [items.wooden_helmet, items.wooden_armor, items.luger],
 					xp: 20
 				},
 				rolls: 2
 			},
-			npcSpawns: [crawlerWeak],
+			npcSpawns: [crawlerWeak, lakeWalker],
 			scavengeCooldown: 60
 		}
 	]

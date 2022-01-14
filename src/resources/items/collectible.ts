@@ -19,7 +19,7 @@ export const collectible = questObject({
 		icon: '<:quest_item:886561850525896724>',
 		sellPrice: 122,
 		slotsUsed: 2,
-		itemLevel: 1
+		itemLevel: 2
 	},
 	farming_guide: {
 		type: 'Collectible',
@@ -29,7 +29,7 @@ export const collectible = questObject({
 		icon: '<:quest_item:886561850525896724>',
 		sellPrice: 120,
 		slotsUsed: 1,
-		itemLevel: 1
+		itemLevel: 2
 	},
 	antique_vase: {
 		type: 'Collectible',
@@ -39,7 +39,7 @@ export const collectible = questObject({
 		description: 'An old vase.',
 		icon: '<:quest_item:886561850525896724>',
 		slotsUsed: 2,
-		itemLevel: 1
+		itemLevel: 7
 	},
 	tech_trash: {
 		type: 'Collectible',
@@ -49,7 +49,7 @@ export const collectible = questObject({
 		icon: '<:quest_item:886561850525896724>',
 		sellPrice: 1020,
 		slotsUsed: 2,
-		itemLevel: 1
+		itemLevel: 7
 	},
 	escape_from_fristoe: {
 		type: 'Collectible',
@@ -59,7 +59,7 @@ export const collectible = questObject({
 		icon: '<:quest_item:886561850525896724>',
 		sellPrice: 1000,
 		slotsUsed: 2,
-		itemLevel: 1
+		itemLevel: 7
 	},
 	dog_tags: {
 		type: 'Collectible',

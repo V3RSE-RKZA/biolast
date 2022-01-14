@@ -5,22 +5,39 @@ import { items } from '../items'
 /*
 	npcs that appear in this location
 */
-// TODO change this raider weak to something stronger to emphasize this disparity between this location and suburbs
 const raiderWeak: NPC = {
 	type: 'raider',
 	display: 'Raider',
-	health: 30,
+	health: 25,
 	damage: 25,
 	drops: {
 		common: [items.bandage],
-		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
-		rare: [items['5.45x39mm_FMJ_bullet'], items['9mm_FMJ_bullet'], items.small_pouch],
+		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
+		rare: [items['9mm_FMJ_bullet']],
 		rolls: 1
 	},
 	weapon: items.luger,
 	ammo: items['.22LR_bullet'],
 	armor: items.cloth_armor,
 	helmet: items.cloth_helmet,
+	xp: 40,
+	boss: false,
+	respawnTime: 60 * 2
+}
+const raiderHelmet: NPC = {
+	type: 'raider',
+	display: 'Raider',
+	health: 30,
+	damage: 15,
+	drops: {
+		common: [items.bandage],
+		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
+		rare: [items['9mm_FMJ_bullet']],
+		rolls: 1
+	},
+	weapon: items.luger,
+	ammo: items['.22LR_bullet'],
+	armor: items.wooden_armor,
 	xp: 40,
 	boss: false,
 	respawnTime: 60 * 2
@@ -48,7 +65,7 @@ const bloatedWalker: NPC = {
 	health: 50,
 	damage: 35,
 	drops: {
-		common: [items.pitchfork, items.walker_goop],
+		common: [items.pitchfork],
 		uncommon: [items.apple],
 		rare: [items.fire_axe],
 		rolls: 1
@@ -66,8 +83,8 @@ const daveTheRedneckBoss: NPC = {
 	damage: 20,
 	drops: {
 		common: [items.pitchfork, items.daves_drug_key, items.P320],
-		uncommon: [items.sauce_pan, items.paracetamol, items.farming_guide],
-		rare: [items.sledgehammer, items.gunsafe_code],
+		uncommon: [items.sauce_pan, items.paracetamol, items.farming_guide, items.sledgehammer],
+		rare: [items.gunsafe_code],
 		rolls: 2
 	},
 	weapon: items.saiga_MK,
@@ -83,7 +100,7 @@ const daveTheRedneckBoss: NPC = {
 	helmet: items.sauce_pan,
 	xp: 500,
 	boss: true,
-	respawnTime: 60 * 10
+	respawnTime: 60 * 60
 }
 
 export const farm: Location = {
@@ -128,27 +145,27 @@ export const farm: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [raiderWeak, feralAnimal],
+			npcSpawns: [bloatedWalker, feralAnimal],
 			scavengeCooldown: 60
 		},
 		{
 			display: 'Barn',
 			loot: {
 				common: {
-					items: [items.scythe, items.corn, items.splint, items.farming_guide],
+					items: [items.scythe, items.corn, items.splint],
 					xp: 5
 				},
 				uncommon: {
-					items: [items.pitchfork, items.warehouse_key],
+					items: [items.pitchfork, items.warehouse_key, items.farming_guide, items.fire_axe],
 					xp: 10
 				},
 				rare: {
-					items: [items.makeshift_shotgun, items.makeshift_shell, items.fire_axe],
+					items: [items['glock-17']],
 					xp: 20
 				},
 				rolls: 2
 			},
-			npcSpawns: [bloatedWalker],
+			npcSpawns: [raiderHelmet, raiderWeak],
 			scavengeCooldown: 60
 		},
 		{
@@ -159,11 +176,11 @@ export const farm: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.wooden_armor, items.knife, items.cloth_backpack],
+					items: [items.wooden_armor, items.knife, items.cloth_backpack, items.compression_bandage],
 					xp: 10
 				},
 				rare: {
-					items: [items.chainsaw, items.compression_bandage],
+					items: [items.chainsaw],
 					xp: 20
 				},
 				rolls: 2
@@ -180,7 +197,7 @@ export const farm: Location = {
 					xp: 8
 				},
 				uncommon: {
-					items: [items['glock-17'], items['9mm_RIP_bullet'], items['20-gauge_buckshot']],
+					items: [items['9mm_RIP_bullet'], items['20-gauge_buckshot']],
 					xp: 10
 				},
 				rare: {
@@ -201,11 +218,11 @@ export const farm: Location = {
 					xp: 8
 				},
 				uncommon: {
-					items: [items.adrenaline, items.morphine],
+					items: [items.adrenaline, items.morphine, items.adderall],
 					xp: 10
 				},
 				rare: {
-					items: [items.daves_concoction, items.adderall],
+					items: [items.daves_concoction],
 					xp: 15
 				},
 				rolls: 2
