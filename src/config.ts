@@ -49,8 +49,10 @@ export const icons = {
 	biohazard: '<:biohazard:886561850622345216>',
 	key: '<:U_key:870786870852874260>',
 	burning: '🔥',
-	debuff: '<:debuff:902746707794726942>',
-	buff: '<:buff:902746707622776832>',
+	postive_effect_debuff: '<:debuff:902746707794726942>',
+	positive_effect_buff: '<:buff:902746707622776832>',
+	negative_effect_buff: '<:plus_negative_effect:931737473502019664>',
+	negative_effect_debuff: '<:minus_negative_effect:931737473502036048>',
 	panic: '<:panic:928046269061021806>',
 	loading: '<a:loading:928735911196381224>',
 	merchant: '<:flurshed:928849729603907594>'

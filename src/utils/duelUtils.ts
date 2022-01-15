@@ -13,7 +13,7 @@ import { getUserRow } from './db/players'
 import { getItemDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from './itemUtils'
 import { logger } from './logger'
 import { disableAllComponents } from './messageUtils'
-import { getEffectsDisplay } from './playerUtils'
+import { getEffectsDescription } from './playerUtils'
 import { combineArrayWithAnd, getBodyPartEmoji } from './stringUtils'
 
 interface AttackChoice {
@@ -701,7 +701,7 @@ export function awaitPlayerChoices (
 								...sortItemsByLevel(playerStimItems, true).slice(0, 25).map(i => {
 									const item = i.item as Stimulant
 									const iconID = i.item.icon.match(/:([0-9]*)>/)
-									const effectsDisplay = getEffectsDisplay(item.effects)
+									const effectsDisplay = getEffectsDescription(item.effects)
 
 									return {
 										label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,

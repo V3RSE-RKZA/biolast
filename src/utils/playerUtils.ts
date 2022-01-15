@@ -1,3 +1,4 @@
+import { icons } from '../config'
 import { Affliction } from '../resources/afflictions'
 import { StatusEffects, Stimulant } from '../types/Items'
 
@@ -73,19 +74,50 @@ export function getEffectsDisplay (effects: StatusEffects, showAll = false): str
 		const typedEffect = effect as keyof StatusEffects
 
 		if (showAll || effects[typedEffect]) {
-			const percentDisplay = `${effects[typedEffect] <= 0 ? '' : '+'}${effects[typedEffect]}%`
+			const percentDisplay = `${Math.abs(effects[typedEffect])}%`
 
 			switch (typedEffect) {
 				case 'accuracyBonus': {
-					display.push(`${percentDisplay} accuracy`)
+					display.push(`${effects[typedEffect] <= 0 ? icons.postive_effect_debuff : icons.positive_effect_buff}${percentDisplay} accuracy`)
 					break
 				}
 				case 'damageBonus': {
-					display.push(`${percentDisplay} damage`)
+					display.push(`${effects[typedEffect] <= 0 ? icons.postive_effect_debuff : icons.positive_effect_buff}${percentDisplay} damage`)
 					break
 				}
 				case 'damageTaken': {
-					display.push(`${percentDisplay} damage taken`)
+					display.push(`${effects[typedEffect] <= 0 ? icons.negative_effect_debuff : icons.negative_effect_buff}${percentDisplay} damage taken`)
+					break
+				}
+			}
+		}
+	}
+
+	return display
+}
+
+/**
+ * Convert an effects object to a array of strings that describe the effect (lowers damage, increases accuracy, etc)
+ * @param effects The effects to get description of
+ */
+export function getEffectsDescription (effects: StatusEffects): string[] {
+	const display = []
+
+	for (const effect in effects) {
+		const typedEffect = effect as keyof StatusEffects
+
+		if (effects[typedEffect]) {
+			switch (typedEffect) {
+				case 'accuracyBonus': {
+					display.push(`${effects[typedEffect] <= 0 ? 'lowers' : 'increases'} accuracy`)
+					break
+				}
+				case 'damageBonus': {
+					display.push(`${effects[typedEffect] <= 0 ? 'lowers' : 'increases'} damage`)
+					break
+				}
+				case 'damageTaken': {
+					display.push(`${effects[typedEffect] <= 0 ? 'lowers' : 'increases'} damage taken`)
 					break
 				}
 			}

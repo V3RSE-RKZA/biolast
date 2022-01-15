@@ -651,7 +651,7 @@ class BossCommand extends CustomSlashCommand {
 								messages[i].push(getAttackString(choice.weapon.item, `<@${choiceInfo.member.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
 
 								if (choice.weapon.item.subtype === 'Incendiary Grenade' && !npcAfflictions.includes(afflictions.Burning)) {
-									messages[i].push(`${icons.debuff} ${npcDisplayName} is ${getAfflictionEmoji('Burning')} Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
+									messages[i].push(`${icons.postive_effect_debuff} ${npcDisplayName} is ${getAfflictionEmoji('Burning')} Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
 
 									npcAfflictions.push(afflictions.Burning)
 								}
@@ -694,7 +694,7 @@ class BossCommand extends CustomSlashCommand {
 									messages[i].push(`${npcDisplayName}'s armor (${getItemDisplay(location.boss.armor)}) reduced the damage by **${result.damage.reduced}**.`)
 								}
 								else if (result.limb === 'arm' && Math.random() <= 0.2 && !npcAfflictions.includes(afflictions['Broken Arm'])) {
-									messages[i].push(`${icons.debuff} ${npcDisplayName}'s ${getAfflictionEmoji('Broken Arm')} arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
+									messages[i].push(`${icons.postive_effect_debuff} ${npcDisplayName}'s ${getAfflictionEmoji('Broken Arm')} arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
 
 									npcAfflictions.push(afflictions['Broken Arm'])
 								}
