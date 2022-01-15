@@ -82,7 +82,7 @@ class InventoryCommand extends CustomSlashCommand {
 					{
 						type: ComponentType.SELECT,
 						custom_id: 'transfer',
-						placeholder: 'Transfer items to your stash:',
+						placeholder: 'Transfer item(s) to your stash:',
 						min_values: 1,
 						max_values: pages[0].items.length,
 						options: pages[0].items.map(i => {
@@ -138,7 +138,7 @@ class InventoryCommand extends CustomSlashCommand {
 									{
 										type: ComponentType.SELECT,
 										custom_id: 'transfer',
-										placeholder: 'Transfer items to your stash:',
+										placeholder: 'Transfer item(s) to your stash:',
 										min_values: 1,
 										max_values: fixedPages[page].items.length,
 										options: fixedPages[page].items.map(i => {
@@ -182,7 +182,7 @@ class InventoryCommand extends CustomSlashCommand {
 									{
 										type: ComponentType.SELECT,
 										custom_id: 'transfer',
-										placeholder: 'Transfer items to your stash:',
+										placeholder: 'Transfer item(s) to your stash:',
 										min_values: 1,
 										max_values: fixedPages[page].items.length,
 										options: fixedPages[page].items.map(i => {
