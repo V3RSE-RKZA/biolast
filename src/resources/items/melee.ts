@@ -6,7 +6,7 @@ export const melee = meleeObject({
 	knife: {
 		type: 'Melee Weapon',
 		name: 'knife',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:knife_weapon:931797105784291358>',
 		aliases: [],
 		sellPrice: 132,
 		durability: 2,
@@ -15,12 +15,13 @@ export const melee = meleeObject({
 		damage: 8,
 		penetration: 1.0,
 		itemLevel: 2,
-		speed: 22
+		speed: 22,
+		artist: '719365897458024558'
 	},
 	wooden_bat: {
 		type: 'Melee Weapon',
 		name: 'wooden_bat',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:wooden_bat:931797105616498729>',
 		aliases: ['bat'],
 		sellPrice: 16,
 		durability: 2,
@@ -29,12 +30,13 @@ export const melee = meleeObject({
 		damage: 10,
 		penetration: 0.5,
 		itemLevel: 1,
-		speed: 9
+		speed: 9,
+		artist: '719365897458024558'
 	},
 	metal_bat: {
 		type: 'Melee Weapon',
 		name: 'metal_bat',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:metal_bat:931797105792647208>',
 		aliases: ['metal'],
 		sellPrice: 74,
 		durability: 3,
@@ -43,7 +45,8 @@ export const melee = meleeObject({
 		damage: 10,
 		penetration: 0.8,
 		itemLevel: 3,
-		speed: 9
+		speed: 9,
+		artist: '719365897458024558'
 	},
 	metal_shank: {
 		type: 'Melee Weapon',
@@ -137,7 +140,7 @@ export const melee = meleeObject({
 	chainsaw: {
 		type: 'Melee Weapon',
 		name: 'chainsaw',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:chainsaw:931797015329906699>',
 		aliases: ['saw', 'chain'],
 		sellPrice: 324,
 		durability: 4,
@@ -146,7 +149,8 @@ export const melee = meleeObject({
 		damage: 30,
 		penetration: 1.8,
 		itemLevel: 8,
-		speed: 4
+		speed: 4,
+		artist: '719365897458024558'
 	},
 	replica_katana: {
 		type: 'Melee Weapon',

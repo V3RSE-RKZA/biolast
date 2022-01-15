@@ -70,7 +70,7 @@ export const stimulants = stimulantsObject({
 	daves_concoction: {
 		type: 'Stimulant',
 		name: 'daves_concoction',
-		icon: '<:syringe:886561670812549130>',
+		icon: '<:daves_concoction:931797015350882344>',
 		description: 'Dave must have made this stimulant himself, who knows what chemicals it contains.',
 		aliases: ['concoction'],
 		sellPrice: 2053,
@@ -82,6 +82,7 @@ export const stimulants = stimulantsObject({
 			accuracyBonus: 100,
 			damageTaken: 0
 		},
-		speed: 30
+		speed: 30,
+		artist: '719365897458024558'
 	}
 })

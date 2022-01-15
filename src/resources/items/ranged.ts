@@ -33,7 +33,7 @@ export const ranged = rangedObject({
 		type: 'Ranged Weapon',
 		name: 'ak-47',
 		description: 'Assault rifle chambered for the 7.62×39mm cartridge. Rugged, can fire many rounds without issue.',
-		icon: '<:ak47:930978080607076373>',
+		icon: '<:ak47:931800769974382592>',
 		aliases: ['ak', 'ak47'],
 		sellPrice: 2242,
 		durability: 6,
@@ -41,7 +41,7 @@ export const ranged = rangedObject({
 		accuracy: 63,
 		itemLevel: 12,
 		speed: 29,
-		artist: '600383557038374913'
+		artist: '699166377705078794'
 	},
 	'awm': {
 		type: 'Ranged Weapon',

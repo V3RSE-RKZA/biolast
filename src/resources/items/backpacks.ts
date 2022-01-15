@@ -6,12 +6,13 @@ export const backpacks = backpackObject({
 	small_pouch: {
 		type: 'Backpack',
 		name: 'small_pouch',
-		icon: '<:U_backpack:601366669595508736>',
+		icon: '<:small_pouch:931797105369042955>',
 		aliases: ['pouch'],
 		sellPrice: 47,
 		slots: 4,
 		slotsUsed: 1,
-		itemLevel: 5
+		itemLevel: 5,
+		artist: '719365897458024558'
 	},
 	cloth_backpack: {
 		type: 'Backpack',

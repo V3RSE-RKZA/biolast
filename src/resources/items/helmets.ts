@@ -29,13 +29,14 @@ export const helmets = helmetObject({
 	aramid_helmet: {
 		type: 'Helmet',
 		name: 'aramid_helmet',
-		icon: '<:U_helmet:874671013181415434>',
+		icon: '<:aramid_helmet:931797015376068618>',
 		aliases: [],
 		sellPrice: 372,
 		durability: 4,
 		level: 3,
 		slotsUsed: 2,
-		itemLevel: 9
+		itemLevel: 9,
+		artist: '719365897458024558'
 	},
 	cloth_helmet: {
 		type: 'Helmet',

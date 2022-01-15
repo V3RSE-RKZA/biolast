@@ -17,10 +17,11 @@ export const collectible = questObject({
 		type: 'Collectible',
 		name: 'walker_sludge',
 		aliases: ['sludge'],
-		icon: '<:quest_item:886561850525896724>',
+		icon: '<:walker_sludge:931797105448714282>',
 		sellPrice: 122,
 		slotsUsed: 2,
-		itemLevel: 2
+		itemLevel: 2,
+		artist: '719365897458024558'
 	},
 	farming_guide: {
 		type: 'Collectible',
@@ -38,9 +39,10 @@ export const collectible = questObject({
 		aliases: ['vase'],
 		sellPrice: 1080,
 		description: 'An old vase.',
-		icon: '<:quest_item:886561850525896724>',
+		icon: '<:antique_vase:931797015346683934>',
 		slotsUsed: 2,
-		itemLevel: 7
+		itemLevel: 7,
+		artist: '719365897458024558'
 	},
 	tech_trash: {
 		type: 'Collectible',

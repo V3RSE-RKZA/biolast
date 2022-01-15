@@ -56,12 +56,13 @@ export const food = foodObject({
 	donut: {
 		type: 'Food',
 		name: 'donut',
-		icon: '<:food:886561670447652886>',
+		icon: '<:donut:931797015371874345>',
 		aliases: [],
 		sellPrice: 100,
 		slotsUsed: 1,
 		itemLevel: 7,
 		durability: 1,
-		reducesHunger: 60
+		reducesHunger: 60,
+		artist: '719365897458024558'
 	}
 })
