@@ -85,8 +85,9 @@ class ProfileCommand extends CustomSlashCommand {
 		const embed = new Embed()
 			.setAuthor(`${userDisplay}'s Profile`, user.avatarURL)
 			.setThumbnail(user.avatarURL)
-			.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP\n${formatHealth(userData.health, userData.maxHealth)}`)
-			.addField('__Experience__', `**Level**: ${userData.level}\n**XP**: ${formatNumber(playerXp.relativeLevelXp)} / ${formatNumber(playerXp.levelTotalXpNeeded)} xp`)
+			.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP\n${formatHealth(userData.health, userData.maxHealth)}`, true)
+			.addField('__Balance__', formatMoney(userData.money), true)
+			.addField('__Experience__', `**Level**: ${userData.level}\n**XP**: ${formatNumber(playerXp.relativeLevelXp)} / ${formatNumber(playerXp.levelTotalXpNeeded)} xp`, true)
 			.addField('__Stats__', `**Highest Tier Region Unlocked**: ${maxLocations.length ? combineArrayWithAnd(maxLocations.map(l => `${l.icon} ${l.display}`)) : 'Unknown...'} (Region Tier **${userData.locationLevel}**)` +
 				`\n**Player Kills**: ${formatNumber(userData.kills)}\n**Mob Kills (bosses count)**: ${formatNumber(userData.npcKills)}` +
 				`\n**Boss Kills**: ${formatNumber(userData.bossKills)}\n**Deaths**: ${formatNumber(userData.deaths)} (${formatNumber(kdRatio, true)} K/D ratio)` +
