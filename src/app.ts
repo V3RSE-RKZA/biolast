@@ -302,10 +302,10 @@ class App {
 					await createAccount(query, ctx.user.id)
 
 					const batRow = await createItem(query, items.wooden_bat.name, { durability: items.wooden_bat.durability })
-					const bandageRow = await createItem(query, items.bandage.name, { durability: items.bandage.durability })
+					const ifakRow = await createItem(query, items.ifak_medkit.name, { durability: items.ifak_medkit.durability })
 
 					await addItemToBackpack(query, ctx.user.id, batRow.id)
-					await addItemToBackpack(query, ctx.user.id, bandageRow.id)
+					await addItemToBackpack(query, ctx.user.id, ifakRow.id)
 
 					// start tutorial
 					this.tutorialHandler.tutorialUsers.set(ctx.user.id, 0)
