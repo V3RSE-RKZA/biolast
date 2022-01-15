@@ -93,7 +93,9 @@ class ItemCommand extends CustomSlashCommand {
 					}
 				]
 			}
-			let pages = this.generatePages(allItems.filter(i => i.itemLevel <= userData.level))
+			const discoveredItems = allItems.filter(i => i.itemLevel <= userData.level)
+			const undiscoveredCount = allItems.filter(i => !discoveredItems.includes(i)).length
+			let pages = this.generatePages(discoveredItems, undiscoveredCount)
 			let page = 0
 
 			const botMessage = await ctx.send({
@@ -152,7 +154,7 @@ class ItemCommand extends CustomSlashCommand {
 					}
 					else if (buttonCtx.customID === 'category') {
 						const newComponents: ComponentActionRow[] = [categorySelectMenu]
-						pages = this.generatePages(allItems.filter(i => i.itemLevel <= userData.level && i.type === buttonCtx.values[0]), buttonCtx.values[0])
+						pages = this.generatePages(discoveredItems.filter(i => i.type === buttonCtx.values[0]), undiscoveredCount, buttonCtx.values[0])
 						page = 0
 
 						if (pages.length > 1) {
@@ -372,11 +374,10 @@ class ItemCommand extends CustomSlashCommand {
 		})
 	}
 
-	generatePages (items: Item[], category?: string): Embed[] {
+	generatePages (items: Item[], undiscoveredItems: number, category?: string): Embed[] {
 		const pages = []
 		const maxPage = Math.ceil(items.length / ITEMS_PER_PAGE) || 1
 		const sortedItems = sortItemsByLevel(items, false, false)
-		const undiscoveredItems = allItems.filter(i => !items.includes(i))
 
 		for (let i = 1; i < maxPage + 1; i++) {
 			const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
@@ -385,7 +386,7 @@ class ItemCommand extends CustomSlashCommand {
 
 			const embed = new Embed()
 				.setDescription(`${icons.information} This list only includes items you are a high enough level to discover. Level up to expand this list.` +
-					` There are **${undiscoveredItems.length}** items you haven't discovered.` +
+					` There are **${undiscoveredItems}** items you haven't discovered.` +
 					`\n\n__**${category ? `${category} Item List**__ (${items.length} total)` : `Item List**__ (${items.length} total)`}` +
 					`\n${filteredItems.map(itm => `${getItemDisplay(itm)} (Level **${itm.itemLevel}** item)`).join('\n') ||
 					`You are not a high enough level to discover any ${category ? `**${category}**` : ''} items`}`)
