@@ -146,7 +146,8 @@ class ScavengeCommand extends CustomSlashCommand {
 			}
 		]
 		let botMessage = await ctx.send({
-			content: 'Which area do you want to scavenge?',
+			content: `${preUserData.health / preUserData.maxHealth <= 0.5 ? `${icons.danger} Hey <@${ctx.user.id}>, you are currently low health! You should heal using \`/heal\` before starting a fight.\n\n` : ''}` +
+				'Which area do you want to scavenge?',
 			embeds: [areasEmbed.embed],
 			components: [
 				{
