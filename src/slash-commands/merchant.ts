@@ -373,7 +373,7 @@ class MerchantCommand extends CustomSlashCommand {
 
 							await confirmed.editParent({
 								content: `You hand over ${formatMoney(deal.price)} in exchange for:\n\n${itemsReceived.join('\n')}.` +
-								`\n\n${icons.merchant} thanks for the trade! best of luck out there.`,
+								`\n\n${icons.merchant} **Guppy the Merchant**: thanks for the trade! best of luck out there.`,
 								components: []
 							})
 						}
@@ -466,7 +466,7 @@ class MerchantCommand extends CustomSlashCommand {
 
 							await confirmed.editParent({
 								content: `You hand over ${getItemDisplay(foundItem.item, foundItem.row)} in exchange for:\n\n${itemsReceived.join('\n')}.` +
-								`\n\n${icons.merchant} thanks for the trade! best of luck out there.`,
+								`\n\n${icons.merchant} **Guppy the Merchant**: thanks for the trade! best of luck out there.`,
 								components: []
 							})
 						}
@@ -539,7 +539,7 @@ class MerchantCommand extends CustomSlashCommand {
 			const filtered = sortedTrades.slice(indexFirst, indexLast)
 			const availableTrades = filtered.filter(t => t.locationLevel <= userData.locationLevel)
 			const lockedTrades = filtered.filter(t => t.locationLevel > userData.locationLevel)
-			let description = `${icons.merchant} ${this.getMerchantQuote(userData.locationLevel)}`
+			let description = `${icons.merchant} **Guppy the Merchant**: ${this.getMerchantQuote(userData.locationLevel)}`
 
 			const embed = new Embed()
 
