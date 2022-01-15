@@ -12,15 +12,6 @@ export const keys = keysObject({
 		slotsUsed: 2,
 		itemLevel: 1
 	},
-	warehouse_key: {
-		type: 'Key',
-		name: 'warehouse_key',
-		durability: 3,
-		aliases: ['wh_key', 'warehouse'],
-		icon: '<:U_key:870786870852874260>',
-		slotsUsed: 3,
-		itemLevel: 3
-	},
 	gunsafe_code: {
 		type: 'Key',
 		name: 'gunsafe_code',

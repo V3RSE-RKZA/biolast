@@ -158,7 +158,7 @@ export const farm: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.pitchfork, items.warehouse_key, items.farming_guide, items.fire_axe],
+					items: [items.pitchfork, items.farming_guide, items.fire_axe],
 					xp: 10
 				},
 				rare: {
@@ -174,11 +174,11 @@ export const farm: Location = {
 			display: 'Warehouse',
 			loot: {
 				common: {
-					items: [items.apple, items.wooden_helmet],
+					items: [items.apple, items.compression_bandage],
 					xp: 5
 				},
 				uncommon: {
-					items: [items.wooden_armor, items.knife, items.cloth_backpack, items.compression_bandage],
+					items: [items.wooden_armor, items.knife, items.cloth_backpack, items.wooden_helmet],
 					xp: 10
 				},
 				rare: {
@@ -187,15 +187,14 @@ export const farm: Location = {
 				},
 				rolls: 2
 			},
-			requiresKey: [items.warehouse_key],
-			keyIsOptional: false,
+			npcSpawns: [raiderHelmet, raiderWeak],
 			scavengeCooldown: 60
 		},
 		{
 			display: 'Bedroom',
 			loot: {
 				common: {
-					items: [items.warehouse_key, items.compression_bandage, items['9mm_HP_bullet']],
+					items: [items.compression_bandage, items['9mm_HP_bullet']],
 					xp: 8
 				},
 				uncommon: {
