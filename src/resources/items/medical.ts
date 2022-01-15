@@ -89,7 +89,7 @@ export const medical = medicalObject({
 		icon: '<:U_usable:601366669259964418>',
 		aliases: ['paracet'],
 		sellPrice: 429,
-		healsFor: 35,
+		healsFor: 37,
 		slotsUsed: 1,
 		itemLevel: 4,
 		durability: 3,

@@ -89,7 +89,7 @@ export const ranged = rangedObject({
 		icon: '<:U_rifle:869647344344387624>',
 		aliases: ['p90'],
 		sellPrice: 1782,
-		durability: 6,
+		durability: 8,
 		slotsUsed: 3,
 		accuracy: 78,
 		itemLevel: 13,

@@ -65,11 +65,29 @@ const allTrades: Trade[] = [
 	{
 		type: 'money',
 		offer: {
+			item: items.splint,
+			amount: 1
+		},
+		price: 400,
+		locationLevel: 1
+	},
+	{
+		type: 'money',
+		offer: {
+			item: items['anti-biotics'],
+			amount: 1
+		},
+		price: 1000,
+		locationLevel: 2
+	},
+	{
+		type: 'money',
+		offer: {
 			item: items['9mm_HP_bullet'],
 			amount: 1
 		},
 		price: 2975,
-		locationLevel: 2
+		locationLevel: 3
 	},
 	{
 		type: 'collectible',
@@ -114,6 +132,15 @@ const allTrades: Trade[] = [
 			amount: 1
 		},
 		price: 8500,
+		locationLevel: 3
+	},
+	{
+		type: 'collectible',
+		offer: {
+			item: items.steel_armor,
+			amount: 1
+		},
+		price: items.tech_trash,
 		locationLevel: 3
 	}
 ]

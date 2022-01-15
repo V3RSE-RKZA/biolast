@@ -55,6 +55,7 @@ const psychoRaider: NPC = {
 	},
 	weapon: items.chainsaw,
 	helmet: items.psycho_mask,
+	usesStimulants: [items.morphine],
 	xp: 125,
 	boss: false,
 	respawnTime: 60 * 2
@@ -172,11 +173,11 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items.bandage, items.splint, items.wooden_armor, items.wooden_helmet],
+					items: [items.ifak_medkit, items.splint, items.wooden_armor, items.wooden_helmet],
 					xp: 15
 				},
 				rare: {
-					items: [items.antique_vase, items.small_pouch],
+					items: [items.antique_vase, items.cloth_backpack],
 					xp: 25
 				},
 				rolls: 1
@@ -191,7 +192,7 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items.knife, items.small_pouch],
+					items: [items.knife, items.cloth_backpack],
 					xp: 15
 				},
 				rare: {
@@ -207,11 +208,11 @@ export const mall: Location = {
 			display: 'Pathway Park',
 			loot: {
 				common: {
-					items: [items.bandage, items['9mm_FMJ_bullet']],
+					items: [items.ifak_medkit, items['9mm_FMJ_bullet']],
 					xp: 10
 				},
 				uncommon: {
-					items: [items['glock-17'], items.dome_depot_key, items.aramid_armor, items.cloth_backpack],
+					items: [items['glock-17'], items.aramid_armor, items.cloth_backpack],
 					xp: 15
 				},
 				rare: {
@@ -221,27 +222,6 @@ export const mall: Location = {
 				rolls: 2
 			},
 			npcSpawns: [mediumRaider, psychoRaider],
-			scavengeCooldown: 60
-		},
-		{
-			display: 'Dome Depot',
-			loot: {
-				common: {
-					items: [items.sledgehammer, items.fire_axe, items.wooden_armor, items.wooden_helmet],
-					xp: 10
-				},
-				uncommon: {
-					items: [items.chainsaw, items.metal_shank, items.aramid_armor],
-					xp: 15
-				},
-				rare: {
-					items: [items.duffle_bag, items.aramid_helmet],
-					xp: 25
-				},
-				rolls: 2
-			},
-			requiresKey: [items.dome_depot_key, items.security_key],
-			keyIsOptional: false,
 			scavengeCooldown: 60
 		},
 		{
@@ -313,15 +293,15 @@ export const mall: Location = {
 			display: 'Staff Break Room',
 			loot: {
 				common: {
-					items: [items.donut],
+					items: [items.donut, items.pizza_slice],
 					xp: 10
 				},
 				uncommon: {
-					items: [items.ifak_medkit],
+					items: [items.paracetamol],
 					xp: 15
 				},
 				rare: {
-					items: [items.paracetamol, items.tech_trash, items.morphine],
+					items: [items.tech_trash, items.morphine],
 					xp: 25
 				},
 				rolls: 2
@@ -362,13 +342,13 @@ export const mall: Location = {
 					xp: 15
 				},
 				rare: {
-					items: [items.paracetamol, items.tech_trash, items.security_key],
+					items: [items.paracetamol, items.tech_trash],
 					xp: 25
 				},
 				rolls: 2
 			},
 			npcSpawns: [securityOfficerWalker],
-			requiresKey: [items.florreds_pharmacy_key, items.security_key],
+			requiresKey: [items.security_key],
 			keyIsOptional: false,
 			scavengeCooldown: 60
 		}

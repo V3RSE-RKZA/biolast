@@ -376,6 +376,7 @@ class ItemCommand extends CustomSlashCommand {
 		const pages = []
 		const maxPage = Math.ceil(items.length / ITEMS_PER_PAGE) || 1
 		const sortedItems = sortItemsByLevel(items, false, false)
+		const undiscoveredItems = allItems.filter(i => !items.includes(i))
 
 		for (let i = 1; i < maxPage + 1; i++) {
 			const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
@@ -384,6 +385,7 @@ class ItemCommand extends CustomSlashCommand {
 
 			const embed = new Embed()
 				.setDescription(`${icons.information} This list only includes items you are a high enough level to discover. Level up to expand this list.` +
+					` There are **${undiscoveredItems.length}** items you haven't discovered.` +
 					`\n\n__**${category ? `${category} Item List**__ (${items.length} total)` : `Item List**__ (${items.length} total)`}` +
 					`\n${filteredItems.map(itm => `${getItemDisplay(itm)} (Level **${itm.itemLevel}** item)`).join('\n') ||
 					`You are not a high enough level to discover any ${category ? `**${category}**` : ''} items`}`)

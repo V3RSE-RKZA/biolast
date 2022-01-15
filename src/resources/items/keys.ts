@@ -33,7 +33,7 @@ export const keys = keysObject({
 	dereks_shop_key: {
 		type: 'Key',
 		name: 'dereks_shop_key',
-		durability: 3,
+		durability: 2,
 		aliases: ['dereks_key'],
 		icon: '<:U_key:870786870852874260>',
 		slotsUsed: 2,
