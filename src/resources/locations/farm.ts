@@ -89,6 +89,8 @@ const daveTheRedneckBoss: NPC = {
 	},
 	weapon: items.saiga_MK,
 	ammo: items['5.45x39mm_FMJ_bullet'],
+	usesStimulants: [items.adrenaline],
+	usesHeals: [items.compression_bandage],
 	quotes: [
 		'~*You hear giggles and crackles...*~',
 		'~*Dave: Did I hear somebody?*~',
