@@ -51,7 +51,7 @@ export const melee = meleeObject({
 	metal_shank: {
 		type: 'Melee Weapon',
 		name: 'metal_shank',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:metal_shank:931835720908296212>',
 		aliases: ['shank'],
 		sellPrice: 318,
 		durability: 3,
@@ -60,7 +60,8 @@ export const melee = meleeObject({
 		damage: 16,
 		penetration: 1.6,
 		itemLevel: 10,
-		speed: 30
+		speed: 30,
+		artist: '719365897458024558'
 	},
 	fork: {
 		type: 'Melee Weapon',
@@ -80,7 +81,7 @@ export const melee = meleeObject({
 	sledgehammer: {
 		type: 'Melee Weapon',
 		name: 'sledgehammer',
-		icon: '<:sledge_hammer:930978902057287750>',
+		icon: '<:sledge_hammer:931833719596134450>',
 		aliases: ['sledge'],
 		sellPrice: 206,
 		durability: 4,
@@ -90,7 +91,7 @@ export const melee = meleeObject({
 		penetration: 0.75,
 		itemLevel: 3,
 		speed: 3,
-		artist: '600383557038374913'
+		artist: '168958344361541633'
 	},
 	scythe: {
 		type: 'Melee Weapon',
@@ -155,7 +156,7 @@ export const melee = meleeObject({
 	replica_katana: {
 		type: 'Melee Weapon',
 		name: 'replica_katana',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:replica_katana:931826279278321664>',
 		aliases: ['katana'],
 		sellPrice: 150,
 		durability: 2,
@@ -164,12 +165,13 @@ export const melee = meleeObject({
 		damage: 20,
 		penetration: 0.95,
 		itemLevel: 6,
-		speed: 8
+		speed: 8,
+		artist: '719365897458024558'
 	},
 	police_baton: {
 		type: 'Melee Weapon',
 		name: 'police_baton',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:police_baton:931835720904081418>',
 		aliases: ['baton'],
 		sellPrice: 118,
 		durability: 5,
@@ -178,6 +180,7 @@ export const melee = meleeObject({
 		damage: 14,
 		penetration: 0.5,
 		itemLevel: 10,
-		speed: 7
+		speed: 7,
+		artist: '719365897458024558'
 	}
 })

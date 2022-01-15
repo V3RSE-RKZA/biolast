@@ -242,7 +242,7 @@ export const ammunition = ammoObject({
 	'makeshift_shell': {
 		type: 'Ammunition',
 		name: 'makeshift_shell',
-		icon: '<:U_ammo:601366669318815745>',
+		icon: '<:makeshift_shell:931808617047396423>',
 		aliases: ['shell'],
 		description: 'A handmade shotgun shell filled with cheap gunpowder and pellets.',
 		damage: 24,
@@ -251,7 +251,8 @@ export const ammunition = ammoObject({
 		sellPrice: 34,
 		slotsUsed: 1,
 		itemLevel: 3,
-		spreadsDamageToLimbs: 2
+		spreadsDamageToLimbs: 2,
+		artist: '600383557038374913'
 	},
 	'.303_FMJ_bullet': {
 		type: 'Ammunition',
@@ -284,7 +285,7 @@ export const ammunition = ammoObject({
 	'20-gauge_slug': {
 		type: 'Ammunition',
 		name: '20-gauge_slug',
-		icon: '<:U_ammo:601366669318815745>',
+		icon: '<:20_gauge_slug:931813743367708682>',
 		aliases: ['slug', '20g_slug', 'slug_shell', 'shotgun_slug'],
 		description: 'A 20-gauge slug shell that fires a single, large projectile.',
 		damage: 65,
@@ -292,12 +293,13 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.bobwhite_g2],
 		sellPrice: 615,
 		slotsUsed: 1,
-		itemLevel: 11
+		itemLevel: 11,
+		artist: '600383557038374913'
 	},
 	'12-gauge_buckshot': {
 		type: 'Ammunition',
 		name: '12-gauge_buckshot',
-		icon: '<:U_ammo:601366669318815745>',
+		icon: '<:12_gauge_buckshot:931809075883294730>',
 		aliases: ['12_guage', '12g_buckshot', '12g_shell', '12g_shotgun', '12g'],
 		description: '20-gauge buckshot shell. Fires many small pellets at a target.',
 		damage: 64,
@@ -306,12 +308,13 @@ export const ammunition = ammoObject({
 		sellPrice: 1707,
 		slotsUsed: 1,
 		itemLevel: 12,
-		spreadsDamageToLimbs: 2
+		spreadsDamageToLimbs: 2,
+		artist: '600383557038374913'
 	},
 	'12-gauge_slug': {
 		type: 'Ammunition',
 		name: '12-gauge_slug',
-		icon: '<:U_ammo:601366669318815745>',
+		icon: ' <:12_gauge_slug:931813743384461363>',
 		aliases: ['12g_slug'],
 		description: 'A 12-gauge slug shell that fires a single, large projectile.',
 		damage: 78,
@@ -319,7 +322,8 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.mossberg_500, ranged.benelli_M4],
 		sellPrice: 2654,
 		slotsUsed: 1,
-		itemLevel: 14
+		itemLevel: 14,
+		artist: '600383557038374913'
 	},
 	'12-gauge_AP_slug': {
 		type: 'Ammunition',
