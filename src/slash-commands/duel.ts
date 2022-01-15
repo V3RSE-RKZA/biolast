@@ -551,7 +551,12 @@ class DuelCommand extends CustomSlashCommand {
 									}
 								}
 
-								messages[i].push(`☠️ **${otherPlayerMember.displayName} DIED!** They dropped **${victimLoot.length}** items.`, `**${userChoice.member.displayName} wins** and earned 🌟 ***+${xpEarned}*** xp for this kill.`)
+								// remove users items while victor picks loot
+								for (const victimItem of victimLoot) {
+									await removeItemFromBackpack(query, victimItem.row.id)
+								}
+
+								messages[i].push(`☠️ **${otherPlayerMember.displayName} DIED!**`, `**${userChoice.member.displayName} wins** and earned 🌟 ***+${xpEarned}*** xp for this kill.`)
 							}
 							else if (!missedPartChoice) {
 								await lowerHealth(atkTransaction.query, otherPlayerMember.id, totalDamage)
@@ -606,7 +611,7 @@ class DuelCommand extends CustomSlashCommand {
 											let itemsPicked: ItemWithRow<BackpackItemRow>[] = []
 
 											try {
-												const itemChoices = (await this.app.componentCollector.awaitClicks(itemSelectMessage.id, int => int.user.id === userChoice.member.id, 60000))[0]
+												const itemChoices = (await this.app.componentCollector.awaitClicks(itemSelectMessage.id, int => int.user.id === userChoice.member.id, 40000))[0]
 												itemsPicked = victimLoot.filter(itm => itemChoices.values.includes(itm.row.id.toString()))
 
 												try {
@@ -622,7 +627,7 @@ class DuelCommand extends CustomSlashCommand {
 															await addItemToBackpack(query, userChoice.member.id, victimItem.row.id)
 														}
 														else {
-															await deleteItem(query, victimItem.row.id)
+															await addItemToBackpack(query, otherPlayerMember.id, victimItem.row.id)
 														}
 													}
 
@@ -637,8 +642,8 @@ class DuelCommand extends CustomSlashCommand {
 												}
 											}
 											catch (err) {
-												for (const victimItem of victimLoot) {
-													await deleteItem(query, victimItem.row.id)
+												for (const victimItem of victimLoot.filter(itm => !itemsPicked.some(pick => pick.row.id === itm.row.id))) {
+													await addItemToBackpack(query, otherPlayerMember.id, victimItem.row.id)
 												}
 
 												await itemSelectMessage.edit({
@@ -674,10 +679,10 @@ class DuelCommand extends CustomSlashCommand {
 											logger.warn(err)
 
 											for (const victimItem of victimLoot) {
-												await deleteItem(query, victimItem.row.id)
+												await addItemToBackpack(query, otherPlayerMember.id, victimItem.row.id)
 											}
 										}
-									}, 5000)
+									}, 2500)
 								}
 								else {
 									// this shouldn't happen but JUST IN CASE IT DOES
