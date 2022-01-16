@@ -415,6 +415,7 @@ class BossCommand extends CustomSlashCommand {
 							const effectsDisplay = getEffectsDisplay(npcChoice.item.effects)
 
 							npcStimulants.push(npcChoice.item)
+
 							messages[i].push(`${npcDisplayName} injects themself with ${getItemDisplay(npcChoice.item)}.` +
 								`\n\n__Effects Received__\n${effectsDisplay.join('\n')}`)
 						}

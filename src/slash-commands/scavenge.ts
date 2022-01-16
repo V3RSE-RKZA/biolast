@@ -489,6 +489,8 @@ class ScavengeCommand extends CustomSlashCommand {
 							else if (npcChoice.choice === 'use a stimulant') {
 								const effectsDisplay = getEffectsDisplay(npcChoice.item.effects)
 
+								npcStimulants.push(npcChoice.item)
+
 								messages[i].push(`${npcDisplayCapitalized} injects themself with ${getItemDisplay(npcChoice.item)}.` +
 									`\n\n__Effects Received__\n${effectsDisplay.join('\n')}`)
 							}
