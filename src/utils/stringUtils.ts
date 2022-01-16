@@ -74,6 +74,58 @@ export function formatHealth (curentHP: number, maxHP: number, options: Partial<
 }
 
 /**
+ * Format xp into an emote xp bar
+ * @param curentXP Current health
+ * @param xpNeeded XP needed to level up
+ * @returns A xp bar
+ */
+export function formatXP (curentXP: number, xpNeeded: number): string {
+	const emojisLength = 5
+	const hpPerBar = xpNeeded / emojisLength
+	let xpStr = ''
+
+	for (let i = 0; i < emojisLength; i++) {
+		const barPerc = (curentXP - (hpPerBar * i)) / hpPerBar
+
+		if (i === 0) {
+			if (barPerc >= 1) {
+				xpStr += icons.xp.start_full
+			}
+			else if (barPerc > 0) {
+				xpStr += icons.xp.start_half
+			}
+			else {
+				xpStr += icons.xp.start_empty
+			}
+		}
+		else if (i === emojisLength - 1) {
+			if (barPerc >= 0.9) {
+				xpStr += icons.xp.end_full
+			}
+			else if (barPerc > 0) {
+				xpStr += icons.xp.end_half
+			}
+			else {
+				xpStr += icons.xp.end_empty
+			}
+		}
+
+		// middle xp block
+		else if (barPerc >= 0.75) {
+			xpStr += icons.xp.mid_full
+		}
+		else if (barPerc > 0) {
+			xpStr += icons.xp.mid_half
+		}
+		else {
+			xpStr += icons.xp.mid_empty
+		}
+	}
+
+	return xpStr
+}
+
+/**
  * Format progress into a red bar
  * @param current Current value
  * @param maxValue Max value

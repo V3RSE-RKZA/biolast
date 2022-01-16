@@ -10,15 +10,26 @@ export const prefix = process.env.PREFIX || '='
 export const icons = {
 	copper: '<:copper:903310312701313114>',
 	health: {
-		start_full: '<:health_1_full:907929719817764884>',
-		start_half: '<:health_1_half:907929719876509697>',
-		start_empty: '<:health_1_empty:907929719717101598>',
+		start_full: '<:health_1_full:932221452839690283>',
+		start_half: '<:health_1_half:932221452843884565>',
+		start_empty: '<:health_1_empty:932221453137477713>',
 		mid_full: '<:health_mid_full:907929720019111946>',
 		mid_half: '<:health_mid_half:907929719868125205>',
 		mid_empty: '<:bar_mid_empty:907929719486418986>',
 		end_full: '<:health_end_full:907929719972986880>',
 		end_half: '<:health_end_half:907929719935213578>',
 		end_empty: '<:bar_end_empty:907929719763251230>'
+	},
+	xp: {
+		start_full: '<:xp_1_full:932221241866203247>',
+		start_half: '<:xp_1_half:932221241711001651>',
+		start_empty: '<:xp_1_empty:932221241459343421>',
+		mid_full: '<:xp_mid_full:932224365033037866>',
+		mid_half: '<:xp_mid_half:932224364873670688>',
+		mid_empty: '<:xp_mid_empty:932224365133705256>',
+		end_full: '<:xp_end_full:932224365179859015>',
+		end_half: '<:xp_end_half:932224365150502922>',
+		end_empty: '<:xp_end_empty:932224365146284072>'
 	},
 	red_bar: {
 		start_full: '<:red_1_full:907947200712179763>',
