@@ -184,7 +184,7 @@ class LeaderboardCommand extends CustomSlashCommand {
 				else if (selection.values.includes('Most Deaths')) {
 					const top = await getTopPlayers(query, 'deaths', erisGuild)
 					lbEmbed.setTitle('Most Deaths (Server)')
-					lbEmbed.setDescription(top.map((p, i) => `${i + 1}. <@${p.userId}> **${p.bossKills}** deaths`).join('\n'))
+					lbEmbed.setDescription(top.map((p, i) => `${i + 1}. <@${p.userId}> **${p.deaths}** deaths`).join('\n'))
 
 					await selection.editParent({
 						content: '',
@@ -334,7 +334,7 @@ class LeaderboardCommand extends CustomSlashCommand {
 						user: await this.app.fetchUser(p.userId)
 					})))
 					lbEmbed.setTitle('Most Deaths (Global)')
-					lbEmbed.setDescription(users.map((u, i) => `${i + 1}. ${u.user ? `\`${u.user.username}#${u.user.discriminator}\`` : `<@${u.row.userId}>`} **${u.row.bossKills}** deaths`).join('\n'))
+					lbEmbed.setDescription(users.map((u, i) => `${i + 1}. ${u.user ? `\`${u.user.username}#${u.user.discriminator}\`` : `<@${u.row.userId}>`} **${u.row.deaths}** deaths`).join('\n'))
 
 					await selection.editParent({
 						content: '',
