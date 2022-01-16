@@ -58,8 +58,8 @@ export const icons = {
 	merchant: '<:flurshed:928849729603907594>'
 }
 
-// How many items a single user can buy from the shop each day
-export const shopDailyBuyLimit = 10
+// How many items a single user can buy from the /market each hour
+export const shopHourlyBuyLimit = 5
 
 // Multiplier of the sell price when you sell an item to the shop (ranging from min% to max%).
 // If you sold an item worth 100 coins and the multiplier was set to 95%, you would receive 95 coins.

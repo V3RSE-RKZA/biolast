@@ -353,8 +353,6 @@ export function awaitPlayerChoices (
 											preSelectPlayerInventory.items.map(r => r.item.name).indexOf(row.item.name) === i
 										)
 
-										console.log(userPossibleAmmo.map(i => `${i.item.name} (${i.row.id})`))
-
 										if (!userPossibleAmmo.length) {
 											await attackMessage.edit({
 												content: `${icons.danger} You don't have any ammo for your ${getItemDisplay(weaponItemRow.item, weaponItemRow.row, { showEquipped: false, showDurability: false })}.` +

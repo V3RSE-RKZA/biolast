@@ -1,6 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext, Message, AutocompleteContext, ComponentType, ComponentActionRow } from 'slash-create'
 import App from '../app'
-import { icons, shopDailyBuyLimit } from '../config'
+import { icons, shopHourlyBuyLimit } from '../config'
 import { allItems } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -220,10 +220,10 @@ class MarketCommand extends CustomSlashCommand {
 						const itemsToBuy = []
 						let price = 0
 
-						if (userData.shopSales >= shopDailyBuyLimit) {
+						if (userData.shopSales >= shopHourlyBuyLimit) {
 							await c.send({
-								content: `${icons.danger} You have already purchased **${shopDailyBuyLimit}** items from the market and cannot purchase any more today.` +
-									' This limit helps prevent a single user from buying every item in the market. Try again tomorrow!',
+								content: `${icons.danger} You have already purchased **${shopHourlyBuyLimit}** items from the market and cannot purchase any more this hour.` +
+									' This limit helps prevent a single user from buying every item in the market. Try again later!',
 								ephemeral: true
 							})
 							return
@@ -259,10 +259,10 @@ class MarketCommand extends CustomSlashCommand {
 							})
 							return
 						}
-						else if (userData.shopSales + itemsToBuy.length > shopDailyBuyLimit) {
+						else if (userData.shopSales + itemsToBuy.length > shopHourlyBuyLimit) {
 							await c.send({
-								content: `${icons.danger} You have already purchased **${userData.shopSales}** items from the market and can only purchase **${shopDailyBuyLimit - userData.shopSales}** more today.` +
-									'This limit helps prevent a single user from buying every item in the market. Try again tomorrow!',
+								content: `${icons.danger} You have already purchased **${userData.shopSales}** items from the market and can only purchase **${shopHourlyBuyLimit - userData.shopSales}** more this hour.` +
+									'This limit helps prevent a single user from buying every item in the market. Try again later!',
 								ephemeral: true
 							})
 							return
@@ -321,12 +321,12 @@ class MarketCommand extends CustomSlashCommand {
 									})
 									return
 								}
-								else if (userDataV.shopSales + itemsToBuy.length > shopDailyBuyLimit) {
+								else if (userDataV.shopSales + itemsToBuy.length > shopHourlyBuyLimit) {
 									await transaction.commit()
 
 									await confirmed.editParent({
-										content: `${icons.danger} You have already purchased **${userDataV.shopSales}** items from the market and can only purchase **${shopDailyBuyLimit - userDataV.shopSales}** more today.` +
-											' This limit helps prevent a single user from buying every item in the market. Try again tomorrow!',
+										content: `${icons.danger} You have already purchased **${userDataV.shopSales}** items from the market and can only purchase **${shopHourlyBuyLimit - userDataV.shopSales}** more this hour.` +
+											' This limit helps prevent a single user from buying every item in the market. Try again later!',
 										components: []
 									})
 									return
