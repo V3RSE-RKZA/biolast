@@ -312,7 +312,7 @@ class SellCommand extends CustomSlashCommand {
 						catch (err) {
 							await botMessage.edit({
 								content: `${icons.danger} Command timed out.`,
-								components: disableAllComponents(botMessage.components)
+								components: disableAllComponents(CONFIRM_BUTTONS)
 							})
 						}
 					}
