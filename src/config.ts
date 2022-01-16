@@ -55,7 +55,9 @@ export const icons = {
 	negative_effect_debuff: '<:minus_negative_effect:931737473502036048>',
 	panic: '<:panic:928046269061021806>',
 	loading: '<a:loading:928735911196381224>',
-	merchant: '<:flurshed:928849729603907594>'
+	merchant: '<:flurshed:928849729603907594>',
+	page_button_next: '932168003771052042',
+	page_button_previous: '932168003561345025'
 }
 
 // How many items a single user can buy from the /market each hour
