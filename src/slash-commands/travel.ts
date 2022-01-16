@@ -3,6 +3,7 @@ import App from '../app'
 import { icons } from '../config'
 import { allLocations, isValidLocation, LocationName, locations } from '../resources/locations'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
+import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow, setLocation } from '../utils/db/players'
 import { combineArrayWithAnd, combineArrayWithOr } from '../utils/stringUtils'
@@ -27,7 +28,30 @@ class TravelCommand extends CustomSlashCommand {
 	}
 
 	async run (ctx: CommandContext): Promise<void> {
+		const preTravelCD = await getCooldown(query, ctx.user.id, 'travel')
 		const preUserData = (await getUserRow(query, ctx.user.id))!
+		const currentLocation = isValidLocation(preUserData.currentLocation) && locations[preUserData.currentLocation]
+
+		if (preTravelCD) {
+			await ctx.send({
+				content: `${icons.danger} You recently traveled to ${currentLocation ? `**${currentLocation.display}**` : ' a region'} and cannot travel again for **${preTravelCD}**.`
+			})
+			return
+		}
+
+		const maxLocations = allLocations.filter(l => l.locationLevel === preUserData.locationLevel)
+		const nextLocations = allLocations.filter(l => l.locationLevel === preUserData.locationLevel + 1)
+		const locationsDisplay = allLocations.map(l => {
+			if (l === currentLocation) {
+				return `${icons.checkmark} (Tier ${l.locationLevel} Region) ${l.icon} **${l.display}**: Current region!`
+			}
+
+			if (preUserData.locationLevel >= l.locationLevel) {
+				return `${icons.checkmark} (Tier ${l.locationLevel} Region) **${l.icon} ${l.display}**: Available`
+			}
+
+			return `${icons.cancel} (Tier ${l.locationLevel} Region) **${l.locationLevel > preUserData.locationLevel + 1 ? l.display.replace(/\w/g, '?') : `${l.icon} ${l.display}`}**: Undiscovered`
+		})
 		const sortedLocationIDs = Object.keys(locations)
 			.filter(l => locations[l as LocationName].locationLevel <= preUserData.locationLevel)
 			.sort((a, b) => locations[a as LocationName].locationLevel - locations[b as LocationName].locationLevel) as LocationName[]
@@ -53,20 +77,6 @@ class TravelCommand extends CustomSlashCommand {
 				})
 			}
 		]
-		const currentLocation = isValidLocation(preUserData.currentLocation) && locations[preUserData.currentLocation]
-		const maxLocations = allLocations.filter(l => l.locationLevel === preUserData.locationLevel)
-		const nextLocations = allLocations.filter(l => l.locationLevel === preUserData.locationLevel + 1)
-		const locationsDisplay = allLocations.map(l => {
-			if (l === currentLocation) {
-				return `${icons.checkmark} (Tier ${l.locationLevel} Region) ${l.icon} **${l.display}**: Current region!`
-			}
-
-			if (preUserData.locationLevel >= l.locationLevel) {
-				return `${icons.checkmark} (Tier ${l.locationLevel} Region) **${l.icon} ${l.display}**: Available`
-			}
-
-			return `${icons.cancel} (Tier ${l.locationLevel} Region) **${l.locationLevel > preUserData.locationLevel + 1 ? l.display.replace(/\w/g, '?') : `${l.icon} ${l.display}`}**: Undiscovered`
-		})
 
 		const botMessage = await ctx.send({
 			content: (`${maxLocations.length && nextLocations.length ?
@@ -88,8 +98,18 @@ class TravelCommand extends CustomSlashCommand {
 			const locationChoice = locationID ? locations[locationID] : undefined
 			const transaction = await beginTransaction()
 			const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
+			const travelCD = await getCooldown(transaction.query, ctx.user.id, 'travel', true)
 
-			if (!locationID || !locationChoice) {
+			if (travelCD) {
+				await transaction.commit()
+
+				await locationCtx.editParent({
+					content: `${icons.danger} You recently traveled to a region and cannot travel again for **${travelCD}**.`,
+					components: []
+				})
+				return
+			}
+			else if (!locationID || !locationChoice) {
 				await transaction.commit()
 
 				await locationCtx.editParent({
@@ -117,6 +137,7 @@ class TravelCommand extends CustomSlashCommand {
 				return
 			}
 
+			await createCooldown(transaction.query, ctx.user.id, 'travel', 10 * 60)
 			await setLocation(transaction.query, ctx.user.id, locationID)
 			await transaction.commit()
 
