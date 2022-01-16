@@ -95,8 +95,8 @@ const cainTheGravekeeperBoss: NPC = {
 		'~*Cain: Do not be afraid of death. Welcome it.*~',
 		'~*Cain: The dead shall not be disturbed.*~'
 	],
-	armor: items.wooden_armor,
-	helmet: items.wooden_helmet,
+	armor: items.cloth_armor,
+	helmet: items.cloth_helmet,
 	xp: 100,
 	boss: true,
 	respawnTime: 60 * 60
@@ -175,11 +175,11 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.makeshift_rifle, items.wooden_helmet],
+					items: [items.makeshift_rifle],
 					xp: 10
 				},
 				rare: {
-					items: [items.wooden_armor],
+					items: [items.wooden_armor, items.wooden_helmet],
 					xp: 20
 				},
 				rarest: {
@@ -204,7 +204,7 @@ export const suburbs: Location = {
 					xp: 10
 				},
 				rare: {
-					items: [items.wooden_helmet, items.makeshift_pistol],
+					items: [items.makeshift_pistol],
 					xp: 20
 				},
 				rolls: 1
