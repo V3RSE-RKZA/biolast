@@ -14,8 +14,8 @@ class RepairCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'repair',
-			description: 'Repair an item to full durability.',
-			longDescription: 'Repair an item from your inventory or stash to full durability. Useful if your favorite weapon or armor is about to break.' +
+			description: 'Repair your weapon or armor to full durability.',
+			longDescription: 'Repair armor or a weapon from your inventory to full durability. Useful if your favorite weapon or armor is about to break.' +
 				' Repairing an item is not cheap, be prepared to shell out a lot of copper if you want to repair an item that has really low durability.',
 			options: [
 				{
@@ -54,10 +54,11 @@ class RepairCommand extends CustomSlashCommand {
 		else if (
 			!itemToUse.item.durability ||
 			!itemToUse.item.sellPrice ||
-			itemToUse.item.type === 'Medical' ||
-			itemToUse.item.type === 'Stimulant' ||
-			itemToUse.item.type === 'Food' ||
-			itemToUse.item.type === 'Throwable Weapon'
+			(
+				itemToUse.item.type !== 'Body Armor' &&
+				itemToUse.item.type !== 'Helmet' &&
+				itemToUse.item.type !== 'Ranged Weapon'
+			)
 		) {
 			await ctx.send({
 				content: `${icons.danger} Your ${getItemDisplay(itemToUse.item, itemToUse.row, { showEquipped: false })} cannot be repaired.`
@@ -109,10 +110,11 @@ class RepairCommand extends CustomSlashCommand {
 			else if (
 				!foundItem.item.durability ||
 				!foundItem.item.sellPrice ||
-				foundItem.item.type === 'Medical' ||
-				foundItem.item.type === 'Stimulant' ||
-				foundItem.item.type === 'Food' ||
-				foundItem.item.type === 'Throwable Weapon'
+				(
+					itemToUse.item.type !== 'Body Armor' &&
+					itemToUse.item.type !== 'Helmet' &&
+					itemToUse.item.type !== 'Ranged Weapon'
+				)
 			) {
 				await transaction.commit()
 
