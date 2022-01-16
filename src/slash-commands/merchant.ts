@@ -137,7 +137,7 @@ const allTrades: Trade[] = [
 	{
 		type: 'collectible',
 		offer: {
-			item: items.steel_armor,
+			item: items.aramid_armor,
 			amount: 1
 		},
 		price: items.tech_trash,
