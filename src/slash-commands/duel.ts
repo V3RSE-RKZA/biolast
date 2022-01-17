@@ -553,7 +553,7 @@ class DuelCommand extends CustomSlashCommand {
 
 								// remove users items while victor picks loot
 								for (const victimItem of victimLoot) {
-									await removeItemFromBackpack(query, victimItem.row.id)
+									await removeItemFromBackpack(atkTransaction.query, victimItem.row.id)
 								}
 
 								messages[i].push(`☠️ **${otherPlayerMember.displayName} DIED!**`, `**${userChoice.member.displayName} wins** and earned 🌟 ***+${xpEarned}*** xp for this kill.`)
