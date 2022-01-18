@@ -1,5 +1,6 @@
 import { Item } from './Items'
 import { NPC } from './NPCs'
+import { RegionQuest } from './Quests'
 
 interface Loot {
 	/**
@@ -114,6 +115,8 @@ interface FreeLootArea extends AreaBase {
 	requiresKey?: undefined
 }
 
+export type LocationLevel = 1 | 2 | 3 | 4
+
 export type Area = RequiredKeyArea | OptionalKeyArea | FreeLootArea
 
 export interface Location {
@@ -122,7 +125,7 @@ export interface Location {
 	/**
 	 * The minimum locationLevel user must have in order to travel to this location
 	 */
-	locationLevel: number
+	locationLevel: LocationLevel
 
 	/**
 	 * Icon to display in select menu on travel command for this location
@@ -135,4 +138,9 @@ export interface Location {
 	boss: NPC
 
 	areas: Area[]
+
+	/**
+	 * Quests user can get if they have unlocked this region
+	 */
+	quests: RegionQuest[]
 }

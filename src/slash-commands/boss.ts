@@ -10,7 +10,7 @@ import { Location } from '../types/Locations'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addHealth, addXp, getUserRow, increaseKills, setFighting, setLocationLevel } from '../utils/db/players'
-import { getUserQuests, increaseProgress } from '../utils/db/quests'
+import { getUserQuest, increaseProgress } from '../utils/db/quests'
 import { backpackHasSpace, getEquips, getItemDisplay, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import getRandomInt from '../utils/randomInt'
@@ -716,7 +716,7 @@ class BossCommand extends CustomSlashCommand {
 
 							for (const player of players) {
 								const userData = (await getUserRow(atkTransaction.query, player.member.id, true))!
-								const userQuests = (await getUserQuests(atkTransaction.query, player.member.id, true)).filter(q => q.questType === 'NPC Kills' || q.questType === 'Any Kills' || q.questType === 'Boss Kills')
+								const userQuest = await getUserQuest(atkTransaction.query, player.member.id, true)
 								const droppedItems = []
 
 								if (location.boss.armor && armorReceiver === player.member.id) {
@@ -802,15 +802,13 @@ class BossCommand extends CustomSlashCommand {
 								}
 
 								// check if user has any kill quests
-								for (const quest of userQuests) {
-									if (quest.progress < quest.progressGoal) {
-										if (
-											quest.questType === 'Boss Kills' ||
-											quest.questType === 'Any Kills' ||
-											quest.questType === 'NPC Kills'
-										) {
-											await increaseProgress(atkTransaction.query, quest.id, 1)
-										}
+								if (userQuest && userQuest.progress < userQuest.progressGoal) {
+									if (
+										userQuest.questType === 'Boss Kills' ||
+										userQuest.questType === 'Any Kills' ||
+										userQuest.questType === 'NPC Kills'
+									) {
+										await increaseProgress(atkTransaction.query, player.member.id, 1)
 									}
 								}
 

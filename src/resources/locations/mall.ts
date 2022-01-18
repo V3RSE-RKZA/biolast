@@ -164,6 +164,29 @@ export const mall: Location = {
 	icon: '🏪',
 	locationLevel: 3,
 	boss: theManyBoss,
+	quests: [
+		{
+			type: 'Region',
+			id: 'mall_retrieve_1',
+			questType: 'Retrieve Item',
+			progressGoal: 3,
+			item: items.donut
+		},
+		{
+			type: 'Region',
+			id: 'mall_retrieve_2',
+			questType: 'Retrieve Item',
+			progressGoal: 3,
+			item: items.pizza_slice
+		},
+		{
+			type: 'Region',
+			id: 'mall_key_1',
+			questType: 'Scavenge With A Key',
+			progressGoal: 1,
+			key: items.florreds_pharmacy_key
+		}
+	],
 	areas: [
 		{
 			display: 'Antique Store',

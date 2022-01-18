@@ -2,7 +2,6 @@ import { SlashCreator, CommandContext, ComponentType, Message, ComponentSelectMe
 import App from '../app'
 import { icons, webhooks } from '../config'
 import { NPC } from '../types/NPCs'
-import { dailyQuests } from '../resources/quests'
 import { isValidLocation, locations } from '../resources/locations'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
@@ -11,7 +10,7 @@ import { Area } from '../types/Locations'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addHealth, addXp, getUserRow, increaseKills, setFighting } from '../utils/db/players'
-import { getUserQuests, increaseProgress } from '../utils/db/quests'
+import { getUserQuest, increaseProgress } from '../utils/db/quests'
 import { backpackHasSpace, getBackpackLimit, getEquips, getItemDisplay, getItems, sortItemsByDurability, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import getRandomInt from '../utils/randomInt'
@@ -24,6 +23,7 @@ import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, P
 import { GRAY_BUTTON, RED_BUTTON } from '../utils/constants'
 import { attackPlayer, getMobChoice, getMobDisplay, getMobDrop } from '../utils/npcUtils'
 import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
+import { allQuests } from '../resources/quests'
 
 class ScavengeCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -242,14 +242,12 @@ class ScavengeCommand extends CustomSlashCommand {
 				return
 			}
 
-			const preUserQuests = (await getUserQuests(transaction.query, ctx.user.id, true))
-				.filter(q => q.questType === 'Scavenge With A Key' || q.questType === 'Scavenge')
+			const preUserQuest = await getUserQuest(transaction.query, ctx.user.id, true)
 
-			// check if user had any scavenge quests
-			for (const questRow of preUserQuests) {
-				const quest = dailyQuests.find(q => q.id === questRow.questId)
+			if (preUserQuest?.questType === 'Scavenge With A Key' || preUserQuest?.questType === 'Scavenge') {
+				const quest = allQuests.find(q => q.id === preUserQuest.questId)
 
-				if (questRow.progress < questRow.progressGoal) {
+				if (preUserQuest.progress < preUserQuest.progressGoal) {
 					if (
 						(
 							quest &&
@@ -257,9 +255,9 @@ class ScavengeCommand extends CustomSlashCommand {
 							hasRequiredKey &&
 							quest.key.name === hasRequiredKey.item.name
 						) ||
-						questRow.questType === 'Scavenge'
+						preUserQuest.questType === 'Scavenge'
 					) {
-						await increaseProgress(transaction.query, questRow.id, 1)
+						await increaseProgress(transaction.query, ctx.user.id, 1)
 					}
 				}
 			}
@@ -774,7 +772,7 @@ class ScavengeCommand extends CustomSlashCommand {
 							}
 
 							if (!missedPartChoice && npcHealth <= 0) {
-								const userQuests = (await getUserQuests(atkTransaction.query, ctx.user.id, true)).filter(q => q.questType === 'NPC Kills' || q.questType === 'Any Kills' || q.questType === 'Boss Kills')
+								const userQuest = await getUserQuest(atkTransaction.query, ctx.user.id, true)
 								const droppedItems = []
 
 								if (npc.armor) {
@@ -855,14 +853,12 @@ class ScavengeCommand extends CustomSlashCommand {
 								await addXp(atkTransaction.query, ctx.user.id, npc.xp)
 
 								// check if user has any kill quests
-								for (const quest of userQuests) {
-									if (quest.progress < quest.progressGoal) {
-										if (
-											(quest.questType === 'Boss Kills' && npc.boss) ||
-											(quest.questType === 'Any Kills' || quest.questType === 'NPC Kills')
-										) {
-											await increaseProgress(atkTransaction.query, quest.id, 1)
-										}
+								if (userQuest && userQuest.progress < userQuest.progressGoal) {
+									if (
+										(userQuest.questType === 'Boss Kills' && npc.boss) ||
+										(userQuest.questType === 'Any Kills' || userQuest.questType === 'NPC Kills')
+									) {
+										await increaseProgress(atkTransaction.query, ctx.user.id, 1)
 									}
 								}
 

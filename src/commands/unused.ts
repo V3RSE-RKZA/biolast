@@ -2,7 +2,6 @@ import { TextCommand } from '../types/Commands'
 import { reply } from '../utils/messageUtils'
 import { allLocations } from '../resources/locations'
 import { getItemDisplay, sortItemsByType } from '../utils/itemUtils'
-import { dailyQuests } from '../resources/quests'
 import { allItems } from '../resources/items'
 import { Item } from '../types/Items'
 
@@ -36,12 +35,6 @@ export const command: TextCommand = {
 							obtainable.push(item)
 						}
 					}
-				}
-			}
-
-			for (const quest of dailyQuests) {
-				if (quest.rewards.item && quest.rewards.item.name === item.name) {
-					obtainable.push(item)
 				}
 			}
 		}

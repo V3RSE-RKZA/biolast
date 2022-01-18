@@ -1,6 +1,6 @@
-import { OkPacket } from 'mysql'
-import { DailyQuest, SideQuest } from '../../types/Quests'
+import { RegionQuest, SideQuest } from '../../types/Quests'
 import { Query, QuestRow } from '../../types/mysql'
+import { Item } from '../../types/Items'
 
 /**
  *
@@ -9,27 +9,27 @@ import { Query, QuestRow } from '../../types/mysql'
  * @param forUpdate Whether this is used in an SQL transaction
  * @returns Users quests
  */
-export async function getUserQuests (query: Query, userID: string, forUpdate = false): Promise<QuestRow[]> {
-	return query(`SELECT * FROM quests WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID])
+export async function getUserQuest (query: Query, userID: string, forUpdate = false): Promise<QuestRow | undefined> {
+	return (await query(`SELECT * FROM quests WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID]))[0]
 }
 
 /**
  * Increases a users quest progress
  * @param query Query to use
- * @param questID ID of quest to increase progress of
+ * @param userID ID of user to increase quest progress of
  * @param amount Amount to increase progress by
  */
-export async function increaseProgress (query: Query, questID: number, amount: number): Promise<void> {
-	await query('UPDATE quests SET progress = progress + ? WHERE id = ?', [amount, questID])
+export async function increaseProgress (query: Query, userID: string, amount: number): Promise<void> {
+	await query('UPDATE quests SET progress = progress + ? WHERE userId = ?', [amount, userID])
 }
 
 /**
  *
  * @param query Query to use
- * @param questID ID of the quest to delete (the sql id)
+ * @param userID ID of the user to delete quest of
  */
-export async function deleteQuest (query: Query, questID: number): Promise<void> {
-	await query('DELETE FROM quests WHERE id = ?', [questID])
+export async function deleteQuest (query: Query, userID: string): Promise<void> {
+	await query('DELETE FROM quests WHERE userId = ?', [userID])
 }
 
 /**
@@ -37,31 +37,27 @@ export async function deleteQuest (query: Query, questID: number): Promise<void>
  * @param query Query to use
  * @param userID ID of user to create quest for
  * @param quest The quest being added
- * @param xpReward The xp rewarded for completing this quest
  */
-export async function createQuest (query: Query, userID: string, quest: DailyQuest | SideQuest, xpReward: number): Promise<QuestRow> {
-	const packet: OkPacket = await query('INSERT INTO quests (userId, questId, questType, progressGoal, itemReward, xpReward, moneyReward, sideQuest) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
+export async function createQuest (query: Query, userID: string, quest: RegionQuest | SideQuest, xpReward: number, itemReward?: Item, moneyReward?: number): Promise<QuestRow> {
+	await query('INSERT INTO quests (userId, questId, questType, progressGoal, itemReward, xpReward, moneyReward) VALUES (?, ?, ?, ?, ?, ?, ?)', [
 		userID,
 		quest.id,
 		quest.questType,
 		quest.progressGoal,
-		quest.type === 'Side' ? undefined : quest.rewards.item?.name,
+		itemReward?.name,
 		xpReward,
-		quest.type === 'Side' ? undefined : quest.rewards.money,
-		quest.type === 'Side'
+		moneyReward
 	])
 
 	return {
-		id: packet.insertId,
 		questId: quest.id,
 		userId: userID,
 		progress: 0,
 		progressGoal: quest.progressGoal,
 		questType: quest.questType,
 		createdAt: new Date(),
-		itemReward: quest.type === 'Side' ? undefined : quest.rewards.item?.name,
+		itemReward: itemReward?.name,
 		xpReward,
-		moneyReward: quest.type === 'Side' ? undefined : quest.rewards.money,
-		sideQuest: quest.type === 'Side' ? 1 : 0
+		moneyReward
 	}
 }

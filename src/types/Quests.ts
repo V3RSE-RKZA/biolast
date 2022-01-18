@@ -1,12 +1,5 @@
 import { Item } from './Items'
 
-// https://stackoverflow.com/a/49725198
-type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
-    Pick<T, Exclude<keyof T, Keys>>
-    & {
-        [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>
-    }[Keys]
-
 export type QuestType = 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Scavenge' | 'Scavenge With A Key' | 'Retrieve Item'
 
 interface BaseQuest {
@@ -24,66 +17,33 @@ interface BaseQuest {
 	progressGoal: number
 }
 
-interface BaseDailyQuest extends BaseQuest {
-	type: 'Daily'
-
-	/**
-	 * The minimum level user must be before they can be assigned this quest
-	 */
-	minLevel: number
-
-	/**
-	 * Max level user can be to obtain the quest
-	 */
-	maxLevel: number
-
-	/**
-	 * Rewards for completing this quest
-	 */
-	rewards: RequireAtLeastOne<{
-		item?: Item
-		money?: number
-	}>
-}
-interface BasicDailyQuest extends BaseDailyQuest {
-	questType: 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Scavenge'
+interface BaseRegionQuest extends BaseQuest {
+	type: 'Region'
 }
 /**
  * This quest type requires a key to be specified
  */
-interface KeyScavengeDailyQuest extends BaseDailyQuest {
+interface KeyScavengeRegionQuest extends BaseRegionQuest {
 	questType: 'Scavenge With A Key'
 	key: Item
 }
 /**
  * This quest type requires a quest item to be specified
  */
-interface QuestItemDailyQuest extends BaseDailyQuest {
+interface QuestItemRegionQuest extends BaseRegionQuest {
 	questType: 'Retrieve Item'
 	item: Item
 }
 
-
-interface BaseSideQuest extends BaseQuest {
-	type: 'Side'
-}
 /**
- * This quest type requires a quest item to be specified
+ * Side quests have no item or money rewards (only XP reward), and can be assigned regardless of players region.
  */
- interface QuestItemSideQuest extends BaseSideQuest {
-	questType: 'Retrieve Item'
-	item: Item
-}
-interface BasicSideQuest extends BaseSideQuest {
+export interface SideQuest extends BaseQuest {
+	type: 'Side'
 	questType: 'Player Kills' | 'NPC Kills' | 'Boss Kills' | 'Any Kills' | 'Scavenge'
 }
 
 /**
- * Daily quests give significant XP based on the users level and possibly a money or item reward.
+ * Region specific quests give a money or item reward, and require user to do something in their highest unlocked region.
  */
-export type DailyQuest = BasicDailyQuest | KeyScavengeDailyQuest | QuestItemDailyQuest
-
-/**
- * Side quests have no item or money rewards (only XP reward), and can be assigned regardless of players level.
- */
-export type SideQuest = BasicSideQuest | QuestItemSideQuest
+export type RegionQuest = KeyScavengeRegionQuest | QuestItemRegionQuest

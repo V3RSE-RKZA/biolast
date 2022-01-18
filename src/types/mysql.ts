@@ -2,6 +2,7 @@ import { QueryOptions } from 'mysql'
 import { QuestType } from './Quests'
 import { Item } from './Items'
 import { ItemSkin } from '../resources/skins'
+import { LocationLevel } from './Locations'
 
 export type Query = (sql: string | QueryOptions, args?: any[]) => Promise<any>
 
@@ -40,7 +41,7 @@ export interface UserRow {
 	 * The max location level this user has achieved,
 	 * allows them to travel to locations of equal or lower locationLevel
 	 */
-	locationLevel: number
+	locationLevel: LocationLevel
 
 	/**
 	 * The id of the location user is currently located at
@@ -118,16 +119,14 @@ export interface SkinRow {
 export type SkinWithRow = { skin: ItemSkin, row: SkinRow }
 
 export interface QuestRow {
-	id: number
 	userId: string
 	questType: QuestType
 	questId: string
 	progress: number
 	progressGoal: number
+	xpReward: number
 	itemReward?: string
-	xpReward?: number
 	moneyReward?: number
-	sideQuest: 0 | 1
 	createdAt: Date
 }
 

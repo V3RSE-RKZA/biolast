@@ -59,7 +59,7 @@ export const PREVIOUS_BUTTON = (disabled: boolean): ComponentButton => ({
 	type: ComponentType.BUTTON,
 	label: '',
 	custom_id: 'previous',
-	style: ButtonStyle.PRIMARY,
+	style: ButtonStyle.SECONDARY,
 	emoji: {
 		name: 'Previous Page',
 		id: icons.page_button_previous
@@ -71,7 +71,7 @@ export const NEXT_BUTTON = (disabled: boolean): ComponentButton => ({
 	type: ComponentType.BUTTON,
 	label: '',
 	custom_id: 'next',
-	style: ButtonStyle.PRIMARY,
+	style: ButtonStyle.SECONDARY,
 	emoji: {
 		name: 'Next Page',
 		id: icons.page_button_next

@@ -67,8 +67,8 @@ export const icons = {
 	panic: '<:panic:928046269061021806>',
 	loading: '<a:loading:928735911196381224>',
 	merchant: '<:flurshed:928849729603907594>',
-	page_button_next: '932168003771052042',
-	page_button_previous: '932168003561345025'
+	page_button_next: '932632499874570300',
+	page_button_previous: '932632500092682250'
 }
 
 // How many items a single user can buy from the /market each hour

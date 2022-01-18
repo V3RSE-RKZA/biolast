@@ -119,6 +119,15 @@ export const station: Location = {
 	icon: '🚓',
 	locationLevel: 4,
 	boss: securityOfficerWalker,
+	quests: [
+		{
+			type: 'Region',
+			id: 'police_key_scavenge',
+			questType: 'Scavenge With A Key',
+			progressGoal: 1,
+			key: items.shed_key
+		}
+	],
 	areas: [
 		{
 			display: 'Parking Lot',

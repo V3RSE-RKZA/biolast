@@ -107,6 +107,36 @@ export const suburbs: Location = {
 	icon: '🏡',
 	locationLevel: 1,
 	boss: cainTheGravekeeperBoss,
+	quests: [
+		{
+			type: 'Region',
+			id: 'suburbs_key_scavenge_1',
+			questType: 'Scavenge With A Key',
+			progressGoal: 1,
+			key: items.shed_key
+		},
+		{
+			type: 'Region',
+			id: 'suburbs_key_scavenge_2',
+			questType: 'Scavenge With A Key',
+			progressGoal: 2,
+			key: items.shed_key
+		},
+		{
+			type: 'Region',
+			id: 'suburbs_goop_retrieve_1',
+			questType: 'Retrieve Item',
+			progressGoal: 1,
+			item: items.walker_goop
+		},
+		{
+			type: 'Region',
+			id: 'suburbs_goop_retrieve_2',
+			questType: 'Retrieve Item',
+			progressGoal: 2,
+			item: items.walker_goop
+		}
+	],
 	areas: [
 		{
 			display: 'Backstreets',

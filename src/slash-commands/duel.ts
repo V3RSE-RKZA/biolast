@@ -12,7 +12,7 @@ import { GRAY_BUTTON, GREEN_BUTTON, RED_BUTTON } from '../utils/constants'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addHealth, addXp, getUserRow, increaseDeaths, increaseKills, lowerHealth, setFighting } from '../utils/db/players'
-import { getUserQuests, increaseProgress } from '../utils/db/quests'
+import { getUserQuest, increaseProgress } from '../utils/db/quests'
 import { backpackHasSpace, getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByLevel, sortItemsByValue } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
@@ -521,7 +521,7 @@ class DuelCommand extends CustomSlashCommand {
 							const victimLoot = victimInventory.items.filter(itm => !victimItemsRemoved.includes(itm.row.id))
 
 							if (!missedPartChoice && victimData.health - totalDamage <= 0) {
-								const killQuests = (await getUserQuests(atkTransaction.query, userChoice.member.id, true)).filter(q => q.questType === 'Player Kills' || q.questType === 'Any Kills')
+								const userQuest = await getUserQuest(atkTransaction.query, userChoice.member.id, true)
 								let xpEarned = 15
 
 								for (const victimItem of victimLoot) {
@@ -545,9 +545,9 @@ class DuelCommand extends CustomSlashCommand {
 								await addXp(atkTransaction.query, userChoice.member.id, xpEarned)
 
 								// check if user has any kill quests
-								for (const quest of killQuests) {
-									if (quest.progress < quest.progressGoal) {
-										await increaseProgress(atkTransaction.query, quest.id, 1)
+								if (userQuest && userQuest.progress < userQuest.progressGoal) {
+									if (userQuest.questType === 'Any Kills' || userQuest.questType === 'Player Kills') {
+										await increaseProgress(atkTransaction.query, userChoice.member.id, 1)
 									}
 								}
 

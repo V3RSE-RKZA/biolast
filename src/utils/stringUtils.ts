@@ -150,7 +150,7 @@ export function formatRedBar (current: number, maxValue: number): string {
 			}
 		}
 		else if (i === 4) {
-			if (barPerc >= 1) {
+			if (barPerc >= 0.9) {
 				hpStr += icons.red_bar.end_full
 			}
 			else if (barPerc > 0) {

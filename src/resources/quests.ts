@@ -1,5 +1,7 @@
-import { SideQuest } from '../../types/Quests'
-import { items } from '../items'
+import { SideQuest } from '../types/Quests'
+import { allLocations } from './locations'
+
+// basic quests that can be done regardless of users level or region
 
 export const sideQuests: SideQuest[] = [
 	{
@@ -55,19 +57,9 @@ export const sideQuests: SideQuest[] = [
 		id: 'side_player_kills_2',
 		questType: 'Player Kills',
 		progressGoal: 2
-	},
-	{
-		type: 'Side',
-		id: 'side_retrieve_item_1',
-		questType: 'Retrieve Item',
-		progressGoal: 1,
-		item: items.walker_goop
-	},
-	{
-		type: 'Side',
-		id: 'side_retrieve_item_2',
-		questType: 'Retrieve Item',
-		progressGoal: 2,
-		item: items.walker_goop
 	}
 ]
+
+export const regionQuests = allLocations.map(l => l.quests).flat(1)
+
+export const allQuests = [...sideQuests, ...regionQuests]

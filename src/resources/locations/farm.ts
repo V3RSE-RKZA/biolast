@@ -110,6 +110,15 @@ export const farm: Location = {
 	icon: '🚜',
 	locationLevel: 2,
 	boss: daveTheRedneckBoss,
+	quests: [
+		{
+			type: 'Region',
+			id: 'farm_goop_retrieve_2',
+			questType: 'Retrieve Item',
+			progressGoal: 2,
+			item: items.walker_goop
+		}
+	],
 	areas: [
 		{
 			display: 'Fields',
