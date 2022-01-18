@@ -95,7 +95,7 @@ class CompanionCommand extends CustomSlashCommand {
 					]
 				}
 			],
-			category: 'items',
+			category: 'scavenging',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

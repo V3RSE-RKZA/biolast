@@ -35,7 +35,7 @@ class MarketCommand extends CustomSlashCommand {
 					autocomplete: true
 				}
 			],
-			category: 'items',
+			category: 'trading',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

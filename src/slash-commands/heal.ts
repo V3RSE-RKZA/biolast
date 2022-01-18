@@ -29,7 +29,7 @@ class HealCommand extends CustomSlashCommand {
 					required: false
 				}
 			],
-			category: 'items',
+			category: 'equipment',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

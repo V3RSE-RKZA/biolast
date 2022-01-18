@@ -155,7 +155,7 @@ class MerchantCommand extends CustomSlashCommand {
 			longDescription: 'Visit the merchant. The merchant sells different stuff depending on the regions you\'ve unlocked.' +
 				'\n\nThe higher level region you unlock, the better deals the merchant will offer you.',
 			options: [],
-			category: 'items',
+			category: 'trading',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

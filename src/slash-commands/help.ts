@@ -5,6 +5,8 @@ import { allLocations } from '../resources/locations'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
+import { query } from '../utils/db/mysql'
+import { getUserRow } from '../utils/db/players'
 import { logger } from '../utils/logger'
 import { disableAllComponents } from '../utils/messageUtils'
 import { combineArrayWithOr } from '../utils/stringUtils'
@@ -21,7 +23,7 @@ class HelpCommand extends CustomSlashCommand {
 				description: 'Command name to get information for.',
 				required: false
 			}],
-			category: 'info',
+			category: 'other',
 			guildModsOnly: false,
 			worksInDMs: true,
 			worksDuringDuel: true,
@@ -56,25 +58,16 @@ class HelpCommand extends CustomSlashCommand {
 			const cmdEmbed = new Embed()
 				.setTitle(`🔎 ${cmd.commandName}`)
 				.setDescription(cmd.customOptions.longDescription)
-
-			/* Maybe ill add these back at some point
-			if (cmd.examples.length) {
-				cmdEmbed.addField('Usage Examples', cmd.examples.map(example => `\`${prefix}${example}\``).join('\n'), true)
-			}
-
-			cmdEmbed.addField('Cooldown', formatTime(cmd.cooldown * 1000), true)
-			*/
-
-			cmdEmbed.addField('Can be used while in a duel?', cmd.customOptions.worksDuringDuel ? 'Yes' : 'No', true)
+				.addField('Can be used while in a duel?', cmd.customOptions.worksDuringDuel ? 'Yes' : 'No')
 
 			if (cmd.customOptions.minimumLocationLevel) {
 				const locationUnlocked = allLocations.filter(l => l.locationLevel === (cmd!.customOptions.minimumLocationLevel))
 				const regionsDisplay = combineArrayWithOr(locationUnlocked.map(l => `**${l.display}**`))
 
-				cmdEmbed.addField('Region Requirement', `This command is unlocked once you discover ${regionsDisplay} (Region tier **${cmd.customOptions.minimumLocationLevel}**)`, true)
+				cmdEmbed.addField('Region Requirement', `This command is unlocked once you discover ${regionsDisplay} (Region tier **${cmd.customOptions.minimumLocationLevel}**)`)
 			}
 			else {
-				cmdEmbed.addField('Region Requirement', 'This command is always unlocked.', true)
+				cmdEmbed.addField('Region Requirement', 'This command is always unlocked.')
 			}
 
 			await ctx.send({
@@ -83,12 +76,35 @@ class HelpCommand extends CustomSlashCommand {
 			return
 		}
 
+		const userData = (await getUserRow(query, ctx.user.id))!
+		const allCommands = Array.from(this.app.slashCreator.commands.values()) as CustomSlashCommand[]
+		const tierUnlocked = allCommands.filter(c => !c.customOptions.minimumLocationLevel)
+		const tierLocked = allCommands.filter(c => c.customOptions.minimumLocationLevel).reduce<{ [key: string]: CustomSlashCommand[] }>((prev, curr) => {
+			if (prev[curr.customOptions.minimumLocationLevel!]) {
+				prev[curr.customOptions.minimumLocationLevel!] = [...prev[curr.customOptions.minimumLocationLevel!], curr]
+			}
+			else {
+				prev[curr.customOptions.minimumLocationLevel!] = [curr]
+			}
+			return prev
+		}, {})
+		const progressionCmds = tierUnlocked.filter(c => c.customOptions.category === 'scavenging').map(c => this.getCommandDisplay(c))
+		const infoCmds = tierUnlocked.filter(c => c.customOptions.category === 'info').map(c => this.getCommandDisplay(c))
+		const tradeCmds = tierUnlocked.filter(c => c.customOptions.category === 'trading').map(c => this.getCommandDisplay(c))
+		const equipCmds = tierUnlocked.filter(c => c.customOptions.category === 'equipment').map(c => this.getCommandDisplay(c))
+		const lockedCmds = Object.keys(tierLocked).map(reg =>
+			`${userData.locationLevel > parseInt(reg) ? '🔓' : '🔒'} [Region Tier **${reg}**] ${tierLocked[reg].map(c => this.getCommandDisplay(c)).join(', ')}`
+		)
+
 		const commandsEmb = new Embed()
 			.setTitle('What are the commands?')
-			.setDescription('Use `/help <command>` to see more about a specific command. You can also hover your mouse over the command for a short description.' +
-				`\n\n${this.app.slashCreator.commands
-					.map(cmd => `[\`${cmd.commandName}\`](https://youtu.be/hnVhYwYuqcM '${cmd.description}')`)
-					.join(', ')}`)
+			.setDescription('Use `/help <command>` to see more about a specific command. You can also hover your mouse over the command for a short description.')
+			.addField('☠️ Scavenging & Progression', `Defeat the region boss to be able to travel to the next region:\n\n${progressionCmds.join(', ')}`)
+			.addField('📋 Player Information', infoCmds.join(', '))
+			.addField(`${icons.copper} Trading Commands`, tradeCmds.join(', '))
+			.addField('🧤 Equipment Commands', equipCmds.join(', '))
+			.addBlankField()
+			.addField('Region Locked Commands', `Unlock these commands by reaching a new region (you are region tier **${userData.locationLevel}**):\n\n${lockedCmds.join('\n')}`)
 
 		const damageEmbed = new Embed()
 			.setTitle('How is damage calculated?')
@@ -195,6 +211,22 @@ class HelpCommand extends CustomSlashCommand {
 				logger.warn(err)
 			}
 		})
+	}
+
+	getCommandDisplay (cmd: CustomSlashCommand): string {
+		if (!cmd.options || !cmd.options.length) {
+			return `[\`${cmd.commandName}\`](https://youtu.be/hnVhYwYuqcM '${cmd.description}')`
+		}
+
+		const optionsDisplay = []
+
+		for (const opt of cmd.options) {
+			if (opt.type === CommandOptionType.SUB_COMMAND) {
+				optionsDisplay.push(opt.name)
+			}
+		}
+
+		return `[\`${cmd.commandName}${optionsDisplay.length ? ` ${optionsDisplay.join('/')}` : ''}\`](https://youtu.be/hnVhYwYuqcM '${cmd.description}')`
 	}
 }
 

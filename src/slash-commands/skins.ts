@@ -71,7 +71,7 @@ class SkinsCommand extends CustomSlashCommand {
 					]
 				}
 			],
-			category: 'info',
+			category: 'equipment',
 			guildModsOnly: false,
 			worksInDMs: true,
 			worksDuringDuel: true,

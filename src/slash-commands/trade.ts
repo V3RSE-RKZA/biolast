@@ -64,7 +64,7 @@ class TradeCommand extends CustomSlashCommand {
 				description: 'User to trade with.',
 				required: true
 			}],
-			category: 'items',
+			category: 'trading',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

@@ -32,7 +32,7 @@ class DuelCommand extends CustomSlashCommand {
 				description: 'User to fight.',
 				required: true
 			}],
-			category: 'info',
+			category: 'scavenging',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

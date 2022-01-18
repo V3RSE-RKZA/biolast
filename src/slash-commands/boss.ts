@@ -69,7 +69,7 @@ class BossCommand extends CustomSlashCommand {
 					required: false
 				}
 			],
-			category: 'info',
+			category: 'scavenging',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

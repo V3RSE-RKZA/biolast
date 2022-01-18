@@ -21,7 +21,7 @@ class EquipCommand extends CustomSlashCommand {
 					required: true
 				}
 			],
-			category: 'items',
+			category: 'equipment',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

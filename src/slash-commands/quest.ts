@@ -43,7 +43,7 @@ class QuestCommand extends CustomSlashCommand {
 			description: 'Track your quest progress. Accept and complete new quests.',
 			longDescription: 'Track your quest progress. Once you finish a quest, use this command to accept the reward!',
 			options: [],
-			category: 'info',
+			category: 'scavenging',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

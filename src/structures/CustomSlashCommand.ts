@@ -1,9 +1,10 @@
 import { SlashCommand, SlashCommandOptions, SlashCreator } from 'slash-create'
 import App from '../app'
 import { debug, testingGuildIDs } from '../config'
+import { LocationLevel } from '../types/Locations'
 import { logger } from '../utils/logger'
 
-type CommandCategory = 'info' | 'items' | 'utility'
+type CommandCategory = 'info' | 'scavenging' | 'trading' | 'equipment' | 'other'
 
 interface BaseCommandOptions {
 	guildModsOnly: boolean
@@ -30,7 +31,7 @@ interface BaseCommandOptions {
 	/**
 	 * What location level user must be in order to use this command (1 = the suburbs, 2 = the farm)
 	 */
-	minimumLocationLevel?: number
+	minimumLocationLevel?: Exclude<LocationLevel, 1>
 }
 
 interface DMCommandOptions extends BaseCommandOptions {

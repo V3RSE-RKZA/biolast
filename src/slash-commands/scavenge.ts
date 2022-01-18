@@ -33,7 +33,7 @@ class ScavengeCommand extends CustomSlashCommand {
 			longDescription: 'Select an area to explore. Different areas have different loot and enemies. Some areas may also require you to use a key to scavenge them.' +
 				' As you level up, more locations will become available to you to explore.',
 			options: [],
-			category: 'info',
+			category: 'scavenging',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

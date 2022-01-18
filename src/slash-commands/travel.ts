@@ -17,7 +17,7 @@ class TravelCommand extends CustomSlashCommand {
 				' well as what boss you fight with `/boss`.\n\nTo unlock a new region, you will have to fight the boss of the region you are currently on (so if you' +
 				' are on **The Suburbs**, you would have to beat the boss either alone or with the help of friends in order to progress to **The Farm**).',
 			options: [],
-			category: 'info',
+			category: 'scavenging',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

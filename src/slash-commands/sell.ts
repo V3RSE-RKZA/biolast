@@ -35,7 +35,7 @@ class SellCommand extends CustomSlashCommand {
 					description: 'Sell items from your stash.'
 				}
 			],
-			category: 'items',
+			category: 'trading',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,

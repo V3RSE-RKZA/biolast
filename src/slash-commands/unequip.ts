@@ -34,7 +34,7 @@ class UnequipCommand extends CustomSlashCommand {
 					]
 				}
 			],
-			category: 'items',
+			category: 'equipment',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
