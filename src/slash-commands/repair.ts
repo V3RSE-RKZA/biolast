@@ -57,7 +57,8 @@ class RepairCommand extends CustomSlashCommand {
 			(
 				itemToUse.item.type !== 'Body Armor' &&
 				itemToUse.item.type !== 'Helmet' &&
-				itemToUse.item.type !== 'Ranged Weapon'
+				itemToUse.item.type !== 'Ranged Weapon' &&
+				itemToUse.item.type !== 'Melee Weapon'
 			)
 		) {
 			await ctx.send({
@@ -113,7 +114,8 @@ class RepairCommand extends CustomSlashCommand {
 				(
 					itemToUse.item.type !== 'Body Armor' &&
 					itemToUse.item.type !== 'Helmet' &&
-					itemToUse.item.type !== 'Ranged Weapon'
+					itemToUse.item.type !== 'Ranged Weapon' &&
+					itemToUse.item.type !== 'Melee Weapon'
 				)
 			) {
 				await transaction.commit()
