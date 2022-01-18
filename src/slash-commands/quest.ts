@@ -205,7 +205,7 @@ class QuestCommand extends CustomSlashCommand {
 			}) as Message
 		}
 
-		const { collector } = this.app.componentCollector.createCollector(questMessage.id, c => c.user.id === ctx.user.id, 40000)
+		const { collector, stopCollector } = this.app.componentCollector.createCollector(questMessage.id, c => c.user.id === ctx.user.id, 40000)
 		const fixedQuest = userQuest
 		let fixedQuestRow = userQuestRow
 
@@ -221,22 +221,22 @@ class QuestCommand extends CustomSlashCommand {
 
 				if (!userQuestRowV || userQuestRowV.questId !== fixedQuestRow.questId) {
 					await transaction.commit()
+					stopCollector()
 
 					await buttonCtx.editParent({
 						content: `${icons.danger} This quest has expired. Please re-run the command.`,
-						components: []
-					})
-					await buttonCtx.send({
-						content: `${icons.danger} That quest has expired. Please re-run the quest command.`,
-						ephemeral: true
+						components: [],
+						embeds: []
 					})
 				}
 				else if (userData.fighting) {
 					await transaction.commit()
+					stopCollector()
 
-					await buttonCtx.send({
+					await buttonCtx.editParent({
 						content: `${icons.danger} You cannot complete or abandon quests while in a duel.`,
-						ephemeral: true
+						components: [],
+						embeds: []
 					})
 				}
 				else if (buttonCtx.customID === 'abandon') {
@@ -248,39 +248,11 @@ class QuestCommand extends CustomSlashCommand {
 
 					await deleteQuest(transaction.query, ctx.user.id)
 					await transaction.commit()
+					stopCollector()
 
 					await buttonCtx.editParent({
-						content: `${icons.checkmark} Quest abandoned!`,
-						components: [{
-							type: ComponentType.ACTION_ROW,
-							components: disableAllComponents([questButton, abandonButton])
-						}]
-					})
-					await buttonCtx.send({
 						content: `${icons.checkmark} **You have abandoned this quest.** You will not be able to accept a new quest for **${questCD || '1 hour'}**.`,
-						ephemeral: true
-					})
-				}
-				else if (!this.questCanBeCompleted(fixedQuest, fixedQuestRow, userBackpackRows, userStashRows)) {
-					await transaction.commit()
-
-					questButton = this.getQuestButton(
-						fixedQuest,
-						fixedQuestRow,
-						userData.fighting ?
-							true :
-							!this.questCanBeCompleted(fixedQuest, fixedQuestRow, userBackpackRows, userStashRows)
-					)
-
-					await buttonCtx.editParent({
-						components: [{
-							type: ComponentType.ACTION_ROW,
-							components: [questButton, abandonButton]
-						}]
-					})
-					await buttonCtx.send({
-						content: `${icons.danger} You cannot complete this quest.`,
-						ephemeral: true
+						components: []
 					})
 				}
 				else if (buttonCtx.customID === 'turn in' && fixedQuest.questType === 'Retrieve Item') {
@@ -299,14 +271,8 @@ class QuestCommand extends CustomSlashCommand {
 								!this.questCanBeCompleted(fixedQuest, fixedQuestRow, userBackpackRows, userStashRows)
 						)
 
-						await buttonCtx.editParent({
-							components: [{
-								type: ComponentType.ACTION_ROW,
-								components: [questButton, abandonButton]
-							}]
-						})
 						await buttonCtx.send({
-							content: `${icons.danger} You don't have a ${getItemDisplay(fixedQuest.item)} to turn in.`,
+							content: `${icons.danger} You don't have a ${getItemDisplay(fixedQuest.item)} in your inventory or stash to turn in.`,
 							ephemeral: true
 						})
 						return
@@ -328,7 +294,7 @@ class QuestCommand extends CustomSlashCommand {
 						fixedQuestRow,
 						userData.fighting ?
 							true :
-							!this.questCanBeCompleted(fixedQuest, fixedQuestRow, userBackpackRows, userStashRows)
+							!this.questCanBeCompleted(fixedQuest, fixedQuestRow, userBackpackRows.filter(r => r.id !== questItemToRemove.row.id), userStashRows.filter(r => r.id !== questItemToRemove.row.id))
 					)
 
 					questMessage = await buttonCtx.editParent({
@@ -339,9 +305,25 @@ class QuestCommand extends CustomSlashCommand {
 							components: [questButton, abandonButton]
 						}]
 					}) as Message
-					await buttonCtx.send({
-						content: `${icons.checkmark} Turned in ${getItemDisplay(questItemToRemove.item, questItemToRemove.row, { showDurability: false, showEquipped: false })}.`,
-						ephemeral: true
+				}
+				else if (!this.questCanBeCompleted(fixedQuest, fixedQuestRow, userBackpackRows, userStashRows)) {
+					await transaction.commit()
+					stopCollector()
+
+					questButton = this.getQuestButton(
+						fixedQuest,
+						fixedQuestRow,
+						userData.fighting ?
+							true :
+							!this.questCanBeCompleted(fixedQuest, fixedQuestRow, userBackpackRows, userStashRows)
+					)
+
+					await buttonCtx.editParent({
+						content: `${icons.danger} You cannot complete this quest.`,
+						components: [{
+							type: ComponentType.ACTION_ROW,
+							components: [questButton, abandonButton]
+						}]
 					})
 				}
 				else if (buttonCtx.customID === 'complete') {
@@ -365,6 +347,7 @@ class QuestCommand extends CustomSlashCommand {
 
 						itemReward = itemRow
 					}
+
 					if (fixedQuestRow.moneyReward) {
 						await addMoney(transaction.query, ctx.user.id, fixedQuestRow.moneyReward)
 					}
@@ -373,18 +356,13 @@ class QuestCommand extends CustomSlashCommand {
 					await increaseQuestsCompleted(transaction.query, ctx.user.id, 1)
 					await deleteQuest(transaction.query, ctx.user.id)
 					await transaction.commit()
+					stopCollector()
 
 					await buttonCtx.editParent({
-						content: `${icons.checkmark} Quest complete!`,
-						components: [{
-							type: ComponentType.ACTION_ROW,
-							components: disableAllComponents([questButton, abandonButton])
-						}]
-					})
-					await buttonCtx.send({
 						content: `${icons.checkmark} **Quest complete!** You received:\n\n${this.getRewardsString(fixedQuestRow, itemReward)}.` +
 							`${itemReward ? '\n\nItem rewards can be found in your **inventory**.' : ''}`,
-						ephemeral: true
+						components: [],
+						embeds: []
 					})
 				}
 				else {
@@ -438,7 +416,7 @@ class QuestCommand extends CustomSlashCommand {
 
 
 		if (rewardItem) {
-			display.push(`1x ${getItemDisplay(rewardItem, itemRewardRow)}`)
+			display.push(getItemDisplay(rewardItem, itemRewardRow))
 		}
 
 		return display.join('\n')
@@ -493,8 +471,7 @@ class QuestCommand extends CustomSlashCommand {
 					name: 'item'
 				} : undefined,
 				style: ButtonStyle.SECONDARY,
-				custom_id: 'turn in',
-				disabled
+				custom_id: 'turn in'
 			}
 		}
 
