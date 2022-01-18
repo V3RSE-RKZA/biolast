@@ -520,7 +520,7 @@ class CompanionCommand extends CustomSlashCommand {
 						const rewards = []
 						const companionNewLevel = this.getCompanionLevel(completedCompanionRow.xp + XP_PER_FETCH, completedCompanionRow.level)
 						const companionXp = getCompanionXp(completedCompanionRow.xp + XP_PER_FETCH, companionNewLevel)
-						let possibleItems = allItems.filter(i => i.itemLevel <= completedCompanionRow.level + 1 && i.itemLevel > completedCompanionRow.level - 4)
+						let possibleItems = allItems.filter(i => i.name !== 'dog_tags' && i.itemLevel <= completedCompanionRow.level + 1 && i.itemLevel > completedCompanionRow.level - 4)
 						let loopI = 1
 						let display = `${icons.checkmark} ${getCompanionDisplay(completedCompanionRow, true)} found the following:\n\n`
 
