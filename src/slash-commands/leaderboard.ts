@@ -129,7 +129,7 @@ class LeaderboardCommand extends CustomSlashCommand {
 				else if (selection.values.includes('Highest Level')) {
 					const top = await getTopPlayers(query, 'level', erisGuild)
 					lbEmbed.setTitle('Highest Level Players (Server)')
-					lbEmbed.setDescription(top.map((p, i) => `${i + 1}. <@${p.userId}> Level **${p.level}**`).join('\n'))
+					lbEmbed.setDescription(top.map((p, i) => `${i + 1}. <@${p.userId}> Lvl. **${p.level}**`).join('\n'))
 
 					await selection.editParent({
 						content: '',
@@ -259,7 +259,7 @@ class LeaderboardCommand extends CustomSlashCommand {
 						user: await this.app.fetchUser(p.userId)
 					})))
 					lbEmbed.setTitle('Highest Level Players (Global)')
-					lbEmbed.setDescription(users.map((u, i) => `${i + 1}. ${u.user ? `\`${u.user.username}#${u.user.discriminator}\`` : `<@${u.row.userId}>`} Level **${u.row.level}**`).join('\n'))
+					lbEmbed.setDescription(users.map((u, i) => `${i + 1}. ${u.user ? `\`${u.user.username}#${u.user.discriminator}\`` : `<@${u.row.userId}>`} Lvl. **${u.row.level}**`).join('\n'))
 
 					await selection.editParent({
 						content: '',

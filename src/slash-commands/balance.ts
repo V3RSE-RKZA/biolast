@@ -42,7 +42,7 @@ class BalanceCommand extends CustomSlashCommand {
 			}
 
 			await ctx.send({
-				content: `**${member.displayName}** currently has **${formatMoney(userData.money)}**.`
+				content: `**${member.displayName}** currently has **${formatMoney(userData.money)}** copper.`
 			})
 			return
 		}
@@ -50,7 +50,7 @@ class BalanceCommand extends CustomSlashCommand {
 		const userData = (await getUserRow(query, ctx.user.id))!
 
 		await ctx.send({
-			content: `You currently have **${formatMoney(userData.money)}**.`
+			content: `You currently have **${formatMoney(userData.money)}** copper.`
 		})
 	}
 }

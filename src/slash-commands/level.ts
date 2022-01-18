@@ -5,7 +5,7 @@ import CustomSlashCommand from '../structures/CustomSlashCommand'
 import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { getPlayerXp } from '../utils/playerUtils'
-import { formatXP } from '../utils/stringUtils'
+import { formatNumber, formatXP } from '../utils/stringUtils'
 
 class LevelCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -45,7 +45,8 @@ class LevelCommand extends CustomSlashCommand {
 			const playerXp = getPlayerXp(userData.xp, userData.level)
 
 			await ctx.send({
-				content: `**${member.displayName}** is currently level **${userData.level}** (XP: ${formatXP(playerXp.relativeLevelXp, playerXp.levelTotalXpNeeded)} **${playerXp.relativeLevelXp} / ${playerXp.levelTotalXpNeeded}** xp)`
+				content: `**${member.displayName}** is currently **Lvl. ${userData.level}** ${formatXP(playerXp.relativeLevelXp, playerXp.levelTotalXpNeeded)}` +
+					` ${formatNumber(playerXp.relativeLevelXp)} / ${formatNumber(playerXp.levelTotalXpNeeded)} XP`
 			})
 			return
 		}
@@ -54,7 +55,8 @@ class LevelCommand extends CustomSlashCommand {
 		const playerXp = getPlayerXp(userData.xp, userData.level)
 
 		await ctx.send({
-			content: `You are currently level **${userData.level}** (XP: ${formatXP(playerXp.relativeLevelXp, playerXp.levelTotalXpNeeded)} **${playerXp.relativeLevelXp} / ${playerXp.levelTotalXpNeeded}** xp)`
+			content: `You are currently **Lvl. ${userData.level}** ${formatXP(playerXp.relativeLevelXp, playerXp.levelTotalXpNeeded)}` +
+				` ${formatNumber(playerXp.relativeLevelXp)} / ${formatNumber(playerXp.levelTotalXpNeeded)} XP`
 		})
 	}
 }

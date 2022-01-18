@@ -8,7 +8,7 @@ import { BackpackItemRow, ItemWithRow, UserRow } from '../types/mysql'
 import { addItemToStash, getUserBackpack, getUserStash, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
-import { formatHealth, formatMoney, formatXP } from '../utils/stringUtils'
+import { formatHealth, formatMoney, formatNumber, formatXP } from '../utils/stringUtils'
 import { getBackpackLimit, getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
 import { getPlayerXp } from '../utils/playerUtils'
 import { logger } from '../utils/logger'
@@ -330,7 +330,7 @@ class InventoryCommand extends CustomSlashCommand {
 					`\n**Inventory Value**: ${formatMoney(invValue)}` +
 					`${isSelf && itemData.slotsUsed > backpackLimit ? `\n\n${icons.warning} You are currently overweight, you should sell items to clear space.` : ''}`)
 				.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP (+5HP/5 mins)\n${formatHealth(userData.health, userData.maxHealth)}`, true)
-				.addField('__Experience__', `**Level**: ${userData.level}\n**XP**: ${playerXp.relativeLevelXp} / ${playerXp.levelTotalXpNeeded} xp\n${formatXP(playerXp.relativeLevelXp, playerXp.levelTotalXpNeeded)}`, true)
+				.addField('__Experience__', `**Lvl. ${userData.level}** ${formatXP(playerXp.relativeLevelXp, playerXp.levelTotalXpNeeded)}\n${formatNumber(playerXp.relativeLevelXp)} / ${formatNumber(playerXp.levelTotalXpNeeded)} XP`, true)
 				.addField('__Equips__', 'Equip an item with `/equip <item id>`.\n' +
 					`**Backpack**: ${equips.backpack ? getItemDisplay(equips.backpack.item, equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}\n` +
 					`**Helmet**: ${equips.helmet ? getItemDisplay(equips.helmet.item, equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}\n` +
