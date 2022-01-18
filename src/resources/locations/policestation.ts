@@ -176,7 +176,7 @@ export const station: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items['glock-17'], items.dome_depot_key, items.aramid_armor],
+					items: [items['glock-17'], items.aramid_armor],
 					xp: 15
 				},
 				rare: {
@@ -186,27 +186,6 @@ export const station: Location = {
 				rolls: 2
 			},
 			npcSpawns: [mediumRaider, psychoRaider],
-			scavengeCooldown: 60
-		},
-		{
-			display: 'Uniform Area',
-			loot: {
-				common: {
-					items: [items.sledgehammer, items.fire_axe, items.wooden_armor, items.wooden_helmet],
-					xp: 10
-				},
-				uncommon: {
-					items: [items.chainsaw, items.metal_shank, items.aramid_armor],
-					xp: 15
-				},
-				rare: {
-					items: [items.duffle_bag, items.aramid_helmet],
-					xp: 25
-				},
-				rolls: 2
-			},
-			requiresKey: [items.dome_depot_key, items.security_key],
-			keyIsOptional: false,
 			scavengeCooldown: 60
 		},
 		{

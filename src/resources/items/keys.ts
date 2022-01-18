@@ -56,14 +56,5 @@ export const keys = keysObject({
 		icon: '<:U_key:870786870852874260>',
 		slotsUsed: 2,
 		itemLevel: 10
-	},
-	dome_depot_key: {
-		type: 'Key',
-		name: 'dome_depot_key',
-		durability: 2,
-		aliases: ['depot_key', 'dome_key'],
-		icon: '<:U_key:870786870852874260>',
-		slotsUsed: 2,
-		itemLevel: 10
 	}
 })
