@@ -576,7 +576,10 @@ class MerchantCommand extends CustomSlashCommand {
 
 			if (lockedTrades.length) {
 				description += `\n\n__**Locked Deals**__\n${lockedTrades.map(t => this.getTradeDisplay(t, true)).join('\n')}`
-				embed.setFooter('Unlock more deals by discovering new regions')
+				embed.setFooter(`Page ${i}/${maxPage} · Unlock more deals by discovering new regions`)
+			}
+			else {
+				embed.setFooter(`Page ${i}/${maxPage}`)
 			}
 
 			embed.setDescription(description)
