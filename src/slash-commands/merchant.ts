@@ -235,7 +235,7 @@ class MerchantCommand extends CustomSlashCommand {
 								type: ComponentType.SELECT,
 								custom_id: 'buy',
 								placeholder: 'Select trade:',
-								options: pages[0].deals.map((d, i) => {
+								options: pages[page].deals.map((d, i) => {
 									const iconID = (d.type === 'collectible' || d.type === 'money') && d.offer.item.icon.match(/:([0-9]*)>/)
 									const label = `${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}`
 									const price = 'price' in d ?
@@ -281,7 +281,7 @@ class MerchantCommand extends CustomSlashCommand {
 									type: ComponentType.SELECT,
 									custom_id: 'buy',
 									placeholder: 'Select trade:',
-									options: pages[0].deals.map((d, i) => {
+									options: pages[page].deals.map((d, i) => {
 										const iconID = (d.type === 'collectible' || d.type === 'money') && d.offer.item.icon.match(/:([0-9]*)>/)
 										const label = `${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}`
 										const price = 'price' in d ?
@@ -358,7 +358,7 @@ class MerchantCommand extends CustomSlashCommand {
 
 							if (confirmed.customID !== 'confirmed') {
 								await confirmed.editParent({
-									content: `${icons.checkmark} Purchase canceled.`,
+									content: `${icons.checkmark} Purchase canceled.\n\n${icons.merchant} **Guppy the Merchant**: changed your mind huh?`,
 									components: []
 								})
 								return
@@ -447,7 +447,7 @@ class MerchantCommand extends CustomSlashCommand {
 
 							if (confirmed.customID !== 'confirmed') {
 								await confirmed.editParent({
-									content: `${icons.checkmark} Purchase canceled.`,
+									content: `${icons.checkmark} Purchase canceled.\n\n${icons.merchant} **Guppy the Merchant**: changed your mind huh?`,
 									components: []
 								})
 								return
@@ -556,7 +556,7 @@ class MerchantCommand extends CustomSlashCommand {
 	}
 
 	generatePages (userData: UserRow): { page: Embed, deals: Trade[] }[] {
-		const sortedTrades = allTrades.sort((a, b) => b.locationLevel - a.locationLevel)
+		const sortedTrades = allTrades.sort((a, b) => a.locationLevel - b.locationLevel)
 		const pages = []
 		const maxPage = Math.ceil((sortedTrades.length) / DEALS_PER_PAGE) || 1
 
