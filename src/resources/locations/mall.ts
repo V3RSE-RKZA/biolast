@@ -163,6 +163,13 @@ export const mall: Location = {
 		},
 		{
 			type: 'Region',
+			id: 'mall_retrieve_3',
+			questType: 'Retrieve Item',
+			progressGoal: 1,
+			item: items.walker_sludge
+		},
+		{
+			type: 'Region',
 			id: 'mall_key_1',
 			questType: 'Scavenge With A Key',
 			progressGoal: 1,
