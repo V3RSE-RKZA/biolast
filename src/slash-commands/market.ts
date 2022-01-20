@@ -9,11 +9,11 @@ import { Item } from '../types/Items'
 import { ItemRow, ItemWithRow, ShopItemRow } from '../types/mysql'
 import { getItem } from '../utils/argParsers'
 import { CONFIRM_BUTTONS, NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
-import { addItemToStash, getAllShopItems, getShopItem, getUserStash, removeItemFromShop } from '../utils/db/items'
+import { addItemToBackpack, getAllShopItems, getShopItem, getUserBackpack, removeItemFromShop } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow, increaseShopSales, removeMoney } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByLevel } from '../utils/itemUtils'
+import { backpackHasSpace, getBackpackLimit, getEquips, getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { disableAllComponents } from '../utils/messageUtils'
 
@@ -215,8 +215,7 @@ class MarketCommand extends CustomSlashCommand {
 					else if (c.customID === 'buy') {
 						const items = fixedPages[page].items.filter(i => c.values.includes(i.row.id.toString()))
 						const userData = (await getUserRow(query, ctx.user.id))!
-						const stashRows = await getUserStash(query, ctx.user.id)
-						const userStashData = getItems(stashRows)
+						const backpackRows = await getUserBackpack(query, ctx.user.id)
 						const itemsToBuy = []
 						let price = 0
 
@@ -269,11 +268,13 @@ class MarketCommand extends CustomSlashCommand {
 						}
 
 						const slotsNeeded = itemsToBuy.reduce((prev, curr) => prev + curr.item.slotsUsed, 0)
-						if (userStashData.slotsUsed + slotsNeeded > userData.stashSlots) {
-							const slotsAvailable = Math.max(0, userData.stashSlots - userStashData.slotsUsed).toFixed(1)
+						if (!backpackHasSpace(backpackRows, slotsNeeded)) {
+							const userBackpack = getItems(backpackRows)
+							const equips = getEquips(backpackRows)
+							const slotsAvailable = Math.max(0, getBackpackLimit(equips.backpack?.item) - userBackpack.slotsUsed).toFixed(1)
 
 							await c.send({
-								content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash but you only have **${slotsAvailable}** slots available.` +
+								content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded.toFixed(1)}** open slots in your inventory but you only have **${slotsAvailable}** slots available.` +
 									'\n\nSell items to clear up some space.',
 								ephemeral: true
 							})
@@ -295,8 +296,7 @@ class MarketCommand extends CustomSlashCommand {
 								// using transaction because users data will be updated
 								const transaction = await beginTransaction()
 								const userDataV = (await getUserRow(transaction.query, ctx.user.id, true))!
-								const stashRowsV = await getUserStash(transaction.query, ctx.user.id, true)
-								const userStashDataV = getItems(stashRowsV)
+								const backpackRowsV = await getUserBackpack(transaction.query, ctx.user.id, true)
 
 								for (const i of itemsToBuy) {
 									const shopItemRow = await getShopItem(transaction.query, i.row.id, true)
@@ -331,11 +331,11 @@ class MarketCommand extends CustomSlashCommand {
 									})
 									return
 								}
-								else if (userStashDataV.slotsUsed + slotsNeeded > userDataV.stashSlots) {
+								else if (!backpackHasSpace(backpackRowsV, slotsNeeded)) {
 									await transaction.commit()
 
 									await confirmed.editParent({
-										content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash. Sell items to clear up some space.`,
+										content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded.toFixed(1)}** open slots in your inventory. Sell items to clear up some space.`,
 										components: []
 									})
 									return
@@ -344,7 +344,7 @@ class MarketCommand extends CustomSlashCommand {
 								// verified shop has items, continue buy
 								for (const i of itemsToBuy) {
 									await removeItemFromShop(transaction.query, i.row.id)
-									await addItemToStash(transaction.query, ctx.user.id, i.row.id)
+									await addItemToBackpack(transaction.query, ctx.user.id, i.row.id)
 								}
 
 								await increaseShopSales(transaction.query, ctx.user.id, itemsToBuy.length)
@@ -352,7 +352,7 @@ class MarketCommand extends CustomSlashCommand {
 								await transaction.commit()
 
 								await confirmed.editParent({
-									content: `${icons.checkmark} Purchased **${itemsToBuy.length}x** items for **${formatMoney(price)}**. You can find purchased items in your stash.\n\n${itemsToBuy.map(i => `~~${getItemDisplay(i.item, i.row)}~~`).join('\n')}\n\n` +
+									content: `${icons.checkmark} Purchased **${itemsToBuy.length}x** items for **${formatMoney(price)}**. You can find purchased items in your inventory.\n\n${itemsToBuy.map(i => getItemDisplay(i.item, i.row)).join('\n')}\n\n` +
 										`${icons.information} You now have **${formatMoney(userDataV.money - price)}**.`,
 									components: []
 								})

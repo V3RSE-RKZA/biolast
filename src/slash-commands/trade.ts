@@ -511,7 +511,7 @@ class TradeCommand extends CustomSlashCommand {
 								await transaction.commit()
 
 								await accepted.editParent({
-									content: `${icons.danger} **${ctx.member.displayName}** does not have enough storage in their inventory to complete this trade (required: **${player1SlotsNeeded}** slots).`,
+									content: `${icons.danger} **${ctx.member.displayName}** does not have enough storage in their inventory to complete this trade (required: **${player1SlotsNeeded.toFixed(1)}** slots).`,
 									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return
@@ -522,7 +522,7 @@ class TradeCommand extends CustomSlashCommand {
 								await transaction.commit()
 
 								await accepted.editParent({
-									content: `${icons.danger} **${member.displayName}** does not have enough storage in their inventory to complete this trade (required: **${player2SlotsNeeded}** slots).`,
+									content: `${icons.danger} **${member.displayName}** does not have enough storage in their inventory to complete this trade (required: **${player2SlotsNeeded.toFixed(1)}** slots).`,
 									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
 								return

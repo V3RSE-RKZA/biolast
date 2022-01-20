@@ -341,7 +341,7 @@ class MerchantCommand extends CustomSlashCommand {
 
 						if (!backpackHasSpace(preBackpackRows, slotsNeeded)) {
 							await c.send({
-								content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory to complete that trade.` +
+								content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded.toFixed(1)}** open slots in your inventory to complete that trade.` +
 									'\n\nSell items to clear up some space.',
 								ephemeral: true
 							})
@@ -381,7 +381,7 @@ class MerchantCommand extends CustomSlashCommand {
 								await transaction.commit()
 
 								await confirmed.editParent({
-									content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory.` +
+									content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded.toFixed(1)}** open slots in your inventory.` +
 										'\n\nSell items to clear up some space.',
 									components: disableAllComponents(CONFIRM_BUTTONS)
 								})
@@ -430,7 +430,7 @@ class MerchantCommand extends CustomSlashCommand {
 
 						if (!backpackHasSpace(preBackpackRows, slotsNeeded)) {
 							await c.send({
-								content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory to complete that trade.` +
+								content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded.toFixed(1)}** open slots in your inventory to complete that trade.` +
 									'\n\nSell items to clear up some space.',
 								ephemeral: true
 							})
@@ -474,7 +474,7 @@ class MerchantCommand extends CustomSlashCommand {
 								await transaction.commit()
 
 								await confirmed.editParent({
-									content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded}** open slots in your inventory to complete this trade.` +
+									content: `${icons.danger} You don't have enough space in your inventory. You need **${slotsNeeded.toFixed(1)}** open slots in your inventory to complete this trade.` +
 										'\n\nSell items to clear up some space.',
 									components: disableAllComponents(CONFIRM_BUTTONS)
 								})

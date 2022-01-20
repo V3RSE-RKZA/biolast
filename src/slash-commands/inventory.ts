@@ -263,7 +263,7 @@ class InventoryCommand extends CustomSlashCommand {
 							const slotsAvailable = Math.max(0, userData.stashSlots - userStashData.slotsUsed).toFixed(1)
 
 							await c.send({
-								content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded}** open slots in your stash but you only have **${slotsAvailable}** slots available.` +
+								content: `${icons.danger} You don't have enough space in your stash. You need **${slotsNeeded.toFixed(1)}** open slots in your stash but you only have **${slotsAvailable}** slots available.` +
 									'\n\nSell items to clear up some space.',
 								ephemeral: true
 							})
