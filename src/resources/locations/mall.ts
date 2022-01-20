@@ -118,24 +118,6 @@ const derekBoss: NPC = {
 	boss: true,
 	respawnTime: 60 * 2
 }
-const securityOfficerWalker: NPC = {
-	type: 'walker',
-	display: 'Walker Security Officer',
-	health: 60,
-	damage: 30,
-	drops: {
-		common: [items.police_baton],
-		uncommon: [items['9mm_FMJ_bullet'], items.duffle_bag, items.walker_goop],
-		rare: [items['glock-17'], items.security_key],
-		rolls: 1
-	},
-	armor: items.aramid_armor,
-	xp: 80,
-	chanceToBite: 10,
-	attackPenetration: 1.5,
-	boss: false,
-	respawnTime: 60 * 2
-}
 const theManyBoss: NPC = {
 	type: 'walker',
 	display: 'The Many',
@@ -288,7 +270,7 @@ export const mall: Location = {
 				},
 				rolls: 3
 			},
-			requiresKey: [items.dereks_shop_key, items.security_key],
+			requiresKey: [items.dereks_shop_key],
 			keyIsOptional: false,
 			scavengeCooldown: 120
 		},
@@ -349,29 +331,7 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			requiresKey: [items.florreds_pharmacy_key, items.security_key],
-			keyIsOptional: false,
-			scavengeCooldown: 60
-		},
-		{
-			display: 'Security Room',
-			loot: {
-				common: {
-					items: [items.donut],
-					xp: 10
-				},
-				uncommon: {
-					items: [items.ifak_medkit],
-					xp: 15
-				},
-				rare: {
-					items: [items.paracetamol, items.tech_trash],
-					xp: 25
-				},
-				rolls: 2
-			},
-			npcSpawns: [securityOfficerWalker],
-			requiresKey: [items.security_key],
+			requiresKey: [items.florreds_pharmacy_key],
 			keyIsOptional: false,
 			scavengeCooldown: 60
 		}

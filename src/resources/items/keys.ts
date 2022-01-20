@@ -42,16 +42,6 @@ export const keys = keysObject({
 		itemLevel: 10,
 		artist: '719365897458024558'
 	},
-	security_key: {
-		type: 'Key',
-		name: 'security_key',
-		durability: 1,
-		aliases: ['security_guard_key'],
-		icon: '<:security_key:933852925552369674>',
-		slotsUsed: 2,
-		itemLevel: 10,
-		artist: '719365897458024558'
-	},
 	florreds_pharmacy_key: {
 		type: 'Key',
 		name: 'florreds_pharmacy_key',

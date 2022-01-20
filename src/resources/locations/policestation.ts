@@ -103,7 +103,7 @@ const securityOfficerWalker: NPC = {
 	drops: {
 		common: [items.police_baton],
 		uncommon: [items['9mm_FMJ_bullet'], items.duffle_bag, items.walker_goop],
-		rare: [items['glock-17'], items.security_key],
+		rare: [items['glock-17']],
 		rolls: 1
 	},
 	armor: items.aramid_armor,
@@ -229,7 +229,7 @@ export const station: Location = {
 				},
 				rolls: 3
 			},
-			requiresKey: [items.dereks_shop_key, items.security_key],
+			requiresKey: [items.dereks_shop_key],
 			keyIsOptional: false,
 			scavengeCooldown: 60
 		},
@@ -270,28 +270,8 @@ export const station: Location = {
 				},
 				rolls: 2
 			},
-			requiresKey: [items.florreds_pharmacy_key, items.security_key],
+			requiresKey: [items.florreds_pharmacy_key],
 			keyIsOptional: false,
-			scavengeCooldown: 60
-		},
-		{
-			display: 'Security Room',
-			loot: {
-				common: {
-					items: [items.donut],
-					xp: 10
-				},
-				uncommon: {
-					items: [items.ifak_medkit],
-					xp: 15
-				},
-				rare: {
-					items: [items.paracetamol, items.tech_trash, items.security_key],
-					xp: 25
-				},
-				rolls: 2
-			},
-			npcSpawns: [securityOfficerWalker],
 			scavengeCooldown: 60
 		}
 	]
