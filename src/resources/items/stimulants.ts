@@ -6,7 +6,7 @@ export const stimulants = stimulantsObject({
 	adrenaline: {
 		type: 'Stimulant',
 		name: 'adrenaline',
-		icon: '<:syringe:886561670812549130>',
+		icon: '<:adrenaline:933851495118540901>',
 		aliases: ['adrena_stim', 'adrena'],
 		sellPrice: 561,
 		slotsUsed: 1,
@@ -17,7 +17,8 @@ export const stimulants = stimulantsObject({
 			accuracyBonus: 0,
 			damageTaken: -15
 		},
-		speed: 30
+		speed: 30,
+		artist: '719365897458024558'
 	},
 	hypo_stim: {
 		type: 'Stimulant',
@@ -54,7 +55,7 @@ export const stimulants = stimulantsObject({
 	morphine: {
 		type: 'Stimulant',
 		name: 'morphine',
-		icon: '<:syringe:886561670812549130>',
+		icon: '<:morphine:933851495940620330>',
 		aliases: [],
 		sellPrice: 565,
 		slotsUsed: 1,
@@ -65,7 +66,8 @@ export const stimulants = stimulantsObject({
 			accuracyBonus: 0,
 			damageTaken: -30
 		},
-		speed: 30
+		speed: 30,
+		artist: '719365897458024558'
 	},
 	daves_concoction: {
 		type: 'Stimulant',

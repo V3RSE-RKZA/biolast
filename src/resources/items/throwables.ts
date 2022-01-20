@@ -7,7 +7,7 @@ export const throwables = throwablesObject({
 		type: 'Throwable Weapon',
 		subtype: 'Fragmentation Grenade',
 		name: 'F1_grenade',
-		icon: '<:U_melee:601366669251575857>',
+		icon: ' <:f1_grenade:933851376738500640>',
 		aliases: ['f1', 'grenade'],
 		sellPrice: 476,
 		durability: 1,
@@ -17,7 +17,8 @@ export const throwables = throwablesObject({
 		penetration: 1.7,
 		itemLevel: 8,
 		spreadsDamageToLimbs: 3,
-		speed: 6
+		speed: 6,
+		artist: '719365897458024558'
 	},
 	M67_grenade: {
 		type: 'Throwable Weapon',
@@ -39,7 +40,7 @@ export const throwables = throwablesObject({
 		type: 'Throwable Weapon',
 		subtype: 'Incendiary Grenade',
 		name: 'molotov_cocktail',
-		icon: '<:U_melee:601366669251575857>',
+		icon: '<:molotov_cocktail:933852261782782002>',
 		description: 'Improvised incendiary grenade.',
 		aliases: ['molotov', 'cocktail', 'molly'],
 		sellPrice: 1205,
@@ -50,6 +51,7 @@ export const throwables = throwablesObject({
 		penetration: 2.5,
 		itemLevel: 9,
 		spreadsDamageToLimbs: 2,
-		speed: 4
+		speed: 4,
+		artist: '699166377705078794'
 	}
 })

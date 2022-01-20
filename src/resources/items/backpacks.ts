@@ -17,21 +17,23 @@ export const backpacks = backpackObject({
 	cloth_backpack: {
 		type: 'Backpack',
 		name: 'cloth_backpack',
-		icon: '<:U_backpack:601366669595508736>',
+		icon: '<:cloth_backpack:933852769364877322>',
 		aliases: ['backpack'],
 		sellPrice: 262,
 		slots: 7,
 		slotsUsed: 1,
-		itemLevel: 5
+		itemLevel: 5,
+		artist: '719365897458024558'
 	},
 	duffle_bag: {
 		type: 'Backpack',
 		name: 'duffle_bag',
-		icon: '<:U_backpack:601366669595508736>',
+		icon: '<:duffle_bag:933852647394537573>',
 		aliases: ['duffle', 'bag'],
 		sellPrice: 945,
 		slots: 14,
 		slotsUsed: 2,
-		itemLevel: 8
+		itemLevel: 8,
+		artist: '719365897458024558'
 	}
 })

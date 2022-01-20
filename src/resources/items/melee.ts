@@ -6,7 +6,7 @@ export const melee = meleeObject({
 	knife: {
 		type: 'Melee Weapon',
 		name: 'knife',
-		icon: '<:knife_weapon:931797105784291358>',
+		icon: '<:knife_weapon:933851171481874483>',
 		aliases: [],
 		sellPrice: 132,
 		durability: 2,
@@ -21,7 +21,7 @@ export const melee = meleeObject({
 	wooden_bat: {
 		type: 'Melee Weapon',
 		name: 'wooden_bat',
-		icon: '<:wooden_bat:931797105616498729>',
+		icon: '<:wooden_bat:933850956481826968>',
 		aliases: ['bat'],
 		sellPrice: 16,
 		durability: 2,
@@ -36,7 +36,7 @@ export const melee = meleeObject({
 	metal_bat: {
 		type: 'Melee Weapon',
 		name: 'metal_bat',
-		icon: '<:metal_bat:931797105792647208>',
+		icon: '<:metal_bat:933850956796420096>',
 		aliases: ['metal'],
 		sellPrice: 74,
 		durability: 3,

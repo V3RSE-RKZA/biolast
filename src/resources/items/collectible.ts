@@ -49,10 +49,11 @@ export const collectible = questObject({
 		name: 'tech_trash',
 		aliases: ['tech', 'trash'],
 		description: 'Some technology junk salvaged from the computers and other technology in the room.',
-		icon: '<:quest_item:886561850525896724>',
+		icon: '<:tech_trash:933851376981790820>',
 		sellPrice: 1020,
 		slotsUsed: 2,
-		itemLevel: 7
+		itemLevel: 7,
+		artist: '719365897458024558'
 	},
 	escape_from_fristoe: {
 		type: 'Collectible',

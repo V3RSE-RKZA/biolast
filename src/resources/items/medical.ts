@@ -22,7 +22,7 @@ export const medical = medicalObject({
 	'ifak_medkit': {
 		type: 'Medical',
 		name: 'ifak_medkit',
-		icon: '<:medical:886561670745452554>',
+		icon: '<:ifak_medkit:932191219616981002>',
 		aliases: ['ifak', 'medkit'],
 		description: 'An individual first aid kit which contains supplies for immediate minor injuries.',
 		sellPrice: 102,
@@ -33,7 +33,8 @@ export const medical = medicalObject({
 		durability: 4,
 		curesBitten: false,
 		curesBrokenArm: false,
-		curesBurning: false
+		curesBurning: false,
+		artist: '168958344361541633'
 	},
 	'compression_bandage': {
 		type: 'Medical',
@@ -101,7 +102,7 @@ export const medical = medicalObject({
 	'splint': {
 		type: 'Medical',
 		name: 'splint',
-		icon: '<:U_usable:601366669259964418>',
+		icon: '<:splint:933851421848256582>',
 		description: 'Use this to fix broken limbs.',
 		aliases: [],
 		sellPrice: 146,
@@ -112,12 +113,13 @@ export const medical = medicalObject({
 		curesBitten: false,
 		curesBrokenArm: true,
 		curesBurning: false,
-		speed: 15
+		speed: 15,
+		artist: '719365897458024558'
 	},
 	'anti-biotics': {
 		type: 'Medical',
 		name: 'anti-biotics',
-		icon: '<:U_usable:601366669259964418>',
+		icon: '<:antibiotics:933851421852438528>',
 		description: 'Cures various infections, such as those from walker bites.',
 		aliases: ['antibiotics'],
 		sellPrice: 307,
@@ -128,6 +130,7 @@ export const medical = medicalObject({
 		curesBitten: true,
 		curesBrokenArm: false,
 		curesBurning: false,
-		speed: 20
+		speed: 20,
+		artist: '699166377705078794'
 	}
 })
