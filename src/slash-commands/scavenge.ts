@@ -483,7 +483,7 @@ class ScavengeCommand extends CustomSlashCommand {
 								npcHealth += maxHeal
 
 								messages[i].push(`${npcDisplayCapitalized} uses a ${getItemDisplay(npcChoice.item)} to heal for **${maxHeal}** health.` +
-									`\n${npcDisplayCapitalized} now has ${formatHealth(npcHealth + maxHeal, npc.health)} **${npcHealth + maxHeal} / ${npc.health}** health.` +
+									`\n${npcDisplayCapitalized} now has ${formatHealth(npcHealth, npc.health)} **${npcHealth} / ${npc.health}** health.` +
 									`${curedAfflictions.length ? `\n${npcDisplayCapitalized} cured the following afflictions: ${combineArrayWithAnd(curedAfflictions.map(a => a.name))}` : ''}`)
 							}
 							else if (npcChoice.choice === 'use a stimulant') {

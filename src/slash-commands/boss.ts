@@ -410,7 +410,7 @@ class BossCommand extends CustomSlashCommand {
 							npcHealth += maxHeal
 
 							messages[i].push(`${npcDisplayName} uses a ${getItemDisplay(npcChoice.item)} to heal for **${maxHeal}** health.` +
-								`\n${npcDisplayName} now has ${formatHealth(npcHealth + maxHeal, location.boss.health)} **${npcHealth + maxHeal} / ${location.boss.health}** health.` +
+								`\n${npcDisplayName} now has ${formatHealth(npcHealth, location.boss.health)} **${npcHealth} / ${location.boss.health}** health.` +
 								`${curedAfflictions.length ? `\n${npcDisplayName} cured the following afflictions: ${combineArrayWithAnd(curedAfflictions.map(a => a.name))}` : ''}`)
 						}
 						else if (npcChoice.choice === 'use a stimulant') {
