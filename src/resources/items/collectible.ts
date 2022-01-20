@@ -20,7 +20,7 @@ export const collectible = questObject({
 		icon: '<:walker_sludge:931797105448714282>',
 		sellPrice: 122,
 		slotsUsed: 2,
-		itemLevel: 2,
+		itemLevel: 8,
 		artist: '719365897458024558'
 	},
 	farming_guide: {
@@ -31,7 +31,7 @@ export const collectible = questObject({
 		icon: '<:farming_guide:933857770061578260>',
 		sellPrice: 120,
 		slotsUsed: 1,
-		itemLevel: 2,
+		itemLevel: 4,
 		artist: '719365897458024558'
 	},
 	antique_vase: {
