@@ -3,7 +3,7 @@
 [![Github Mega-Linter](https://github.com/blobfysh/project-z/workflows/Lint%20Code/badge.svg)](https://github.com/nvuillam/mega-linter)
 ![Build](https://github.com/blobfysh/project-z/workflows/Build/badge.svg)
 
-This is a post-apocalyptic RPG bot where players enter raids to find items and level up. The bot features PvP, PvE, quests, a global shop, unique items, equippable items and some other things.
+This is a post-apocalyptic RPG bot where players scavenge regions for items and progress to new regions by defeating a boss. The bot features PvP, PvE, quests, a global shop, unique items, equippable items and some other things.
 
 Join our discord server if you'd like to help work on the bot: https://discord.gg/6JqT3STJ5w
 
@@ -28,17 +28,19 @@ Join our discord server if you'd like to help work on the bot: https://discord.g
 - [x] durability should affect how much item sells for
 - [x] change the currency from rubles to something else
 - [x] commands shouldn't be able to be used while user is `evac`ing
-- [ ] add `notifications` command that would show user notifications such as who they were killed by, who they killed, successful/failed raid evacs, level ups.
-- [ ] `leaderboard` command for viewing players with most xp/level, money, successful raids, quests completed
-- [ ] add tests that make sure every item is obtainable, whether it be from scavenging channels in raids or as drops from an npc.
+- [x] `leaderboard` command for viewing players with most xp/level, money, successful raids, quests completed
+- [x] add tests that make sure every item is obtainable, whether it be from scavenging channels in raids or as drops from an npc.
 - [x] players drop dog tags when they die, they would show up as "user#1234's Dog Tags". this would allow people to collect dog tags of the players they kill.
 
 ### Further down line (after bot releases):
 - [ ] when user votes for the bot on a bot list, they should receive a random item (maybe like 10% weapon, 30% ammo, 60% other stuff)
-- [ ] 2 attachment slots that can be equipped (requires ranged weapon to already be equipped)
+- [ ] attachments that can be added to ranged weapons, only certain attachments would work depending on the weapon. these attachments would give the weapon a damage/speed/accuracy buff.
 - [ ] translations??? this might be confusing when other players see them using command in raid though... or maybe that would be cooler who knows
 - [ ] for late game, add a max level user can achieve and some sort of prestiging system that resets them (there should be some kind of reward involved)
-- [ ] a companion system, you can hire raiders or have pets like dogs/cats that fetch items for you (you could level your companion up, making the items they retrieve better)
+- [x] a companion system, you can hire raiders or have pets like dogs/cats that fetch items for you (you could level your companion up, making the items they retrieve better)
+- [ ] `combine` command that users can unlock after prestiging, requires prestige system to be finished first. this command would allow users to combine the durability of 2 of the same weapon/armor. this would allow the durability to go higher than items normally could, so players could have an armor that has much more durability than usual.
+- [ ] perk system. as players level up, they gain a point which they can use to upgrade perks. perks would be things like "gain 50 max health but deal -30% damage", "increase the number of stimulants you can use in a duel", "increased chance to flee from duels", "deal 10% more damage with melee weapons".
+- [ ] ranked PvP duels that are exclusive to the official discord server. players would gain RP (ranked points) based on the sum of item level of the users inventory (better items = more rp if they win). there would be some kind of leaderboard for this and the leaderboard would reset monthly, top players would get some kind of prize.
 
 ## Contributing
 
