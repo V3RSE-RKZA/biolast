@@ -96,7 +96,7 @@ class ProfileCommand extends CustomSlashCommand {
 			.addField('__Balance__', `**${formatMoney(userData.money)}** copper`, true)
 
 		if (companionRow && companion) {
-			embed.addField('__Companion__', `${getCompanionDisplay(companion, companionRow)} (Lvl. **${companionRow.level}**)`, true)
+			embed.addField('__Companion__', `${companion.icon} ${getCompanionDisplay(companion, companionRow)} (Lvl. **${companionRow.level}**)`, true)
 		}
 
 		embed.addField('__Stats__', `**Highest Tier Region**: ${maxLocations.length ? combineArrayWithAnd(maxLocations.map(l => `${l.icon} ${l.display}`)) : 'Unknown...'} (Region Tier **${userData.locationLevel}**)` +
