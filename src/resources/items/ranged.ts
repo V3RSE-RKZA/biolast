@@ -103,7 +103,7 @@ export const ranged = rangedObject({
 		sellPrice: 251,
 		durability: 5,
 		slotsUsed: 2,
-		accuracy: 85,
+		accuracy: 75,
 		itemLevel: 5,
 		speed: 20,
 		artist: '600383557038374913'
@@ -117,7 +117,7 @@ export const ranged = rangedObject({
 		sellPrice: 1464,
 		durability: 9,
 		slotsUsed: 3,
-		accuracy: 70,
+		accuracy: 85,
 		itemLevel: 9,
 		speed: 28
 	},
