@@ -12,7 +12,7 @@ import { getCompanionDisplay, getCompanionXp, getFetchTime, getProtectionChance 
 import { clearCooldown, createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { BLUE_BUTTON, GRAY_BUTTON, GREEN_BUTTON, NEXT_BUTTON, PREVIOUS_BUTTON, RED_BUTTON } from '../utils/constants'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, getUserStash, lowerItemDurability } from '../utils/db/items'
-import { backpackHasSpace, getItemDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
+import { backpackHasSpace, getItemDisplay, getItemNameDisplay, getItems, sortItemsByName } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { CompanionRow, ItemRow, ItemWithRow } from '../types/mysql'
 import { allItems } from '../resources/items'
@@ -480,7 +480,7 @@ class CompanionCommand extends CustomSlashCommand {
 										const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 										return {
-											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 											value: i.row.id.toString(),
 											description: `Reduces hunger by ${i.item.reducesHunger}. Gives ${i.item.xpGiven} XP`,
 											emoji: iconID ? {
@@ -532,7 +532,7 @@ class CompanionCommand extends CustomSlashCommand {
 												const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 												return {
-													label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+													label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 													value: i.row.id.toString(),
 													description: `Reduces hunger by ${i.item.reducesHunger}. Gives ${i.item.xpGiven} XP`,
 													emoji: iconID ? {
@@ -572,7 +572,7 @@ class CompanionCommand extends CustomSlashCommand {
 												const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 												return {
-													label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+													label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 													value: i.row.id.toString(),
 													description: `Reduces hunger by ${i.item.reducesHunger}. Gives ${i.item.xpGiven} XP`,
 													emoji: iconID ? {
@@ -958,7 +958,7 @@ class CompanionCommand extends CustomSlashCommand {
 										const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 										return {
-											label: `${i.item.name.replace(/_/g, ' ')}`,
+											label: getItemNameDisplay(i.item),
 											value: i.row.id.toString(),
 											description: `Uses ${i.item.slotsUsed} slots.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
 											emoji: iconID ? {

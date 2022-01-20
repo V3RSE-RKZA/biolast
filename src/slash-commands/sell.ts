@@ -9,7 +9,7 @@ import { addItemToShop, getUserBackpack, getUserStash, removeItemFromBackpack, r
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addMoney, getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { getItemDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
+import { getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 import { disableAllComponents } from '../utils/messageUtils'
 import { logger } from '../utils/logger'
@@ -74,7 +74,7 @@ class SellCommand extends CustomSlashCommand {
 							const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 							return {
-								label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+								label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 								value: i.row.id.toString(),
 								description: `Worth ${formatMoney(this.getItemShopPrice(i.item, i.row), false)}.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
 								emoji: iconID ? {
@@ -129,7 +129,7 @@ class SellCommand extends CustomSlashCommand {
 										const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 										return {
-											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 											value: i.row.id.toString(),
 											description: `Worth ${formatMoney(this.getItemShopPrice(i.item, i.row), false)}.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
 											emoji: iconID ? {
@@ -171,7 +171,7 @@ class SellCommand extends CustomSlashCommand {
 										const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 										return {
-											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 											value: i.row.id.toString(),
 											description: `Worth ${formatMoney(this.getItemShopPrice(i.item, i.row), false)}.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
 											emoji: iconID ? {

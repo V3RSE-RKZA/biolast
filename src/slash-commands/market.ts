@@ -13,7 +13,7 @@ import { addItemToStash, getAllShopItems, getShopItem, getUserStash, removeItemF
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow, increaseShopSales, removeMoney } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { getItemDisplay, getItemPrice, getItems, sortItemsByLevel } from '../utils/itemUtils'
+import { getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { disableAllComponents } from '../utils/messageUtils'
 
@@ -91,7 +91,7 @@ class MarketCommand extends CustomSlashCommand {
 							const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 							return {
-								label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+								label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 								value: i.row.id.toString(),
 								description: `Price: ${formatMoney(i.row.price, false)}. Uses ${i.item.slotsUsed} slots.`,
 								emoji: iconID ? {
@@ -146,7 +146,7 @@ class MarketCommand extends CustomSlashCommand {
 										const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 										return {
-											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 											value: i.row.id.toString(),
 											description: `Price: ${formatMoney(i.row.price, false)}. Uses ${i.item.slotsUsed} slots.`,
 											emoji: iconID ? {
@@ -187,7 +187,7 @@ class MarketCommand extends CustomSlashCommand {
 										const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 										return {
-											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 											value: i.row.id.toString(),
 											description: `Price: ${formatMoney(i.row.price, false)}. Uses ${i.item.slotsUsed} slots.`,
 											emoji: iconID ? {
@@ -430,14 +430,14 @@ class MarketCommand extends CustomSlashCommand {
 		const items = allItems.filter(itm => itm.name.toLowerCase().includes(search) || itm.type.toLowerCase().includes(search))
 
 		if (items.length) {
-			await ctx.sendResults(items.slice(0, 25).map(itm => ({ name: `${itm.type} - ${itm.name.replace(/_/g, ' ')}`, value: itm.name })))
+			await ctx.sendResults(items.slice(0, 25).map(itm => ({ name: `${itm.type} - ${getItemNameDisplay(itm)}`, value: itm.name })))
 		}
 		else {
 			const related = itemCorrector.getWord(search, 5)
 			const relatedItem = related && allItems.find(i => i.name.toLowerCase() === related || i.aliases.map(a => a.toLowerCase()).includes(related))
 
 			if (relatedItem) {
-				await ctx.sendResults([{ name: `${relatedItem.type} - ${relatedItem.name.replace(/_/g, ' ')}`, value: relatedItem.name }])
+				await ctx.sendResults([{ name: `${relatedItem.type} - ${getItemNameDisplay(relatedItem)}`, value: relatedItem.name }])
 			}
 			else {
 				await ctx.sendResults([])

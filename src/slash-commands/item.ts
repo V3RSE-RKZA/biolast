@@ -10,7 +10,7 @@ import { getItem } from '../utils/argParsers'
 import { getAttachments, getItemByID, getUserBackpack, getUserStash } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
 import { combineArrayWithOr, formatMoney, getAfflictionEmoji } from '../utils/stringUtils'
-import { getItemDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from '../utils/itemUtils'
+import { getItemDisplay, getItemNameDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from '../utils/itemUtils'
 import { allLocations } from '../resources/locations'
 import { getEffectsDisplay } from '../utils/playerUtils'
 import { GRAY_BUTTON, NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
@@ -573,14 +573,14 @@ class ItemCommand extends CustomSlashCommand {
 		const items = allItems.filter(itm => itm.name.toLowerCase().includes(search) || itm.type.toLowerCase().includes(search))
 
 		if (items.length) {
-			await ctx.sendResults(items.slice(0, 25).map(itm => ({ name: `${itm.type} - ${itm.name.replace(/_/g, ' ')}`, value: itm.name })))
+			await ctx.sendResults(items.slice(0, 25).map(itm => ({ name: `${itm.type} - ${getItemNameDisplay(itm)}`, value: itm.name })))
 		}
 		else {
 			const related = itemCorrector.getWord(search, 5)
 			const relatedItem = related && allItems.find(i => i.name.toLowerCase() === related || i.aliases.map(a => a.toLowerCase()).includes(related))
 
 			if (relatedItem) {
-				await ctx.sendResults([{ name: `${relatedItem.type} - ${relatedItem.name.replace(/_/g, ' ')}`, value: relatedItem.name }])
+				await ctx.sendResults([{ name: `${relatedItem.type} - ${getItemNameDisplay(relatedItem)}`, value: relatedItem.name }])
 			}
 			else {
 				await ctx.sendResults([])

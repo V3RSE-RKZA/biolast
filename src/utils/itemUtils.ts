@@ -39,6 +39,19 @@ export function getItems<T extends ItemRow> (itemRows: T[]): { items: ItemWithRo
 }
 
 /**
+ * Gets display name for item
+ * @param item Item object
+ * @param itemRow Row of the item
+ * @param options Option for the display
+ * @param options.showDisplayName Show the display name of this item
+ */
+export function getItemNameDisplay (item: Item, itemRow?: ItemRow, options: Partial<{ showDisplayName: boolean }> = {}): string {
+	const { showDisplayName = true } = options
+
+	return showDisplayName && itemRow?.displayName ? itemRow.displayName : item.name.replace(/_/g, ' ')
+}
+
+/**
  * Get the string form of an item
  * @param item Item to display as string
  * @param itemRow The row of the item
@@ -50,7 +63,6 @@ export function getItems<T extends ItemRow> (itemRows: T[]): { items: ItemWithRo
  */
 export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<{ showEquipped: boolean, showID: boolean, showDurability: boolean, showDisplayName: boolean }> = {}): string {
 	const { showEquipped = true, showID = true, showDurability = true, showDisplayName = true } = options
-	const itemDisplayName = item.name.replace(/_/g, ' ')
 	let icon = item.icon
 
 	if (itemRow && itemRow.skin !== undefined) {
@@ -63,7 +75,7 @@ export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<
 
 	if (itemRow) {
 		const attributes = []
-		const display = `${icon}\`${showDisplayName && itemRow.displayName ? itemRow.displayName : itemDisplayName}\``
+		const display = `${icon}\`${getItemNameDisplay(item, itemRow, { showDisplayName })}\``
 
 		if (showDurability && itemRow.durability) {
 			attributes.push(`**${itemRow.durability}** uses left`)
@@ -80,7 +92,7 @@ export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<
 		return `${display}${attributes.length ? ` (${attributes.join(', ')})` : ''}`
 	}
 
-	return `${icon}\`${itemDisplayName}\``
+	return `${icon}\`${getItemNameDisplay(item)}\``
 }
 
 /**

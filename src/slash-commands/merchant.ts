@@ -11,7 +11,7 @@ import { addItemToBackpack, createItem, deleteItem, getUserBackpack, getUserStas
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow, removeMoney } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { backpackHasSpace, getItemDisplay, getItems } from '../utils/itemUtils'
+import { backpackHasSpace, getItemDisplay, getItemNameDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { disableAllComponents } from '../utils/messageUtils'
 
@@ -181,11 +181,11 @@ class MerchantCommand extends CustomSlashCommand {
 						placeholder: 'Select trade:',
 						options: pages[0].deals.map((d, i) => {
 							const iconID = (d.type === 'collectible' || d.type === 'money') && d.offer.item.icon.match(/:([0-9]*)>/)
-							const label = `${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}`
+							const label = `${d.offer.amount}x ${getItemNameDisplay(d.offer.item)}`
 							const price = 'price' in d ?
 								typeof d.price === 'number' ?
 									`Costs ${formatMoney(d.price, false)}` :
-									`Costs 1x ${d.price.name.replace(/_/g, ' ')}` :
+									`Costs 1x ${getItemNameDisplay(d.price)}` :
 								undefined
 
 							return {
@@ -237,11 +237,11 @@ class MerchantCommand extends CustomSlashCommand {
 								placeholder: 'Select trade:',
 								options: pages[page].deals.map((d, i) => {
 									const iconID = (d.type === 'collectible' || d.type === 'money') && d.offer.item.icon.match(/:([0-9]*)>/)
-									const label = `${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}`
+									const label = `${d.offer.amount}x ${getItemNameDisplay(d.offer.item)}`
 									const price = 'price' in d ?
 										typeof d.price === 'number' ?
 											`Costs ${formatMoney(d.price, false)}` :
-											`Costs 1x ${d.price.name.replace(/_/g, ' ')}` :
+											`Costs 1x ${getItemNameDisplay(d.price)}` :
 										undefined
 
 									return {
@@ -283,11 +283,11 @@ class MerchantCommand extends CustomSlashCommand {
 									placeholder: 'Select trade:',
 									options: pages[page].deals.map((d, i) => {
 										const iconID = (d.type === 'collectible' || d.type === 'money') && d.offer.item.icon.match(/:([0-9]*)>/)
-										const label = `${d.offer.amount}x ${d.offer.item.name.replace(/_/g, ' ')}`
+										const label = `${d.offer.amount}x ${getItemNameDisplay(d.offer.item)}`
 										const price = 'price' in d ?
 											typeof d.price === 'number' ?
 												`Costs ${formatMoney(d.price, false)}` :
-												`Costs 1x ${d.price.name.replace(/_/g, ' ')}` :
+												`Costs 1x ${getItemNameDisplay(d.price)}` :
 											undefined
 
 										return {

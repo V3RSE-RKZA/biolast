@@ -10,7 +10,7 @@ import { GRAY_BUTTON, RED_BUTTON } from './constants'
 import { getUserBackpack } from './db/items'
 import { query } from './db/mysql'
 import { getUserRow } from './db/players'
-import { getItemDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from './itemUtils'
+import { getItemDisplay, getItemNameDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from './itemUtils'
 import { logger } from './logger'
 import { disableAllComponents } from './messageUtils'
 import { getEffectsDescription } from './playerUtils'
@@ -278,7 +278,7 @@ export function awaitPlayerChoices (
 
 
 									return {
-										label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+										label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 										value: i.row.id.toString(),
 										description: `${i.row.durability ? `${i.row.durability} uses left. ` : ''}${weaponDesc}`,
 										emoji: iconID ? {
@@ -380,7 +380,7 @@ export function awaitPlayerChoices (
 														`${ammoItem.damage} damage. ${ammoItem.penetration.toFixed(1)} armor penetration.`
 
 													return {
-														label: i.item.name.replace(/_/g, ' '),
+														label: getItemNameDisplay(i.item),
 														value: i.row.id.toString(),
 														description: ammoDesc,
 														emoji: iconID ? {
@@ -569,7 +569,7 @@ export function awaitPlayerChoices (
 										''
 
 									return {
-										label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+										label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 										value: i.row.id.toString(),
 										description: `${i.row.durability ? `${i.row.durability} uses left. ` : ''}${itemDesc}`,
 										emoji: iconID ? {
@@ -702,7 +702,7 @@ export function awaitPlayerChoices (
 									const effectsDisplay = getEffectsDescription(item.effects)
 
 									return {
-										label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+										label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 										value: i.row.id.toString(),
 										description: `${i.row.durability ? `${i.row.durability} uses left. ` : ''}${effectsDisplay.join(', ') || 'No viable effects.'}`,
 										emoji: iconID ? {

@@ -13,7 +13,7 @@ import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDu
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addHealth, addXp, getUserRow, increaseDeaths, increaseKills, lowerHealth, setFighting } from '../utils/db/players'
 import { getUserQuest, increaseProgress } from '../utils/db/quests'
-import { backpackHasSpace, getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByLevel, sortItemsByValue } from '../utils/itemUtils'
+import { backpackHasSpace, getEquips, getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByLevel, sortItemsByValue } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
@@ -584,7 +584,7 @@ class DuelCommand extends CustomSlashCommand {
 											const iconID = itm.item.icon.match(/:([0-9]*)>/)
 
 											return {
-												label: `${itm.row.displayName ? itm.row.displayName : itm.item.name.replace(/_/g, ' ')} (ID: ${itm.row.id})`,
+												label: `[${itm.row.id}] ${getItemNameDisplay(itm.item, itm.row)}`,
 												value: itm.row.id.toString(),
 												description: `${itm.row.durability ? `${itm.row.durability} uses left. ` : ''}Worth ${formatMoney(getItemPrice(itm.item, itm.row), false)}`,
 												emoji: iconID ? {

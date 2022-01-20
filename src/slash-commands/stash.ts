@@ -9,7 +9,7 @@ import { addItemToBackpack, getUserBackpack, getUserStash, removeItemFromStash }
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { backpackHasSpace, getBackpackLimit, getEquips, getItemDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
+import { backpackHasSpace, getBackpackLimit, getEquips, getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
 import { disableAllComponents } from '../utils/messageUtils'
@@ -88,7 +88,7 @@ class StashCommand extends CustomSlashCommand {
 							const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 							return {
-								label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+								label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 								value: i.row.id.toString(),
 								description: `Uses ${i.item.slotsUsed} slots.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
 								emoji: iconID ? {
@@ -143,7 +143,7 @@ class StashCommand extends CustomSlashCommand {
 										const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 										return {
-											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 											value: i.row.id.toString(),
 											description: `Uses ${i.item.slotsUsed} slots.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
 											emoji: iconID ? {
@@ -184,7 +184,7 @@ class StashCommand extends CustomSlashCommand {
 										const iconID = i.item.icon.match(/:([0-9]*)>/)
 
 										return {
-											label: `${i.item.name.replace(/_/g, ' ')} (ID: ${i.row.id})`,
+											label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 											value: i.row.id.toString(),
 											description: `Uses ${i.item.slotsUsed} slots.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
 											emoji: iconID ? {
