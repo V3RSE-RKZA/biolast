@@ -8,13 +8,13 @@ export const sideQuests: SideQuest[] = [
 		type: 'Side',
 		id: 'side_npc_kills_1',
 		questType: 'NPC Kills',
-		progressGoal: 1
+		progressGoal: 4
 	},
 	{
 		type: 'Side',
 		id: 'side_npc_kills_2',
 		questType: 'NPC Kills',
-		progressGoal: 2
+		progressGoal: 5
 	},
 	{
 		type: 'Side',
@@ -26,25 +26,25 @@ export const sideQuests: SideQuest[] = [
 		type: 'Side',
 		id: 'side_any_kills_1',
 		questType: 'Any Kills',
-		progressGoal: 1
+		progressGoal: 3
 	},
 	{
 		type: 'Side',
 		id: 'side_any_kills_2',
 		questType: 'Any Kills',
-		progressGoal: 2
+		progressGoal: 4
 	},
 	{
 		type: 'Side',
 		id: 'side_scavenge_1',
 		questType: 'Scavenge',
-		progressGoal: 1
+		progressGoal: 5
 	},
 	{
 		type: 'Side',
 		id: 'side_scavenge_2',
 		questType: 'Scavenge',
-		progressGoal: 2
+		progressGoal: 6
 	},
 	{
 		type: 'Side',
