@@ -12,14 +12,14 @@ const bloatedWalker: NPC = {
 	health: 50,
 	damage: 35,
 	drops: {
-		common: [items.pitchfork, items.walker_goop],
+		common: [items.fire_axe],
 		uncommon: [items.apple],
-		rare: [items.fire_axe],
+		rare: [items.walker_sludge],
 		rolls: 1
 	},
-	xp: 50,
-	chanceToBite: 15,
-	attackPenetration: 1.3,
+	xp: 100,
+	chanceToBite: 20,
+	attackPenetration: 2.1,
 	boss: false,
 	respawnTime: 60 * 2
 }
@@ -68,7 +68,7 @@ const mediumCrawler: NPC = {
 	drops: {
 		common: [items.compression_bandage],
 		uncommon: [items['9mm_FMJ_bullet']],
-		rare: [items.walker_goop],
+		rare: [items.walker_sludge],
 		rolls: 1
 	},
 	xp: 60,
