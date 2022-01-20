@@ -38,6 +38,8 @@ class CronJobs {
 	private async hungerTask (): Promise<void> {
 		// increase companions hunger (+1/30 mins)
 		await query('UPDATE companions SET hunger = hunger + 1 WHERE hunger < 100')
+		// increase companions stress (+1/30 mins)
+		await query('UPDATE companions SET stress = stress + 1 WHERE stress < 100')
 	}
 
 	private async oftenTasks (): Promise<void> {

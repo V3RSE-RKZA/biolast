@@ -431,23 +431,25 @@ class ScavengeCommand extends CustomSlashCommand {
 									// end the duel
 									duelIsActive = false
 
-									lootEmbed = new Embed()
-										.setTitle('__Loot Lost__')
-										.setColor(16734296)
-										.setDescription(attackResult.lostItems.length ?
-											`${sortItemsByLevel(attackResult.lostItems, true).slice(0, 15).map(victimItem => getItemDisplay(victimItem.item, victimItem.row, { showEquipped: false, showDurability: false })).join('\n')}` +
-											`${attackResult.lostItems.length > 15 ? `\n...and **${attackResult.lostItems.length - 15}** other item${attackResult.lostItems.length - 15 > 1 ? 's' : ''}` : ''}` :
-											'No items were lost.')
+									if (!attackResult.savedByCompanion) {
+										lootEmbed = new Embed()
+											.setTitle('__Loot Lost__')
+											.setColor(16734296)
+											.setDescription(attackResult.lostItems.length ?
+												`${sortItemsByLevel(attackResult.lostItems, true).slice(0, 15).map(victimItem => getItemDisplay(victimItem.item, victimItem.row, { showEquipped: false, showDurability: false })).join('\n')}` +
+												`${attackResult.lostItems.length > 15 ? `\n...and **${attackResult.lostItems.length - 15}** other item${attackResult.lostItems.length - 15 > 1 ? 's' : ''}` : ''}` :
+												'No items were lost.')
 
-									if (webhooks.pvp.id && webhooks.pvp.token) {
-										try {
-											await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-												content: `☠️ ${npc.boss ? `**${npc.display}**` : `A **${npc.display}**`} killed **${ctx.user.username}#${ctx.user.discriminator}** at **${locationChoice.display}**!`,
-												embeds: [lootEmbed.embed]
-											})
-										}
-										catch (err) {
-											logger.warn(err)
+										if (webhooks.pvp.id && webhooks.pvp.token) {
+											try {
+												await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
+													content: `☠️ ${npc.boss ? `**${npc.display}**` : `A **${npc.display}**`} killed **${ctx.user.username}#${ctx.user.discriminator}** at **${locationChoice.display}**!`,
+													embeds: [lootEmbed.embed]
+												})
+											}
+											catch (err) {
+												logger.warn(err)
+											}
 										}
 									}
 

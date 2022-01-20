@@ -1,3 +1,4 @@
+import { Companion } from '../resources/companions'
 import { CompanionRow } from '../types/mysql'
 
 /**
@@ -6,6 +7,29 @@ import { CompanionRow } from '../types/mysql'
  * @returns The XP required for specified level
  */
 const LEVEL_FORMULA = (level: number) => 100 * level
+
+/**
+ *
+ * @param agility The companions agility level
+ * @returns The time in seconds it takes companion to complete fetch mission
+ */
+export function getFetchTime (agility: number): number {
+	// 2 hours if companion has no agility
+	const defaultTime = 7200
+
+	// decrease by 20% with each point of agility
+	const decayFactor = 0.2
+
+	return Math.floor(defaultTime * ((1 - decayFactor) ** agility))
+}
+
+/**
+ * @param courage The companions courage level
+ * @returns The chance 0 - 100 this companion will protect player from dying
+ */
+export function getProtectionChance (courage: number): number {
+	return 10 * Math.log(courage + 1)
+}
 
 /**
  *
@@ -33,9 +57,17 @@ export function getCompanionXp (companionXp: number, level: number): { relativeL
 }
 
 /**
+ * @param companion Companion object
  * @param companionRow The sql row of the companion
  * @param nameOnly Whether to only show the companions name if they have one
  */
-export function getCompanionDisplay (companionRow: CompanionRow, nameOnly = false): string {
-	return nameOnly && companionRow.name ? `${companionRow.name}` : `${companionRow.type}${companionRow.name ? ` "**${companionRow.name}**"` : ''}`
+export function getCompanionDisplay (companion: Companion, companionRow?: CompanionRow, nameOnly = false): string {
+	if (nameOnly && companionRow?.name) {
+		return companionRow.name
+	}
+	else if (companionRow) {
+		return `${companion.name}${companionRow.name ? ` "${companionRow.name}"` : ''}`
+	}
+
+	return companion.name
 }

@@ -1,5 +1,6 @@
-import { ComponentType, ButtonStyle, ComponentActionRow, ComponentButton } from 'slash-create'
+import { ComponentType, ButtonStyle, ComponentActionRow, ComponentButton, ComponentSelectMenu } from 'slash-create'
 import { icons } from '../config'
+import { ItemRow, ItemWithRow } from '../types/mysql'
 
 export const CONFIRM_BUTTONS: ComponentActionRow[] = [
 	{
@@ -26,6 +27,17 @@ export const RED_BUTTON = (label: string, customID: string, disabled?: boolean, 
 	label,
 	custom_id: customID,
 	style: ButtonStyle.DESTRUCTIVE,
+	disabled,
+	emoji: icon ? {
+		name: icon
+	} : undefined
+})
+
+export const BLUE_BUTTON = (label: string, customID: string, disabled?: boolean, icon?: string): ComponentButton => ({
+	type: ComponentType.BUTTON,
+	label,
+	custom_id: customID,
+	style: ButtonStyle.PRIMARY,
 	disabled,
 	emoji: icon ? {
 		name: icon
@@ -62,7 +74,7 @@ export const PREVIOUS_BUTTON = (disabled: boolean): ComponentButton => ({
 	style: ButtonStyle.SECONDARY,
 	emoji: {
 		name: 'Previous Page',
-		id: icons.page_button_previous
+		id: icons.button_icons.page_button_previous
 	},
 	disabled
 })
@@ -74,7 +86,7 @@ export const NEXT_BUTTON = (disabled: boolean): ComponentButton => ({
 	style: ButtonStyle.SECONDARY,
 	emoji: {
 		name: 'Next Page',
-		id: icons.page_button_next
+		id: icons.button_icons.page_button_next
 	},
 	disabled
 })

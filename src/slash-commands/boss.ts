@@ -348,30 +348,32 @@ class BossCommand extends CustomSlashCommand {
 							if (playerRow.health - attackResult.damage <= 0) {
 								players = players.filter(p => p.member.id !== playerToAttack.member.id)
 
-								const lootLostEmbed = new Embed()
-									.setAuthor(`${playerToAttack.member.user.username}#${playerToAttack.member.user.discriminator}'s Loot Lost`, playerToAttack.member.avatarURL)
-									.setColor(16734296)
-									.setDescription(attackResult.lostItems.length ?
-										`${sortItemsByLevel(attackResult.lostItems, true).slice(0, 15).map(victimItem => getItemDisplay(victimItem.item, victimItem.row, { showEquipped: false, showDurability: false })).join('\n')}` +
-										`${attackResult.lostItems.length > 15 ? `\n...and **${attackResult.lostItems.length - 15}** other item${attackResult.lostItems.length - 15 > 1 ? 's' : ''}` : ''}` :
-										'No items were lost.')
+								if (!attackResult.savedByCompanion) {
+									const lootLostEmbed = new Embed()
+										.setAuthor(`${playerToAttack.member.user.username}#${playerToAttack.member.user.discriminator}'s Loot Lost`, playerToAttack.member.avatarURL)
+										.setColor(16734296)
+										.setDescription(attackResult.lostItems.length ?
+											`${sortItemsByLevel(attackResult.lostItems, true).slice(0, 15).map(victimItem => getItemDisplay(victimItem.item, victimItem.row, { showEquipped: false, showDurability: false })).join('\n')}` +
+											`${attackResult.lostItems.length > 15 ? `\n...and **${attackResult.lostItems.length - 15}** other item${attackResult.lostItems.length - 15 > 1 ? 's' : ''}` : ''}` :
+											'No items were lost.')
 
-								lootEmbeds.push({ ...lootLostEmbed.embed })
+									lootEmbeds.push({ ...lootLostEmbed.embed })
 
-								// removing the author field because I dont want user avatars to show in the global kill feed,
-								// who knows what kind of weird pfp someone could have
-								lootLostEmbed.embed.author = undefined
-								lootLostEmbed.setTitle('__Loot Lost__')
+									// removing the author field because I dont want user avatars to show in the global kill feed,
+									// who knows what kind of weird pfp someone could have
+									lootLostEmbed.embed.author = undefined
+									lootLostEmbed.setTitle('__Loot Lost__')
 
-								if (webhooks.pvp.id && webhooks.pvp.token) {
-									try {
-										await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-											content: `☠️ ${npcDisplayName} (${location.display} Boss) killed **${playerToAttack.member.user.username}#${playerToAttack.member.user.discriminator}**!`,
-											embeds: [lootLostEmbed.embed]
-										})
-									}
-									catch (err) {
-										logger.warn(err)
+									if (webhooks.pvp.id && webhooks.pvp.token) {
+										try {
+											await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
+												content: `☠️ ${npcDisplayName} (${location.display} Boss) killed **${playerToAttack.member.user.username}#${playerToAttack.member.user.discriminator}**!`,
+												embeds: [lootLostEmbed.embed]
+											})
+										}
+										catch (err) {
+											logger.warn(err)
+										}
 									}
 								}
 

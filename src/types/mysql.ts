@@ -140,5 +140,10 @@ export interface CompanionRow {
 	hunger: number
 	fetches: number
 	fetching: 0 | 1
+	skillPoints: number
+	agility: number
+	strength: number
+	perception: number
+	courage: number
 	createdAt: Date
 }

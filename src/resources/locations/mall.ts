@@ -139,7 +139,7 @@ const securityOfficerWalker: NPC = {
 const theManyBoss: NPC = {
 	type: 'walker',
 	display: 'The Many',
-	health: 600,
+	health: 500,
 	damage: 60,
 	drops: {
 		common: [items['9mm_AP_bullet'], items.paracetamol, items.aramid_armor, items.aramid_helmet, items['12-gauge_buckshot']],
@@ -153,7 +153,7 @@ const theManyBoss: NPC = {
 		'~*You hear the collective screams of many different zombies*~'
 	],
 	xp: 1000,
-	attackPenetration: 2.8,
+	attackPenetration: 2.0,
 	chanceToBite: 15,
 	boss: true,
 	respawnTime: 60 * 10

@@ -10,6 +10,9 @@ import { getEquips, getItemDisplay, getItems } from './itemUtils'
 import { addStatusEffects, getEffectsDisplay } from './playerUtils'
 import { combineArrayWithAnd, formatHealth, getAfflictionEmoji, getBodyPartEmoji, getRarityDisplay } from './stringUtils'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
+import { addStress, getCompanionRow } from './db/companions'
+import { getCompanionDisplay, getProtectionChance } from './companionUtils'
+import { companions } from '../resources/companions'
 
 interface MobAttackChoice {
 	choice: 'attack'
@@ -173,7 +176,7 @@ export async function attackPlayer (
 	playerAfflictions: Affliction[],
 	npcStimulants: Stimulant[],
 	npcAfflictions: Affliction[]
-): Promise<{ messages: string[], damage: number, lostItems: ItemWithRow<BackpackItemRow>[] }> {
+): Promise<{ messages: string[], damage: number, lostItems: ItemWithRow<BackpackItemRow>[], savedByCompanion: boolean }> {
 	const messages = []
 	const userBackpackData = getItems(userBackpack)
 	const userEquips = getEquips(userBackpack)
@@ -186,6 +189,7 @@ export async function attackPlayer (
 	let totalDamage
 	let npcAttackPenetration
 	let victimLoot: ItemWithRow<BackpackItemRow>[] = []
+	let savedByCompanion = false
 
 	if (npc.type === 'raider') {
 		if ('ammo' in npc) {
@@ -317,17 +321,30 @@ export async function attackPlayer (
 	}
 
 	if (userRow.health - totalDamage <= 0) {
-		// have to filter out the removed armor/helmet to prevent sql reference errors
-		victimLoot = userBackpackData.items.filter(i => !removedItems.includes(i.row.id))
+		const companionRow = await getCompanionRow(transactionQuery, member.id, true)
+		const usersCompanion = companions.find(c => c.name === companionRow?.type)
 
-		for (const victimItem of victimLoot) {
-			await deleteItem(transactionQuery, victimItem.row.id)
+		if (companionRow && usersCompanion && companionRow.stress < 100 && Math.random() < getProtectionChance(companionRow.courage) / 100) {
+			const stressToAdd = Math.min(100 - companionRow.stress, 50)
+			await addStress(transactionQuery, member.id, stressToAdd)
+
+			savedByCompanion = true
+			messages.push(`☠️ **${member.displayName}** was about to die but THEIR COMPANION **${getCompanionDisplay(usersCompanion, companionRow, true)}** SWOOPED IN LAST SECOND AND SAVED THEM!`)
+		}
+		else {
+			// have to filter out the removed armor/helmet to prevent sql reference errors
+			victimLoot = userBackpackData.items.filter(i => !removedItems.includes(i.row.id))
+
+			for (const victimItem of victimLoot) {
+				await deleteItem(transactionQuery, victimItem.row.id)
+			}
+
+			await increaseDeaths(transactionQuery, member.id, 1)
+
+			messages.push(`☠️ **${member.displayName}** DIED and lost **${victimLoot.length}** items.`)
 		}
 
-		await increaseDeaths(transactionQuery, member.id, 1)
 		await setFighting(transactionQuery, member.id, false)
-
-		messages.push(`☠️ **${member.displayName}** DIED and lost **${victimLoot.length}** items.`)
 	}
 	else {
 		await lowerHealth(transactionQuery, member.id, totalDamage)
@@ -338,6 +355,7 @@ export async function attackPlayer (
 	return {
 		messages,
 		damage: totalDamage,
-		lostItems: victimLoot
+		lostItems: victimLoot,
+		savedByCompanion
 	}
 }

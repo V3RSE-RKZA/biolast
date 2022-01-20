@@ -14,6 +14,7 @@ export const food = foodObject({
 		itemLevel: 1,
 		durability: 2,
 		reducesHunger: 15,
+		xpGiven: 15,
 		artist: '719365897458024558'
 	},
 	pretzel: {
@@ -27,6 +28,7 @@ export const food = foodObject({
 		itemLevel: 1,
 		durability: 2,
 		reducesHunger: 15,
+		xpGiven: 15,
 		artist: '719365897458024558'
 	},
 	corn: {
@@ -39,6 +41,7 @@ export const food = foodObject({
 		itemLevel: 1,
 		durability: 3,
 		reducesHunger: 13,
+		xpGiven: 10,
 		artist: '719365897458024558'
 	},
 	apple: {
@@ -51,6 +54,7 @@ export const food = foodObject({
 		itemLevel: 1,
 		durability: 2,
 		reducesHunger: 17,
+		xpGiven: 10,
 		artist: '719365897458024558'
 	},
 	donut: {
@@ -63,6 +67,7 @@ export const food = foodObject({
 		itemLevel: 7,
 		durability: 1,
 		reducesHunger: 60,
+		xpGiven: 15,
 		artist: '719365897458024558'
 	}
 })

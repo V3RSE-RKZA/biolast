@@ -67,8 +67,13 @@ export const icons = {
 	panic: '<:panic:928046269061021806>',
 	loading: '<a:loading:928735911196381224>',
 	merchant: '<:flurshed:928849729603907594>',
-	page_button_next: '932632499874570300',
-	page_button_previous: '932632500092682250'
+	xp_star: '<:xp_star:932226958148911124>',
+	button_icons: {
+		// ids of custom icons used in buttons throughout the bot
+		page_button_next: '932632499874570300',
+		page_button_previous: '932632500092682250',
+		upgrade_skills_icon: '933440155103158372'
+	}
 }
 
 // How many items a single user can buy from the /market each hour

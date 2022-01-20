@@ -217,6 +217,11 @@ export interface Food extends BaseItem {
 	 * How much this item lowers companion hunger by
 	 */
 	reducesHunger: number
+
+	/**
+	 * How much xp this item gives to your companion when used
+	 */
+	xpGiven: number
 }
 
 /**

@@ -4,7 +4,7 @@ import App from '../app'
 import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { BackpackItemRow, ItemRow, UserRow } from '../types/mysql'
+import { BackpackItemRow, CompanionRow, ItemRow, UserRow } from '../types/mysql'
 import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { combineArrayWithAnd, formatHealth, formatMoney, formatNumber, formatXP } from '../utils/stringUtils'
@@ -12,6 +12,9 @@ import { getPlayerXp } from '../utils/playerUtils'
 import { getItemPrice, getItems } from '../utils/itemUtils'
 import { getUserBackpack, getUserStash } from '../utils/db/items'
 import { allLocations, isValidLocation, locations } from '../resources/locations'
+import { getCompanionRow } from '../utils/db/companions'
+import { companions } from '../resources/companions'
+import { getCompanionDisplay } from '../utils/companionUtils'
 
 class ProfileCommand extends CustomSlashCommand {
 	constructor (creator: SlashCreator, app: App) {
@@ -50,7 +53,8 @@ class ProfileCommand extends CustomSlashCommand {
 
 			const backpackRows = await getUserBackpack(query, member.id)
 			const stashRows = await getUserStash(query, member.id)
-			const profileEmb = this.getProfileEmbed(member, userData, backpackRows, stashRows)
+			const companionRow = await getCompanionRow(query, member.id)
+			const profileEmb = this.getProfileEmbed(member, userData, backpackRows, stashRows, companionRow)
 
 			await ctx.send({
 				embeds: [profileEmb.embed]
@@ -61,14 +65,15 @@ class ProfileCommand extends CustomSlashCommand {
 		const backpackRows = await getUserBackpack(query, ctx.user.id)
 		const stashRows = await getUserStash(query, ctx.user.id)
 		const userData = (await getUserRow(query, ctx.user.id))!
-		const profileEmb = this.getProfileEmbed(ctx.member || ctx.user, userData, backpackRows, stashRows)
+		const companionRow = await getCompanionRow(query, ctx.user.id)
+		const profileEmb = this.getProfileEmbed(ctx.member || ctx.user, userData, backpackRows, stashRows, companionRow)
 
 		await ctx.send({
 			embeds: [profileEmb.embed]
 		})
 	}
 
-	getProfileEmbed (member: ResolvedMember | User, userData: UserRow, backpackRows: BackpackItemRow[], stashRows: ItemRow[]): Embed {
+	getProfileEmbed (member: ResolvedMember | User, userData: UserRow, backpackRows: BackpackItemRow[], stashRows: ItemRow[], companionRow?: CompanionRow): Embed {
 		const user = 'user' in member ? member.user : member
 		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
 		const playerXp = getPlayerXp(userData.xp, userData.level)
@@ -81,6 +86,7 @@ class ProfileCommand extends CustomSlashCommand {
 			userData.money
 		const currentLocation = isValidLocation(userData.currentLocation) ? locations[userData.currentLocation] : undefined
 		const maxLocations = allLocations.filter(l => l.locationLevel === userData.locationLevel) || allLocations.filter(l => l.locationLevel === userData.locationLevel - 1)
+		const companion = companions.find(c => c.name === companionRow?.type)
 
 		const embed = new Embed()
 			.setAuthor(`${userDisplay}'s Profile`, user.avatarURL)
@@ -88,7 +94,12 @@ class ProfileCommand extends CustomSlashCommand {
 			.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP\n${formatHealth(userData.health, userData.maxHealth)}`, true)
 			.addField('__Experience__', `**Lvl. ${userData.level}** ${formatXP(playerXp.relativeLevelXp, playerXp.levelTotalXpNeeded)}\n${formatNumber(playerXp.relativeLevelXp)} / ${formatNumber(playerXp.levelTotalXpNeeded)} XP`, true)
 			.addField('__Balance__', `**${formatMoney(userData.money)}** copper`, true)
-			.addField('__Stats__', `**Highest Tier Region**: ${maxLocations.length ? combineArrayWithAnd(maxLocations.map(l => `${l.icon} ${l.display}`)) : 'Unknown...'} (Region Tier **${userData.locationLevel}**)` +
+
+		if (companionRow && companion) {
+			embed.addField('__Companion__', `${getCompanionDisplay(companion, companionRow)} (Lvl. **${companionRow.level}**)`, true)
+		}
+
+		embed.addField('__Stats__', `**Highest Tier Region**: ${maxLocations.length ? combineArrayWithAnd(maxLocations.map(l => `${l.icon} ${l.display}`)) : 'Unknown...'} (Region Tier **${userData.locationLevel}**)` +
 				`\n**Player Kills**: ${formatNumber(userData.kills)}\n**Mob Kills (bosses count)**: ${formatNumber(userData.npcKills)}` +
 				`\n**Boss Kills**: ${formatNumber(userData.bossKills)}\n**Deaths**: ${formatNumber(userData.deaths)} (${formatNumber(kdRatio, true)} K/D ratio)` +
 				`\n**Quests Completed**: ${formatNumber(userData.questsCompleted)}\n**Player Value**: ${formatMoney(playerValue)}`)
