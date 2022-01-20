@@ -655,7 +655,7 @@ class DuelCommand extends CustomSlashCommand {
 												})
 											}
 
-											if (webhooks.pvp.id && webhooks.pvp.token) {
+											if ((webhooks.pvp.id && webhooks.pvp.token) || (webhooks.bot_logs.id && webhooks.bot_logs.token)) {
 												const lootEmbed = new Embed()
 													.setTitle('__Loot Stolen__')
 													.setDescription(itemsPicked.length ?
@@ -663,15 +663,31 @@ class DuelCommand extends CustomSlashCommand {
 														`${itemsPicked.length > 15 ? `\n...and **${itemsPicked.length - 15}** other item${itemsPicked.length - 15 > 1 ? 's' : ''}` : ''}` :
 														'No items were stolen.')
 
-												try {
-													await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
-														content: `☠️ **${userChoice.member.user.username}#${userChoice.member.user.discriminator}** killed **${otherPlayerMember.user.username}#${otherPlayerMember.user.discriminator}** using their ${getItemDisplay(choice.weapon.item)}` +
-															`${choice.ammo ? ` (ammo: ${getItemDisplay(choice.ammo.item)})` : ''}.`,
-														embeds: [lootEmbed.embed]
-													})
+												if (webhooks.pvp.id && webhooks.pvp.token) {
+													try {
+														await this.app.bot.executeWebhook(webhooks.pvp.id, webhooks.pvp.token, {
+															content: `☠️ **${userChoice.member.user.username}#${userChoice.member.user.discriminator}** killed **${otherPlayerMember.user.username}#${otherPlayerMember.user.discriminator}** using their ${getItemDisplay(choice.weapon.item)}` +
+																`${choice.ammo ? ` (ammo: ${getItemDisplay(choice.ammo.item)})` : ''}.`,
+															embeds: [lootEmbed.embed]
+														})
+													}
+													catch (err) {
+														logger.warn(err)
+													}
 												}
-												catch (err) {
-													logger.warn(err)
+												if (webhooks.bot_logs.id && webhooks.bot_logs.token) {
+													try {
+														lootEmbed.setFooter(`Guild ID: ${userChoice.member.guildID}`)
+
+														await this.app.bot.executeWebhook(webhooks.bot_logs.id, webhooks.bot_logs.token, {
+															content: `☠️ **${userChoice.member.user.username}#${userChoice.member.user.discriminator}** (${userChoice.member.id}) killed **${otherPlayerMember.user.username}#${otherPlayerMember.user.discriminator}** (${otherPlayerMember.id}) using their ${getItemDisplay(choice.weapon.item)}` +
+																`${choice.ammo ? ` (ammo: ${getItemDisplay(choice.ammo.item)})` : ''}.`,
+															embeds: [lootEmbed.embed]
+														})
+													}
+													catch (err) {
+														logger.warn(err)
+													}
 												}
 											}
 										}
