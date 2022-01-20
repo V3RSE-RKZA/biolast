@@ -142,6 +142,15 @@ const allTrades: Trade[] = [
 		},
 		price: items.tech_trash,
 		locationLevel: 3
+	},
+	{
+		type: 'collectible',
+		offer: {
+			item: items.aramid_helmet,
+			amount: 1
+		},
+		price: items.escape_from_fristoe,
+		locationLevel: 3
 	}
 ]
 
