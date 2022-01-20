@@ -85,7 +85,7 @@ class QuestCommand extends CustomSlashCommand {
 				return
 			}
 
-			await createCooldown(preTransaction.query, ctx.user.id, 'quest', questCooldown)
+			await createCooldown(preTransaction.query, ctx.user.id, 'quest', 15 * 60)
 			await preTransaction.commit()
 
 			// quest prompt
@@ -108,7 +108,7 @@ class QuestCommand extends CustomSlashCommand {
 				.addField('__Reward__', `${rewardsDisplay.join('\n')}`, true)
 
 			questMessage = await ctx.send({
-				content: '**Do you accept this quest?** If you decline, you will have to wait **1 hour** before you can accept another.',
+				content: '**Do you accept this quest?** If you decline, you will have to wait **15 minutes** before you can accept another.',
 				embeds: [promptEmbed.embed],
 				components: [{
 					type: ComponentType.ACTION_ROW,
@@ -121,7 +121,7 @@ class QuestCommand extends CustomSlashCommand {
 
 				if (accepted.customID !== 'accept') {
 					await accepted.editParent({
-						content: '**You have declined this quest.** You will not be able to accept another quest for **1 hour**.',
+						content: '**You have declined this quest.** You will not be able to accept another quest for **15 minutes**.',
 						components: []
 					})
 					return
