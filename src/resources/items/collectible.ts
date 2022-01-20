@@ -28,10 +28,11 @@ export const collectible = questObject({
 		name: 'farming_guide',
 		aliases: ['farming_guide', 'guide'],
 		description: 'Some helpful tips for growing crops. Drop from The Farm.',
-		icon: '<:quest_item:886561850525896724>',
+		icon: '<:farming_guide:933857770061578260>',
 		sellPrice: 120,
 		slotsUsed: 1,
-		itemLevel: 2
+		itemLevel: 2,
+		artist: '719365897458024558'
 	},
 	antique_vase: {
 		type: 'Collectible',
