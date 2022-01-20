@@ -143,7 +143,7 @@ class BossCommand extends CustomSlashCommand {
 				}
 				else {
 					await ctx.send({
-						content: `${icons.warning} You have traveled to a higher tiered region than **${member.displayName}** (Region tier ${memberData.locationLevel}). You can only invite players who are the same region tier as you (Region tier ${preUserData.locationLevel}).`
+						content: `${icons.warning} You cannot assist **${member.displayName}** because you are a higher region tier than them. You can only invite players who are the same region tier as you (Region tier ${preUserData.locationLevel}).`
 					})
 				}
 				return
