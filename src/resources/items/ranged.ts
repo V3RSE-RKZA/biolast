@@ -101,9 +101,9 @@ export const ranged = rangedObject({
 		icon: '<:glock17:931424425851621417>',
 		aliases: ['glock'],
 		sellPrice: 251,
-		durability: 6,
+		durability: 5,
 		slotsUsed: 2,
-		accuracy: 91,
+		accuracy: 85,
 		itemLevel: 5,
 		speed: 20,
 		artist: '600383557038374913'
@@ -115,9 +115,9 @@ export const ranged = rangedObject({
 		aliases: [],
 		description: '9mm submachine gun created by Heckler & Koch.',
 		sellPrice: 1464,
-		durability: 5,
+		durability: 9,
 		slotsUsed: 3,
-		accuracy: 65,
+		accuracy: 70,
 		itemLevel: 9,
 		speed: 28
 	},
