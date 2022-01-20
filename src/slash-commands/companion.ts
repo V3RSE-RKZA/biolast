@@ -41,7 +41,7 @@ const hireMenu: ComponentActionRow[] = [{
 				return {
 					label: c.name,
 					value: c.name,
-					description: `Costs ${formatMoney(c.price, false)}`,
+					description: `Costs ${formatMoney(c.price, false)}. Can be upgraded ${c.maxUpgrades} times.`,
 					emoji: iconID ? {
 						id: iconID[1],
 						name: c.name
