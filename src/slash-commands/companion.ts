@@ -868,7 +868,7 @@ class CompanionCommand extends CustomSlashCommand {
 						await transaction.commit()
 
 						await buttonCtx.send({
-							content: `${icons.warning} You are overweight, you will need to clear some space in your inventory before you can claim the items from your companion.`,
+							content: `${icons.warning} You are overweight, you need to clear some space in your inventory before you can claim the items from your companion.`,
 							ephemeral: true
 						})
 						return
@@ -1057,7 +1057,8 @@ class CompanionCommand extends CustomSlashCommand {
 							' Better companions can have more upgrades.'
 					}
 					else {
-						display = `Your companion has **${upgradesAvailable}** skill upgrades available.${upgradesAvailable > 0 ? ' What would you like to spend them on?' : ''}`
+						display = `**${getCompanionDisplay(preCompanion, companionRow, true)}** has **${upgradesAvailable}** skill upgrades available.` +
+							` ${upgradesAvailable > 0 ? 'What would you like to spend them on?' : 'Earn skill points by leveling up your companion.'}`
 					}
 
 					components = [{
@@ -1291,7 +1292,7 @@ class CompanionCommand extends CustomSlashCommand {
 				`Your companion will be able to find items with an item level of **${companionRow.perception + 3}** maximum (fetch better items).`)
 			.addField(`🛡️ Courage (${companionRow.courage} → ${companionRow.courage + 1})`,
 				`Your companion will have a higher chance (${getProtectionChance(companionRow.courage).toFixed(2)}% to ${getProtectionChance(companionRow.courage + 1).toFixed(2)}%) of protecting you from dying in a duel.`)
-			.setFooter(`${getCompanionDisplay(companion, companionRow, true)} can only be upgraded up to ${companion.maxUpgrades} times.`)
+			.setFooter(`${getCompanionDisplay(companion, companionRow, true)} can be upgraded up to ${companion.maxUpgrades} times.`)
 		return embed
 	}
 
