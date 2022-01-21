@@ -8,7 +8,7 @@ export const food = foodObject({
 		name: 'pizza_slice',
 		description: 'A rotting slice of pizza. Maybe it still tastes good.',
 		icon: '<:pizza_food:931430476940472330>',
-		aliases: [],
+		aliases: ['pizza'],
 		sellPrice: 19,
 		slotsUsed: 1,
 		itemLevel: 1,

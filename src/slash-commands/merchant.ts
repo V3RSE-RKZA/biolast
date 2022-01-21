@@ -1,10 +1,8 @@
 import { SlashCreator, CommandContext, Message, ComponentType, ComponentActionRow } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
-import { items } from '../resources/items'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { Collectible, Item } from '../types/Items'
 import { UserRow } from '../types/mysql'
 import { CONFIRM_BUTTONS, NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, getUserStash } from '../utils/db/items'
@@ -14,145 +12,7 @@ import { formatMoney } from '../utils/stringUtils'
 import { backpackHasSpace, getItemDisplay, getItemNameDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { disableAllComponents } from '../utils/messageUtils'
-
-interface MoneyTrade {
-	type: 'money'
-	offer: {
-		item: Item
-		amount: number
-	}
-	price: number
-}
-interface CollectibleTrade {
-	type: 'collectible'
-	offer: {
-		item: Item
-		amount: number
-	}
-	price: Collectible
-}
-
-type Trade = (MoneyTrade | CollectibleTrade) & { locationLevel: number }
-
-const allTrades: Trade[] = [
-	{
-		type: 'money',
-		offer: {
-			item: items['glock-17'],
-			amount: 1
-		},
-		price: 2000,
-		locationLevel: 1
-	},
-	{
-		type: 'money',
-		offer: {
-			item: items['9mm_FMJ_bullet'],
-			amount: 2
-		},
-		price: 2000,
-		locationLevel: 1
-	},
-	{
-		type: 'money',
-		offer: {
-			item: items.bandage,
-			amount: 1
-		},
-		price: 200,
-		locationLevel: 1
-	},
-	{
-		type: 'money',
-		offer: {
-			item: items.splint,
-			amount: 1
-		},
-		price: 400,
-		locationLevel: 1
-	},
-	{
-		type: 'money',
-		offer: {
-			item: items['anti-biotics'],
-			amount: 1
-		},
-		price: 1000,
-		locationLevel: 2
-	},
-	{
-		type: 'money',
-		offer: {
-			item: items['9mm_HP_bullet'],
-			amount: 1
-		},
-		price: 2975,
-		locationLevel: 3
-	},
-	{
-		type: 'collectible',
-		offer: {
-			item: items.luger,
-			amount: 1
-		},
-		price: items.walker_goop,
-		locationLevel: 1
-	},
-	{
-		type: 'collectible',
-		offer: {
-			item: items['.22LR_bullet'],
-			amount: 1
-		},
-		price: items.walker_goop,
-		locationLevel: 1
-	},
-	{
-		type: 'collectible',
-		offer: {
-			item: items.wooden_helmet,
-			amount: 1
-		},
-		price: items.farming_guide,
-		locationLevel: 2
-	},
-	{
-		type: 'collectible',
-		offer: {
-			item: items.wooden_armor,
-			amount: 1
-		},
-		price: items.farming_guide,
-		locationLevel: 2
-	},
-	{
-		type: 'money',
-		offer: {
-			item: items.duffle_bag,
-			amount: 1
-		},
-		price: 8500,
-		locationLevel: 3
-	},
-	{
-		type: 'collectible',
-		offer: {
-			item: items.aramid_armor,
-			amount: 1
-		},
-		price: items.tech_trash,
-		locationLevel: 3
-	},
-	{
-		type: 'collectible',
-		offer: {
-			item: items.aramid_helmet,
-			amount: 1
-		},
-		price: items.escape_from_fristoe,
-		locationLevel: 3
-	}
-]
+import { MerchantTrade, merchantTrades } from '../resources/trades'
 
 const DEALS_PER_PAGE = 10
 
@@ -553,7 +413,7 @@ class MerchantCommand extends CustomSlashCommand {
 		return possibleQuotes[Math.floor(Math.random() * possibleQuotes.length)]
 	}
 
-	getTradeDisplay (trade: Trade, locked = false): string {
+	getTradeDisplay (trade: MerchantTrade, locked = false): string {
 		if (locked) {
 			return `**${trade.offer.amount}x** ${getItemDisplay(trade.offer.item)} for *an unknown price*`
 		}
@@ -564,8 +424,8 @@ class MerchantCommand extends CustomSlashCommand {
 		return `**${trade.offer.amount}x** ${getItemDisplay(trade.offer.item)} for ${formatMoney(trade.price)}`
 	}
 
-	generatePages (userData: UserRow): { page: Embed, deals: Trade[] }[] {
-		const sortedTrades = allTrades.sort((a, b) => a.locationLevel - b.locationLevel)
+	generatePages (userData: UserRow): { page: Embed, deals: MerchantTrade[] }[] {
+		const sortedTrades = merchantTrades.sort((a, b) => a.locationLevel - b.locationLevel)
 		const pages = []
 		const maxPage = Math.ceil((sortedTrades.length) / DEALS_PER_PAGE) || 1
 

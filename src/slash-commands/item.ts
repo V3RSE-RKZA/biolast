@@ -20,6 +20,7 @@ import { formatTime } from '../utils/db/cooldowns'
 import { skins } from '../resources/skins'
 import { getSkinDisplay } from '../utils/skinUtils'
 import { disableAllComponents } from '../utils/messageUtils'
+import { merchantTrades } from '../resources/trades'
 
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 const ITEMS_PER_PAGE = 10
@@ -278,7 +279,7 @@ class ItemCommand extends CustomSlashCommand {
 			try {
 				if (buttonCtx.customID === 'find') {
 					const userData = await getUserRow(query, buttonCtx.user.id)
-					const obtainedFrom: { [key: string]: string[] } = allLocations.reduce((prev, curr) => ({ ...prev, [curr.display]: [] }), {})
+					const obtainedFrom: { [key: string]: string[] } = { ...allLocations.reduce((prev, curr) => ({ ...prev, [curr.display]: [] }), {}), Merchant: [] }
 
 					if (!userData) {
 						await buttonCtx.send({
@@ -333,6 +334,20 @@ class ItemCommand extends CustomSlashCommand {
 							(loc.boss.drops.rare.find(i => i.name === itemFixed.name))
 						) {
 							obtainedFrom[loc.display].push(`**${loc.boss.display}** was spotted with this item, good luck trying to get it.`)
+						}
+					}
+
+					for (const trade of merchantTrades) {
+						if (trade.offer.item.name === itemFixed.name) {
+							if (userData.locationLevel < trade.locationLevel) {
+								obtainedFrom.Merchant.push(`The merchant trades this item once you reach region tier **${trade.locationLevel}**.`)
+							}
+							else if (trade.type === 'money') {
+								obtainedFrom.Merchant.push(`The merchant trades this item in return for **${formatMoney(trade.price)}**.`)
+							}
+							else {
+								obtainedFrom.Merchant.push(`The merchant trades this item in return for **${getItemDisplay(trade.price)}**.`)
+							}
 						}
 					}
 
