@@ -792,6 +792,7 @@ class CompanionCommand extends CustomSlashCommand {
 					const transaction = await beginTransaction()
 					const companionRow = await getCompanionRow(transaction.query, ctx.user.id, true)
 					const companionFetchCD = await getCooldown(transaction.query, ctx.user.id, 'companion-fetch', true)
+					const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
 
 					if (!companionRow || !preCompanion || companionRow.type !== preCompanion.name) {
 						await transaction.commit()
@@ -848,6 +849,15 @@ class CompanionCommand extends CustomSlashCommand {
 						})
 						await buttonCtx.send({
 							content: `${icons.cancel} Your companion still fetching. They will finish their fetch mission in about **${companionFetchCD}**.`,
+							ephemeral: true
+						})
+						return
+					}
+					else if (userData.fighting) {
+						await transaction.commit()
+
+						await buttonCtx.send({
+							content: `${icons.cancel} You are in a duel! You must finish your duel before you can claim these items.`,
 							ephemeral: true
 						})
 						return
