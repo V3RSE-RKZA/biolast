@@ -182,7 +182,7 @@ class TradeCommand extends CustomSlashCommand {
 
 			while (tradeActive) {
 				try {
-					const tradeChoice = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id || i.user.id === member.id, 30000))[0]
+					const tradeChoice = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id || i.user.id === member.id, 60000))[0]
 					const userDisplay = tradeChoice.member?.displayName || `${tradeChoice.user.username}#${tradeChoice.user.discriminator}`
 
 					await tradeChoice.acknowledge()
