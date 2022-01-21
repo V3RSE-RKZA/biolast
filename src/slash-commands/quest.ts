@@ -174,7 +174,7 @@ class QuestCommand extends CustomSlashCommand {
 			}
 			catch (err) {
 				await questMessage.edit({
-					content: '**You ran out of time to accept this quest.** You will not be able to accept another quest for **1 hour**.',
+					content: '**You ran out of time to accept this quest.** You will not be able to accept another quest for **15 minutes**.',
 					components: disableAllComponents(questMessage.components)
 				})
 				return
