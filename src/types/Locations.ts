@@ -85,6 +85,11 @@ interface AreaBase {
 	 * item from the special loot pool
 	 */
 	keyIsOptional?: boolean
+
+	/**
+	 * Image URL representing the area (shown in /scavenge command menu)
+	 */
+	image?: string
 }
 interface KeyArea extends AreaBase {
 	requiresKey: Item[]

@@ -945,6 +945,10 @@ class ScavengeCommand extends CustomSlashCommand {
 			let scavengeButton = GREEN_BUTTON('Scavenge', 'scavenge')
 			let mobCD
 
+			if (area.image) {
+				areaEmbed.setThumbnail(area.image)
+			}
+
 			if (area.requiresKey && hasRequiredKey) {
 				const iconID = hasRequiredKey.item.icon.match(/:([0-9]*)>/)
 
