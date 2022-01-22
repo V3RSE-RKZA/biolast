@@ -345,7 +345,7 @@ export async function attackPlayer (
 		const usersCompanion = companions.find(c => c.name === companionRow?.type)
 
 		if (companionRow && usersCompanion && companionRow.stress < 100 && Math.random() < getProtectionChance(companionRow.courage) / 100) {
-			const stressToAdd = Math.min(100 - companionRow.stress, 50)
+			const stressToAdd = Math.min(100 - companionRow.stress, 30)
 			await addStress(transactionQuery, member.id, stressToAdd)
 
 			savedByCompanion = true
