@@ -522,7 +522,10 @@ class ItemCommand extends CustomSlashCommand {
 				break
 			}
 			case 'Food': {
-				itemEmbed.addField('Reduces Hunger', `Reduces companion hunger by **${item.reducesHunger}**`, true)
+				itemEmbed.addField('Effects on Companion',
+					`Reduces companion hunger by **${item.reducesHunger}**` +
+					`\nIncreases companion xp by **${item.xpGiven}**`,
+					true)
 				break
 			}
 			case 'Key': {

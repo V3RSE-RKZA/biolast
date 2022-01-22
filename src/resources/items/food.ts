@@ -66,8 +66,8 @@ export const food = foodObject({
 		slotsUsed: 1,
 		itemLevel: 7,
 		durability: 1,
-		reducesHunger: 60,
-		xpGiven: 15,
+		reducesHunger: 25,
+		xpGiven: 18,
 		artist: '719365897458024558'
 	}
 })
