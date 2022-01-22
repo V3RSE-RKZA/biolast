@@ -959,7 +959,7 @@ class BossCommand extends CustomSlashCommand {
 
 			duelEmb.addField(`${player.member.user.username}#${player.member.user.discriminator} (Level ${player.data.level})`,
 				`**${player.data.health} / ${player.data.maxHealth}** HP\n${formatHealth(player.data.health, player.data.maxHealth)}` +
-				`\n\n__**Gear**__\n**Backpack**: ${playerEquips.backpack ? getItemDisplay(playerEquips.backpack.item, playerEquips.backpack.row, { showEquipped: false, showID: false }) : 'None'}` +
+				`\n\n__**Equipment**__\n**Backpack**: ${playerEquips.backpack ? getItemDisplay(playerEquips.backpack.item, playerEquips.backpack.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Helmet**: ${playerEquips.helmet ? getItemDisplay(playerEquips.helmet.item, playerEquips.helmet.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Body Armor**: ${playerEquips.armor ? getItemDisplay(playerEquips.armor.item, playerEquips.armor.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n\n__**Stimulants**__\n${player.stimulants.length ? player.stimulants.map(i => getItemDisplay(i)).join('\n') : 'None'}` +
