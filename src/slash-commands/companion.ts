@@ -25,7 +25,7 @@ const ITEMS_PER_PAGE = 10
 // how much xp companion receives when played with
 const XP_PER_PLAY = 15
 // how much xp companion receives when completed fetch
-const XP_PER_FETCH = 20
+const XP_PER_FETCH = 50
 
 const sortedCompanions = companions.sort((a, b) => a.price - b.price)
 const hireMenu: ComponentActionRow[] = [{

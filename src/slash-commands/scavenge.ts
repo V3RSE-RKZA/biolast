@@ -961,13 +961,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				requirements.push(`${icons.checkmark} ~~Have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))} in your inventory.~~`)
 			}
 			else if (area.requiresKey) {
-				scavengeButton = {
-					type: ComponentType.BUTTON,
-					label: 'Use Key',
-					custom_id: 'scavenge',
-					style: ButtonStyle.PRIMARY,
-					disabled: true
-				}
+				scavengeButton = BLUE_BUTTON('Use Key', 'scavenge', true)
 				requirements.push(`${icons.cancel} Have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))} in your inventory.`)
 			}
 
