@@ -23,25 +23,6 @@ const bloatedWalker: NPC = {
 	boss: false,
 	respawnTime: 60 * 2
 }
-const mediumRaider: NPC = {
-	type: 'raider',
-	display: 'Raider',
-	health: 60,
-	damage: 35,
-	drops: {
-		common: [items['9mm_FMJ_bullet']],
-		uncommon: [items.ifak_medkit, items['anti-biotics']],
-		rare: [items['9mm_RIP_bullet'], items.duffle_bag],
-		rolls: 1
-	},
-	weapon: items['glock-17'],
-	ammo: items['9mm_HP_bullet'],
-	armor: items.wooden_armor,
-	helmet: items.wooden_helmet,
-	xp: 125,
-	boss: false,
-	respawnTime: 60 * 2
-}
 const psychoRaider: NPC = {
 	type: 'raider',
 	display: 'Psycho',
@@ -77,15 +58,15 @@ const mediumCrawler: NPC = {
 	boss: false,
 	respawnTime: 60 * 2
 }
-const gameNGoRaider: NPC = {
+const mediumRaider: NPC = {
 	type: 'raider',
 	display: 'Raider',
 	health: 60,
 	damage: 35,
 	drops: {
 		common: [items['9mm_FMJ_bullet']],
-		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
-		rare: [items['9mm_RIP_bullet'], items.escape_from_fristoe],
+		uncommon: [items.ifak_medkit, items['anti-biotics']],
+		rare: [items['9mm_RIP_bullet'], items.escape_from_fristoe, items.duffle_bag],
 		rolls: 1
 	},
 	weapon: items['glock-17'],
@@ -213,7 +194,7 @@ export const mall: Location = {
 				},
 				rolls: 1
 			},
-			npcSpawns: [bloatedWalker],
+			npc: bloatedWalker,
 			scavengeCooldown: 60
 		},
 		{
@@ -233,7 +214,7 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [mediumRaider, psychoRaider],
+			npc: mediumRaider,
 			scavengeCooldown: 60
 		},
 		{
@@ -257,7 +238,7 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [mediumCrawler],
+			npc: mediumCrawler,
 			scavengeCooldown: 60
 		},
 		{
@@ -298,7 +279,7 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [gameNGoRaider, psychoRaider],
+			npc: psychoRaider,
 			scavengeCooldown: 60
 		},
 		{
@@ -318,7 +299,7 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [derekBoss],
+			npc: derekBoss,
 			scavengeCooldown: 60
 		},
 		{

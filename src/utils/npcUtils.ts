@@ -56,6 +56,26 @@ export function getMobDrop (npc: NPC): { item: Item, rarityDisplay: string } | u
 	}
 }
 
+/**
+ * Refer to the mobs display name
+ * @param npc The NPC object
+ * @param options Options for the display
+ * @param options.specific Whether to refer to the NPC specifically (so "The raider" instead of "A raider"), defaults false
+ * @param options.lowerCase Whether the display should be lower case, defaults false
+ */
+export function getMobDisplayReference (npc: NPC, options: Partial<{ specific: boolean, lowerCase: boolean }> = {}): string {
+	const { specific = false, lowerCase = false } = options
+
+	if (npc.boss) {
+		return npc.display
+	}
+	else if (specific) {
+		return lowerCase ? `the ${npc.display}` : `The ${npc.display}`
+	}
+
+	return lowerCase ? `a ${npc.display}` : `A ${npc.display}`
+}
+
 export function getMobChoice (npc: NPC, npcStimulants: Stimulant[], currentHealth: number): MobChoice {
 	const random = Math.random()
 
@@ -90,12 +110,12 @@ export function getMobChoice (npc: NPC, npcStimulants: Stimulant[], currentHealt
  * @param npc NPC to display
  * @param currentHealth Health the NPC has
  * @param options Options for the display
- * @param options.showHealth Show the NPCs health
+ * @param options.showHealth Show the NPCs health, defaults true
  */
 export function getMobDisplay (npc: NPC, currentHealth: number, options: Partial<{ showHealth: boolean }> = {}): string[] {
 	const { showHealth = true } = options
 	const npcDescription = showHealth ? [
-		`__**Health**__\n**${currentHealth} / ${npc.health}** HP\n${formatHealth(currentHealth, npc.health)}`
+		`**${currentHealth} / ${npc.health}** HP\n${formatHealth(currentHealth, npc.health)}`
 	] : []
 	const npcPenetration = 'ammo' in npc ?
 		npc.ammo.penetration :
@@ -103,7 +123,7 @@ export function getMobDisplay (npc: NPC, currentHealth: number, options: Partial
 			npc.weapon.penetration :
 			npc.attackPenetration
 
-	npcDescription.push('\n__**Gear**__')
+	npcDescription.push('\n__**Equipment & Stats**__')
 
 	if ('weapon' in npc) {
 		npcDescription.push(`**Weapon**: ${getItemDisplay(npc.weapon)}`)

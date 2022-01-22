@@ -59,23 +59,6 @@ const lakeWalker: NPC = {
 	boss: false,
 	respawnTime: 60 * 2
 }
-const crawlerWeak: NPC = {
-	type: 'walker',
-	display: 'Crawler',
-	health: 20,
-	damage: 25,
-	drops: {
-		common: [items.bandage, items['.22LR_bullet'], items.luger],
-		uncommon: [items.makeshift_pistol_bullet],
-		rare: [items.walker_goop],
-		rolls: 2
-	},
-	xp: 20,
-	chanceToBite: 0,
-	attackPenetration: 0.3,
-	boss: false,
-	respawnTime: 60 * 2
-}
 const cainTheGravekeeperBoss: NPC = {
 	type: 'raider',
 	display: 'Cain, The Gravekeeper',
@@ -174,7 +157,7 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [redHouseWalker],
+			npc: redHouseWalker,
 			scavengeCooldown: 60
 		},
 		{
@@ -194,7 +177,7 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [raider1],
+			npc: raider1,
 			scavengeCooldown: 60
 		},
 		{
@@ -218,7 +201,8 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			requiresKey: [items.shed_key],
+			npc: lakeWalker,
+			requiresKey: [items.shed_key, items.florreds_pharmacy_key],
 			keyIsOptional: false,
 			scavengeCooldown: 60
 		},
@@ -258,7 +242,7 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [crawlerWeak, lakeWalker],
+			npc: lakeWalker,
 			scavengeCooldown: 60
 		}
 	]

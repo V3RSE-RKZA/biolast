@@ -940,7 +940,7 @@ class BossCommand extends CustomSlashCommand {
 
 		const duelEmb = new Embed()
 			.setTitle(`${mob.display} (Boss Fight)`)
-			.addField('__**Health**__', `**${npcHealth} / ${mob.health}** HP\n${formatHealth(npcHealth, mob.health, { emojisLength: 17 })}`)
+			.addField('\u200b', `**${npcHealth} / ${mob.health}** HP\n${formatHealth(npcHealth, mob.health, { emojisLength: 17 })}`)
 			.addField('\u200b', getMobDisplay(mob, npcHealth, { showHealth: false }).join('\n'), true)
 			.addField('\u200b', `__**Stimulants**__\n${npcStimulants.length ? npcStimulants.map(i => getItemDisplay(i)).join('\n') : 'None'}` +
 				`\n\n__**Afflictions**__\n${npcAfflictions.length ? combineArrayWithAnd(npcAfflictions.map(a => `${getAfflictionEmoji(a.name as AfflictionName)} ${a.name}`)) : 'None'}` +
@@ -958,7 +958,7 @@ class BossCommand extends CustomSlashCommand {
 			const playerEffectsDisplay = getEffectsDisplay(playerEffects)
 
 			duelEmb.addField(`${player.member.user.username}#${player.member.user.discriminator} (Level ${player.data.level})`,
-				`__**Health**__\n**${player.data.health} / ${player.data.maxHealth}** HP\n${formatHealth(player.data.health, player.data.maxHealth)}` +
+				`**${player.data.health} / ${player.data.maxHealth}** HP\n${formatHealth(player.data.health, player.data.maxHealth)}` +
 				`\n\n__**Gear**__\n**Backpack**: ${playerEquips.backpack ? getItemDisplay(playerEquips.backpack.item, playerEquips.backpack.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Helmet**: ${playerEquips.helmet ? getItemDisplay(playerEquips.helmet.item, playerEquips.helmet.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Body Armor**: ${playerEquips.armor ? getItemDisplay(playerEquips.armor.item, playerEquips.armor.row, { showEquipped: false, showID: false }) : 'None'}` +

@@ -816,7 +816,7 @@ class DuelCommand extends CustomSlashCommand {
 		const duelEmb = new Embed()
 			.setTitle(`Duel - ${player1.displayName} vs ${player2.displayName}`)
 			.addField(`${player1.user.username}#${player1.user.discriminator} (Level ${player1Data.level})`,
-				`__**Health**__\n**${player1Data.health} / ${player1Data.maxHealth}** HP\n${formatHealth(player1Data.health, player1Data.maxHealth)}` +
+				`**${player1Data.health} / ${player1Data.maxHealth}** HP\n${formatHealth(player1Data.health, player1Data.maxHealth)}` +
 				`\n\n__**Gear**__\n**Backpack**: ${player1Equips.backpack ? getItemDisplay(player1Equips.backpack.item, player1Equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Helmet**: ${player1Equips.helmet ? getItemDisplay(player1Equips.helmet.item, player1Equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Body Armor**: ${player1Equips.armor ? getItemDisplay(player1Equips.armor.item, player1Equips.armor.row, { showEquipped: false, showID: false }) : 'None'}` +
@@ -825,7 +825,7 @@ class DuelCommand extends CustomSlashCommand {
 				`${player1EffectsDisplay.length ? `\n\n__**Effects**__\n${player1EffectsDisplay.join('\n')}` : ''}`,
 				true)
 			.addField(`${player2.user.username}#${player2.user.discriminator} (Level ${player2Data.level})`,
-				`__**Health**__\n**${player2Data.health} / ${player2Data.maxHealth}** HP\n${formatHealth(player2Data.health, player2Data.maxHealth)}` +
+				`**${player2Data.health} / ${player2Data.maxHealth}** HP\n${formatHealth(player2Data.health, player2Data.maxHealth)}` +
 				`\n\n__**Gear**__\n**Backpack**: ${player2Equips.backpack ? getItemDisplay(player2Equips.backpack.item, player2Equips.backpack.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Helmet**: ${player2Equips.helmet ? getItemDisplay(player2Equips.helmet.item, player2Equips.helmet.row, { showEquipped: false, showID: false }) : 'None'}` +
 				`\n**Body Armor**: ${player2Equips.armor ? getItemDisplay(player2Equips.armor.item, player2Equips.armor.row, { showEquipped: false, showID: false }) : 'None'}` +

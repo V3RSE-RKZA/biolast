@@ -76,25 +76,6 @@ const mediumCrawler: NPC = {
 	boss: false,
 	respawnTime: 60 * 2
 }
-const gameNGoRaider: NPC = {
-	type: 'raider',
-	display: 'Raider',
-	health: 60,
-	damage: 35,
-	drops: {
-		common: [items['9mm_FMJ_bullet']],
-		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
-		rare: [items['9mm_RIP_bullet'], items.escape_from_fristoe],
-		rolls: 1
-	},
-	weapon: items['glock-17'],
-	ammo: items['9mm_HP_bullet'],
-	armor: items.wooden_armor,
-	helmet: items.wooden_helmet,
-	xp: 125,
-	boss: false,
-	respawnTime: 60 * 2
-}
 const securityOfficerWalker: NPC = {
 	type: 'walker',
 	display: 'Walker Security Officer',
@@ -165,7 +146,7 @@ export const station: Location = {
 				},
 				rolls: 1
 			},
-			npcSpawns: [bloatedWalker],
+			npc: bloatedWalker,
 			scavengeCooldown: 60
 		},
 		{
@@ -185,7 +166,7 @@ export const station: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [mediumRaider, psychoRaider],
+			npc: mediumRaider,
 			scavengeCooldown: 60
 		},
 		{
@@ -209,7 +190,7 @@ export const station: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [mediumCrawler],
+			npc: mediumCrawler,
 			scavengeCooldown: 60
 		},
 		{
@@ -250,7 +231,7 @@ export const station: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [gameNGoRaider, psychoRaider],
+			npc: psychoRaider,
 			scavengeCooldown: 60
 		},
 		{

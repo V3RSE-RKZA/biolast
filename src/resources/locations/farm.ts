@@ -42,23 +42,6 @@ const raiderHelmet: NPC = {
 	boss: false,
 	respawnTime: 60 * 2
 }
-const feralAnimal: NPC = {
-	type: 'walker',
-	display: 'Feral Animal',
-	health: 35,
-	damage: 45,
-	drops: {
-		common: [items.apple, items.corn],
-		uncommon: [items.apple],
-		rare: [items.corn],
-		rolls: 1
-	},
-	xp: 35,
-	chanceToBite: 30,
-	attackPenetration: 1.2,
-	boss: false,
-	respawnTime: 60 * 2
-}
 const bloatedWalker: NPC = {
 	type: 'walker',
 	display: 'Bloated Walker',
@@ -66,7 +49,7 @@ const bloatedWalker: NPC = {
 	damage: 35,
 	drops: {
 		common: [items.pitchfork],
-		uncommon: [items.apple],
+		uncommon: [items.apple, items.corn],
 		rare: [items.fire_axe],
 		rolls: 1
 	},
@@ -156,7 +139,7 @@ export const farm: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [bloatedWalker, feralAnimal],
+			npc: bloatedWalker,
 			scavengeCooldown: 60
 		},
 		{
@@ -176,7 +159,7 @@ export const farm: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [raiderHelmet, raiderWeak],
+			npc: raiderWeak,
 			scavengeCooldown: 60
 		},
 		{
@@ -196,7 +179,7 @@ export const farm: Location = {
 				},
 				rolls: 2
 			},
-			npcSpawns: [raiderHelmet, raiderWeak],
+			npc: raiderHelmet,
 			scavengeCooldown: 60
 		},
 		{

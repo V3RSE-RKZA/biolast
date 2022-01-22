@@ -68,6 +68,7 @@ export const icons = {
 	loading: '<a:loading:928735911196381224>',
 	merchant: '<:flurshed:928849729603907594>',
 	xp_star: '<:xp_star:932226958148911124>',
+	error_pain: '<a:pain:934193619714338906>',
 	button_icons: {
 		// ids of custom icons used in buttons throughout the bot
 		page_button_next: '932632499874570300',

@@ -69,9 +69,9 @@ interface AreaBase {
 	scavengeCooldown: number
 
 	/**
-	 * NPCs that can spawn in this channel
+	 * NPC that can spawns in this channel
 	 */
-	npcSpawns?: NPC[]
+	npc?: NPC
 
 	/**
 	 * Key/item's user must have in order to scavenge this area. If you specify multiple items, the user must have at least 1 of them to scavenge.
