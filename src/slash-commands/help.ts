@@ -172,12 +172,12 @@ class HelpCommand extends CustomSlashCommand {
 					})
 				}
 				else {
-					const q = faq.find(q => q.question === c.values[0])
+					const faqQuestion = faq.find(q => q.question === c.values[0])
 
-					if (q) {
+					if (faqQuestion) {
 						const qEmbed = new Embed()
-							.setTitle(q.question)
-							.setDescription(q.answer)
+							.setTitle(faqQuestion.question)
+							.setDescription(faqQuestion.answer)
 
 						await c.editParent({
 							content: '',
