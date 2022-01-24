@@ -4,7 +4,7 @@ import { icons } from '../config'
 import { Affliction } from '../resources/afflictions'
 import { allItems } from '../resources/items'
 import { Ammunition, Armor, Medical, Helmet, MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon, Weapon } from '../types/Items'
-import { BackpackItemRow, ItemWithRow } from '../types/mysql'
+import { BackpackItemRow, ItemRow, ItemWithRow } from '../types/mysql'
 import ComponentCollector, { CollectorObject } from './ComponentCollector'
 import { GRAY_BUTTON, RED_BUTTON } from './constants'
 import { getUserBackpack } from './db/items'
@@ -168,10 +168,10 @@ export function getAttackDamage (damage: number, penetration: number, bodyPartHi
 	}
 }
 
-export function getAttackString (weapon: MeleeWeapon | ThrowableWeapon, attackerName: string, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number): string
-export function getAttackString (weapon: RangedWeapon, attackerName: string, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, ammo: Ammunition): string
-export function getAttackString (weapon: Weapon, attackerName: string, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, ammo?: Ammunition): string {
-	if (weapon.type === 'Ranged Weapon') {
+export function getAttackString (weapon: ItemWithRow<ItemRow | undefined, MeleeWeapon | ThrowableWeapon>, attackerName: string, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number): string
+export function getAttackString (weapon: ItemWithRow<ItemRow | undefined, RangedWeapon>, attackerName: string, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, ammo: Ammunition): string
+export function getAttackString (weapon: ItemWithRow<ItemRow | undefined, Weapon>, attackerName: string, victimName: string, limbsHit: { damage: { total: number, reduced: number }, limb: BodyPart }[], totalDamage: number, ammo?: Ammunition): string {
+	if (weapon.item.type === 'Ranged Weapon') {
 		if (limbsHit.length > 1) {
 			const limbsHitStrings = []
 
@@ -179,12 +179,12 @@ export function getAttackString (weapon: Weapon, attackerName: string, victimNam
 				limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
 			}
 
-			return `${attackerName} shot ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(weapon)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** total damage dealt.\n`
+			return `${attackerName} shot ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(weapon.item, weapon.row)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** total damage dealt.\n`
 		}
 
-		return `${attackerName} shot ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with their ${getItemDisplay(weapon)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** damage dealt.\n`
+		return `${attackerName} shot ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with their ${getItemDisplay(weapon.item, weapon.row)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** damage dealt.\n`
 	}
-	else if (weapon.type === 'Throwable Weapon' && weapon.subtype === 'Fragmentation Grenade') {
+	else if (weapon.item.type === 'Throwable Weapon' && weapon.item.subtype === 'Fragmentation Grenade') {
 		if (limbsHit.length > 1) {
 			const limbsHitStrings = []
 
@@ -192,12 +192,12 @@ export function getAttackString (weapon: Weapon, attackerName: string, victimNam
 				limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
 			}
 
-			return `${attackerName} throws a ${getItemDisplay(weapon)} that explodes and hits ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`
+			return `${attackerName} throws a ${getItemDisplay(weapon.item, weapon.row)} that explodes and hits ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`
 		}
 
-		return `${attackerName} throws a ${getItemDisplay(weapon)} that explodes and hits ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
+		return `${attackerName} throws a ${getItemDisplay(weapon.item, weapon.row)} that explodes and hits ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
 	}
-	else if (weapon.type === 'Throwable Weapon' && weapon.subtype === 'Incendiary Grenade') {
+	else if (weapon.item.type === 'Throwable Weapon' && weapon.item.subtype === 'Incendiary Grenade') {
 		if (limbsHit.length > 1) {
 			const limbsHitStrings = []
 
@@ -205,10 +205,10 @@ export function getAttackString (weapon: Weapon, attackerName: string, victimNam
 				limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
 			}
 
-			return `${attackerName} throws a ${getItemDisplay(weapon)} that bursts into flames and hits ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`
+			return `${attackerName} throws a ${getItemDisplay(weapon.item, weapon.row)} that bursts into flames and hits ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)}. **${totalDamage}** total damage dealt.\n`
 		}
 
-		return `${attackerName} throws a ${getItemDisplay(weapon)} that bursts into flames and hits ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
+		return `${attackerName} throws a ${getItemDisplay(weapon.item, weapon.row)} that bursts into flames and hits ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}**. **${totalDamage}** damage dealt.\n`
 	}
 
 	// melee weapon
@@ -219,10 +219,10 @@ export function getAttackString (weapon: Weapon, attackerName: string, victimNam
 			limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
 		}
 
-		return `${attackerName} hit ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(weapon)}. **${totalDamage}** damage dealt.\n`
+		return `${attackerName} hit ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(weapon.item, weapon.row)}. **${totalDamage}** damage dealt.\n`
 	}
 
-	return `${attackerName} hit ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with their ${getItemDisplay(weapon)}. **${totalDamage}** damage dealt.\n`
+	return `${attackerName} hit ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with their ${getItemDisplay(weapon.item, weapon.row)}. **${totalDamage}** damage dealt.\n`
 }
 
 export function awaitPlayerChoices (

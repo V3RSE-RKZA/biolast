@@ -5,7 +5,7 @@ import { NPC } from '../types/NPCs'
 import { allLocations, isValidLocation, locations } from '../resources/locations'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { Stimulant } from '../types/Items'
+import { MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon } from '../types/Items'
 import { Location } from '../types/Locations'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
@@ -611,10 +611,10 @@ class BossCommand extends CustomSlashCommand {
 							totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 							if (missedPartChoice) {
-								messages[i].push(`<@${choiceInfo.member.id}> tries to shoot ${npcDisplayName} in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item)} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
+								messages[i].push(`<@${choiceInfo.member.id}> tries to shoot ${npcDisplayName} in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item, choice.weapon.row)} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
 							}
 							else {
-								messages[i].push(getAttackString(choice.weapon.item, `<@${choiceInfo.member.id}>`, npcDisplayName, limbsHit, totalDamage, choice.ammo.item))
+								messages[i].push(getAttackString(choice.weapon as ItemWithRow<ItemRow, RangedWeapon>, `<@${choiceInfo.member.id}>`, npcDisplayName, limbsHit, totalDamage, choice.ammo.item))
 							}
 						}
 						else if (choice.weapon.item.type === 'Throwable Weapon') {
@@ -648,10 +648,10 @@ class BossCommand extends CustomSlashCommand {
 							totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 							if (missedPartChoice) {
-								messages[i].push(`${icons.danger} <@${choiceInfo.member.id}> tries to throw a ${getItemDisplay(choice.weapon.item)} at ${npcDisplayName}'s ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** **BUT MISSES!**\n`)
+								messages[i].push(`${icons.danger} <@${choiceInfo.member.id}> tries to throw a ${getItemDisplay(choice.weapon.item, choice.weapon.row)} at ${npcDisplayName}'s ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** **BUT MISSES!**\n`)
 							}
 							else {
-								messages[i].push(getAttackString(choice.weapon.item, `<@${choiceInfo.member.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
+								messages[i].push(getAttackString(choice.weapon as ItemWithRow<ItemRow, ThrowableWeapon>, `<@${choiceInfo.member.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
 
 								if (choice.weapon.item.subtype === 'Incendiary Grenade' && !npcAfflictions.includes(afflictions.Burning)) {
 									messages[i].push(`${icons.postive_effect_debuff} ${npcDisplayName} is ${getAfflictionEmoji('Burning')} Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
@@ -669,21 +669,21 @@ class BossCommand extends CustomSlashCommand {
 							totalDamage = limbsHit[0].damage.total
 
 							if (missedPartChoice) {
-								messages[i].push(`${icons.danger} <@${choiceInfo.member.id}> tries to hit ${npcDisplayName} in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item)} **BUT MISSES!**\n`)
+								messages[i].push(`${icons.danger} <@${choiceInfo.member.id}> tries to hit ${npcDisplayName} in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item, choice.weapon.row)} **BUT MISSES!**\n`)
 							}
 							else {
-								messages[i].push(getAttackString(choice.weapon.item, `<@${choiceInfo.member.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
+								messages[i].push(getAttackString(choice.weapon as ItemWithRow<ItemRow, MeleeWeapon>, `<@${choiceInfo.member.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
 							}
 						}
 
 						// remove weapon
 						if (choice.weapon.row && (!choice.weapon.row.durability || choice.weapon.row.durability - 1 <= 0)) {
-							messages[i].push(`${icons.danger} **${choiceInfo.member.displayName}**'s ${getItemDisplay(choice.weapon.item, choice.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
+							messages[i].push(`${icons.danger} **${choiceInfo.member.displayName}**'s ${getItemDisplay(choice.weapon.item)} broke from this attack.`)
 
 							await deleteItem(atkTransaction.query, choice.weapon.row.id)
 						}
 						else if (choice.weapon.row && choice.weapon.row.durability) {
-							messages[i].push(`**${choiceInfo.member.displayName}**'s ${getItemDisplay(choice.weapon.item, choice.weapon.row, { showDurability: false, showEquipped: false })} now has **${choice.weapon.row.durability - 1}** durability.`)
+							messages[i].push(`**${choiceInfo.member.displayName}**'s ${getItemDisplay(choice.weapon.item)} now has **${choice.weapon.row.durability - 1}** durability.`)
 
 							await lowerItemDurability(atkTransaction.query, choice.weapon.row.id, 1)
 						}

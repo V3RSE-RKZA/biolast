@@ -6,8 +6,8 @@ import { Affliction, AfflictionName, afflictions } from '../resources/affliction
 import { items } from '../resources/items'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { Stimulant } from '../types/Items'
-import { BackpackItemRow, ItemWithRow, UserRow } from '../types/mysql'
+import { MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon } from '../types/Items'
+import { BackpackItemRow, ItemRow, ItemWithRow, UserRow } from '../types/mysql'
 import { GRAY_BUTTON, GREEN_BUTTON, RED_BUTTON } from '../utils/constants'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability, removeItemFromBackpack } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
@@ -394,10 +394,10 @@ class DuelCommand extends CustomSlashCommand {
 								totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 								if (missedPartChoice) {
-									messages[i].push(`<@${userChoice.member.id}> tries to shoot <@${otherPlayerMember.id}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item)} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
+									messages[i].push(`<@${userChoice.member.id}> tries to shoot <@${otherPlayerMember.id}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item, choice.weapon.row)} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
 								}
 								else {
-									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage, choice.ammo.item))
+									messages[i].push(getAttackString(choice.weapon as ItemWithRow<ItemRow, RangedWeapon>, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage, choice.ammo.item))
 								}
 							}
 							else if (choice.weapon.item.type === 'Throwable Weapon') {
@@ -431,10 +431,10 @@ class DuelCommand extends CustomSlashCommand {
 								totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 								if (missedPartChoice) {
-									messages[i].push(`${icons.danger} <@${userChoice.member.id}> tries to throw a ${getItemDisplay(choice.weapon.item)} at <@${otherPlayerMember.id}>'s ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** **BUT MISSES!**\n`)
+									messages[i].push(`${icons.danger} <@${userChoice.member.id}> tries to throw a ${getItemDisplay(choice.weapon.item, choice.weapon.row)} at <@${otherPlayerMember.id}>'s ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** **BUT MISSES!**\n`)
 								}
 								else {
-									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage))
+									messages[i].push(getAttackString(choice.weapon as ItemWithRow<ItemRow, ThrowableWeapon>, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage))
 
 									if (choice.weapon.item.subtype === 'Incendiary Grenade') {
 										messages[i].push(`${icons.postive_effect_debuff} <@${otherPlayerMember.id}> is ${getAfflictionEmoji('Burning')} Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
@@ -457,21 +457,21 @@ class DuelCommand extends CustomSlashCommand {
 								totalDamage = limbsHit[0].damage.total
 
 								if (missedPartChoice) {
-									messages[i].push(`${icons.danger} <@${userChoice.member.id}> tries to hit <@${otherPlayerMember.id}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item)} **BUT MISSES!**\n`)
+									messages[i].push(`${icons.danger} <@${userChoice.member.id}> tries to hit <@${otherPlayerMember.id}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item, choice.weapon.row)} **BUT MISSES!**\n`)
 								}
 								else {
-									messages[i].push(getAttackString(choice.weapon.item, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage))
+									messages[i].push(getAttackString(choice.weapon as ItemWithRow<ItemRow, MeleeWeapon>, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage))
 								}
 							}
 
 							// remove weapon annd ammo
 							if (choice.weapon.row && (!choice.weapon.row.durability || choice.weapon.row.durability - 1 <= 0)) {
-								messages[i].push(`${icons.danger} **${userChoice.member.displayName}**'s ${getItemDisplay(choice.weapon.item, choice.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
+								messages[i].push(`${icons.danger} **${userChoice.member.displayName}**'s ${getItemDisplay(choice.weapon.item)} broke from this attack.`)
 
 								await deleteItem(atkTransaction.query, choice.weapon.row.id)
 							}
 							else if (choice.weapon.row && choice.weapon.row.durability) {
-								messages[i].push(`**${userChoice.member.displayName}**'s ${getItemDisplay(choice.weapon.item, choice.weapon.row, { showDurability: false, showEquipped: false })} now has **${choice.weapon.row.durability - 1}** durability.`)
+								messages[i].push(`**${userChoice.member.displayName}**'s ${getItemDisplay(choice.weapon.item)} now has **${choice.weapon.row.durability - 1}** durability.`)
 
 								await lowerItemDurability(atkTransaction.query, choice.weapon.row.id, 1)
 							}

@@ -5,7 +5,7 @@ import { NPC } from '../types/NPCs'
 import { isValidLocation, locations } from '../resources/locations'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
-import { Item, Stimulant } from '../types/Items'
+import { Item, MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon } from '../types/Items'
 import { Area, Location } from '../types/Locations'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
@@ -641,10 +641,10 @@ class ScavengeCommand extends CustomSlashCommand {
 							totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 							if (missedPartChoice) {
-								messages[i].push(`<@${ctx.user.id}> tries to shoot ${npcDisplayName} in the ${getBodyPartEmoji(playerChoice.limbTarget!)} **${playerChoice.limbTarget}** with their ${getItemDisplay(playerChoice.weapon.item)} (ammo: ${getItemDisplay(playerChoice.ammo.item)}) **BUT MISSES!**\n`)
+								messages[i].push(`<@${ctx.user.id}> tries to shoot ${npcDisplayName} in the ${getBodyPartEmoji(playerChoice.limbTarget!)} **${playerChoice.limbTarget}** with their ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row)} (ammo: ${getItemDisplay(playerChoice.ammo.item)}) **BUT MISSES!**\n`)
 							}
 							else {
-								messages[i].push(getAttackString(playerChoice.weapon.item, `<@${ctx.user.id}>`, npcDisplayName, limbsHit, totalDamage, playerChoice.ammo.item))
+								messages[i].push(getAttackString(playerChoice.weapon as ItemWithRow<ItemRow, RangedWeapon>, `<@${ctx.user.id}>`, npcDisplayName, limbsHit, totalDamage, playerChoice.ammo.item))
 							}
 						}
 						else if (playerChoice.weapon.item.type === 'Throwable Weapon') {
@@ -678,10 +678,10 @@ class ScavengeCommand extends CustomSlashCommand {
 							totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 							if (missedPartChoice) {
-								messages[i].push(`${icons.danger} <@${ctx.user.id}> tries to throw a ${getItemDisplay(playerChoice.weapon.item)} at ${npcDisplayName}'s ${getBodyPartEmoji(playerChoice.limbTarget!)} **${playerChoice.limbTarget}** **BUT MISSES!**\n`)
+								messages[i].push(`${icons.danger} <@${ctx.user.id}> tries to throw a ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row)} at ${npcDisplayName}'s ${getBodyPartEmoji(playerChoice.limbTarget!)} **${playerChoice.limbTarget}** **BUT MISSES!**\n`)
 							}
 							else {
-								messages[i].push(getAttackString(playerChoice.weapon.item, `<@${ctx.user.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
+								messages[i].push(getAttackString(playerChoice.weapon as ItemWithRow<ItemRow, ThrowableWeapon>, `<@${ctx.user.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
 
 								if (playerChoice.weapon.item.subtype === 'Incendiary Grenade' && !npcAfflictions.includes(afflictions.Burning)) {
 									messages[i].push(`${icons.postive_effect_debuff} ${npcDisplayCapitalized} is ${getAfflictionEmoji('Burning')} Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
@@ -699,21 +699,21 @@ class ScavengeCommand extends CustomSlashCommand {
 							totalDamage = limbsHit[0].damage.total
 
 							if (missedPartChoice) {
-								messages[i].push(`${icons.danger} <@${ctx.user.id}> tries to hit ${npcDisplayName} in the ${getBodyPartEmoji(playerChoice.limbTarget!)} **${playerChoice.limbTarget}** with their ${getItemDisplay(playerChoice.weapon.item)} **BUT MISSES!**\n`)
+								messages[i].push(`${icons.danger} <@${ctx.user.id}> tries to hit ${npcDisplayName} in the ${getBodyPartEmoji(playerChoice.limbTarget!)} **${playerChoice.limbTarget}** with their ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row)} **BUT MISSES!**\n`)
 							}
 							else {
-								messages[i].push(getAttackString(playerChoice.weapon.item, `<@${ctx.user.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
+								messages[i].push(getAttackString(playerChoice.weapon as ItemWithRow<ItemRow, MeleeWeapon>, `<@${ctx.user.id}>`, `${npcDisplayName}`, limbsHit, totalDamage))
 							}
 						}
 
 						// remove weapon
 						if (playerChoice.weapon.row && (!playerChoice.weapon.row.durability || playerChoice.weapon.row.durability - 1 <= 0)) {
-							messages[i].push(`${icons.danger} **${ctx.member.displayName}**'s ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row, { showDurability: false, showEquipped: false })} broke from this attack.`)
+							messages[i].push(`${icons.danger} **${ctx.member.displayName}**'s ${getItemDisplay(playerChoice.weapon.item)} broke from this attack.`)
 
 							await deleteItem(atkTransaction.query, playerChoice.weapon.row.id)
 						}
 						else if (playerChoice.weapon.row && playerChoice.weapon.row.durability) {
-							messages[i].push(`**${ctx.member.displayName}**'s ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row, { showDurability: false, showEquipped: false })} now has **${playerChoice.weapon.row.durability - 1}** durability.`)
+							messages[i].push(`**${ctx.member.displayName}**'s ${getItemDisplay(playerChoice.weapon.item)} now has **${playerChoice.weapon.row.durability - 1}** durability.`)
 
 							await lowerItemDurability(atkTransaction.query, playerChoice.weapon.row.id, 1)
 						}

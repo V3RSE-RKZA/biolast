@@ -154,10 +154,10 @@ export function getMobAttackString (npc: NPC, victimName: string, limbsHit: { da
 
 	if (weapon && npc.type !== 'walker') {
 		if (weapon.type === 'Ranged Weapon') {
-			return getAttackString(weapon, npcDisplay, victimName, limbsHit, totalDamage, ammo!)
+			return getAttackString({ item: weapon, row: undefined }, npcDisplay, victimName, limbsHit, totalDamage, ammo!)
 		}
 
-		return getAttackString(weapon, npcDisplay, victimName, limbsHit, totalDamage)
+		return getAttackString({ item: weapon, row: undefined }, npcDisplay, victimName, limbsHit, totalDamage)
 	}
 
 	if (limbsHit.length > 1) {

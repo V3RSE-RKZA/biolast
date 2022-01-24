@@ -103,7 +103,7 @@ export interface AttachmentItemRow extends ItemRow {
 	weaponId: number
 }
 
-export type ItemWithRow<T extends ItemRow, I extends Item = Item> = { item: I, row: T }
+export type ItemWithRow<T extends ItemRow | undefined, I extends Item = Item> = { item: I, row: T }
 
 export interface SkinRow {
 	id: number
