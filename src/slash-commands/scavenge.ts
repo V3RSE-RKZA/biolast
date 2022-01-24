@@ -58,7 +58,7 @@ class ScavengeCommand extends CustomSlashCommand {
 		}
 
 		const preUserData = (await getUserRow(query, ctx.user.id))!
-		let botMessage
+		let botMessage: Message | undefined
 
 		if (!isValidLocation(preUserData.currentLocation)) {
 			await ctx.send({
@@ -237,7 +237,7 @@ class ScavengeCommand extends CustomSlashCommand {
 
 		// player scavenges without encountering mob
 		if (!areaChoice.npc || mobKilledCD) {
-			const scavengedLoot = []
+			const scavengedLoot: { rarity: string, item: Item, row: ItemRow }[] = []
 			let xpEarned = 0
 
 			for (let i = 0; i < areaChoice.loot.rolls; i++) {
@@ -275,13 +275,11 @@ class ScavengeCommand extends CustomSlashCommand {
 			await addXp(transaction.query, ctx.user.id, xpEarned)
 			await transaction.commit()
 
-			const finalMessage = `You ${hasRequiredKey ?
-				`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
-				''}scavenge **${areaChoice.display}** and find:\n\n${scavengedLoot.map(itm => `${itm.rarity} ${getItemDisplay(itm.item, itm.row)}`).join('\n') || '**nothing**!'}\n🌟 ***+${xpEarned}** xp!*`
-
 			if (!scavengedLoot.length) {
 				await this.sendMessage(ctx, {
-					content: finalMessage,
+					content: `You ${hasRequiredKey ?
+						`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
+						''}scavenge **${areaChoice.display}** and find:\n\n**nothing**!\n🌟 ***+${xpEarned}** xp!*`,
 					components: [],
 					embeds: []
 				}, botMessage)
@@ -289,11 +287,39 @@ class ScavengeCommand extends CustomSlashCommand {
 			}
 
 			await this.sendMessage(ctx, {
-				content: `${finalMessage}\n\n` +
-					`${icons.checkmark} These items were added to your inventory.`,
+				content: `You ${hasRequiredKey ?
+					`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
+					''}scavenge **${areaChoice.display}** and find:\n\n${scavengedLoot.map(itm => `${icons.loading} ${itm.rarity} *examining...*`).join('\n')}` +
+					'\n🌟 ***+???** xp!*',
 				components: [],
 				embeds: []
 			}, botMessage)
+
+			for (let i = 0; i < scavengedLoot.length; i++) {
+				console.log(`item #${i + 1}`)
+				setTimeout(async () => {
+					console.log(`item #${i + 1} complete`)
+					try {
+						const unhiddenItems = scavengedLoot.slice(0, i + 1)
+						const hiddenItems = scavengedLoot.slice(i + 1)
+						const lootedMessage = `You ${hasRequiredKey ?
+							`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
+							''}scavenge **${areaChoice!.display}** and find:\n\n${unhiddenItems.map(itm => `${itm.rarity} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}` +
+							`${hiddenItems.length ? `\n${hiddenItems.map(itm => `${icons.loading} ${itm.rarity} *examining...*`).join('\n')}` : ''}` +
+							`\n${unhiddenItems.length === scavengedLoot.length ? `🌟 ***+${xpEarned}** xp!*` : '🌟 ***+???** xp!*'}`
+
+						await this.sendMessage(ctx, {
+							content: `${lootedMessage}` +
+								`${unhiddenItems.length === scavengedLoot.length ? `\n\n${icons.checkmark} These items were added to your inventory.` : ''}`,
+							components: [],
+							embeds: []
+						}, botMessage)
+					}
+					catch (err) {
+						logger.warn(err)
+					}
+				}, 1500 * (i + 1))
+			}
 			return
 		}
 

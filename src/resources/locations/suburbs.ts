@@ -129,11 +129,11 @@ export const suburbs: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.bandage, items.splint, items.makeshift_pistol_bullet],
+					items: [items.bandage, items.makeshift_pistol_bullet],
 					xp: 10
 				},
 				rare: {
-					items: [items.metal_bat, items.makeshift_pistol],
+					items: [items.metal_bat, items.makeshift_pistol, items.splint],
 					xp: 20
 				},
 				rolls: 1
