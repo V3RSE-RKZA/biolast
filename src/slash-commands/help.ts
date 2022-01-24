@@ -11,7 +11,11 @@ import { logger } from '../utils/logger'
 import { disableAllComponents } from '../utils/messageUtils'
 import { combineArrayWithOr } from '../utils/stringUtils'
 
-const faq = [
+const faq: { question: string, answer: string }[] = [
+	{
+		question: '',
+		answer: ''
+	},
 	{
 		question: 'How is damage calculated?',
 		answer: 'Weapons are classified as either melee or ranged. If your weapon is melee, you can view how much damage it does by checking the item stats: `/item <item name>`' +

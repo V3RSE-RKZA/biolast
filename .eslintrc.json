@@ -61,7 +61,7 @@
   "keyword-spacing": "error",
   "array-bracket-spacing": "error",
   "computed-property-spacing": "error",
-  "object-curly-spacing": ["error", "always"],
+  "@typescript-eslint/object-curly-spacing": ["error", "always"],
   "template-tag-spacing": "error",
   "arrow-spacing": "error",
   "semi-spacing": "error",

@@ -1028,7 +1028,7 @@ class ScavengeCommand extends CustomSlashCommand {
 				requirements.push('None!')
 			}
 
-			areaEmbed.addField('Requirements', requirements.join('\n'), true)
+			areaEmbed.addField('Requirements to Scavenge', requirements.join('\n'), true)
 			areaEmbed.setFooter(`Area ${page + 1}/${location.areas.length}`)
 
 			return {

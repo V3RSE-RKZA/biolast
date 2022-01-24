@@ -83,7 +83,7 @@ class Embed {
 
 		this.embed.footer = {
 			text: text.substring(0, 2048),
-			icon_url: icon
+			icon_url: icon || this.embed.footer?.icon_url
 		}
 
 		return this
