@@ -10,6 +10,8 @@ import { getAttackDamage } from '../utils/duelUtils'
 export const command: TextCommand = {
 	name: 'calculate',
 	aliases: [],
+	permissionLevel: 'anyone',
+	worksInDMs: true,
 	async execute (app, message, { args, prefix }) {
 		const ammo = getItem([args[0]])
 		const armor = getItem([args[1]])

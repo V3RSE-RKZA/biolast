@@ -1,9 +1,8 @@
 import { AdvancedMessageContent, Message, User } from 'eris'
 import { AnyComponent, AnyComponentButton, ComponentActionRow, ComponentSelectMenu, ComponentType } from 'slash-create'
-import { MessageType } from '../types/Messages'
 import { logger } from './logger'
 
-export function reply<T extends Message> (msg: T, content: AdvancedMessageContent): Promise<MessageType<T>> {
+export function reply<T extends Message> (msg: T, content: AdvancedMessageContent): Promise<T> {
 	if (typeof content === 'string') {
 		content = {
 			content
@@ -16,7 +15,7 @@ export function reply<T extends Message> (msg: T, content: AdvancedMessageConten
 		}
 	})
 
-	return msg.channel.createMessage(content) as Promise<MessageType<T>>
+	return msg.channel.createMessage(content) as Promise<T>
 }
 
 export async function messageUser (user: User, content: AdvancedMessageContent, throwErr = false): Promise<void> {

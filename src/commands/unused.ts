@@ -11,6 +11,8 @@ const ITEMS_PER_PAGE = 20
 export const command: TextCommand = {
 	name: 'unused',
 	aliases: [],
+	permissionLevel: 'admin',
+	worksInDMs: true,
 	async execute (app, message, { args, prefix }) {
 		const obtainable: Item[] = []
 

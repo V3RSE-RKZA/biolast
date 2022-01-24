@@ -16,6 +16,8 @@ import { getFetchTime, getProtectionChance } from '../utils/companionUtils'
 export const command: TextCommand = {
 	name: 'eval',
 	aliases: [],
+	permissionLevel: 'admin',
+	worksInDMs: false,
 	async execute (app, message, { args, prefix }) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const t = {
@@ -37,7 +39,7 @@ export const command: TextCommand = {
 			getProtectionChance,
 			items
 		}
-		let commandInput = message.content.substring(5 + prefix.length)
+		let commandInput = message.content.slice(prefix.length).trimStart().slice(this.name.length).trimStart()
 
 		if (commandInput.startsWith('```')) {
 			// remove the first and last lines from code block

@@ -5,6 +5,8 @@ export const botToken = process.env.BOT_TOKEN
 export const clientId = process.env.BOT_CLIENT_ID
 
 // This is only used for text commands (commands that rely on message.content)
+// you can also just mention the bot if you don't have the message content intent
+// ex. =ban <user> or @bot ban <user> both work
 export const prefix = process.env.PREFIX || '='
 
 export const icons = {
