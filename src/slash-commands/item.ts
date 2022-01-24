@@ -1,7 +1,7 @@
 import { CommandOptionType, SlashCreator, CommandContext, AutocompleteContext, Message, ComponentType, ComponentActionRow } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
-import { allItems } from '../resources/items'
+import { allItems, items } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
@@ -86,11 +86,20 @@ class ItemCommand extends CustomSlashCommand {
 						type: ComponentType.SELECT,
 						custom_id: 'category',
 						placeholder: 'Filter items by category:',
-						options: Array.from(new Set(allItems.map(i => i.type))).sort().map(c => ({
-							label: c,
-							value: c,
-							description: this.getCategoryDescription(c)
-						}))
+						options: Array.from(new Set(allItems.map(i => i.type))).sort().map(c => {
+							const info = this.getCategoryInfo(c)
+							const iconID = info.icon.match(/:([0-9]*)>/)
+
+							return {
+								label: c,
+								value: c,
+								description: info.description,
+								emoji: iconID ? {
+									id: iconID[1],
+									name: c
+								} : undefined
+							}
+						})
 					}
 				]
 			}
@@ -388,10 +397,10 @@ class ItemCommand extends CustomSlashCommand {
 		})
 	}
 
-	generatePages (items: Item[], undiscoveredItems: number, category?: string): Embed[] {
+	generatePages (itemList: Item[], undiscoveredItems: number, category?: string): Embed[] {
 		const pages = []
-		const maxPage = Math.ceil(items.length / ITEMS_PER_PAGE) || 1
-		const sortedItems = sortItemsByLevel(items, false, false)
+		const maxPage = Math.ceil(itemList.length / ITEMS_PER_PAGE) || 1
+		const sortedItems = sortItemsByLevel(itemList, false, false)
 
 		for (let i = 1; i < maxPage + 1; i++) {
 			const indexFirst = (ITEMS_PER_PAGE * i) - ITEMS_PER_PAGE
@@ -401,7 +410,7 @@ class ItemCommand extends CustomSlashCommand {
 			const embed = new Embed()
 				.setDescription(`${icons.information} This list only includes items you are a high enough level to discover. Level up to expand this list.` +
 					` There are **${undiscoveredItems}** items you haven't discovered.` +
-					`\n\n__**${category ? `${category} Item List**__ (${items.length} total)` : `Item List**__ (${items.length} total)`}` +
+					`\n\n__**${category ? `${category} Item List**__ (${itemList.length} total)` : `Item List**__ (${itemList.length} total)`}` +
 					`\n${filteredItems.map(itm => `${getItemDisplay(itm)} (Level **${itm.itemLevel}** item)`).join('\n') ||
 					`You are not a high enough level to discover any ${category ? `**${category}**` : ''} items`}`)
 
@@ -546,51 +555,84 @@ class ItemCommand extends CustomSlashCommand {
 		return itemEmbed
 	}
 
-	getCategoryDescription (category: ItemType): string {
+	getCategoryInfo (category: ItemType): { description: string, icon: string } {
 		switch (category) {
 			case 'Ammunition': {
-				return 'Ammo used to fire Ranged Weapons.'
+				return {
+					icon: items['20-gauge_buckshot'].icon,
+					description: 'Ammo used to fire Ranged Weapons.'
+				}
 			}
 			case 'Backpack': {
-				return 'Equippable items that increase inventory space.'
+				return {
+					icon: items.cloth_backpack.icon,
+					description: 'Equippable items that increase inventory space.'
+				}
 			}
 			case 'Helmet':
 			case 'Body Armor': {
-				return 'Equippable items that reduce damage from attacks.'
+				return {
+					icon: items.aramid_armor.icon,
+					description: 'Equippable items that reduce damage from attacks.'
+				}
 			}
 			case 'Collectible': {
-				return 'Rare items worth collecting.'
+				return {
+					icon: items.dog_tags.icon,
+					description: 'Rare items worth collecting.'
+				}
 			}
 			case 'Food': {
-				return 'Items used to feed your companion.'
+				return {
+					icon: items.donut.icon,
+					description: 'Items used to feed your companion.'
+				}
 			}
 			case 'Key': {
-				return 'Items used to scavenge locked areas.'
+				return {
+					icon: items.shed_key.icon,
+					description: 'Items used to scavenge locked areas.'
+				}
 			}
 			case 'Medical': {
-				return 'Items used to heal yourself'
+				return {
+					icon: items.ifak_medkit.icon,
+					description: 'Items used to heal yourself'
+				}
 			}
 			case 'Melee Weapon': {
-				return 'Weapons that can be used without ammunition.'
+				return {
+					icon: items.sledgehammer.icon,
+					description: 'Weapons that can be used without ammunition.'
+				}
 			}
 			case 'Ranged Weapon': {
-				return 'Weapons that fire ammunition.'
+				return {
+					icon: items['ak-47'].icon,
+					description: 'Weapons that fire ammunition.'
+				}
 			}
 			case 'Throwable Weapon': {
-				return 'Weapons such as grenades that can be thrown.'
+				return {
+					icon: items.M67_grenade.icon,
+					description: 'Weapons such as grenades that can be thrown.'
+				}
 			}
 			case 'Stimulant': {
-				return 'Injectors used for temporary stat boosts during fights.'
+				return {
+					icon: items.morphine.icon,
+					description: 'Injectors used for temporary stat boosts during fights.'
+				}
 			}
 		}
 	}
 
 	async autocomplete (ctx: AutocompleteContext): Promise<void> {
 		const search = ctx.options.info[ctx.focused].replace(/ +/g, '_').toLowerCase()
-		const items = allItems.filter(itm => itm.name.toLowerCase().includes(search) || itm.type.toLowerCase().includes(search))
+		const itemSearch = allItems.filter(itm => itm.name.toLowerCase().includes(search) || itm.type.toLowerCase().includes(search))
 
-		if (items.length) {
-			await ctx.sendResults(items.slice(0, 25).map(itm => ({ name: `${itm.type} - ${getItemNameDisplay(itm)}`, value: itm.name })))
+		if (itemSearch.length) {
+			await ctx.sendResults(itemSearch.slice(0, 25).map(itm => ({ name: `${itm.type} - ${getItemNameDisplay(itm)}`, value: itm.name })))
 		}
 		else {
 			const related = itemCorrector.getWord(search, 5)
