@@ -1,5 +1,9 @@
+import { EventHandler } from '../types/Events'
 import { logger } from '../utils/logger'
 
-export async function run (error: Error, id: number): Promise<void> {
-	logger.error(`[SHARD ${id}] Error: ${error.message}`)
-}
+export default {
+	name: 'error',
+	async run (error, shardID) {
+		logger.error(`[SHARD ${shardID || 'unknown'}] Error: ${error.message}`)
+	}
+} as EventHandler<'error'>

@@ -1,7 +1,10 @@
-import App from '../app'
+import { EventHandler } from '../types/Events'
 import { logger } from '../utils/logger'
 
-export async function run (this: App): Promise<void> {
-	this.acceptingCommands = true
-	logger.info('Bot ready and accepting commands!')
-}
+export default {
+	name: 'ready',
+	async run () {
+		this.acceptingCommands = true
+		logger.info('Bot ready and accepting commands!')
+	}
+} as EventHandler<'ready'>

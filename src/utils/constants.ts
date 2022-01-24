@@ -1,6 +1,5 @@
-import { ComponentType, ButtonStyle, ComponentActionRow, ComponentButton, ComponentSelectMenu } from 'slash-create'
+import { ComponentType, ButtonStyle, ComponentActionRow, ComponentButton } from 'slash-create'
 import { icons } from '../config'
-import { ItemRow, ItemWithRow } from '../types/mysql'
 
 export const CONFIRM_BUTTONS: ComponentActionRow[] = [
 	{

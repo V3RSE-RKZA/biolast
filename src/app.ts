@@ -18,6 +18,7 @@ import { messageUser } from './utils/messageUtils'
 import { logger } from './utils/logger'
 import getRandomInt from './utils/randomInt'
 import TutorialHandler from './utils/TutorialHandler'
+import { EventHandler } from './types/Events'
 
 class App {
 	bot: Eris.Client
@@ -118,22 +119,21 @@ class App {
 
 		// add users who use slash commands to the eris cache if they aren't already
 		// this helps prevent API calls to fetch users
-		this.slashCreator.on('rawInteraction', i => {
-			if (i.type === InteractionType.APPLICATION_COMMAND) {
-				const data = i as any
+		this.slashCreator.on('rawInteraction', interaction => {
+			if (interaction.type === InteractionType.APPLICATION_COMMAND) {
 				let user
 
-				if ('guild_id' in data) {
-					user = data.member.user
+				if ('guild_id' in interaction) {
+					user = interaction.member.user
 				}
 				else {
-					user = data.user
+					user = interaction.user
 				}
 
 				// check if user is not in eris cache, and
 				// add user to eris cache if not
 				if (!this.bot.users.has(user.id)) {
-					const erisUser = new User(user, this.bot)
+					const erisUser = new User(Object.freeze(user), this.bot)
 
 					this.bot.users.add(erisUser, this.bot)
 				}
@@ -146,16 +146,19 @@ class App {
 
 		// load bot gateway events
 		for (const event of botEventFiles) {
-			const { run } = await import(`./events/${event}`)
-			const eventName = event.replace(/.js|.ts/, '')
+			let eventHandler = await import(`./events/${event}`) as EventHandler | { default: EventHandler }
 
-			if (eventName === 'ready') {
+			if ('default' in eventHandler) {
+				eventHandler = eventHandler.default
+			}
+
+			if (eventHandler.name === 'ready') {
 				// using .once here because the ready event is called every time the bot reconnects and we may have functions
 				// inside the ready event that we want called only once.
-				this.bot.once(eventName, run.bind(this))
+				this.bot.once(eventHandler.name, eventHandler.run.bind(this))
 			}
 			else {
-				this.bot.on(eventName, run.bind(this))
+				this.bot.on(eventHandler.name, eventHandler.run.bind(this))
 			}
 		}
 
