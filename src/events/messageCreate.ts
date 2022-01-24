@@ -44,6 +44,15 @@ export default {
 				return
 			}
 
+			else if ('guild' in message.channel) {
+				const botPerms = message.channel.permissionsOf(this.bot.user.id)
+
+				if (!botPerms.has('sendMessages') || !botPerms.has('externalEmojis')) {
+					// bot doesnt have permission to send messages or use emojis, just return since text commands are optional
+					return
+				}
+			}
+
 			const args = message.content.slice(prefixUsed.length).trimStart().split(/ +/)
 			const commandName = args.shift()?.toLowerCase()
 
