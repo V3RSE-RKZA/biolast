@@ -60,7 +60,7 @@ class App {
 	}
 
 	async launch (): Promise<void> {
-		const botEventFiles = fs.readdirSync(path.join(__dirname, '/events'))
+		const botEventFiles = fs.readdirSync(path.join(__dirname, '/events')).filter(file => file.endsWith('.js') || file.endsWith('.ts'))
 
 		// load all commands to array
 		this.commands = await this.loadCommands()
@@ -197,12 +197,12 @@ class App {
 		const commands = []
 
 		for (const file of botCommandFiles) {
-			if (file.endsWith('.js')) {
+			if (file.endsWith('.js') || file.endsWith('.ts')) {
 				const command = await import(`./slash-commands/${file}`)
 
 				commands.push(new command.default(this.slashCreator, this))
 			}
-			else {
+			else if (!file.endsWith('.map')) {
 				const directory = fs.readdirSync(path.join(__dirname, `/slash-commands/${file}`)).filter(f => f.endsWith('.js'))
 
 				for (const subFile of directory) {

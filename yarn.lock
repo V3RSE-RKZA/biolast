@@ -1706,7 +1706,6 @@ enquirer@^2.3.5:
 
 "eris@github:abalabahaha/eris#dev":
   version "0.16.2-dev"
-  uid "1a6e043331aea04de307a71d2e50e9680d1a5ae3"
   resolved "https://codeload.github.com/abalabahaha/eris/tar.gz/1a6e043331aea04de307a71d2e50e9680d1a5ae3"
   dependencies:
     ws "^8.2.3"
@@ -3327,6 +3326,13 @@ pino-abstract-transport@^0.5.0, pino-abstract-transport@v0.5.0:
     duplexify "^4.1.2"
     split2 "^4.0.0"
 
+pino-caller@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/pino-caller/-/pino-caller-3.2.0.tgz#f248303a493b6f3a10d9f9273cf1b3c5fa5a6482"
+  integrity sha512-44T2o5CynyLSR4URaD7T2yLZIGgfubTWUImT9JTyQIROwGhz3c1b9Kgd7OqgKmVpIkUsSQLzqRY/JwPZgveLeA==
+  dependencies:
+    source-map-support "^0.5.13"
+
 pino-pretty@^7.3.0:
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-7.3.0.tgz#277fdc2306a2f6d727a1127e7747d1c078efdd4b"
@@ -3716,6 +3722,14 @@ sonic-boom@^2.2.0, sonic-boom@^2.2.1:
   integrity sha512-lEPaw654/4/rCJHz/TNzV4GIthqCq4inO+O3aFhbdOvR1bE+2//sVkcS+xlqPdb8gdjQCEE0hE9BuvnVixbnWQ==
   dependencies:
     atomic-sleep "^1.0.0"
+
+source-map-support@^0.5.13:
+  version "0.5.21"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.21.tgz#04fe7c7f9e1ed2d662233c28cb2b35b9f63f6e4f"
+  integrity sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==
+  dependencies:
+    buffer-from "^1.0.0"
+    source-map "^0.6.0"
 
 source-map-support@^0.5.6:
   version "0.5.20"
