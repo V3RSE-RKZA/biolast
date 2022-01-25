@@ -100,6 +100,11 @@ export const baseBackpackLimit = 15
 // how often a user can accept a trade (in seconds, cooldown only applies if user accepts trade)
 export const tradeCooldown = 60 * 60
 
+// the percentage of accuracy needed for player to be able to target a limb in duels.
+// this percentage INCLUDES stimulant bonuses as well, so a 30% accuracy weapon with a +25% accuracy stimulant
+// would have 55% total accuracy.
+export const accuracyToTargetLimbs = 50
+
 // User ids of users who have admin permissions (can run commands with the 'admin' category)
 export const adminUsers = ['168958344361541633', '319897342415470592', '622437218744664120', '596841923508174849']
 

@@ -1,6 +1,6 @@
 import { CommandOptionType, SlashCreator, CommandContext, AutocompleteContext, Message, ComponentType, ComponentActionRow } from 'slash-create'
 import App from '../app'
-import { icons } from '../config'
+import { accuracyToTargetLimbs, icons } from '../config'
 import { allItems, items } from '../resources/items'
 import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -462,14 +462,14 @@ class ItemCommand extends CustomSlashCommand {
 				break
 			}
 			case 'Melee Weapon': {
-				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
+				itemEmbed.addField('Accuracy', `${item.accuracy}% ${item.accuracy < accuracyToTargetLimbs ? '(cannot target limbs)' : '(can target limbs)'}`, true)
 				itemEmbed.addField('Damage', item.damage.toString(), true)
 				itemEmbed.addField('Armor Penetration', item.penetration.toFixed(2), true)
 				itemEmbed.addField('Speed', `${item.speed} (determines turn order in duels)`, true)
 				break
 			}
 			case 'Throwable Weapon': {
-				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
+				itemEmbed.addField('Accuracy', `${item.accuracy}% ${item.accuracy < accuracyToTargetLimbs ? '(cannot target limbs)' : '(can target limbs)'}`, true)
 				if (item.spreadsDamageToLimbs) {
 					itemEmbed.addField('Damage', `${item.damage} (${Math.round(item.damage / item.spreadsDamageToLimbs)} x ${item.spreadsDamageToLimbs} limbs)`, true)
 					itemEmbed.addField('Special', `Spreads damage across **${item.spreadsDamageToLimbs}** limbs.`, true)
@@ -487,7 +487,7 @@ class ItemCommand extends CustomSlashCommand {
 			case 'Ranged Weapon': {
 				const ammunition = sortItemsByAmmo(allItems.filter(itm => itm.type === 'Ammunition' && itm.ammoFor.includes(item))) as Ammunition[]
 
-				itemEmbed.addField('Accuracy', `${item.accuracy}%`, true)
+				itemEmbed.addField('Accuracy', `${item.accuracy}% ${item.accuracy < accuracyToTargetLimbs ? '(cannot target limbs)' : '(can target limbs)'}`, true)
 				itemEmbed.addField('Speed', `${item.speed} (determines turn order in duels)`, true)
 				itemEmbed.addField('Compatible Ammo', ammunition.map(itm => `${getItemDisplay(itm)} (${itm.spreadsDamageToLimbs ?
 					`**${Math.round(itm.damage / itm.spreadsDamageToLimbs)} x ${itm.spreadsDamageToLimbs}** damage` :

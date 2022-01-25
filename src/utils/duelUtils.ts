@@ -1,6 +1,6 @@
 import { ComponentContext, ComponentSelectMenu, ComponentType, Message } from 'slash-create'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
-import { icons } from '../config'
+import { accuracyToTargetLimbs, icons } from '../config'
 import { Affliction } from '../resources/afflictions'
 import { allItems } from '../resources/items'
 import { Ammunition, Armor, Medical, Helmet, MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon, Weapon } from '../types/Items'
@@ -13,7 +13,7 @@ import { getUserRow } from './db/players'
 import { getItemDisplay, getItemNameDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from './itemUtils'
 import { logger } from './logger'
 import { disableAllComponents } from './messageUtils'
-import { getEffectsDescription } from './playerUtils'
+import { addStatusEffects, getEffectsDescription } from './playerUtils'
 import { combineArrayWithAnd, getBodyPartEmoji } from './stringUtils'
 
 interface AttackChoice {
@@ -431,6 +431,27 @@ export function awaitPlayerChoices (
 								})
 							}
 							else if ((weapon && ammo) || (weapon && weapon.item.type !== 'Ranged Weapon')) {
+								const playerInfo = players.find(p => p.member.id === actionCtx.user.id)
+								const playerStimulants = playerInfo?.stims
+								const playerAfflictions = playerInfo?.afflictions
+								const stimulantEffects = addStatusEffects(playerStimulants || [], playerAfflictions)
+
+								// check if the user has at least 50% accuracy (stimulants can boost accuracy, so add those too)
+								if (Math.floor(weapon.item.accuracy + stimulantEffects.accuracyBonus) < accuracyToTargetLimbs) {
+									// weapon is not accurate enough to target limbs
+									attackCollector.stopCollector()
+									await attackMessage.edit({
+										content: `${icons.checkmark} ${getItemDisplay(weapon!.item)} ${ammo ? `(ammo: ${getItemDisplay(ammo.item)})` : ''} selected as your weapon!` +
+											` (You could not target a limb because you only have **${Math.floor(weapon.item.accuracy + stimulantEffects.accuracyBonus)}%** accuracy. **${accuracyToTargetLimbs}%** is needed to target limbs.)`,
+										components: [{
+											type: ComponentType.ACTION_ROW,
+											components: disableAllComponents(components)
+										}]
+									})
+									return
+								}
+
+								// weapon is accurate enough, allow player to select limb
 								components = [
 									{
 										type: ComponentType.SELECT,
