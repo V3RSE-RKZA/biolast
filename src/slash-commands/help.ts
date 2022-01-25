@@ -145,7 +145,7 @@ class HelpCommand extends CustomSlashCommand<'help'> {
 		const tradeCmds = tierUnlocked.filter(c => c.customOptions.category === 'trading').map(c => this.getCommandDisplay(c))
 		const equipCmds = tierUnlocked.filter(c => c.customOptions.category === 'equipment').map(c => this.getCommandDisplay(c))
 		const lockedCmds = Object.keys(tierLocked).map(reg =>
-			`${userData.locationLevel > parseInt(reg) ? '🔓' : '🔒'} [Region Tier **${reg}**] ${tierLocked[reg].map(c => this.getCommandDisplay(c)).join(', ')}`
+			`${userData.locationLevel >= parseInt(reg) ? '🔓' : '🔒'} [Region Tier **${reg}**] ${tierLocked[reg].map(c => this.getCommandDisplay(c)).join(', ')}`
 		)
 
 		const commandsEmb = new Embed()
