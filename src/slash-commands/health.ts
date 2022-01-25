@@ -6,7 +6,7 @@ import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { formatHealth } from '../utils/stringUtils'
 
-class HealthCommand extends CustomSlashCommand {
+class HealthCommand extends CustomSlashCommand<'health'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'health',

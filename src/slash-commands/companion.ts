@@ -52,7 +52,7 @@ const hireMenu: ComponentActionRow[] = [{
 	]
 }]
 
-class CompanionCommand extends CustomSlashCommand {
+class CompanionCommand extends CustomSlashCommand<'companion'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'companion',
@@ -63,7 +63,10 @@ class CompanionCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
-			guildIDs: []
+			guildIDs: [],
+			starterTip: 'You can hire a companion to help you survive the apocalypse. When you have a companion, you\'ll need to feed and take care' +
+				' of them. In return, they will fetch random items for you. Companions also have their own skills that can be upgraded' +
+				' as they level up.\n\nWith proper care, companions could find you the best gear possible.'
 		})
 
 		this.filePath = __filename

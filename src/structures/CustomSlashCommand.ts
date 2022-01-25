@@ -2,6 +2,7 @@ import { SlashCommand, SlashCommandOptions, SlashCreator } from 'slash-create'
 import App from '../app'
 import { debug, testingGuildIDs } from '../config'
 import { LocationLevel } from '../types/Locations'
+import { CommandsWithStarterTip } from '../utils/constants'
 import { logger } from '../utils/logger'
 
 type CommandCategory = 'info' | 'scavenging' | 'trading' | 'equipment' | 'other'
@@ -49,18 +50,21 @@ interface GuildCommandOptions extends BaseCommandOptions {
 	worksInDMs: false
 }
 
-type CommandOptions = DMCommandOptions | GuildCommandOptions
+type CommandOptions<T extends string> = (DMCommandOptions | GuildCommandOptions) & { name: T }
+type CustomSlashCommandOptions<T extends string> = Omit<SlashCommandOptions, 'throttling' | 'permissions'> & CommandOptions<T>
 
-class CustomSlashCommand extends SlashCommand {
+class CustomSlashCommand<T extends string = string> extends SlashCommand {
 	app: App
-	customOptions: CommandOptions
+	customOptions: T extends keyof typeof CommandsWithStarterTip ? CommandOptions<T> & { starterTip: string } : CommandOptions<T>
 
 	constructor (
 		creator: SlashCreator,
 		app: App,
 		// omitting throttling and permissions because I run the commands
 		// through my own custom command handler and they won't be supported
-		slashOptions: Omit<SlashCommandOptions, 'throttling' | 'permissions'> & CommandOptions
+		slashOptions: T extends keyof typeof CommandsWithStarterTip ?
+			CustomSlashCommandOptions<T> & { starterTip: string } :
+			CustomSlashCommandOptions<T>
 	) {
 		if (debug && testingGuildIDs) {
 			// register to testing guild while bot is in debug mode

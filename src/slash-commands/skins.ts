@@ -19,7 +19,7 @@ import { disableAllComponents } from '../utils/messageUtils'
 
 const SKINS_PER_PAGE = 12
 
-class SkinsCommand extends CustomSlashCommand {
+class SkinsCommand extends CustomSlashCommand<'skins'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'skins',

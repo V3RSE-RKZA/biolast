@@ -84,7 +84,12 @@ export function beginTransaction (): Promise<Transaction> {
 					const rollbackTimeout = setTimeout(() => {
 						logger.info('TRANSACTION TIMED OUT, ROLLING BACK')
 						connection.rollback(() => {
-							connection.release()
+							try {
+								connection.release()
+							}
+							catch (err) {
+								logger.warn(err)
+							}
 						})
 					}, 5000)
 

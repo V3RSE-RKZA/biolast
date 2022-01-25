@@ -36,7 +36,7 @@ const abandonButton: ComponentButton = {
 	} : undefined
 }
 
-class QuestCommand extends CustomSlashCommand {
+class QuestCommand extends CustomSlashCommand<'quest'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'quest',
@@ -47,7 +47,9 @@ class QuestCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
-			guildIDs: []
+			guildIDs: [],
+			starterTip: `Complete quests to gain rewards such as ${icons.xp_star} **XP**, items, or money. The quests you receive are` +
+				' dependent on your region, and the amount of XP you receive is based on your level.'
 		})
 
 		this.filePath = __filename
@@ -77,7 +79,7 @@ class QuestCommand extends CustomSlashCommand {
 				await preTransaction.commit()
 
 				const cdEmbed = new Embed()
-					.setDescription(`You cannot accept a new quest for **${preQuestCD}**.`)
+					.setDescription(`You can't accept a new quest for **${preQuestCD}**.`)
 
 				await ctx.send({
 					embeds: [cdEmbed.embed]

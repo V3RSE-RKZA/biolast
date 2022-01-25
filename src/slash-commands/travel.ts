@@ -8,7 +8,7 @@ import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow, setLocation } from '../utils/db/players'
 import { combineArrayWithAnd, combineArrayWithOr } from '../utils/stringUtils'
 
-class TravelCommand extends CustomSlashCommand {
+class TravelCommand extends CustomSlashCommand<'travel'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'travel',
@@ -21,7 +21,9 @@ class TravelCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
-			guildIDs: []
+			guildIDs: [],
+			starterTip: 'Once you defeat a boss, this is the command you would use to travel to a new region. Higher tiered regions' +
+				' contain better gear and stronger enemies.'
 		})
 
 		this.filePath = __filename

@@ -10,7 +10,7 @@ import { getItemDisplay, getItemPrice, getItems } from '../utils/itemUtils'
 import { disableAllComponents } from '../utils/messageUtils'
 import { CONFIRM_BUTTONS } from '../utils/constants'
 
-class RepairCommand extends CustomSlashCommand {
+class RepairCommand extends CustomSlashCommand<'repair'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'repair',

@@ -16,7 +16,7 @@ import { getCompanionRow } from '../utils/db/companions'
 import { companions } from '../resources/companions'
 import { getCompanionDisplay } from '../utils/companionUtils'
 
-class ProfileCommand extends CustomSlashCommand {
+class ProfileCommand extends CustomSlashCommand<'profile'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'profile',
@@ -32,7 +32,8 @@ class ProfileCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: true,
 			worksDuringDuel: true,
-			guildIDs: []
+			guildIDs: [],
+			starterTip: 'You can view player stats and other information about yourself or another player by viewing their profile.'
 		})
 
 		this.filePath = __filename

@@ -7,7 +7,7 @@ import { beginTransaction } from '../utils/db/mysql'
 import { getBackpackLimit, getEquips, getItemDisplay, getItems } from '../utils/itemUtils'
 import { getBodyPartEmoji } from '../utils/stringUtils'
 
-class EquipCommand extends CustomSlashCommand {
+class EquipCommand extends CustomSlashCommand<'equip'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'equip',

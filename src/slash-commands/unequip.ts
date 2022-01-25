@@ -6,7 +6,7 @@ import { getUserBackpack, unequipItem } from '../utils/db/items'
 import { beginTransaction } from '../utils/db/mysql'
 import { getEquips, getItemDisplay } from '../utils/itemUtils'
 
-class UnequipCommand extends CustomSlashCommand {
+class UnequipCommand extends CustomSlashCommand<'unequip'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'unequip',

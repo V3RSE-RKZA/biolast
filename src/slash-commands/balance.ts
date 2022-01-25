@@ -6,7 +6,7 @@ import { query } from '../utils/db/mysql'
 import { getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
 
-class BalanceCommand extends CustomSlashCommand {
+class BalanceCommand extends CustomSlashCommand<'balance'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'balance',

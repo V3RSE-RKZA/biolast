@@ -1,5 +1,5 @@
 import Eris, { User, Member, Guild, Constants } from 'eris'
-import { SlashCreator, GatewayServer, AnyRequestData, CommandContext, InteractionRequestData, InteractionResponseFlags, InteractionResponseType, InteractionType } from 'slash-create'
+import { SlashCreator, GatewayServer, AnyRequestData, CommandContext, InteractionRequestData, InteractionResponseFlags, InteractionResponseType, InteractionType, MessageOptions } from 'slash-create'
 import { TextCommand } from './types/Commands'
 import MessageCollector from './utils/MessageCollector'
 import ComponentCollector from './utils/ComponentCollector'
@@ -10,15 +10,16 @@ import path from 'path'
 import { query } from './utils/db/mysql'
 import { addItemToBackpack, createItem } from './utils/db/items'
 import CustomSlashCommand from './structures/CustomSlashCommand'
-import { createAccount, getUserRow, increaseLevel, setStashSlots } from './utils/db/players'
+import { createAccount, createStarterTipsRow, getUserRow, getUserTipsRow, increaseLevel, setStashSlots, setUserStarterTip } from './utils/db/players'
 import { items } from './resources/items'
 import { getPlayerXp } from './utils/playerUtils'
 import { getItemDisplay } from './utils/itemUtils'
 import { messageUser } from './utils/messageUtils'
 import { logger } from './utils/logger'
 import getRandomInt from './utils/randomInt'
-import TutorialHandler from './utils/TutorialHandler'
 import { EventHandler } from './types/Events'
+import { CommandsWithStarterTip } from './utils/constants'
+import { UserStarterTipsRow } from './types/mysql'
 
 class App {
 	bot: Eris.Client
@@ -32,7 +33,6 @@ class App {
 	 * The current multiplier for selling items to the shop (changes every hour)
 	 */
 	currentShopSellMultiplier: number
-	tutorialHandler: TutorialHandler
 
 	constructor (token: string, options: Eris.ClientOptions) {
 		if (!clientId) {
@@ -56,7 +56,6 @@ class App {
 		this.cronJobs = new CronJobs(this)
 		this.acceptingCommands = false
 		this.currentShopSellMultiplier = getRandomInt(shopSellMultiplier.min, shopSellMultiplier.max) / 100
-		this.tutorialHandler = new TutorialHandler(this)
 	}
 
 	async launch (): Promise<void> {
@@ -286,7 +285,7 @@ class App {
 
 	private async _handleSlashCommand (command: CustomSlashCommand, ctx: CommandContext) {
 		try {
-			let userLeveledUpMessage
+			let afterCommandMessage: MessageOptions | undefined
 
 			// command was run in a server
 			if (ctx.guildID) {
@@ -309,9 +308,6 @@ class App {
 
 					await addItemToBackpack(query, ctx.user.id, batRow.id)
 					await addItemToBackpack(query, ctx.user.id, ifakRow.id)
-
-					// start tutorial
-					this.tutorialHandler.tutorialUsers.set(ctx.user.id, 0)
 
 					// send welcome DM
 					const erisUser = await this.fetchUser(ctx.user.id)
@@ -359,8 +355,11 @@ class App {
 						await increaseLevel(query, ctx.user.id, newLevel - userData.level)
 						await setStashSlots(query, ctx.user.id, newStashSlots)
 
-						userLeveledUpMessage = `**You leveled up!** (Lvl **${userData.level}** → **${newLevel}**)` +
-							`\n💼 Stash Space: **${newStashSlots - 5}** → **${newStashSlots}** slots`
+						afterCommandMessage = {
+							content: `**You leveled up!** (Lvl **${userData.level}** → **${newLevel}**)` +
+								`\n💼 Stash Space: **${newStashSlots - 5}** → **${newStashSlots}** slots`,
+							ephemeral: true
+						}
 					}
 				}
 			}
@@ -378,30 +377,65 @@ class App {
 				await ctx.defer(command.deferEphemeral)
 			}
 
+			let userTips = await getUserTipsRow(query, ctx.user.id)
+
+			// starter tips stuff for when user first runs command, give them useful info about the command
+			if (!userTips) {
+				await createStarterTipsRow(query, ctx.user.id)
+				userTips = { tips: 0 } as UserStarterTipsRow
+			}
+
+			if (!afterCommandMessage && Object.keys(CommandsWithStarterTip).includes(command.commandName)) {
+				const cmdWithTip = command as CustomSlashCommand<keyof typeof CommandsWithStarterTip>
+
+				// check if tip has already been shown to user
+				if (!(userTips.tips & CommandsWithStarterTip[cmdWithTip.customOptions.name])) {
+					await setUserStarterTip(query, ctx.user.id, userTips.tips | CommandsWithStarterTip[cmdWithTip.customOptions.name])
+					afterCommandMessage = {
+						content: `<@${ctx.user.id}>, ${cmdWithTip.customOptions.starterTip}`,
+						ephemeral: false
+					}
+				}
+			}
+
+			// recursive function to make sure message is sent after bot responds to the command,
+			// have to do this because some commands like /boss wait for user input which prevents me from placing
+			// code after running the command. this is also just safer because it checks that command was responded to
+			const sendAfterCommandMessage = (msg: MessageOptions, attemptNum = 1) => new Promise<boolean>((resolve, reject) => {
+				setTimeout(async () => {
+					try {
+						if (attemptNum >= 5) {
+							// command hasn't been responded to in over 5 seconds? give up i guess
+							reject(new Error('Command not responded to after 5000 ms'))
+							return
+						}
+
+						const hasResponded = await ctx.fetch()
+
+						// ensure command was responded to before sending this message
+						if (hasResponded.content || hasResponded.embeds.length) {
+							await ctx.sendFollowUp(msg)
+							resolve(true)
+						}
+						else {
+							// try to respond again
+							resolve(sendAfterCommandMessage(msg, attemptNum + 1))
+						}
+					}
+					catch (err) {
+						logger.warn(err)
+					}
+				}, 1000)
+			})
+
+			if (afterCommandMessage) {
+				sendAfterCommandMessage(afterCommandMessage).catch(err => {
+					logger.warn(err)
+				})
+			}
+
 			logger.info(`Command (${command.commandName}) run by ${ctx.user.username}#${ctx.user.discriminator} (${ctx.user.id}) in ${ctx.guildID ? `guild (${ctx.guildID})` : 'DMs'}`)
 			await command.run(ctx)
-
-			/* TODO fix tutorial
-			try {
-				await this.tutorialHandler.handle(command, ctx)
-			}
-			catch (err) {
-				logger.error(err)
-			}
-			*/
-
-			// send level up message as a follow up after user uses command
-			if (userLeveledUpMessage) {
-				try {
-					await ctx.sendFollowUp({
-						content: userLeveledUpMessage,
-						flags: InteractionResponseFlags.EPHEMERAL
-					})
-				}
-				catch (err) {
-					logger.warn(err)
-				}
-			}
 		}
 		catch (err) {
 			logger.error(err)

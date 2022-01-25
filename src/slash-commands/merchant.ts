@@ -16,7 +16,7 @@ import { MerchantTrade, merchantTrades } from '../resources/trades'
 
 const DEALS_PER_PAGE = 10
 
-class MerchantCommand extends CustomSlashCommand {
+class MerchantCommand extends CustomSlashCommand<'merchant'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'merchant',
@@ -28,7 +28,10 @@ class MerchantCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
-			guildIDs: []
+			guildIDs: [],
+			starterTip: `${icons.merchant} **Guppy the Merchant**: first time stopping by? welcome to the shop! I sell all kinds of stuff that could help` +
+				' you take down those pesky walkers. I also have a keen interest in collectibles if you could find me any.\n\nbe sure to check back as you progress, I might' +
+				' have some better deals for ya.'
 		})
 
 		this.filePath = __filename

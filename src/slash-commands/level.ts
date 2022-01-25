@@ -7,7 +7,7 @@ import { getUserRow } from '../utils/db/players'
 import { getPlayerXp } from '../utils/playerUtils'
 import { formatNumber, formatXP } from '../utils/stringUtils'
 
-class LevelCommand extends CustomSlashCommand {
+class LevelCommand extends CustomSlashCommand<'level'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'level',

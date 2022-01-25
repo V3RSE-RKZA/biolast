@@ -17,7 +17,7 @@ import Embed from '../structures/Embed'
 
 const ITEMS_PER_PAGE = 10
 
-class SellCommand extends CustomSlashCommand {
+class SellCommand extends CustomSlashCommand<'sell'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'sell',

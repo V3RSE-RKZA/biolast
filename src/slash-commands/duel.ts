@@ -20,7 +20,7 @@ import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, P
 import { combineArrayWithAnd, formatHealth, formatMoney, getAfflictionEmoji, getBodyPartEmoji } from '../utils/stringUtils'
 import { disableAllComponents } from '../utils/messageUtils'
 
-class DuelCommand extends CustomSlashCommand {
+class DuelCommand extends CustomSlashCommand<'duel'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'duel',

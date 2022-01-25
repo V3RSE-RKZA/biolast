@@ -26,7 +26,7 @@ import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { allQuests } from '../resources/quests'
 import { disableAllComponents } from '../utils/messageUtils'
 
-class ScavengeCommand extends CustomSlashCommand {
+class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'scavenge',
@@ -46,7 +46,10 @@ class ScavengeCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
-			guildIDs: []
+			guildIDs: [],
+			starterTip: 'This is the main way to find gear. Choose an area to scavenge for items or fight the mobs protecting areas.' +
+				` Once you kill a mob, you'll be able to scavenge the area they were gaurding.\n\n${icons.information} *You can also skip the navigation menu` +
+				' by doing `/scavenge area`, for all you command spammers out there :)*'
 		})
 
 		this.filePath = __filename
@@ -296,9 +299,7 @@ class ScavengeCommand extends CustomSlashCommand {
 			}, botMessage)
 
 			for (let i = 0; i < scavengedLoot.length; i++) {
-				console.log(`item #${i + 1}`)
 				setTimeout(async () => {
-					console.log(`item #${i + 1} complete`)
 					try {
 						const unhiddenItems = scavengedLoot.slice(0, i + 1)
 						const hiddenItems = scavengedLoot.slice(i + 1)

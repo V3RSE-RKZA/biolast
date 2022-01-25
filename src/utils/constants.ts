@@ -110,3 +110,27 @@ export enum Perks {
 	 */
 	Perceptive = 1 << 1
 }
+
+/**
+ * Commands that have a starter tip when user runs the command for the first time.
+ * using flags so that I can add and remove commands from this in the future
+ */
+export enum CommandsWithStarterTip {
+	inventory = 1 << 0,
+	stash = 1 << 1,
+	profile = 1 << 2,
+	boss = 1 << 3,
+	companion = 1 << 4,
+	travel = 1 << 5,
+	scavenge = 1 << 6,
+	quest = 1 << 7,
+	merchant = 1 << 8,
+	market = 1 << 9
+}
+
+// export const commandsWithStarterTip = [
+//    'inventory',
+//    'stash'
+// ] as const
+// https://github.com/microsoft/TypeScript/issues/20965
+// export type CommandWithStarterTip = (typeof commandsWithStarterTip)[number]

@@ -1,6 +1,6 @@
 import { Guild } from 'eris'
 import { LocationName } from '../../resources/locations'
-import { Query, UserRow } from '../../types/mysql'
+import { Query, UserStarterTipsRow, UserRow } from '../../types/mysql'
 
 /**
  *
@@ -11,6 +11,16 @@ import { Query, UserRow } from '../../types/mysql'
  */
 export async function getUserRow (query: Query, userID: string, forUpdate = false): Promise<UserRow | undefined> {
 	return (await query(`SELECT * FROM users WHERE userId = ?${forUpdate ? ' FOR UPDATE' : ''}`, [userID]))[0]
+}
+
+/**
+ *
+ * @param query Query to use
+ * @param userID ID of user to get row of
+ * @returns Users starter tips row
+ */
+export async function getUserTipsRow (query: Query, userID: string): Promise<UserStarterTipsRow | undefined> {
+	return (await query('SELECT * FROM users_starter_tips WHERE userId = ?', [userID]))[0]
 }
 
 /**
@@ -182,6 +192,25 @@ export async function setLocationLevel (query: Query, userID: string, locationLe
  */
 export async function createAccount (query: Query, userID: string): Promise<void> {
 	await query('INSERT INTO users (userId) VALUES (?)', [userID])
+}
+
+/**
+ * Sets whether or not user has seen starter tip for a command
+ * @param query Query to use
+ * @param userID ID of user to set
+ * @param bitfield Bitfield value to set tips column to
+ */
+export async function setUserStarterTip (query: Query, userID: string, bitfield: number): Promise<void> {
+	await query('UPDATE users_starter_tips SET tips = ? WHERE userId = ?', [bitfield, userID])
+}
+
+/**
+ * Adds user to starter tips table so they can receive tips when they first run commands
+ * @param query Query to use
+ * @param userID ID of user to create row for
+ */
+export async function createStarterTipsRow (query: Query, userID: string): Promise<void> {
+	await query('INSERT IGNORE INTO users_starter_tips (userId) VALUES (?)', [userID])
 }
 
 /**

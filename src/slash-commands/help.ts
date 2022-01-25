@@ -63,7 +63,7 @@ const faq: { question: string, answer: string }[] = [
 	}
 ]
 
-class HelpCommand extends CustomSlashCommand {
+class HelpCommand extends CustomSlashCommand<'help'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'help',

@@ -25,7 +25,7 @@ import { merchantTrades } from '../resources/trades'
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 const ITEMS_PER_PAGE = 10
 
-class ItemCommand extends CustomSlashCommand {
+class ItemCommand extends CustomSlashCommand<'item'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'item',

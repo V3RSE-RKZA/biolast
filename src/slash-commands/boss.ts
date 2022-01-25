@@ -47,7 +47,7 @@ interface OrderedMobChoice extends BaseOrderedChoice {
 }
 type OrderedChoice = OrderedPlayerChoice | OrderedMobChoice
 
-class BossCommand extends CustomSlashCommand {
+class BossCommand extends CustomSlashCommand<'boss'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'boss',
@@ -74,7 +74,10 @@ class BossCommand extends CustomSlashCommand {
 			worksInDMs: false,
 			worksDuringDuel: false,
 			noDefer: true,
-			guildIDs: []
+			guildIDs: [],
+			starterTip: 'This is the boss of your region, be sure to invite some friends to help you fight or' +
+				' your chances of survival are slim. If you defeat the boss, you will unlock a new region that you can `/travel` to.' +
+				' Be careful though, the later regions will get progressively more difficult as you unlock them.'
 		})
 
 		this.filePath = __filename

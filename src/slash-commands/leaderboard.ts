@@ -18,7 +18,7 @@ const lbCategories = [
 	{ icon: icons.panic, category: 'Most Deaths', description: 'View players who have died the most (sad).' }
 ]
 
-class LeaderboardCommand extends CustomSlashCommand {
+class LeaderboardCommand extends CustomSlashCommand<'leaderboards'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'leaderboards',

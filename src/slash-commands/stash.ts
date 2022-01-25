@@ -16,7 +16,7 @@ import { disableAllComponents } from '../utils/messageUtils'
 
 const ITEMS_PER_PAGE = 10
 
-class StashCommand extends CustomSlashCommand {
+class StashCommand extends CustomSlashCommand<'stash'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'stash',
@@ -34,7 +34,10 @@ class StashCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
-			guildIDs: []
+			guildIDs: [],
+			starterTip: 'The stash is used to keep items safe. You will not lose these items if you die and there is no way for someone to steal these from you.' +
+				' Your stash also has a much higher space limit than your inventory, and the limit will increase as you level up!' +
+				`\n\n${icons.information} *As a side note, your coins are part of your stash, and will not be lost when you die.*`
 		})
 
 		this.filePath = __filename

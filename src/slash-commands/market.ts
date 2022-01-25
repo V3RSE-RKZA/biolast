@@ -20,7 +20,7 @@ import { disableAllComponents } from '../utils/messageUtils'
 const ITEMS_PER_PAGE = 5
 const itemCorrector = new Corrector([...allItems.map(itm => itm.name.toLowerCase()), ...allItems.map(itm => itm.aliases.map(a => a.toLowerCase())).flat(1)])
 
-class MarketCommand extends CustomSlashCommand {
+class MarketCommand extends CustomSlashCommand<'market'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'market',
@@ -39,7 +39,10 @@ class MarketCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
-			guildIDs: []
+			guildIDs: [],
+			starterTip: 'Welcome to the bustling player market! **Whenever you or another scavenger sells an item, it gets listed here for sale.**' +
+				'\n\nNo, that doesn\'t mean you can just buy 15 machine guns and destroy everything... **The items you can view and purchase' +
+				' depend on your level.**'
 		})
 
 		this.filePath = __filename

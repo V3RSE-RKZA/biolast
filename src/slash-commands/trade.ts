@@ -49,7 +49,7 @@ const TRADE_BUTTONS = (picked?: 'item' | 'money' | 'complete' | 'cancel'): Compo
 	}
 ]
 
-class TradeCommand extends CustomSlashCommand {
+class TradeCommand extends CustomSlashCommand<'trade'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'trade',

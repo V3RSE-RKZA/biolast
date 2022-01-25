@@ -147,3 +147,8 @@ export interface CompanionRow {
 	courage: number
 	createdAt: Date
 }
+
+export interface UserStarterTipsRow {
+	userId: string
+	tips: number
+}

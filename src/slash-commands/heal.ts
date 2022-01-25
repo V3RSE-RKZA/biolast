@@ -9,7 +9,7 @@ import { formatHealth } from '../utils/stringUtils'
 import { getItemDisplay, getItems } from '../utils/itemUtils'
 import { getNumber } from '../utils/argParsers'
 
-class HealCommand extends CustomSlashCommand {
+class HealCommand extends CustomSlashCommand<'heal'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'heal',

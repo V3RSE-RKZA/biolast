@@ -17,7 +17,7 @@ import { disableAllComponents } from '../utils/messageUtils'
 
 const ITEMS_PER_PAGE = 10
 
-class InventoryCommand extends CustomSlashCommand {
+class InventoryCommand extends CustomSlashCommand<'inventory'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
 			name: 'inventory',
@@ -34,7 +34,10 @@ class InventoryCommand extends CustomSlashCommand {
 			guildModsOnly: false,
 			worksInDMs: true,
 			worksDuringDuel: true,
-			guildIDs: []
+			guildIDs: [],
+			starterTip: 'Welcome to your inventory! These are all the items you are currently holding. Contrary to your `/stash`, these items will be taken' +
+				' with you into duels and you will lose them if you die. If you want to keep an item safe, **move it to your stash**!' +
+				' You can do so by using the selection menu under your inventory.'
 		})
 
 		this.filePath = __filename
