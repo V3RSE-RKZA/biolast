@@ -126,7 +126,7 @@ export const melee = meleeObject({
 	fire_axe: {
 		type: 'Melee Weapon',
 		name: 'fire_axe',
-		icon: ' <:fire_axe:930978902057287700>',
+		icon: '<:fire_axe:930978902057287700>',
 		aliases: ['axe'],
 		sellPrice: 217,
 		durability: 3,

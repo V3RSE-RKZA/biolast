@@ -314,7 +314,7 @@ export const ammunition = ammoObject({
 	'12-gauge_slug': {
 		type: 'Ammunition',
 		name: '12-gauge_slug',
-		icon: ' <:12_gauge_slug:931813743384461363>',
+		icon: '<:12_gauge_slug:931813743384461363>',
 		aliases: ['12g_slug'],
 		description: 'A 12-gauge slug shell that fires a single, large projectile.',
 		damage: 78,

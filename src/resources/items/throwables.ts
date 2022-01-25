@@ -7,7 +7,7 @@ export const throwables = throwablesObject({
 		type: 'Throwable Weapon',
 		subtype: 'Fragmentation Grenade',
 		name: 'F1_grenade',
-		icon: ' <:f1_grenade:933851376738500640>',
+		icon: '<:f1_grenade:933851376738500640>',
 		aliases: ['f1', 'grenade'],
 		sellPrice: 476,
 		durability: 1,
