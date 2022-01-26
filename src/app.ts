@@ -33,6 +33,7 @@ class App {
 	 * The current multiplier for selling items to the shop (changes every hour)
 	 */
 	currentShopSellMultiplier: number
+	channelsWithActiveDuel: Set<string>
 
 	constructor (token: string, options: Eris.ClientOptions) {
 		if (!clientId) {
@@ -56,6 +57,7 @@ class App {
 		this.cronJobs = new CronJobs(this)
 		this.acceptingCommands = false
 		this.currentShopSellMultiplier = getRandomInt(shopSellMultiplier.min, shopSellMultiplier.max) / 100
+		this.channelsWithActiveDuel = new Set()
 	}
 
 	async launch (): Promise<void> {

@@ -61,6 +61,12 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 			})
 			return
 		}
+		else if (this.app.channelsWithActiveDuel.has(ctx.channelID)) {
+			await ctx.send({
+				content: `${icons.error_pain} There is already another fight occuring in this channel! Wait for other scavengers to finish their fight or head to a different channel.`
+			})
+			return
+		}
 
 		const memberData = await getUserRow(query, member.id)
 		if (!memberData) {
@@ -139,7 +145,16 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 				})
 				return
 			}
+			else if (this.app.channelsWithActiveDuel.has(ctx.channelID)) {
+				await preTransaction.commit()
+				await confirmed.editParent({
+					content: `${icons.error_pain} There is already another fight occuring in this channel! Wait for other scavengers to finish their fight or head to a different channel.`,
+					components: []
+				})
+				return
+			}
 
+			this.app.channelsWithActiveDuel.add(ctx.channelID)
 			await setFighting(preTransaction.query, ctx.user.id, true)
 			await setFighting(preTransaction.query, member.id, true)
 			await preTransaction.commit()
@@ -208,6 +223,7 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 								// success
 								duelIsActive = false
 								messages[i].push(`<@${userChoice.member.id}> flees from the duel! The duel has ended.`)
+								this.app.channelsWithActiveDuel.delete(ctx.channelID)
 								await setFighting(query, ctx.user.id, false)
 								await setFighting(query, member.id, false)
 								break
@@ -538,6 +554,7 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 									row: { ...dogTagsRow, equipped: 0 }
 								})
 
+								this.app.channelsWithActiveDuel.delete(ctx.channelID)
 								await setFighting(atkTransaction.query, ctx.user.id, false)
 								await setFighting(atkTransaction.query, member.id, false)
 								await increaseKills(atkTransaction.query, userChoice.member.id, 'player', 1)
@@ -717,6 +734,7 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 
 					if (!player1Choice && !player2Choice) {
 						duelIsActive = false
+						this.app.channelsWithActiveDuel.delete(ctx.channelID)
 						await setFighting(query, ctx.user.id, false)
 						await setFighting(query, member.id, false)
 						messages.push(['Neither players selected an action, the duel has been ended early.'])
@@ -736,51 +754,64 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 					})
 				}
 				catch (err) {
-					// TODO cancel duel early due to an error?
-					logger.warn(err)
+					logger.error(err)
+
+					duelIsActive = false
+					this.app.channelsWithActiveDuel.delete(ctx.channelID)
+					await setFighting(query, ctx.user.id, false)
+					await setFighting(query, member.id, false)
+
+					try {
+						await confirmed.sendFollowUp({
+							content: `${icons.danger} <@${ctx.user.id}> <@${member.id}>, An error occured, the duel has been ended. Sorry about that...`
+						})
+					}
+					catch (msgErr) {
+						logger.warn(msgErr)
+					}
 				}
-				finally {
-					playerChoices.clear()
 
-					if (duelIsActive) {
-						if (turnNumber >= 20) {
-							duelIsActive = false
-							await setFighting(query, ctx.user.id, false)
-							await setFighting(query, member.id, false)
-							await confirmed.sendFollowUp({
-								content: `${icons.danger} <@${ctx.user.id}> <@${member.id}>, **The max turn limit (20) has been reached!** The duel ends in a tie, neither players will lose their items.`
-							})
-						}
-						else {
-							const player1DataV = (await getUserRow(query, ctx.user.id))!
-							const player2DataV = (await getUserRow(query, member.id))!
-							const player1InventoryV = await getUserBackpack(query, ctx.user.id)
-							const player2InventoryV = await getUserBackpack(query, member.id)
+				playerChoices.clear()
 
-							turnNumber += 1
-							botMessage = await confirmed.sendFollowUp({
-								content: `<@${ctx.user.id}> <@${member.id}>, Turn #${turnNumber} - select your action:`,
-								embeds: [
-									this.getDuelEmbed(
-										ctx.member,
-										member,
-										player1DataV,
-										player2DataV,
-										player1InventoryV,
-										player2InventoryV,
-										turnNumber,
-										player1Stimulants,
-										player2Stimulants,
-										player1Afflictions,
-										player2Afflictions
-									).embed
-								],
-								components: [{
-									type: ComponentType.ACTION_ROW,
-									components: [GRAY_BUTTON('Attack', 'attack', false, '🗡️'), GRAY_BUTTON('Use Medical Item', 'heal', false, '🩹'), GRAY_BUTTON('Use Stimulant', 'stimulant', false, '💉'), RED_BUTTON('Try to Flee', 'flee')]
-								}]
-							})
-						}
+				if (duelIsActive) {
+					if (turnNumber >= 20) {
+						duelIsActive = false
+						this.app.channelsWithActiveDuel.delete(ctx.channelID)
+						await setFighting(query, ctx.user.id, false)
+						await setFighting(query, member.id, false)
+						await confirmed.sendFollowUp({
+							content: `${icons.danger} <@${ctx.user.id}> <@${member.id}>, **The max turn limit (20) has been reached!** The duel ends in a tie, neither players will lose their items.`
+						})
+					}
+					else {
+						const player1DataV = (await getUserRow(query, ctx.user.id))!
+						const player2DataV = (await getUserRow(query, member.id))!
+						const player1InventoryV = await getUserBackpack(query, ctx.user.id)
+						const player2InventoryV = await getUserBackpack(query, member.id)
+
+						turnNumber += 1
+						botMessage = await confirmed.sendFollowUp({
+							content: `<@${ctx.user.id}> <@${member.id}>, Turn #${turnNumber} - select your action:`,
+							embeds: [
+								this.getDuelEmbed(
+									ctx.member,
+									member,
+									player1DataV,
+									player2DataV,
+									player1InventoryV,
+									player2InventoryV,
+									turnNumber,
+									player1Stimulants,
+									player2Stimulants,
+									player1Afflictions,
+									player2Afflictions
+								).embed
+							],
+							components: [{
+								type: ComponentType.ACTION_ROW,
+								components: [GRAY_BUTTON('Attack', 'attack', false, '🗡️'), GRAY_BUTTON('Use Medical Item', 'heal', false, '🩹'), GRAY_BUTTON('Use Stimulant', 'stimulant', false, '💉'), RED_BUTTON('Try to Flee', 'flee')]
+							}]
+						})
 					}
 				}
 			}

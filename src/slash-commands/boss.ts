@@ -104,6 +104,12 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 			})
 			return
 		}
+		else if (this.app.channelsWithActiveDuel.has(ctx.channelID)) {
+			await ctx.send({
+				content: `${icons.error_pain} There is already another fight occuring in this channel! Wait for other scavengers to finish their fight or head to a different channel.`
+			})
+			return
+		}
 
 		const location = locations[preUserData.currentLocation]
 		const nextLocation = allLocations.filter(l => l.locationLevel === location.locationLevel + 1)
@@ -257,6 +263,15 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 				})
 				return
 			}
+			else if (this.app.channelsWithActiveDuel.has(ctx.channelID)) {
+				await preTransaction.commit()
+
+				await botMessage.edit({
+					content: `${icons.error_pain} There is already another fight occuring in this channel! Wait for other scavengers to finish their fight or head to a different channel.`,
+					components: []
+				})
+				return
+			}
 
 			await setFighting(preTransaction.query, player.member.id, true)
 			await createCooldown(preTransaction.query, player.member.id, `boss-${location.display}`, location.boss.respawnTime)
@@ -271,6 +286,8 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 		let npcHealth = location.boss.health
 		let turnNumber = 1
 		let duelIsActive = true
+
+		this.app.channelsWithActiveDuel.add(ctx.channelID)
 
 		await botMessage.edit({
 			content: `${players.map(p => `<@${p.member.id}>`).join(' ')}, Turn #1 - select your action:`,
@@ -441,10 +458,12 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 							// success
 							messages[i].push(`<@${choiceInfo.member.id}> flees from the duel!`)
 							players = players.filter(p => p.member.id !== choiceInfo.member.id)
+
 							await setFighting(query, choiceInfo.member.id, false)
 
 							if (!players.length) {
 								// end duel if all players flee or died
+								this.app.channelsWithActiveDuel.delete(ctx.channelID)
 								duelIsActive = false
 								break
 							}
@@ -842,6 +861,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 
 						if (!missedPartChoice && npcHealth <= 0) {
 							// end the duel
+							this.app.channelsWithActiveDuel.delete(ctx.channelID)
 							duelIsActive = false
 
 							if (webhooks.pvp.id && webhooks.pvp.token) {
@@ -880,51 +900,67 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 				})
 			}
 			catch (err) {
-				// TODO cancel duel early due to an error?
-				logger.warn(err)
+				logger.error(err)
+
+				duelIsActive = false
+				this.app.channelsWithActiveDuel.delete(ctx.channelID)
+
+				for (const player of players) {
+					await setFighting(query, player.member.id, false)
+				}
+
+				try {
+					await ctx.sendFollowUp({
+						content: `${icons.danger} ${players.map(p => `<@${p.member.id}>`).join(' ')}, An error occured, the boss fight had to be ended. Sorry about that...` +
+							'\n\nHEY IF YOU JOIN THE SUPPORT SERVER AND LET A DEV KNOW, WE MIGHT COMPENSATE YOU!'
+					})
+				}
+				catch (msgErr) {
+					logger.warn(msgErr)
+				}
 			}
-			finally {
-				playerChoices.clear()
 
-				if (duelIsActive) {
-					if (turnNumber >= 20) {
-						duelIsActive = false
+			playerChoices.clear()
 
-						for (const player of players) {
-							await setFighting(query, player.member.id, false)
-						}
+			if (duelIsActive) {
+				if (turnNumber >= 20) {
+					duelIsActive = false
+					this.app.channelsWithActiveDuel.delete(ctx.channelID)
 
-						await ctx.sendFollowUp({
-							content: `${icons.danger} ${players.map(p => `<@${p.member.id}>`).join(' ')}, **The max turn limit (20) has been reached!** The boss fight ends in a tie.`
-						})
+					for (const player of players) {
+						await setFighting(query, player.member.id, false)
 					}
-					else {
-						players = await Promise.all(players.map(async p => ({
-							...p,
-							data: (await getUserRow(query, p.member.id))!,
-							inventory: await getUserBackpack(query, p.member.id)
-						})))
 
-						turnNumber += 1
+					await ctx.sendFollowUp({
+						content: `${icons.danger} ${players.map(p => `<@${p.member.id}>`).join(' ')}, **The max turn limit (20) has been reached!** The boss fight ends in a tie.`
+					})
+				}
+				else {
+					players = await Promise.all(players.map(async p => ({
+						...p,
+						data: (await getUserRow(query, p.member.id))!,
+						inventory: await getUserBackpack(query, p.member.id)
+					})))
 
-						botMessage = await ctx.sendFollowUp({
-							content: `${players.map(p => `<@${p.member.id}>`).join(' ')}, Turn #${turnNumber} - select your action:`,
-							embeds: [
-								this.getMobDuelEmbed(
-									players,
-									location.boss,
-									npcHealth,
-									turnNumber,
-									npcStimulants,
-									npcAfflictions
-								).embed
-							],
-							components: [{
-								type: ComponentType.ACTION_ROW,
-								components: [GRAY_BUTTON('Attack', 'attack', false, '🗡️'), GRAY_BUTTON('Use Medical Item', 'heal', false, '🩹'), GRAY_BUTTON('Use Stimulant', 'stimulant', false, '💉'), RED_BUTTON('Try to Flee', 'flee')]
-							}]
-						})
-					}
+					turnNumber += 1
+
+					botMessage = await ctx.sendFollowUp({
+						content: `${players.map(p => `<@${p.member.id}>`).join(' ')}, Turn #${turnNumber} - select your action:`,
+						embeds: [
+							this.getMobDuelEmbed(
+								players,
+								location.boss,
+								npcHealth,
+								turnNumber,
+								npcStimulants,
+								npcAfflictions
+							).embed
+						],
+						components: [{
+							type: ComponentType.ACTION_ROW,
+							components: [GRAY_BUTTON('Attack', 'attack', false, '🗡️'), GRAY_BUTTON('Use Medical Item', 'heal', false, '🩹'), GRAY_BUTTON('Use Stimulant', 'stimulant', false, '💉'), RED_BUTTON('Try to Flee', 'flee')]
+						}]
+					})
 				}
 			}
 		}

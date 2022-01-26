@@ -175,23 +175,15 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		}
 
 		const backpackRows = await getUserBackpack(transaction.query, ctx.user.id, true)
+		const preUserQuest = await getUserQuest(transaction.query, ctx.user.id, true)
 		const backpackData = getItems(backpackRows)
 		const userEquips = getEquips(backpackRows)
 		const keysRequired = areaChoice.requiresKey
 		const hasRequiredKey = sortItemsByDurability(backpackData.items, true).reverse().find(i => keysRequired?.some(key => i.item.name === key.name))
 		const backpackLimit = getBackpackLimit(userEquips.backpack?.item)
 
-		if (keysRequired && !areaChoice.keyIsOptional && !hasRequiredKey) {
-			await transaction.commit()
-
-			await this.sendMessage(ctx, {
-				content: `${icons.information} You need a ${combineArrayWithOr(keysRequired.map(key => getItemDisplay(key)))} to scavenge **${areaChoice.display}**.`,
-				components: [],
-				embeds: []
-			}, botMessage)
-			return
-		}
-		else if (
+		// verify user has space needed to scavenge area, factoring in if they will lose a key from the scavenge
+		if (
 			backpackData.slotsUsed -
 			(
 				hasRequiredKey &&
@@ -208,14 +200,13 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 			return
 		}
 
-		const preUserQuest = await getUserQuest(transaction.query, ctx.user.id, true)
-
 		if (preUserQuest?.questType === 'Scavenge With A Key' || preUserQuest?.questType === 'Scavenge') {
 			const quest = allQuests.find(q => q.id === preUserQuest.questId)
 
 			if (preUserQuest.progress < preUserQuest.progressGoal) {
 				if (
 					(
+						(!areaChoice.npc || mobKilledCD) &&
 						quest &&
 						quest.questType === 'Scavenge With A Key' &&
 						hasRequiredKey &&
@@ -228,18 +219,29 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 			}
 		}
 
-		// lower durability or remove key
-		if (hasRequiredKey) {
-			if (!hasRequiredKey.row.durability || hasRequiredKey.row.durability - 1 <= 0) {
-				await deleteItem(transaction.query, hasRequiredKey.row.id)
-			}
-			else {
-				await lowerItemDurability(transaction.query, hasRequiredKey.row.id, 1)
-			}
-		}
-
 		// player scavenges without encountering mob
 		if (!areaChoice.npc || mobKilledCD) {
+			if (keysRequired && !areaChoice.keyIsOptional && !hasRequiredKey) {
+				await transaction.commit()
+
+				await this.sendMessage(ctx, {
+					content: `${icons.information} You need a ${combineArrayWithOr(keysRequired.map(key => getItemDisplay(key)))} to scavenge **${areaChoice.display}**.`,
+					components: [],
+					embeds: []
+				}, botMessage)
+				return
+			}
+
+			// lower durability or remove key
+			else if (hasRequiredKey) {
+				if (!hasRequiredKey.row.durability || hasRequiredKey.row.durability - 1 <= 0) {
+					await deleteItem(transaction.query, hasRequiredKey.row.id)
+				}
+				else {
+					await lowerItemDurability(transaction.query, hasRequiredKey.row.id, 1)
+				}
+			}
+
 			const scavengedLoot: { rarity: string, item: Item, row: ItemRow }[] = []
 			let xpEarned = 0
 
@@ -324,6 +326,17 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 			return
 		}
 
+		if (this.app.channelsWithActiveDuel.has(ctx.channelID)) {
+			await transaction.commit()
+
+			await this.sendMessage(ctx, {
+				content: `${icons.error_pain} There is already another fight occuring in this channel! Wait for other scavengers to finish their fight or head to a different channel.`,
+				components: [],
+				embeds: []
+			}, botMessage)
+			return
+		}
+
 		// player encountered mob
 		await setFighting(transaction.query, ctx.user.id, true)
 		await transaction.commit()
@@ -340,6 +353,8 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		let npcHealth = npc.health
 		let turnNumber = 1
 		let duelIsActive = true
+
+		this.app.channelsWithActiveDuel.add(ctx.channelID)
 
 		botMessage = await this.sendMessage(ctx, {
 			content: finalMessage,
@@ -420,6 +435,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 							if (playerRow.health - attackResult.damage <= 0) {
 								// end the duel
 								duelIsActive = false
+								this.app.channelsWithActiveDuel.delete(ctx.channelID)
 
 								if (!attackResult.savedByCompanion) {
 									lootEmbed = new Embed()
@@ -497,6 +513,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 						if (Math.random() <= chance) {
 							// success
 							duelIsActive = false
+							this.app.channelsWithActiveDuel.delete(ctx.channelID)
 							messages[i].push(`<@${ctx.user.id}> flees from the duel! The duel has ended.`)
 							await setFighting(query, ctx.user.id, false)
 							break
@@ -875,6 +892,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 						if (!missedPartChoice && npcHealth <= 0) {
 							// end the duel
 							duelIsActive = false
+							this.app.channelsWithActiveDuel.delete(ctx.channelID)
 
 							if (webhooks.pvp.id && webhooks.pvp.token) {
 								try {
@@ -910,47 +928,60 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 				})
 			}
 			catch (err) {
-				// TODO cancel duel early due to an error?
-				logger.warn(err)
+				logger.error(err)
+
+				duelIsActive = false
+				this.app.channelsWithActiveDuel.delete(ctx.channelID)
+				await setFighting(query, ctx.user.id, false)
+
+				try {
+					await ctx.sendFollowUp({
+						content: `${icons.danger} <@${ctx.user.id}>, An error occured, the boss fight had to be ended. Sorry about that...` +
+							'\n\nHEY IF YOU JOIN THE SUPPORT SERVER AND LET A DEV KNOW, WE MIGHT COMPENSATE YOU!'
+					})
+				}
+				catch (msgErr) {
+					logger.warn(msgErr)
+				}
 			}
-			finally {
-				playerChoices.clear()
 
-				if (duelIsActive) {
-					if (turnNumber >= 20) {
-						duelIsActive = false
-						await setFighting(query, ctx.user.id, false)
-						await ctx.sendFollowUp({
-							content: `${icons.danger} <@${ctx.user.id}>, **The max turn limit (20) has been reached!** The duel ends in a tie.`
-						})
-					}
-					else {
-						const playerDataV = (await getUserRow(query, ctx.user.id))!
-						const playerInventoryV = await getUserBackpack(query, ctx.user.id)
+			playerChoices.clear()
 
-						turnNumber += 1
-						botMessage = await ctx.sendFollowUp({
-							content: `<@${ctx.user.id}>, Turn #${turnNumber} - select your action:`,
-							embeds: [
-								this.getMobDuelEmbed(
-									ctx.member,
-									npc,
-									playerDataV,
-									npcHealth,
-									playerInventoryV,
-									turnNumber,
-									playerStimulants,
-									npcStimulants,
-									playerAfflictions,
-									npcAfflictions
-								).embed
-							],
-							components: [{
-								type: ComponentType.ACTION_ROW,
-								components: [GRAY_BUTTON('Attack', 'attack', false, '🗡️'), GRAY_BUTTON('Use Medical Item', 'heal', false, '🩹'), GRAY_BUTTON('Use Stimulant', 'stimulant', false, '💉'), RED_BUTTON('Try to Flee', 'flee')]
-							}]
-						})
-					}
+			if (duelIsActive) {
+				if (turnNumber >= 20) {
+					duelIsActive = false
+					this.app.channelsWithActiveDuel.delete(ctx.channelID)
+					await setFighting(query, ctx.user.id, false)
+					await ctx.sendFollowUp({
+						content: `${icons.danger} <@${ctx.user.id}>, **The max turn limit (20) has been reached!** The duel ends in a tie.`
+					})
+				}
+				else {
+					const playerDataV = (await getUserRow(query, ctx.user.id))!
+					const playerInventoryV = await getUserBackpack(query, ctx.user.id)
+
+					turnNumber += 1
+					botMessage = await ctx.sendFollowUp({
+						content: `<@${ctx.user.id}>, Turn #${turnNumber} - select your action:`,
+						embeds: [
+							this.getMobDuelEmbed(
+								ctx.member,
+								npc,
+								playerDataV,
+								npcHealth,
+								playerInventoryV,
+								turnNumber,
+								playerStimulants,
+								npcStimulants,
+								playerAfflictions,
+								npcAfflictions
+							).embed
+						],
+						components: [{
+							type: ComponentType.ACTION_ROW,
+							components: [GRAY_BUTTON('Attack', 'attack', false, '🗡️'), GRAY_BUTTON('Use Medical Item', 'heal', false, '🩹'), GRAY_BUTTON('Use Stimulant', 'stimulant', false, '💉'), RED_BUTTON('Try to Flee', 'flee')]
+						}]
+					})
 				}
 			}
 		}
