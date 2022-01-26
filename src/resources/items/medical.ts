@@ -119,7 +119,7 @@ export const medical = medicalObject({
 	'anti-biotics': {
 		type: 'Medical',
 		name: 'anti-biotics',
-		icon: '<:antibiotics:933851421852438528>',
+		icon: '<:antibiotics:935748154253525012>',
 		description: 'Cures various infections, such as those from walker bites.',
 		aliases: ['antibiotics'],
 		sellPrice: 307,

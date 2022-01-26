@@ -412,7 +412,8 @@ class MarketCommand extends CustomSlashCommand<'market'> {
 			const filteredItems = itemData.slice(indexFirst, indexLast)
 
 			const embed = new Embed()
-				.setDescription(`**${searchedItem ? `Market Results For: ${getItemDisplay(searchedItem)}` : 'Market'}**` +
+				.setDescription(`**${searchedItem ?
+					`Market Results For: ${getItemDisplay(searchedItem)}` : 'Global Market Sales'}**` +
 					`\n\n${icons.information} Use the selection menu to purchase items.\n${icons.warning} These deals will expire after 1 day.` +
 					'\n\n__**Items Available**__ (Sorted best to worst)' +
 					`\n${filteredItems.map(itm => `**Item**: ${getItemDisplay(itm.item, itm.row)}\n**Listed**: <t:${itm.row.createdAt.getTime() / 1000}:R>\n**Price**: ${formatMoney(itm.row.price)}`).join('\n\n') ||

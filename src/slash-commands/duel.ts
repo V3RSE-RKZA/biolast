@@ -556,7 +556,7 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 									await removeItemFromBackpack(atkTransaction.query, victimItem.row.id)
 								}
 
-								messages[i].push(`☠️ **${otherPlayerMember.displayName} DIED!**`, `**${userChoice.member.displayName} wins** and earned 🌟 ***+${xpEarned}*** xp for this kill.`)
+								messages[i].push(`☠️ **${otherPlayerMember.displayName} DIED!**`, `**${userChoice.member.displayName} wins** and earned ${icons.xp_star}***+${xpEarned}*** xp for this kill.`)
 							}
 							else if (!missedPartChoice) {
 								await lowerHealth(atkTransaction.query, otherPlayerMember.id, totalDamage)

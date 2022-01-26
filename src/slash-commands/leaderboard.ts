@@ -107,7 +107,7 @@ class LeaderboardCommand extends CustomSlashCommand<'leaderboards'> {
 			}) as Message
 
 			try {
-				const selection = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id))[0]
+				const selection = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id, 40000))[0]
 				const lbEmbed = new Embed()
 					.setFooter('Some users might be excluded if they have not been active lately.')
 
@@ -234,7 +234,7 @@ class LeaderboardCommand extends CustomSlashCommand<'leaderboards'> {
 			}) as Message
 
 			try {
-				const selection = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id))[0]
+				const selection = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id, 40000))[0]
 				const lbEmbed = new Embed()
 
 				if (selection.values.includes('Richest Users')) {

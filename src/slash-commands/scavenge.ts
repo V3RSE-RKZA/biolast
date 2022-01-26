@@ -282,21 +282,21 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 				await this.sendMessage(ctx, {
 					content: `You ${hasRequiredKey ?
 						`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
-						''}scavenge **${areaChoice.display}** and find:\n\n**nothing**!\n🌟 ***+${xpEarned}** xp!*`,
+						''}scavenge **${areaChoice.display}** and find:\n\n**nothing**!\n${icons.xp_star}***+${xpEarned}** xp!*`,
 					components: [],
 					embeds: []
 				}, botMessage)
 				return
 			}
 
-			await this.sendMessage(ctx, {
+			botMessage = await this.sendMessage(ctx, {
 				content: `You ${hasRequiredKey ?
 					`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
 					''}scavenge **${areaChoice.display}** and find:\n\n${scavengedLoot.map(itm => `${icons.loading} ${itm.rarity} *examining...*`).join('\n')}` +
-					'\n🌟 ***+???** xp!*',
+					`\n${icons.xp_star}***+???** xp!*`,
 				components: [],
 				embeds: []
-			}, botMessage)
+			}, botMessage) as Message
 
 			for (let i = 0; i < scavengedLoot.length; i++) {
 				setTimeout(async () => {
@@ -307,7 +307,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 							`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
 							''}scavenge **${areaChoice!.display}** and find:\n\n${unhiddenItems.map(itm => `${itm.rarity} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}` +
 							`${hiddenItems.length ? `\n${hiddenItems.map(itm => `${icons.loading} ${itm.rarity} *examining...*`).join('\n')}` : ''}` +
-							`\n${unhiddenItems.length === scavengedLoot.length ? `🌟 ***+${xpEarned}** xp!*` : '🌟 ***+???** xp!*'}`
+							`\n${unhiddenItems.length === scavengedLoot.length ? `${icons.xp_star}***+${xpEarned}** xp!*` : `${icons.xp_star}***+???** xp!*`}`
 
 						await this.sendMessage(ctx, {
 							content: `${lootedMessage}` +
@@ -861,7 +861,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 							lootEmbed = new Embed()
 								.setTitle('__Loot Received__')
 								.setColor(9043800)
-								.setDescription(`🌟 ***+${npc.xp}** xp!*` +
+								.setDescription(`${icons.xp_star}***+${npc.xp}** xp!*` +
 									`\n${(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
 										.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : `${getRarityDisplay('Common')} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}`)
 						}

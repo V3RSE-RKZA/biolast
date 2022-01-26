@@ -416,7 +416,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 
 					const maxHeal = Math.min(companionRow.stress, 10)
 					const companionNewLevel = this.getCompanionLevel(companionRow.xp + XP_PER_PLAY, companionRow.level)
-					let display = `${icons.checkmark} You play with ${getCompanionDisplay(preCompanion, companionRow, true)}! They gained 🌟 ***+${XP_PER_PLAY}*** xp.`
+					let display = `${icons.checkmark} You play with ${getCompanionDisplay(preCompanion, companionRow, true)}! They gained ${icons.xp_star}***+${XP_PER_PLAY}*** xp.`
 
 					await createCooldown(transaction.query, ctx.user.id, 'self-companion-play', 2 * 60)
 					await addXp(transaction.query, ctx.user.id, XP_PER_PLAY)
@@ -645,7 +645,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 
 								const maxHeal = Math.min(companionRow.hunger, foundItem.item.reducesHunger)
 								const companionNewLevel = this.getCompanionLevel(companionRow.xp + foundItem.item.xpGiven, companionRow.level)
-								let display = `${icons.checkmark} You fed **${getCompanionDisplay(preCompanion, companionRow, true)}** your ${getItemDisplay(foundItem.item)}. They gained 🌟 ***+${foundItem.item.xpGiven}*** xp!`
+								let display = `${icons.checkmark} You fed **${getCompanionDisplay(preCompanion, companionRow, true)}** your ${getItemDisplay(foundItem.item)}. They gained ${icons.xp_star}***+${foundItem.item.xpGiven}*** xp!`
 
 								if (!foundItem.row.durability || foundItem.row.durability - 1 <= 0) {
 									await deleteItem(transaction.query, foundItem.row.id)

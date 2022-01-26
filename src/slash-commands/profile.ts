@@ -92,7 +92,7 @@ class ProfileCommand extends CustomSlashCommand<'profile'> {
 		const embed = new Embed()
 			.setAuthor(`${userDisplay}'s Profile`, user.avatarURL)
 			.setThumbnail(user.avatarURL)
-			.addField('__Health__', `**${userData.health} / ${userData.maxHealth}** HP\n${formatHealth(userData.health, userData.maxHealth)}`, true)
+			.addField('__Health__', `**${userData.health} / ${userData.maxHealth}**\n${formatHealth(userData.health, userData.maxHealth)}`, true)
 			.addField('__Experience__', `**Lvl. ${userData.level}** ${formatXP(playerXp.relativeLevelXp, playerXp.levelTotalXpNeeded)}\n${formatNumber(playerXp.relativeLevelXp)} / ${formatNumber(playerXp.levelTotalXpNeeded)} XP`, true)
 			.addField('__Balance__', `**${formatMoney(userData.money)}** copper`, true)
 
