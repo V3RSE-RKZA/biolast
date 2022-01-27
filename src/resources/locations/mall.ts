@@ -1,132 +1,31 @@
 import { Location } from '../../types/Locations'
-import { NPC } from '../../types/NPCs'
 import { items } from '../items'
-
-/*
-	npcs that appear in this location
-*/
-// TODO this bloated walker appears in The Farm with same stats, change this to something stronger
-const bloatedWalker: NPC = {
-	type: 'walker',
-	display: 'Bloated Walker',
-	health: 50,
-	damage: 35,
-	drops: {
-		common: [items.fire_axe],
-		uncommon: [items.apple],
-		rare: [items.walker_sludge],
-		rolls: 1
-	},
-	xp: 100,
-	chanceToBite: 20,
-	attackPenetration: 2.1,
-	boss: false,
-	respawnTime: 60 * 2
-}
-const psychoRaider: NPC = {
-	type: 'raider',
-	display: 'Psycho',
-	health: 40,
-	damage: 30,
-	drops: {
-		common: [items.knife],
-		uncommon: [items.fire_axe, items.splint],
-		rare: [items.hypo_stim, items.duffle_bag],
-		rolls: 1
-	},
-	weapon: items.chainsaw,
-	helmet: items.psycho_mask,
-	usesStimulants: [items.morphine],
-	xp: 125,
-	boss: false,
-	respawnTime: 60 * 2
-}
-const mediumCrawler: NPC = {
-	type: 'walker',
-	display: 'Crawler',
-	health: 40,
-	damage: 50,
-	drops: {
-		common: [items.compression_bandage],
-		uncommon: [items['9mm_FMJ_bullet']],
-		rare: [items.walker_sludge],
-		rolls: 1
-	},
-	xp: 60,
-	chanceToBite: 25,
-	attackPenetration: 1.9,
-	boss: false,
-	respawnTime: 60 * 2
-}
-const mediumRaider: NPC = {
-	type: 'raider',
-	display: 'Raider',
-	health: 60,
-	damage: 35,
-	drops: {
-		common: [items['9mm_FMJ_bullet']],
-		uncommon: [items.ifak_medkit, items['anti-biotics']],
-		rare: [items['9mm_RIP_bullet'], items.escape_from_fristoe, items.duffle_bag],
-		rolls: 1
-	},
-	weapon: items['glock-17'],
-	ammo: items['9mm_HP_bullet'],
-	armor: items.wooden_armor,
-	helmet: items.wooden_helmet,
-	xp: 125,
-	boss: false,
-	respawnTime: 60 * 2
-}
-const derekBoss: NPC = {
-	type: 'raider',
-	display: 'Derek',
-	health: 200,
-	damage: 40,
-	drops: {
-		common: [items.dereks_shop_key],
-		uncommon: [items['9mm_AP_bullet'], items['5.45x39mm_HP_bullet'], items.SS195LF_bullet],
-		rare: [items.adrenaline],
-		rolls: 2
-	},
-	weapon: items.bobwhite_g2,
-	ammo: items['20-gauge_buckshot'],
-	quotes: [
-		'~*You hear frantic breathing*~',
-		'~*Derek: I fear no man. But that thing, it scares me.*~'
-	],
-	armor: items.aramid_armor,
-	xp: 550,
-	boss: true,
-	respawnTime: 60 * 2
-}
-const theManyBoss: NPC = {
-	type: 'walker',
-	display: 'The Many',
-	health: 500,
-	damage: 60,
-	drops: {
-		common: [items['9mm_AP_bullet'], items.paracetamol, items.aramid_armor, items.aramid_helmet, items['12-gauge_buckshot']],
-		uncommon: [items['9mm_RIP_bullet'], items.duffle_bag, items.steel_armor, items.bobwhite_g2],
-		rare: [items.steel_helmet, items['12-gauge_buckshot']],
-		rolls: 6
-	},
-	quotes: [
-		'~*You see what looks to be a horde of zombies*~',
-		'~*The Many: We are many, we are one.*~',
-		'~*You hear the collective screams of many different zombies*~'
-	],
-	xp: 1000,
-	attackPenetration: 2.0,
-	chanceToBite: 15,
-	boss: true,
-	respawnTime: 60 * 10
-}
 
 export const mall: Location = {
 	display: 'The Mall',
 	icon: '🏪',
 	locationLevel: 3,
-	boss: theManyBoss,
+	boss: {
+		type: 'walker',
+		display: 'The Many',
+		health: 500,
+		damage: 60,
+		drops: {
+			common: [items['9mm_AP_bullet'], items.paracetamol, items.aramid_armor, items.aramid_helmet, items['12-gauge_buckshot']],
+			uncommon: [items['9mm_RIP_bullet'], items.duffle_bag, items.steel_armor, items.bobwhite_g2],
+			rare: [items.steel_helmet, items['12-gauge_buckshot']],
+			rolls: 6
+		},
+		quotes: [
+			'We are many, we are one.',
+			'*you hear the collective screams of many different zombies*'
+		],
+		xp: 1000,
+		attackPenetration: 2.0,
+		chanceToBite: 15,
+		boss: true,
+		respawnTime: 60 * 10
+	},
 	quests: [
 		{
 			type: 'Region',
@@ -194,7 +93,23 @@ export const mall: Location = {
 				},
 				rolls: 1
 			},
-			npc: bloatedWalker,
+			npc: {
+				type: 'walker',
+				display: 'Bloated Walker',
+				health: 50,
+				damage: 35,
+				drops: {
+					common: [items.fire_axe],
+					uncommon: [items.apple],
+					rare: [items.walker_sludge],
+					rolls: 1
+				},
+				xp: 100,
+				chanceToBite: 20,
+				attackPenetration: 2.1,
+				boss: false,
+				respawnTime: 60 * 2
+			},
 			scavengeCooldown: 60
 		},
 		{
@@ -214,7 +129,25 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npc: mediumRaider,
+			npc: {
+				type: 'raider',
+				display: 'Raider',
+				health: 60,
+				damage: 35,
+				drops: {
+					common: [items['9mm_FMJ_bullet']],
+					uncommon: [items.ifak_medkit, items['anti-biotics']],
+					rare: [items['9mm_RIP_bullet'], items.escape_from_fristoe, items.duffle_bag],
+					rolls: 1
+				},
+				weapon: items['glock-17'],
+				ammo: items['9mm_HP_bullet'],
+				armor: items.wooden_armor,
+				helmet: items.wooden_helmet,
+				xp: 125,
+				boss: false,
+				respawnTime: 60 * 2
+			},
 			scavengeCooldown: 60
 		},
 		{
@@ -238,7 +171,23 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npc: mediumCrawler,
+			npc: {
+				type: 'walker',
+				display: 'Crawler',
+				health: 40,
+				damage: 50,
+				drops: {
+					common: [items.compression_bandage],
+					uncommon: [items['9mm_FMJ_bullet']],
+					rare: [items.walker_sludge],
+					rolls: 1
+				},
+				xp: 60,
+				chanceToBite: 25,
+				attackPenetration: 1.9,
+				boss: false,
+				respawnTime: 60 * 2
+			},
 			scavengeCooldown: 60
 		},
 		{
@@ -260,7 +209,7 @@ export const mall: Location = {
 			},
 			requiresKey: [items.dereks_shop_key],
 			keyIsOptional: false,
-			scavengeCooldown: 120
+			scavengeCooldown: 60 * 10
 		},
 		{
 			display: 'Game N Go',
@@ -279,7 +228,24 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npc: psychoRaider,
+			npc: {
+				type: 'raider',
+				display: 'Psycho',
+				health: 40,
+				damage: 30,
+				drops: {
+					common: [items.knife],
+					uncommon: [items.fire_axe, items.splint],
+					rare: [items.hypo_stim, items.duffle_bag],
+					rolls: 1
+				},
+				weapon: items.chainsaw,
+				helmet: items.psycho_mask,
+				usesStimulants: [items.morphine],
+				xp: 125,
+				boss: false,
+				respawnTime: 60 * 2
+			},
 			scavengeCooldown: 60
 		},
 		{
@@ -299,8 +265,29 @@ export const mall: Location = {
 				},
 				rolls: 2
 			},
-			npc: derekBoss,
-			scavengeCooldown: 60
+			npc: {
+				type: 'raider',
+				display: 'Derek',
+				health: 200,
+				damage: 40,
+				drops: {
+					common: [items.dereks_shop_key],
+					uncommon: [items['9mm_AP_bullet'], items['5.45x39mm_HP_bullet'], items.SS195LF_bullet],
+					rare: [items.adrenaline],
+					rolls: 2
+				},
+				weapon: items.bobwhite_g2,
+				ammo: items['20-gauge_buckshot'],
+				quotes: [
+					'~*You hear frantic breathing*~',
+					'~*Derek: I fear no man. But that thing, it scares me.*~'
+				],
+				armor: items.aramid_armor,
+				xp: 550,
+				boss: true,
+				respawnTime: 60 * 20
+			},
+			scavengeCooldown: 60 * 10
 		},
 		{
 			display: 'Florreds Pharmacy',
@@ -321,7 +308,7 @@ export const mall: Location = {
 			},
 			requiresKey: [items.florreds_pharmacy_key],
 			keyIsOptional: false,
-			scavengeCooldown: 60
+			scavengeCooldown: 60 * 2
 		}
 	]
 }

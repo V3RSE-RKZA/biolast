@@ -1,98 +1,37 @@
 import { Location } from '../../types/Locations'
-import { NPC } from '../../types/NPCs'
 import { items } from '../items'
-
-/*
-	npcs that appear in this location
-*/
-const raiderWeak: NPC = {
-	type: 'raider',
-	display: 'Raider',
-	health: 25,
-	damage: 25,
-	drops: {
-		common: [items.bandage],
-		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
-		rare: [items['9mm_FMJ_bullet']],
-		rolls: 1
-	},
-	weapon: items.luger,
-	ammo: items['.22LR_bullet'],
-	armor: items.cloth_armor,
-	helmet: items.cloth_helmet,
-	xp: 40,
-	boss: false,
-	respawnTime: 60 * 2
-}
-const raiderHelmet: NPC = {
-	type: 'raider',
-	display: 'Raider',
-	health: 30,
-	damage: 15,
-	drops: {
-		common: [items.bandage],
-		uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
-		rare: [items['9mm_FMJ_bullet']],
-		rolls: 1
-	},
-	weapon: items.luger,
-	ammo: items['.22LR_bullet'],
-	armor: items.wooden_armor,
-	xp: 40,
-	boss: false,
-	respawnTime: 60 * 2
-}
-const bloatedWalker: NPC = {
-	type: 'walker',
-	display: 'Bloated Walker',
-	health: 50,
-	damage: 35,
-	drops: {
-		common: [items.pitchfork],
-		uncommon: [items.apple, items.corn],
-		rare: [items.fire_axe],
-		rolls: 1
-	},
-	xp: 50,
-	chanceToBite: 15,
-	attackPenetration: 1.3,
-	boss: false,
-	respawnTime: 60 * 2
-}
-const daveTheRedneckBoss: NPC = {
-	type: 'raider',
-	display: 'Dave, The Redneck',
-	health: 185,
-	damage: 20,
-	drops: {
-		common: [items.pitchfork, items.daves_drug_key, items.P320],
-		uncommon: [items.paracetamol, items.farming_guide, items.sledgehammer],
-		rare: [items.gunsafe_code],
-		rolls: 2
-	},
-	weapon: items.saiga_MK,
-	ammo: items['5.45x39mm_FMJ_bullet'],
-	usesStimulants: [items.adrenaline],
-	usesHeals: [items.compression_bandage],
-	quotes: [
-		'~*You hear giggles and crackles...*~',
-		'~*Dave: Did I hear somebody?*~',
-		'~*Dave: buUUUUuUrP*~',
-		'~*Dave: What do you mean, zombies?*~',
-		'~*Dave: Damn pterodactyls eating my crops again.*~'
-	],
-	armor: items.cloth_armor,
-	helmet: items.sauce_pan,
-	xp: 500,
-	boss: true,
-	respawnTime: 60 * 60
-}
 
 export const farm: Location = {
 	display: 'The Farm',
 	icon: '🚜',
 	locationLevel: 2,
-	boss: daveTheRedneckBoss,
+	boss: {
+		type: 'raider',
+		display: 'Dave, The Redneck',
+		health: 185,
+		damage: 20,
+		drops: {
+			common: [items.pitchfork, items.daves_drug_key, items.P320],
+			uncommon: [items.paracetamol, items.farming_guide, items.sledgehammer],
+			rare: [items.gunsafe_code],
+			rolls: 2
+		},
+		weapon: items.saiga_MK,
+		ammo: items['5.45x39mm_FMJ_bullet'],
+		usesStimulants: [items.adrenaline],
+		usesHeals: [items.compression_bandage],
+		quotes: [
+			'Did I hear somebody?',
+			'*buUUUUuUrP*',
+			'What do you mean, zombies?',
+			'Damn pterodactyls eating my crops again.'
+		],
+		armor: items.cloth_armor,
+		helmet: items.sauce_pan,
+		xp: 500,
+		boss: true,
+		respawnTime: 60 * 60
+	},
 	quests: [
 		{
 			type: 'Region',
@@ -139,7 +78,23 @@ export const farm: Location = {
 				},
 				rolls: 2
 			},
-			npc: bloatedWalker,
+			npc: {
+				type: 'walker',
+				display: 'Bloated Walker',
+				health: 50,
+				damage: 35,
+				drops: {
+					common: [items.pitchfork],
+					uncommon: [items.apple, items.corn],
+					rare: [items.fire_axe],
+					rolls: 1
+				},
+				xp: 50,
+				chanceToBite: 15,
+				attackPenetration: 1.3,
+				boss: false,
+				respawnTime: 60 * 2
+			},
 			scavengeCooldown: 60
 		},
 		{
@@ -159,7 +114,25 @@ export const farm: Location = {
 				},
 				rolls: 2
 			},
-			npc: raiderWeak,
+			npc: {
+				type: 'raider',
+				display: 'Raider',
+				health: 25,
+				damage: 25,
+				drops: {
+					common: [items.bandage],
+					uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
+					rare: [items['9mm_FMJ_bullet']],
+					rolls: 1
+				},
+				weapon: items.luger,
+				ammo: items['.22LR_bullet'],
+				armor: items.cloth_armor,
+				helmet: items.cloth_helmet,
+				xp: 40,
+				boss: false,
+				respawnTime: 60 * 2
+			},
 			scavengeCooldown: 60
 		},
 		{
@@ -170,7 +143,7 @@ export const farm: Location = {
 					xp: 5
 				},
 				uncommon: {
-					items: [items.wooden_armor, items.knife, items.cloth_backpack, items.wooden_helmet],
+					items: [items.wooden_armor, items.cloth_backpack, items.wooden_helmet],
 					xp: 10
 				},
 				rare: {
@@ -179,7 +152,24 @@ export const farm: Location = {
 				},
 				rolls: 2
 			},
-			npc: raiderHelmet,
+			npc: {
+				type: 'raider',
+				display: 'Raider',
+				health: 30,
+				damage: 15,
+				drops: {
+					common: [items.bandage],
+					uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
+					rare: [items['9mm_FMJ_bullet']],
+					rolls: 1
+				},
+				weapon: items.luger,
+				ammo: items['.22LR_bullet'],
+				armor: items.wooden_armor,
+				xp: 40,
+				boss: false,
+				respawnTime: 60 * 2
+			},
 			scavengeCooldown: 60
 		},
 		{
@@ -201,7 +191,7 @@ export const farm: Location = {
 			},
 			requiresKey: [items.gunsafe_code],
 			keyIsOptional: false,
-			scavengeCooldown: 60
+			scavengeCooldown: 60 * 10
 		},
 		{
 			display: 'Drug Room',
@@ -222,7 +212,7 @@ export const farm: Location = {
 			},
 			requiresKey: [items.daves_drug_key],
 			keyIsOptional: false,
-			scavengeCooldown: 60
+			scavengeCooldown: 60 * 10
 		}
 	]
 }

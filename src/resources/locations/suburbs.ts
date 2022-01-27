@@ -1,122 +1,62 @@
 import { Location } from '../../types/Locations'
-import { NPC } from '../../types/NPCs'
 import { items } from '../items'
-
-/*
-	npcs that appear in this location
-*/
-const raider1: NPC = {
-	type: 'raider',
-	display: 'Raider',
-	health: 30,
-	damage: 15,
-	drops: {
-		common: [items.bandage, items.splint],
-		uncommon: [items['anti-biotics'], items.makeshift_rifle],
-		rare: [items.makeshift_shell, items.small_pouch],
-		rolls: 1
-	},
-	weapon: items.makeshift_pistol,
-	ammo: items.makeshift_pistol_bullet,
-	armor: items.cloth_armor,
-	xp: 30,
-	boss: false,
-	respawnTime: 60 * 2
-}
-const redHouseWalker: NPC = {
-	type: 'walker',
-	display: 'Walker',
-	health: 20,
-	damage: 15,
-	drops: {
-		common: [items.bandage],
-		uncommon: [items.makeshift_pistol_bullet, items.small_pouch],
-		rare: [items['9mm_FMJ_bullet'], items.walker_goop],
-		rolls: 2
-	},
-	xp: 20,
-	chanceToBite: 0,
-	attackPenetration: 0.1,
-	boss: false,
-	respawnTime: 60 * 2
-}
-const lakeWalker: NPC = {
-	type: 'walker',
-	display: 'Walker',
-	health: 30,
-	damage: 10,
-	drops: {
-		common: [items.bandage, items['.22LR_bullet']],
-		uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.luger],
-		rare: [items.walker_goop],
-		rolls: 1
-	},
-	armor: items.cloth_armor,
-	helmet: items.cloth_helmet,
-	xp: 40,
-	chanceToBite: 0,
-	attackPenetration: 0.1,
-	boss: false,
-	respawnTime: 60 * 2
-}
-const cainTheGravekeeperBoss: NPC = {
-	type: 'raider',
-	display: 'Cain, The Gravekeeper',
-	health: 105,
-	damage: 15,
-	drops: {
-		common: [items.bandage],
-		uncommon: [items.ifak_medkit],
-		rare: [items.sledgehammer, items.bone_armor],
-		rolls: 1
-	},
-	weapon: items.luger,
-	ammo: items['.22LR_bullet'],
-	quotes: [
-		'~*Cain: Life is suffering.*~',
-		'~*Cain: I have a plot specifically made for you.*~',
-		'~*Cain: Do not be afraid of death. Welcome it.*~',
-		'~*Cain: The dead shall not be disturbed.*~'
-	],
-	armor: items.cloth_armor,
-	helmet: items.cloth_helmet,
-	xp: 100,
-	boss: true,
-	respawnTime: 60 * 60
-}
 
 export const suburbs: Location = {
 	display: 'The Suburbs',
 	icon: '🏡',
 	locationLevel: 1,
-	boss: cainTheGravekeeperBoss,
+	boss: {
+		type: 'raider',
+		display: 'Cain, The Gravekeeper',
+		health: 105,
+		damage: 15,
+		drops: {
+			common: [items.bandage],
+			uncommon: [items.ifak_medkit],
+			rare: [items.sledgehammer, items.bone_armor],
+			rolls: 1
+		},
+		weapon: items.luger,
+		ammo: items['.22LR_bullet'],
+		quotes: [
+			'~*Cain: Life is suffering.*~',
+			'~*Cain: I have a plot specifically made for you.*~',
+			'~*Cain: Do not be afraid of death. Welcome it.*~',
+			'~*Cain: The dead shall not be disturbed.*~'
+		],
+		armor: items.cloth_armor,
+		helmet: items.cloth_helmet,
+		xp: 100,
+		boss: true,
+		respawnTime: 60 * 60
+	},
 	quests: [
 		{
 			type: 'Region',
 			id: 'suburbs_key_scavenge_1',
 			questType: 'Scavenge With A Key',
-			progressGoal: 1,
+			progressGoal: 2,
 			key: items.shed_key
 		},
 		{
 			type: 'Region',
 			id: 'suburbs_key_scavenge_2',
 			questType: 'Scavenge With A Key',
-			progressGoal: 2,
+			progressGoal: 3,
 			key: items.shed_key
 		},
 		{
 			type: 'Region',
 			id: 'suburbs_goop_retrieve_1',
 			questType: 'Retrieve Item',
-			progressGoal: 1,
+			progressGoal: 2,
 			item: items.walker_goop
 		},
 		{
 			type: 'Region',
 			id: 'suburbs_goop_retrieve_2',
 			questType: 'Retrieve Item',
-			progressGoal: 2,
+			progressGoal: 3,
 			item: items.walker_goop
 		}
 	],
@@ -157,7 +97,23 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npc: redHouseWalker,
+			npc: {
+				type: 'walker',
+				display: 'Walker',
+				health: 20,
+				damage: 15,
+				drops: {
+					common: [items.bandage],
+					uncommon: [items.makeshift_pistol_bullet, items.small_pouch],
+					rare: [items['9mm_FMJ_bullet'], items.walker_goop],
+					rolls: 2
+				},
+				xp: 20,
+				chanceToBite: 0,
+				attackPenetration: 0.1,
+				boss: false,
+				respawnTime: 60 * 2
+			},
 			scavengeCooldown: 60
 		},
 		{
@@ -177,7 +133,24 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npc: raider1,
+			npc: {
+				type: 'raider',
+				display: 'Raider',
+				health: 30,
+				damage: 15,
+				drops: {
+					common: [items.bandage, items.splint],
+					uncommon: [items['anti-biotics'], items.makeshift_rifle],
+					rare: [items.makeshift_shell, items.small_pouch],
+					rolls: 1
+				},
+				weapon: items.makeshift_pistol,
+				ammo: items.makeshift_pistol_bullet,
+				armor: items.cloth_armor,
+				xp: 30,
+				boss: false,
+				respawnTime: 60 * 4
+			},
 			scavengeCooldown: 60
 		},
 		{
@@ -201,10 +174,28 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npc: lakeWalker,
-			requiresKey: [items.shed_key, items.florreds_pharmacy_key],
+			npc: {
+				type: 'walker',
+				display: 'Walker',
+				health: 30,
+				damage: 10,
+				drops: {
+					common: [items.bandage, items['.22LR_bullet']],
+					uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.luger],
+					rare: [items.walker_goop],
+					rolls: 1
+				},
+				armor: items.cloth_armor,
+				helmet: items.cloth_helmet,
+				xp: 40,
+				chanceToBite: 0,
+				attackPenetration: 0.1,
+				boss: false,
+				respawnTime: 60 * 5
+			},
+			requiresKey: [items.shed_key],
 			keyIsOptional: false,
-			scavengeCooldown: 60
+			scavengeCooldown: 60 * 3
 		},
 		{
 			display: 'Park',
@@ -242,8 +233,26 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npc: lakeWalker,
-			scavengeCooldown: 60
+			npc: {
+				type: 'walker',
+				display: 'Walker',
+				health: 30,
+				damage: 10,
+				drops: {
+					common: [items.bandage, items['.22LR_bullet']],
+					uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.luger],
+					rare: [items.walker_goop],
+					rolls: 1
+				},
+				armor: items.cloth_armor,
+				helmet: items.cloth_helmet,
+				xp: 40,
+				chanceToBite: 0,
+				attackPenetration: 0.1,
+				boss: false,
+				respawnTime: 60 * 5
+			},
+			scavengeCooldown: 60 * 3
 		}
 	]
 }

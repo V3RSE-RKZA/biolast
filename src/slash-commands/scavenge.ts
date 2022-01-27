@@ -1196,7 +1196,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 			.setFooter(`Turn #${turnNumber} / 20 max · 40 seconds to make selection`)
 
 		if (mob.quotes && mob.quotes.length) {
-			duelEmb.setDescription(mob.quotes[Math.floor(Math.random() * mob.quotes.length)])
+			duelEmb.setDescription(`**${mob.display}**: ${mob.quotes[Math.floor(Math.random() * mob.quotes.length)]}`)
 		}
 
 		return duelEmb
