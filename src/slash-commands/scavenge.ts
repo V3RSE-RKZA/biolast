@@ -1036,9 +1036,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 						true)
 					requirements.push(`${icons.cancel} Defeat ${getMobDisplayReference(area.npc, { specific: true, lowerCase: true })}.`)
 
-					if (!area.requiresKey || hasRequiredKey) {
-						scavengeButton = RED_BUTTON(`Fight ${area.npc.display}`, 'scavenge', false, '🗡️')
-					}
+					scavengeButton = RED_BUTTON(`Fight ${area.npc.display}`, 'scavenge', false, '🗡️')
 				}
 				else {
 					areaEmbed.addField('Mob',
