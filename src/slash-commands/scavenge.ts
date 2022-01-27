@@ -878,9 +878,9 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 							lootEmbed = new Embed()
 								.setTitle('__Loot Received__')
 								.setColor(9043800)
-								.setDescription(`${icons.xp_star}***+${npc.xp}** xp!*` +
-									`\n${(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
-										.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : `${getRarityDisplay('Common')} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}`)
+								.setDescription(`${(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
+									.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : `${getRarityDisplay('Common')} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}` +
+									`\n${icons.xp_star}***+${npc.xp}** xp!*`)
 						}
 						else if (!missedPartChoice) {
 							messages[i].push(`${npcDisplayCapitalized} is left with ${formatHealth(npcHealth, npc.health)} **${npcHealth}** health.`)
