@@ -1,4 +1,4 @@
-import { SlashCreator, CommandContext, Message, ComponentType, User, ComponentActionRow, ButtonStyle } from 'slash-create'
+import { SlashCreator, CommandContext, Message, ComponentType, User, ComponentActionRow, ButtonStyle, CommandOptionType } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -58,7 +58,12 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 			name: 'companion',
 			description: 'View your companion stats, assign them to a fetch mission, or complete their fetch mission.',
 			longDescription: 'View your companion stats, assign them to a fetch mission, or complete their fetch mission.',
-			options: [],
+			options: [{
+				type: CommandOptionType.USER,
+				name: 'user',
+				description: 'User to view companion of.',
+				required: false
+			}],
 			category: 'scavenging',
 			guildModsOnly: false,
 			worksInDMs: false,
@@ -73,6 +78,128 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 	}
 
 	async run (ctx: CommandContext): Promise<void> {
+		const member = ctx.members.get(ctx.options.user)
+
+		if (member && member.id !== ctx.user.id) {
+			const userData = await getUserRow(query, member.id)
+
+			if (!userData) {
+				await ctx.send({
+					content: `${icons.warning} **${member.displayName}** does not have an account!`
+				})
+				return
+			}
+
+			const preCompanionRow = await getCompanionRow(query, member.id)
+			const preCompanion = companions.find(c => c.name === preCompanionRow?.type)
+
+			if (!preCompanionRow || !preCompanion) {
+				await ctx.send({
+					content: `${icons.warning} **${member.displayName}** does not have a companion!`
+				})
+				return
+			}
+
+			const preCompanionFetchCD = await getCooldown(query, member.id, 'companion-fetch')
+			const companionEmbed = this.getCompanionEmbed(member, preCompanion, preCompanionRow, preCompanionFetchCD)
+			const components: ComponentActionRow[] = [{
+				type: ComponentType.ACTION_ROW,
+				components: [
+					GRAY_BUTTON('Play', 'play')
+				]
+			}]
+			const companionMessage = await ctx.send({
+				embeds: [companionEmbed.embed],
+				components
+			}) as Message
+
+			const { collector, stopCollector } = this.app.componentCollector.createCollector(companionMessage.id, c => c.user.id === ctx.user.id, 100000)
+
+			collector.on('collect', async buttonCtx => {
+				try {
+					await buttonCtx.acknowledge()
+
+					if (buttonCtx.customID === 'play') {
+						const transaction = await beginTransaction()
+						const companionRow = await getCompanionRow(transaction.query, member.id, true)
+						const playCD = await getCooldown(transaction.query, ctx.user.id, 'other-companion-play', true)
+						const companionFetchCD = await getCooldown(transaction.query, member.id, 'companion-fetch', true)
+
+						if (!companionRow || !preCompanion || companionRow.type !== preCompanion.name) {
+							await transaction.commit()
+							stopCollector()
+
+							await buttonCtx.editParent({
+								content: `${icons.cancel} **${member.displayName}** don't own this companion anymore.`,
+								components: disableAllComponents(components)
+							})
+							return
+						}
+						else if (playCD) {
+							await transaction.commit()
+
+							await buttonCtx.send({
+								content: `${icons.timer} You recently played with a companion.` +
+									` You will have to wait **${playCD}**.`,
+								ephemeral: true
+							})
+							return
+						}
+						else if (companionRow.stress <= 0) {
+							await transaction.commit()
+
+							await buttonCtx.send({
+								content: `${icons.cancel} ${getCompanionDisplay(preCompanion, companionRow, true)} is not stressed!` +
+									' You should only play with companions when they are stressed.',
+								ephemeral: true
+							})
+							return
+						}
+
+						const maxHeal = Math.min(companionRow.stress, 10)
+
+						await createCooldown(transaction.query, ctx.user.id, 'other-companion-play', 5 * 60)
+
+						if (maxHeal > 0) {
+							await lowerStress(transaction.query, member.id, maxHeal)
+						}
+
+						companionRow.stress -= maxHeal
+
+						await transaction.commit()
+
+						await buttonCtx.editParent({
+							content: `${icons.checkmark} You play with ${getCompanionDisplay(preCompanion, companionRow, true)}! Their stress lowers from **${companionRow.stress + maxHeal}** to **${companionRow.stress}**.`,
+							embeds: [this.getCompanionEmbed(member, preCompanion, companionRow, companionFetchCD).embed]
+						})
+					}
+				}
+				catch (err) {
+					logger.warn(err)
+					stopCollector()
+					await buttonCtx.editParent({
+						content: `${icons.cancel} There was an error trying to interact with this companion. Try running the command again.`,
+						components: []
+					})
+				}
+			})
+
+			collector.on('end', async msg => {
+				try {
+					if (msg === 'time') {
+						await ctx.editOriginal({
+							content: 'Buttons timed out.',
+							components: disableAllComponents(components)
+						})
+					}
+				}
+				catch (err) {
+					logger.error(err)
+				}
+			})
+			return
+		}
+
 		const preTransaction = await beginTransaction()
 		const preCompanionRow = await getCompanionRow(preTransaction.query, ctx.user.id, true)
 		const preCompanionFetchCD = await getCooldown(preTransaction.query, ctx.user.id, 'companion-fetch', true)
@@ -116,7 +243,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 		else {
 			await preTransaction.commit()
 
-			const companionEmbed = this.getCompanionEmbed(ctx.user, preCompanion, preCompanionRow, preCompanionFetchCD)
+			const companionEmbed = this.getCompanionEmbed(ctx.member || ctx.user, preCompanion, preCompanionRow, preCompanionFetchCD)
 			components = [{
 				type: ComponentType.ACTION_ROW,
 				components: [
@@ -235,7 +362,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 					await removeMoney(transaction.query, ctx.user.id, companionToHire.price)
 					await transaction.commit()
 
-					const companionEmbed = this.getCompanionEmbed(ctx.user, companionToHire, companionRow)
+					const companionEmbed = this.getCompanionEmbed(ctx.member || ctx.user, companionToHire, companionRow)
 					components = [{
 						type: ComponentType.ACTION_ROW,
 						components: [
@@ -835,7 +962,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						}]
 
 						await buttonCtx.editParent({
-							embeds: [this.getCompanionEmbed(ctx.user, preCompanion, companionRow).embed],
+							embeds: [this.getCompanionEmbed(ctx.member || ctx.user, preCompanion, companionRow).embed],
 							components
 						})
 						await buttonCtx.send({
@@ -848,7 +975,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						await transaction.commit()
 
 						await buttonCtx.editParent({
-							embeds: [this.getCompanionEmbed(ctx.user, preCompanion, companionRow, companionFetchCD).embed]
+							embeds: [this.getCompanionEmbed(ctx.member || ctx.user, preCompanion, companionRow, companionFetchCD).embed]
 						})
 						await buttonCtx.send({
 							content: `${icons.cancel} Your companion still fetching. They will finish their fetch mission in about **${companionFetchCD}**.`,
