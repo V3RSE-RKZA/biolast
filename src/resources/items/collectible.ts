@@ -61,7 +61,7 @@ export const collectible = questObject({
 		name: 'escape_from_fristoe',
 		aliases: ['fristoe'],
 		description: 'The most popular first-person shooter game of the pre-apocalyptic world!',
-		icon: '<:quest_item:886561850525896724>',
+		icon: '<:xp_star_pixel:935658011379257375>',
 		sellPrice: 1000,
 		slotsUsed: 2,
 		itemLevel: 7

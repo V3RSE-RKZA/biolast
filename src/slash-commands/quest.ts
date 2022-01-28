@@ -96,7 +96,7 @@ class QuestCommand extends CustomSlashCommand<'quest'> {
 			const xpReward = this.getQuestXpReward(preUserData.level)
 			const moneyReward = assignedQuest.type === 'Region' && Math.random() < 0.75 ? this.getQuestMoneyReward(preUserData.locationLevel) : undefined
 			const itemReward = assignedQuest.type === 'Region' && Math.random() < 0.5 ? this.getQuestItemReward(preUserData.locationLevel) : undefined
-			const rewardsDisplay = [`🌟 ${formatNumber(xpReward)} XP`]
+			const rewardsDisplay = [`${icons.xp_star} ${formatNumber(xpReward)} XP`]
 
 			if (moneyReward) {
 				rewardsDisplay.push(formatMoney(moneyReward))
@@ -409,7 +409,7 @@ class QuestCommand extends CustomSlashCommand<'quest'> {
 	}
 
 	getRewardsString (questRow: QuestRow, itemRewardRow?: ItemRow): string {
-		const display = [`🌟 ${formatNumber(questRow.xpReward)} XP`]
+		const display = [`${icons.xp_star} ${formatNumber(questRow.xpReward)} XP`]
 		const rewardItem = allItems.find(i => i.name === questRow.itemReward)
 
 		if (questRow.moneyReward) {

@@ -342,9 +342,6 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		await transaction.commit()
 
 		const npc = areaChoice.npc
-		const finalMessage = `${icons.danger} You ${hasRequiredKey ?
-			`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
-			''}try and scavenge **${areaChoice.display}** but **ENCOUNTER A ${npc.type.toUpperCase()}!**`
 		const playerChoices = new Map<string, PlayerChoice>()
 		const playerStimulants: Stimulant[] = []
 		const playerAfflictions: Affliction[] = []
@@ -357,7 +354,9 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		this.app.channelsWithActiveDuel.add(ctx.channelID)
 
 		botMessage = await this.sendMessage(ctx, {
-			content: finalMessage,
+			content: `${icons.danger} <@${ctx.user.id}>, You ${hasRequiredKey ?
+				`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
+				''}try and scavenge **${areaChoice.display}** but **ENCOUNTER A ${npc.type.toUpperCase()}!**`,
 			embeds: [
 				this.getMobDuelEmbed(
 					ctx.member,

@@ -10,7 +10,7 @@ import { disableAllComponents } from '../utils/messageUtils'
 
 const lbCategories = [
 	{ icon: icons.copper, category: 'Richest Users', description: 'View the richest players.' },
-	{ icon: '🌟', category: 'Highest Level', description: 'View players with the highest level.' },
+	{ icon: icons.xp_star, category: 'Highest Level', description: 'View players with the highest level.' },
 	{ icon: '🔖', category: 'Quest Completions', description: 'View players who have completed the most quests.' },
 	{ icon: icons.crosshair, category: 'Player Kills', description: 'View players who have killed the most players.' },
 	{ icon: '💀', category: 'Mob Kills', description: 'View players who have killed the most mobs (including bosses).' },
