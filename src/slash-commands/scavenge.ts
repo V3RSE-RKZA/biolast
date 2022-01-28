@@ -25,6 +25,7 @@ import { attackPlayer, getMobChoice, getMobDisplay, getMobDrop, getMobDisplayRef
 import { createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
 import { allQuests } from '../resources/quests'
 import { disableAllComponents } from '../utils/messageUtils'
+import SellCommand from './sell'
 
 class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 	constructor (creator: SlashCreator, app: App) {
@@ -100,10 +101,35 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		const preBackpackRows = await getUserBackpack(query, ctx.user.id)
 
 		if (!backpackHasSpace(preBackpackRows, 0)) {
-			await this.sendMessage(ctx, {
+			botMessage = await this.sendMessage(ctx, {
 				content: `${icons.warning} You are overweight, you will need to clear some space in your inventory before scavenging.`,
-				components: []
-			}, botMessage)
+				components: [{
+					type: ComponentType.ACTION_ROW,
+					components: [GRAY_BUTTON('Sell Items', 'sell')]
+				}]
+			}, botMessage) as Message
+
+			try {
+				const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id))[0]
+
+				if (confirmed.customID === 'sell') {
+					const sellCommand = new SellCommand(this.app.slashCreator, this.app)
+
+					await confirmed.editParent({
+						components: [{
+							type: ComponentType.ACTION_ROW,
+							components: [GREEN_BUTTON('Sell Items', 'sell')]
+						}]
+					})
+					await sellCommand.run(ctx)
+				}
+			}
+			catch (err) {
+				// continue
+				await botMessage.edit({
+					components: disableAllComponents(botMessage.components)
+				})
+			}
 			return
 		}
 

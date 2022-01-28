@@ -441,9 +441,11 @@ class App {
 		}
 		catch (err) {
 			logger.error(err)
-			await ctx.send({
+			ctx.send({
 				content: 'Command failed to execute... If this keeps happening please let a bot dev know!!',
 				flags: InteractionResponseFlags.EPHEMERAL
+			}).catch(msgErr => {
+				logger.warn(msgErr)
 			})
 		}
 	}

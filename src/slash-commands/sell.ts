@@ -48,13 +48,13 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 	async run (ctx: CommandContext): Promise<void> {
 		let pages: { page: Embed, items: ItemWithRow<ItemRow>[] }[]
 
-		if (ctx.options.inventory) {
-			const userBackpack = await getUserBackpack(query, ctx.user.id)
-			pages = this.generatePages(userBackpack)
-		}
-		else {
+		if (ctx.options.stash) {
 			const userStash = await getUserStash(query, ctx.user.id)
 			pages = this.generatePages(userStash)
+		}
+		else {
+			const userBackpack = await getUserBackpack(query, ctx.user.id)
+			pages = this.generatePages(userBackpack)
 		}
 
 		let components: ComponentActionRow[] = []
