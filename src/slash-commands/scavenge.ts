@@ -118,7 +118,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 					await confirmed.editParent({
 						components: [{
 							type: ComponentType.ACTION_ROW,
-							components: [GREEN_BUTTON('Sell Items', 'sell')]
+							components: [GREEN_BUTTON('Sell Items', 'sell', true)]
 						}]
 					})
 					await sellCommand.run(ctx)
