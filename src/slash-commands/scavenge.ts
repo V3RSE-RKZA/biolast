@@ -1023,7 +1023,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 			const areaCD = await getCooldown(query, ctx.user.id, `scavenge-${location.display}-${area.display}`)
 			const hasRequiredKey = sortItemsByDurability(userBackpack.items, true).reverse().find(itm => area.requiresKey?.some(key => itm.item.name === key.name))
 			const areaEmbed = new Embed()
-				.setTitle(area.display)
+				.setTitle(`${location.display} - ${area.display}`)
 			const requirements = []
 			let scavengeButton = GREEN_BUTTON('Scavenge', 'scavenge')
 			let mobCD

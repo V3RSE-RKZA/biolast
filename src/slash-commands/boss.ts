@@ -736,7 +736,13 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 							const helmetReceiver = players[Math.floor(Math.random() * players.length)].member.id
 
 							messages[i].push(`☠️ ${npcDisplayName} **DIED!**`)
-							msgContent = `${combineArrayWithAnd(players.map(p => `<@${p.member.id}>`))} unlocked a new region! You can now travel to ${combineArrayWithAnd(nextLocation.map(l => `**${l.display}**`))}.`
+
+							if (players.every(p => p.data.locationLevel <= location.locationLevel)) {
+								msgContent = `${players.map(p => `<@${p.member.id}>`).join(' ')}, You have unlocked a new region! You can now travel to ${combineArrayWithAnd(nextLocation.map(l => `**${l.display}**`))}.`
+							}
+							else {
+								msgContent = `${players.map(p => `<@${p.member.id}>`).join(' ')}, You have defeated **${location.boss.display}**!`
+							}
 
 							for (const player of players) {
 								const userData = (await getUserRow(atkTransaction.query, player.member.id, true))!
