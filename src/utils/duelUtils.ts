@@ -235,7 +235,6 @@ export function awaitPlayerChoices (
 	return new Promise<void>((resolve, reject) => {
 		const turnCollector = componentCollector.createCollector(botMessage.id, i => players.some(p => p.member.id === i.user.id), 40000)
 		const actionCollectors: CollectorObject[] = []
-		const lockedPlayers: string[] = []
 
 		turnCollector.collector.on('collect', async actionCtx => {
 			try {
@@ -248,16 +247,7 @@ export function awaitPlayerChoices (
 						content: `${icons.danger} You have already selected \`${playerChoice.choice}\` this turn. Currently waiting for ${combineArrayWithAnd(otherPlayerIDs.map(p => `<@${p}>`))} to select an action.`
 					})
 				}
-				else if (lockedPlayers.includes(actionCtx.user.id)) {
-					await actionCtx.send({
-						ephemeral: true,
-						content: `${icons.danger} You cannot change your action after you have already selected one.` +
-							' You must complete your chosen action within **40 seconds** or your turn will be skipped.'
-					})
-				}
 				else if (actionCtx.customID === 'attack') {
-					lockedPlayers.push(actionCtx.user.id)
-
 					await actionCtx.acknowledge()
 
 					const preSelectPlayerBackpackRows = await getUserBackpack(query, actionCtx.user.id)
@@ -318,7 +308,11 @@ export function awaitPlayerChoices (
 						try {
 							await attackCtx.acknowledge()
 
-							if (attackCtx.customID === 'weapon') {
+							if (playerChoices.get(attackCtx.user.id)) {
+								attackCollector.stopCollector('selected')
+								return
+							}
+							else if (attackCtx.customID === 'weapon') {
 								const weaponItemRow = preSelectPlayerInventory.items.find(i => i.row.id.toString() === attackCtx.values[0])
 								const weaponItem = weaponItemRow?.item
 
@@ -520,7 +514,17 @@ export function awaitPlayerChoices (
 						try {
 							if (msg === 'time') {
 								await attackMessage.edit({
-									content: `${icons.timer} You ran out of time to complete this attack. Your turn has been skipped.`,
+									content: `${icons.timer} Action selection for this turn has expired.`,
+									components: [{
+										type: ComponentType.ACTION_ROW,
+										components: disableAllComponents(components)
+									}]
+								})
+								return
+							}
+							else if (msg === 'selected') {
+								await attackMessage.edit({
+									content: `${icons.timer} You have already chosen an action.`,
 									components: [{
 										type: ComponentType.ACTION_ROW,
 										components: disableAllComponents(components)
@@ -574,9 +578,6 @@ export function awaitPlayerChoices (
 						return
 					}
 
-					// valid heal, lock in action choice
-					lockedPlayers.push(actionCtx.user.id)
-
 					const components: ComponentSelectMenu[] = [
 						{
 							type: ComponentType.SELECT,
@@ -621,7 +622,11 @@ export function awaitPlayerChoices (
 
 							await healCtx.acknowledge()
 
-							if (!healItemRow) {
+							if (playerChoices.get(healCtx.user.id)) {
+								healCollector.stopCollector('selected')
+								return
+							}
+							else if (!healItemRow) {
 								await healMessage.edit({
 									content: `${icons.danger} Item not found in your inventory. Please select another item:`
 								})
@@ -648,7 +653,17 @@ export function awaitPlayerChoices (
 						try {
 							if (msg === 'time') {
 								await healMessage.edit({
-									content: `${icons.timer} You ran out of time to select an item. Your turn has been skipped.`,
+									content: `${icons.timer} Action selection for this turn has expired.`,
+									components: [{
+										type: ComponentType.ACTION_ROW,
+										components: disableAllComponents(components)
+									}]
+								})
+								return
+							}
+							else if (msg === 'selected') {
+								await healMessage.edit({
+									content: `${icons.timer} You have already chosen an action.`,
 									components: [{
 										type: ComponentType.ACTION_ROW,
 										components: disableAllComponents(components)
@@ -708,9 +723,6 @@ export function awaitPlayerChoices (
 						return
 					}
 
-					// valid stimulant, lock in action choice
-					lockedPlayers.push(actionCtx.user.id)
-
 					const components: ComponentSelectMenu[] = [
 						{
 							type: ComponentType.SELECT,
@@ -754,7 +766,11 @@ export function awaitPlayerChoices (
 
 							await stimCtx.acknowledge()
 
-							if (!stimItemRow) {
+							if (playerChoices.get(stimCtx.user.id)) {
+								stimCollector.stopCollector('selected')
+								return
+							}
+							else if (!stimItemRow) {
 								await stimMessage.edit({
 									content: `${icons.danger} Item not found in your inventory. Please select another item:`
 								})
@@ -781,7 +797,17 @@ export function awaitPlayerChoices (
 						try {
 							if (msg === 'time') {
 								await stimMessage.edit({
-									content: `${icons.timer} You ran out of time to select an item. Your turn has been skipped.`,
+									content: `${icons.timer} Action selection for this turn has expired.`,
+									components: [{
+										type: ComponentType.ACTION_ROW,
+										components: disableAllComponents(components)
+									}]
+								})
+								return
+							}
+							else if (msg === 'selected') {
+								await stimMessage.edit({
+									content: `${icons.timer} You have already chosen an action.`,
 									components: [{
 										type: ComponentType.ACTION_ROW,
 										components: disableAllComponents(components)
@@ -809,8 +835,6 @@ export function awaitPlayerChoices (
 					})
 				}
 				else if (actionCtx.customID === 'flee') {
-					lockedPlayers.push(actionCtx.user.id)
-
 					await actionCtx.acknowledge()
 
 					playerChoices.set(actionCtx.user.id, {
