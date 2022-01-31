@@ -400,6 +400,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 								if (!players.length) {
 									// all players died, end the duel
 									duelIsActive = false
+									this.app.channelsWithActiveDuel.delete(ctx.channelID)
 									break
 								}
 							}
