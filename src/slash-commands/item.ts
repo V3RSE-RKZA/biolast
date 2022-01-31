@@ -632,14 +632,14 @@ class ItemCommand extends CustomSlashCommand<'item'> {
 		const itemSearch = allItems.filter(itm => itm.name.toLowerCase().includes(search) || itm.type.toLowerCase().includes(search))
 
 		if (itemSearch.length) {
-			await ctx.sendResults(itemSearch.slice(0, 25).map(itm => ({ name: `${itm.type} - ${getItemNameDisplay(itm)}`, value: itm.name })))
+			await ctx.sendResults(itemSearch.slice(0, 25).map(itm => ({ name: `${itm.type} - ${getItemNameDisplay(itm)}`, value: getItemNameDisplay(itm) })))
 		}
 		else {
 			const related = itemCorrector.getWord(search, 5)
 			const relatedItem = related && allItems.find(i => i.name.toLowerCase() === related || i.aliases.map(a => a.toLowerCase()).includes(related))
 
 			if (relatedItem) {
-				await ctx.sendResults([{ name: `${relatedItem.type} - ${getItemNameDisplay(relatedItem)}`, value: relatedItem.name }])
+				await ctx.sendResults([{ name: `${relatedItem.type} - ${getItemNameDisplay(relatedItem)}`, value: getItemNameDisplay(relatedItem) }])
 			}
 			else {
 				await ctx.sendResults([])
