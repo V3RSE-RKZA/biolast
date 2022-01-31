@@ -11,7 +11,7 @@ import { beginTransaction } from '../utils/db/mysql'
 import { addMoney, addXp, getUserRow, increaseQuestsCompleted } from '../utils/db/players'
 import { createQuest, deleteQuest, getUserQuest, increaseProgress } from '../utils/db/quests'
 import { formatMoney, formatNumber, formatRedBar } from '../utils/stringUtils'
-import { backpackHasSpace, getItemDisplay, getItems } from '../utils/itemUtils'
+import { backpackHasSpace, getItemDisplay, getItemNameDisplay, getItems } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { SideQuest, RegionQuest } from '../types/Quests'
 import { disableAllComponents } from '../utils/messageUtils'
@@ -467,7 +467,7 @@ class QuestCommand extends CustomSlashCommand<'quest'> {
 
 			return {
 				type: ComponentType.BUTTON,
-				label: `Turn in 1x ${quest.item.name}`,
+				label: `Turn in 1x ${getItemNameDisplay(quest.item)}`,
 				emoji: iconID ? {
 					id: iconID[1],
 					name: 'item'
