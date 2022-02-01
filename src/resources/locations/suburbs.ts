@@ -19,10 +19,12 @@ export const suburbs: Location = {
 		weapon: items.luger,
 		ammo: items['.22LR_bullet'],
 		quotes: [
-			'~*Cain: Life is suffering.*~',
-			'~*Cain: I have a plot specifically made for you.*~',
-			'~*Cain: Do not be afraid of death. Welcome it.*~',
-			'~*Cain: The dead shall not be disturbed.*~'
+			'I will lay you all to rest.',
+			'I have a plot specifically made for you.',
+			'Do not be afraid of death. Welcome it.',
+			'The dead shall not be disturbed.',
+			'The world you and I once knew is long gone.',
+			'You dare slaughter my brothers and sisters with no remorse?'
 		],
 		armor: items.cloth_armor,
 		helmet: items.cloth_helmet,
@@ -100,7 +102,7 @@ export const suburbs: Location = {
 			npc: {
 				type: 'walker',
 				display: 'Walker',
-				health: 20,
+				health: 22,
 				damage: 15,
 				drops: {
 					common: [items.bandage],
@@ -110,9 +112,9 @@ export const suburbs: Location = {
 				},
 				xp: 20,
 				chanceToBite: 0,
-				attackPenetration: 0.1,
+				attackPenetration: 0.3,
 				boss: false,
-				respawnTime: 60 * 2
+				respawnTime: 60 * 4
 			},
 			scavengeCooldown: 60
 		},
@@ -134,20 +136,19 @@ export const suburbs: Location = {
 				rolls: 2
 			},
 			npc: {
-				type: 'raider',
-				display: 'Raider',
-				health: 30,
+				type: 'walker',
+				display: 'Crawler',
+				health: 20,
 				damage: 15,
 				drops: {
-					common: [items.bandage, items.splint],
+					common: [items.makeshift_pistol, items.makeshift_pistol_bullet, items.cloth_armor],
 					uncommon: [items['anti-biotics'], items.makeshift_rifle],
-					rare: [items.makeshift_shell, items.small_pouch],
-					rolls: 1
+					rare: [items.makeshift_shell, items.small_pouch, items.walker_goop],
+					rolls: 2
 				},
-				weapon: items.makeshift_pistol,
-				ammo: items.makeshift_pistol_bullet,
-				armor: items.cloth_armor,
-				xp: 30,
+				xp: 20,
+				chanceToBite: 0,
+				attackPenetration: 0.1,
 				boss: false,
 				respawnTime: 60 * 4
 			},
@@ -191,11 +192,11 @@ export const suburbs: Location = {
 				chanceToBite: 0,
 				attackPenetration: 0.1,
 				boss: false,
-				respawnTime: 60 * 5
+				respawnTime: 60 * 4
 			},
 			requiresKey: [items.shed_key],
 			keyIsOptional: false,
-			scavengeCooldown: 60 * 3
+			scavengeCooldown: 60 * 2
 		},
 		{
 			display: 'Park',
@@ -250,9 +251,9 @@ export const suburbs: Location = {
 				chanceToBite: 0,
 				attackPenetration: 0.1,
 				boss: false,
-				respawnTime: 60 * 5
+				respawnTime: 60 * 4
 			},
-			scavengeCooldown: 60 * 3
+			scavengeCooldown: 60 * 2
 		}
 	]
 }
