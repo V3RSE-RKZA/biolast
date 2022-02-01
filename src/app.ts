@@ -315,14 +315,15 @@ class App {
 					const erisUser = await this.fetchUser(ctx.user.id)
 					if (erisUser) {
 						messageUser(erisUser, {
-							content: '**Welcome to `project z???`**\n\n' +
-								'You are a scavenger just trying to survive in the middle of an apocalypse. You need to explore areas and collect as much loot as you can all while ' +
-								'making sure you aren\'t killed. It\'s survival of the fittest, other scavengers will try to kill you for your loot. You need to find weapons and armor ' +
-								'to protect yourself with. Scavengers aren\'t the only thing trying to get you though, watch out for walkers and heavily armed raiders.\n\n' +
-								'You have a `stash` and an `inventory` for your items. Whenever you enter a duel, you will be able to use whatever items in your `inventory` to fight. ' +
-								'**If you die in a duel, you will lose all the items in your inventory.**\n\n' +
-								`I've put some items in your \`inventory\` to help you get started: **1x** ${getItemDisplay(items.wooden_bat)}, **1x** ${getItemDisplay(items.bandage)}\n\n` +
-								'Use the `scavenge` command to start searching for loot. **Good luck!** - 💙 blobfysh'
+							content: `${icons.biohazard} __**Welcome to Biolast**__` +
+								'\nYou\'ve been holed up in your house for weeks since the start of an apocalypse. Unfortunately, supplies have started running low. ' +
+								'You\'ll need to explore and search for useful items all while making sure you aren\'t killed. ' +
+								'Find weapons and armor to protect yourself with, there are monsters around every corner.' +
+								`\n\n*You grab the last of your supplies and head out the door:* **1x** ${getItemDisplay(items.wooden_bat)}, **1x** ${getItemDisplay(items.ifak_medkit)}` +
+								'\n\n__**Game Mechanics**__' +
+								'\nYou have a `stash` and an `inventory` for your items. Whenever you enter a fight, you will be able to use whatever items in your `inventory` to fight. ' +
+								`${icons.warning} **If you die, you will lose all of the items in your inventory.**` +
+								'\n\nUse the `/scavenge` command to start searching for loot. **Good luck!** - 💙 blobfysh'
 						})
 					}
 				}
