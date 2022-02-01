@@ -6,7 +6,7 @@ import Corrector from '../structures/Corrector'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { Item } from '../types/Items'
-import { ItemRow, ItemWithRow, ShopItemRow } from '../types/mysql'
+import { ItemRow, ItemWithRow, ShopItemRow, UserRow } from '../types/mysql'
 import { getItem } from '../utils/argParsers'
 import { CONFIRM_BUTTONS, NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
 import { addItemToBackpack, getAllShopItems, getShopItem, getUserBackpack, removeItemFromShop } from '../utils/db/items'
@@ -50,6 +50,7 @@ class MarketCommand extends CustomSlashCommand<'market'> {
 
 	async run (ctx: CommandContext): Promise<void> {
 		const searchedItem = getItem([ctx.options.item])
+		const preUserData = (await getUserRow(query, ctx.user.id))!
 		let shopItems
 		let pages
 		let page = 0
@@ -69,13 +70,12 @@ class MarketCommand extends CustomSlashCommand<'market'> {
 
 			shopItems = (await getAllShopItems(query))
 				.filter(i => i.item === searchedItem.name)
-			pages = this.generatePages(shopItems, searchedItem)
+			pages = this.generatePages(shopItems, preUserData, searchedItem)
 		}
 		else {
-			const preUserData = (await getUserRow(query, ctx.user.id))!
 			shopItems = (await getAllShopItems(query))
 				.filter(row => (allItems.find(i => i.name === row.item)?.itemLevel || 1) <= preUserData.level)
-			pages = this.generatePages(shopItems)
+			pages = this.generatePages(shopItems, preUserData)
 		}
 
 		const preComponents: ComponentActionRow[] = []
@@ -401,7 +401,7 @@ class MarketCommand extends CustomSlashCommand<'market'> {
 		return Math.floor(getItemPrice(item, itemRow) * this.app.currentShopSellMultiplier)
 	}
 
-	generatePages (rows: ShopItemRow[], searchedItem?: Item): { page: Embed, items: ItemWithRow<ShopItemRow>[] }[] {
+	generatePages (rows: ShopItemRow[], userData: UserRow, searchedItem?: Item): { page: Embed, items: ItemWithRow<ShopItemRow>[] }[] {
 		const itemData = sortItemsByLevel(getItems(rows).items, true)
 		const pages = []
 		const maxPage = Math.ceil(itemData.length / ITEMS_PER_PAGE) || 1
@@ -415,6 +415,7 @@ class MarketCommand extends CustomSlashCommand<'market'> {
 				.setDescription(`**${searchedItem ?
 					`Market Results For: ${getItemDisplay(searchedItem)}` : 'Global Market Sales'}**` +
 					`\n\n${icons.information} Use the selection menu to purchase items.\n${icons.warning} These deals will expire after 1 day.` +
+					`\n\n__**Current Balance**__\n${formatMoney(userData.money)}` +
 					'\n\n__**Items Available**__ (Sorted best to worst)' +
 					`\n${filteredItems.map(itm => `**Item**: ${getItemDisplay(itm.item, itm.row)}\n**Listed**: <t:${itm.row.createdAt.getTime() / 1000}:R>\n**Price**: ${formatMoney(itm.row.price)}`).join('\n\n') ||
 					`There are no ${searchedItem ? `${getItemDisplay(searchedItem)}'s` : 'items'} available right now. When a player sells an item, you will see it for sale here.`}`)
