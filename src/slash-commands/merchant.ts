@@ -39,8 +39,8 @@ class MerchantCommand extends CustomSlashCommand<'merchant'> {
 
 	async run (ctx: CommandContext): Promise<void> {
 		const preUserData = (await getUserRow(query, ctx.user.id))!
-		const pages = this.generatePages(preUserData)
 		const preComponents: ComponentActionRow[] = []
+		let pages = this.generatePages(preUserData)
 		let page = 0
 
 		if (pages[0].deals.length) {
@@ -270,6 +270,11 @@ class MerchantCommand extends CustomSlashCommand<'merchant'> {
 							await removeMoney(transaction.query, ctx.user.id, deal.price)
 							await transaction.commit()
 
+							userData.money -= deal.price
+							pages = this.generatePages(userData)
+							await botMessage.edit({
+								embeds: [pages[page].page.embed]
+							})
 							await confirmed.editParent({
 								content: `You hand over ${formatMoney(deal.price)} in exchange for:\n\n${itemsReceived.join('\n')}.` +
 								`\n\n${icons.merchant} **Guppy the Merchant**: thanks for the trade! best of luck out there.`,
@@ -438,7 +443,8 @@ class MerchantCommand extends CustomSlashCommand<'merchant'> {
 			const filtered = sortedTrades.slice(indexFirst, indexLast)
 			const availableTrades = filtered.filter(t => t.locationLevel <= userData.locationLevel)
 			const lockedTrades = filtered.filter(t => t.locationLevel > userData.locationLevel)
-			let description = `${icons.merchant} **Guppy the Merchant**: ${this.getMerchantQuote(userData.locationLevel)}`
+			let description = `${icons.merchant} **Guppy the Merchant**: ${this.getMerchantQuote(userData.locationLevel)}` +
+				`\n\n__**Current Balance**__\n${formatMoney(userData.money)}`
 
 			const embed = new Embed()
 
