@@ -211,7 +211,7 @@ export const station: Location = {
 				rolls: 3
 			},
 			requiresKey: [items.dereks_shop_key],
-			keyIsOptional: false,
+			keyUsedToFightNPC: false,
 			scavengeCooldown: 60
 		},
 		{
@@ -252,7 +252,7 @@ export const station: Location = {
 				rolls: 2
 			},
 			requiresKey: [items.florreds_pharmacy_key],
-			keyIsOptional: false,
+			keyUsedToFightNPC: false,
 			scavengeCooldown: 60
 		}
 	]

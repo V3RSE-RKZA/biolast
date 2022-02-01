@@ -79,12 +79,11 @@ interface AreaBase {
 	requiresKey?: Item[]
 
 	/**
-	 * Whether or not the required key to scavenge this area is optional.
+	 * Whether or not the required key to scavenge this area is required to FIGHT the npc.
 	 *
-	 * If set to true and the user scavenges with the key, they will receive an
-	 * item from the special loot pool
+	 * If set to true, the user must have key to fight the npc. If they kill NPC they can scavenge the area without needing the key
 	 */
-	keyIsOptional?: boolean
+	keyUsedToFightNPC?: boolean
 
 	/**
 	 * Image URL representing the area (shown in /scavenge command menu)
@@ -93,27 +92,7 @@ interface AreaBase {
 }
 interface KeyArea extends AreaBase {
 	requiresKey: Item[]
-	keyIsOptional: boolean
-}
-interface RequiredKeyArea extends KeyArea {
-	keyIsOptional: false
-	requiresKey: Item[]
-}
-interface OptionalKeyArea extends KeyArea {
-	keyIsOptional: true
-	requiresKey: Item[]
-
-	/**
-	 * Loot pool if user scavenges with the special key
-	 */
-	specialLoot: {
-		items: Item[]
-
-		/**
-		 * The amount of xp for rolling this loot drop
-		 */
-		xp: number
-	}
+	keyUsedToFightNPC: boolean
 }
 
 interface FreeLootArea extends AreaBase {
@@ -122,7 +101,7 @@ interface FreeLootArea extends AreaBase {
 
 export type LocationLevel = 1 | 2 | 3 | 4
 
-export type Area = RequiredKeyArea | OptionalKeyArea | FreeLootArea
+export type Area = KeyArea | FreeLootArea
 
 export interface Location {
 	display: string

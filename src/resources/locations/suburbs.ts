@@ -195,7 +195,7 @@ export const suburbs: Location = {
 				respawnTime: 60 * 4
 			},
 			requiresKey: [items.shed_key],
-			keyIsOptional: false,
+			keyUsedToFightNPC: true,
 			scavengeCooldown: 60 * 2
 		},
 		{

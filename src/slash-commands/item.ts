@@ -9,7 +9,7 @@ import { Ammunition, Item, ItemType } from '../types/Items'
 import { getItem } from '../utils/argParsers'
 import { getAttachments, getItemByID, getUserBackpack, getUserStash } from '../utils/db/items'
 import { query } from '../utils/db/mysql'
-import { combineArrayWithOr, formatMoney, getAfflictionEmoji } from '../utils/stringUtils'
+import { formatMoney, getAfflictionEmoji } from '../utils/stringUtils'
 import { getItemDisplay, getItemNameDisplay, getItems, sortItemsByAmmo, sortItemsByLevel } from '../utils/itemUtils'
 import { allLocations } from '../resources/locations'
 import { getEffectsDisplay } from '../utils/playerUtils'
@@ -311,9 +311,6 @@ class ItemCommand extends CustomSlashCommand<'item'> {
 							}
 							else if (area.loot.rarest?.items.find(i => i.name === itemFixed.name)) {
 								obtainedFrom[loc.display].push(`Very rarely found from scavenging **${area.display}**.`)
-							}
-							else if (area.requiresKey && area.keyIsOptional && area.specialLoot.items.find(i => i.name === itemFixed.name)) {
-								obtainedFrom[loc.display].push(`Commonly found from scavenging **${area.display}** if you have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))}.`)
 							}
 
 							if (

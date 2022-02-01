@@ -204,7 +204,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		const preUserQuest = await getUserQuest(transaction.query, ctx.user.id, true)
 		const backpackData = getItems(backpackRows)
 		const userEquips = getEquips(backpackRows)
-		const keysRequired = areaChoice.requiresKey
+		const keysRequired = !areaChoice.keyUsedToFightNPC || (areaChoice.npc && !mobKilledCD) ? areaChoice.requiresKey : undefined
 		const hasRequiredKey = sortItemsByDurability(backpackData.items, true).reverse().find(i => keysRequired?.some(key => i.item.name === key.name))
 		const backpackLimit = getBackpackLimit(userEquips.backpack?.item)
 
@@ -224,6 +224,27 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 				embeds: []
 			}, botMessage)
 			return
+		}
+
+		else if (keysRequired && !hasRequiredKey) {
+			await transaction.commit()
+
+			await this.sendMessage(ctx, {
+				content: `${icons.information} You need a ${combineArrayWithOr(keysRequired.map(key => getItemDisplay(key)))} to scavenge **${areaChoice.display}**.`,
+				components: [],
+				embeds: []
+			}, botMessage)
+			return
+		}
+
+		// lower durability or remove key
+		else if (hasRequiredKey) {
+			if (!hasRequiredKey.row.durability || hasRequiredKey.row.durability - 1 <= 0) {
+				await deleteItem(transaction.query, hasRequiredKey.row.id)
+			}
+			else {
+				await lowerItemDurability(transaction.query, hasRequiredKey.row.id, 1)
+			}
 		}
 
 		if (preUserQuest?.questType === 'Scavenge With A Key' || preUserQuest?.questType === 'Scavenge') {
@@ -247,34 +268,11 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 
 		// player scavenges without encountering mob
 		if (!areaChoice.npc || mobKilledCD) {
-			if (keysRequired && !areaChoice.keyIsOptional && !hasRequiredKey) {
-				await transaction.commit()
-
-				await this.sendMessage(ctx, {
-					content: `${icons.information} You need a ${combineArrayWithOr(keysRequired.map(key => getItemDisplay(key)))} to scavenge **${areaChoice.display}**.`,
-					components: [],
-					embeds: []
-				}, botMessage)
-				return
-			}
-
-			// lower durability or remove key
-			else if (hasRequiredKey) {
-				if (!hasRequiredKey.row.durability || hasRequiredKey.row.durability - 1 <= 0) {
-					await deleteItem(transaction.query, hasRequiredKey.row.id)
-				}
-				else {
-					await lowerItemDurability(transaction.query, hasRequiredKey.row.id, 1)
-				}
-			}
-
 			const scavengedLoot: { rarity: string, item: Item, row: ItemRow }[] = []
 			let xpEarned = 0
 
 			for (let i = 0; i < areaChoice.loot.rolls; i++) {
-				const randomLoot = hasRequiredKey && areaChoice.keyIsOptional ?
-					{ ...this.getRandomSpecialItem(areaChoice), rarityDisplay: getRarityDisplay('Rare') } :
-					this.getRandomItem(areaChoice)
+				const randomLoot = this.getRandomItem(areaChoice)
 
 				if (randomLoot) {
 					const itemRow = await createItem(transaction.query, randomLoot.item.name, { durability: randomLoot.item.durability })
@@ -1032,7 +1030,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 				areaEmbed.setThumbnail(area.image)
 			}
 
-			if (area.requiresKey && hasRequiredKey) {
+			if (area.requiresKey && hasRequiredKey && !area.keyUsedToFightNPC) {
 				const iconID = hasRequiredKey.item.icon.match(/:([0-9]*)>/)
 
 				scavengeButton = {
@@ -1047,7 +1045,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 				}
 				requirements.push(`${icons.checkmark} ~~Have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))} in your inventory.~~`)
 			}
-			else if (area.requiresKey) {
+			else if (area.requiresKey && !area.keyUsedToFightNPC) {
 				scavengeButton = BLUE_BUTTON('Use Key', 'scavenge', true)
 				requirements.push(`${icons.cancel} Have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))} in your inventory.`)
 			}
@@ -1061,7 +1059,28 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 						true)
 					requirements.push(`${icons.cancel} Defeat ${getMobDisplayReference(area.npc, { specific: true, lowerCase: true })}.`)
 
-					scavengeButton = RED_BUTTON(`Fight ${area.npc.display}`, 'scavenge', false, '🗡️')
+					if (area.requiresKey && hasRequiredKey && area.keyUsedToFightNPC) {
+						const iconID = hasRequiredKey.item.icon.match(/:([0-9]*)>/)
+
+						scavengeButton = {
+							type: ComponentType.BUTTON,
+							label: `Use key to fight ${area.npc.display}`,
+							custom_id: 'scavenge',
+							style: ButtonStyle.DESTRUCTIVE,
+							emoji: iconID ? {
+								id: iconID[1],
+								name: hasRequiredKey.item.name
+							} : undefined
+						}
+						requirements.push(`${icons.checkmark} ~~Have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))} in your inventory.~~`)
+					}
+					else if (area.requiresKey && area.keyUsedToFightNPC) {
+						scavengeButton = RED_BUTTON(`Use key to fight ${area.npc.display}`, 'scavenge', true)
+						requirements.push(`${icons.cancel} Have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))} in your inventory.`)
+					}
+					else {
+						scavengeButton = RED_BUTTON(`Fight ${area.npc.display}`, 'scavenge', false, '🗡️')
+					}
 				}
 				else {
 					areaEmbed.addField('Mob',
@@ -1225,17 +1244,6 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		}
 
 		return duelEmb
-	}
-
-	getRandomSpecialItem (area: Area): { item: Item, xp: number } {
-		if (!area.requiresKey || !area.keyIsOptional) {
-			throw new Error(`Raid channel (${area.display}) does not have special loot`)
-		}
-
-		return {
-			item: area.specialLoot.items[Math.floor(Math.random() * area.specialLoot.items.length)],
-			xp: area.specialLoot.xp
-		}
 	}
 
 	/**

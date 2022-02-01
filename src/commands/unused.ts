@@ -32,9 +32,6 @@ export const command: TextCommand = {
 					else if (area.loot.rarest?.items.find(i => i.name === itemFixed.name)) {
 						obtainable.push(itemFixed)
 					}
-					else if (area.requiresKey && area.keyIsOptional && area.specialLoot.items.find(i => i.name === itemFixed.name)) {
-						obtainable.push(itemFixed)
-					}
 
 					if (
 						area.npc &&

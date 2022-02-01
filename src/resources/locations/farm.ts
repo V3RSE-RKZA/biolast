@@ -23,8 +23,9 @@ export const farm: Location = {
 		quotes: [
 			'Did I hear somebody?',
 			'*buUUUUuUrP*',
-			'What do you mean, zombies?',
-			'Damn pterodactyls eating my crops again.'
+			'Damn pterodactyls eating my crops again.',
+			'You\'ll never get to my stash you damn raiders!',
+			'Stay away from my farm!!'
 		],
 		armor: items.cloth_armor,
 		helmet: items.sauce_pan,
@@ -190,7 +191,7 @@ export const farm: Location = {
 				rolls: 4
 			},
 			requiresKey: [items.gunsafe_code],
-			keyIsOptional: false,
+			keyUsedToFightNPC: false,
 			scavengeCooldown: 60 * 10
 		},
 		{
@@ -211,7 +212,7 @@ export const farm: Location = {
 				rolls: 2
 			},
 			requiresKey: [items.daves_drug_key],
-			keyIsOptional: false,
+			keyUsedToFightNPC: false,
 			scavengeCooldown: 60 * 10
 		}
 	]

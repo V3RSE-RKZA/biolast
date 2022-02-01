@@ -208,7 +208,7 @@ export const mall: Location = {
 				rolls: 3
 			},
 			requiresKey: [items.dereks_shop_key],
-			keyIsOptional: false,
+			keyUsedToFightNPC: false,
 			scavengeCooldown: 60 * 10
 		},
 		{
@@ -307,7 +307,7 @@ export const mall: Location = {
 				rolls: 2
 			},
 			requiresKey: [items.florreds_pharmacy_key],
-			keyIsOptional: false,
+			keyUsedToFightNPC: false,
 			scavengeCooldown: 60 * 2
 		}
 	]
