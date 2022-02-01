@@ -88,7 +88,7 @@ class EquipCommand extends CustomSlashCommand<'equip'> {
 				await unequipItem(transaction.query, equips.helmet.row.id)
 			}
 
-			equipDetails = `Your ${getBodyPartEmoji('head')} head is now protected from weapons with an armor penetration below **${itemToEquip.item.level.toFixed(2)}**.`
+			equipDetails = `Your **${getBodyPartEmoji('head')} head** is now protected from weapons with an armor penetration below **${itemToEquip.item.level.toFixed(2)}**.`
 		}
 		else if (itemToEquip.item.type === 'Body Armor') {
 			if (equips.armor) {
@@ -96,7 +96,7 @@ class EquipCommand extends CustomSlashCommand<'equip'> {
 				await unequipItem(transaction.query, equips.armor.row.id)
 			}
 
-			equipDetails = `Your ${getBodyPartEmoji('chest')} chest is now protected from weapons with an armor penetration below **${itemToEquip.item.level.toFixed(2)}**.`
+			equipDetails = `Your **${getBodyPartEmoji('chest')} chest** is now protected from weapons with an armor penetration below **${itemToEquip.item.level.toFixed(2)}**.`
 		}
 
 		await equipItem(transaction.query, itemToEquip.row.id)
