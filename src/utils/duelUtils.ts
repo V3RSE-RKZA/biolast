@@ -134,7 +134,8 @@ export function getAttackDamage (damage: number, penetration: number, bodyPartHi
 
 		// minimum 1 damage
 		// armor level has the armor penetration difference added to it so theres a drastic damage adjustment the higher armor level victim is wearing
-		const adjusted = Math.max(1, Math.round((penetration / (victimArmor.level + (victimArmor.level - penetration))) * damage))
+		const reductionMultiplier = Math.max(1, victimArmor.level - penetration)
+		const adjusted = Math.max(1, Math.round((penetration / (victimArmor.level + ((victimArmor.level - penetration) ** reductionMultiplier))) * damage))
 
 		return {
 			total: adjusted,
@@ -152,7 +153,8 @@ export function getAttackDamage (damage: number, penetration: number, bodyPartHi
 			}
 		}
 
-		const adjusted = Math.max(1, Math.round((penetration / (victimHelmet.level + (victimHelmet.level - penetration))) * damage))
+		const reductionMultiplier = Math.max(1, victimHelmet.level - penetration)
+		const adjusted = Math.max(1, Math.round((penetration / (victimHelmet.level + ((victimHelmet.level - penetration) ** reductionMultiplier))) * damage))
 
 		return {
 			total: adjusted,
