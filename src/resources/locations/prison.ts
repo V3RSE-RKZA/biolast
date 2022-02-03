@@ -93,7 +93,7 @@ export const prison: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items['7.62x39mm_FMJ_bullet'], items.M67_grenade],
+					items: [items.M67_grenade],
 					xp: 15
 				},
 				rare: {
@@ -105,7 +105,7 @@ export const prison: Location = {
 			npc: {
 				type: 'raider',
 				display: 'Guardian Recruit',
-				health: 70,
+				health: 100,
 				damage: 40,
 				drops: {
 					common: [items.police_baton, items.compression_bandage],
@@ -122,7 +122,7 @@ export const prison: Location = {
 				usesHeals: [items.splint],
 				weapon: items['FN_Five-seveN'],
 				ammo: items.SS195LF_bullet,
-				helmet: items.aramid_helmet,
+				helmet: items.swat_helmet,
 				armor: items.aramid_armor,
 				xp: 200,
 				boss: false,
@@ -143,7 +143,7 @@ export const prison: Location = {
 					xp: 15
 				},
 				rare: {
-					items: [items.gold_watch],
+					items: [items.compression_bandage],
 					xp: 25
 				},
 				rarest: {
@@ -175,7 +175,7 @@ export const prison: Location = {
 			npc: {
 				type: 'raider',
 				display: 'Guardian',
-				health: 100,
+				health: 120,
 				damage: 40,
 				drops: {
 					common: [items.molotov_cocktail, items.compression_bandage],
