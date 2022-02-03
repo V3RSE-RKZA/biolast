@@ -15,7 +15,7 @@ import { disableAllComponents } from '../utils/messageUtils'
 import { logger } from '../utils/logger'
 import Embed from '../structures/Embed'
 
-const ITEMS_PER_PAGE = 10
+const ITEMS_PER_PAGE = 12
 
 class SellCommand extends CustomSlashCommand<'sell'> {
 	constructor (creator: SlashCreator, app: App) {

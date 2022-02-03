@@ -11,8 +11,8 @@ export const farm: Location = {
 		health: 185,
 		damage: 20,
 		drops: {
-			common: [items.pitchfork, items.daves_drug_key, items.P320],
-			uncommon: [items.paracetamol, items.farming_guide, items.sledgehammer],
+			common: [items.pitchfork, items.daves_drug_key, items.sledgehammer],
+			uncommon: [items.paracetamol, items.farming_guide, items.P320],
 			rare: [items.gunsafe_code],
 			rolls: 2
 		},

@@ -1,7 +1,7 @@
 import { Location } from '../../types/Locations'
 import { farm } from './farm'
 import { mall } from './mall'
-import { station } from './policestation'
+import { prison } from './prison'
 import { suburbs } from './suburbs'
 
 const locationsObject = <T>(et: { [K in keyof T]: Location }) => et
@@ -10,7 +10,7 @@ export const locations = locationsObject({
 	suburbs,
 	farm,
 	mall,
-	station
+	prison
 })
 
 export type LocationName = keyof typeof locations

@@ -370,7 +370,7 @@ class MarketCommand extends CustomSlashCommand<'market'> {
 						catch (err) {
 							await botMessage.edit({
 								content: `${icons.danger} Purchase timed out.`,
-								components: disableAllComponents(botMessage.components)
+								components: disableAllComponents(CONFIRM_BUTTONS)
 							})
 						}
 					}

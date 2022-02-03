@@ -89,6 +89,11 @@ interface AreaBase {
 	 * Image URL representing the area (shown in /scavenge command menu)
 	 */
 	image?: string
+
+	/**
+	 * Quote when user is viewing the area (description of the area from the players perspective)
+	 */
+	quote?: string
 }
 interface KeyArea extends AreaBase {
 	requiresKey: Item[]

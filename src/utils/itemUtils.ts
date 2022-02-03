@@ -75,7 +75,7 @@ export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<
 
 	if (itemRow) {
 		const attributes = []
-		const display = `${icon}\`${getItemNameDisplay(item, itemRow, { showDisplayName })}\``
+		const display = `${icon} \`${getItemNameDisplay(item, itemRow, { showDisplayName })}\``
 
 		if (showDurability && itemRow.durability) {
 			attributes.push(`**${itemRow.durability}** uses left`)
@@ -92,7 +92,7 @@ export function getItemDisplay (item: Item, itemRow?: ItemRow, options: Partial<
 		return `${display}${attributes.length ? ` (${attributes.join(', ')})` : ''}`
 	}
 
-	return `${icon}\`${getItemNameDisplay(item)}\``
+	return `${icon} \`${getItemNameDisplay(item)}\``
 }
 
 /**

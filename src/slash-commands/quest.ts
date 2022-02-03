@@ -540,7 +540,7 @@ class QuestCommand extends CustomSlashCommand<'quest'> {
 				return possibleItems[Math.floor(Math.random() * possibleItems.length)]
 			}
 			case 4: {
-				const possibleItems = [items.steel_armor, items.steel_helmet, items.bobwhite_g2, items['20-gauge_buckshot'], items.hyfin_chest_seal]
+				const possibleItems = [items.swat_armor, items.swat_helmet, items.bobwhite_g2, items['20-gauge_buckshot'], items.hyfin_chest_seal]
 				return possibleItems[Math.floor(Math.random() * possibleItems.length)]
 			}
 		}

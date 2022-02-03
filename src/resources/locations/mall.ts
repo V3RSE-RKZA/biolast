@@ -11,9 +11,9 @@ export const mall: Location = {
 		health: 500,
 		damage: 60,
 		drops: {
-			common: [items['9mm_AP_bullet'], items.paracetamol, items.aramid_armor, items.aramid_helmet, items['12-gauge_buckshot']],
-			uncommon: [items['9mm_RIP_bullet'], items.duffle_bag, items.steel_armor, items.bobwhite_g2],
-			rare: [items.steel_helmet, items['12-gauge_buckshot']],
+			common: [items['9mm_AP_bullet'], items.paracetamol, items.aramid_armor, items.aramid_helmet, items['20-gauge_buckshot']],
+			uncommon: [items['9mm_RIP_bullet'], items.duffle_bag, items.bobwhite_g2, items['12-gauge_buckshot']],
+			rare: [items.steel_helmet],
 			rolls: 6
 		},
 		quotes: [
@@ -84,11 +84,11 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items.knife, items.cloth_backpack],
+					items: [items.knife, items.cloth_backpack, items.aramid_armor],
 					xp: 15
 				},
 				rare: {
-					items: [items.metal_shank, items.aramid_armor],
+					items: [items.P320],
 					xp: 25
 				},
 				rolls: 1
@@ -120,11 +120,11 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items['glock-17'], items.aramid_armor, items.cloth_backpack],
+					items: [items.cloth_backpack],
 					xp: 15
 				},
 				rare: {
-					items: [items['ak-47'], items['7.62x39mm_FMJ_bullet']],
+					items: [items['ak-47'], items['7.62x39mm_HP_bullet']],
 					xp: 25
 				},
 				rolls: 2
@@ -198,11 +198,11 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items['9mm_RIP_bullet'], items['12-gauge_buckshot'], items.mossberg_500, items['9mm_AP_bullet']],
+					items: [items['9mm_RIP_bullet'], items['9mm_AP_bullet']],
 					xp: 15
 				},
 				rare: {
-					items: [items['5.45x39mm_7N24_bullet'], items.steel_armor, items.SS190_bullet],
+					items: [items['5.45x39mm_7N24_bullet'], items.swat_armor, items.SS190_bullet],
 					xp: 25
 				},
 				rolls: 3
@@ -240,6 +240,7 @@ export const mall: Location = {
 					rolls: 1
 				},
 				weapon: items.chainsaw,
+				armor: items.wooden_armor,
 				helmet: items.psycho_mask,
 				usesStimulants: [items.morphine],
 				xp: 125,
@@ -272,15 +273,16 @@ export const mall: Location = {
 				damage: 40,
 				drops: {
 					common: [items.dereks_shop_key],
-					uncommon: [items['9mm_AP_bullet'], items['5.45x39mm_HP_bullet'], items.SS195LF_bullet],
+					uncommon: [items['9mm_AP_bullet'], items['5.45x39mm_HP_bullet'], items.F1_grenade],
 					rare: [items.adrenaline],
 					rolls: 2
 				},
 				weapon: items.bobwhite_g2,
 				ammo: items['20-gauge_buckshot'],
 				quotes: [
-					'~*You hear frantic breathing*~',
-					'~*Derek: I fear no man. But that thing, it scares me.*~'
+					'What did you do with sarah?!',
+					'Tell me where you took her!',
+					'I fear no man. But that thing, it scares me.'
 				],
 				armor: items.aramid_armor,
 				xp: 550,
@@ -309,6 +311,32 @@ export const mall: Location = {
 			requiresKey: [items.florreds_pharmacy_key],
 			keyUsedToFightNPC: false,
 			scavengeCooldown: 60 * 2
+		},
+		{
+			display: 'Hideout',
+			quote: 'There\'s a sign on the door: "sarah\'s hideout, KEEP OUT"',
+			loot: {
+				common: {
+					items: [items.SS190_bullet, items['9mm_AP_bullet']],
+					xp: 10
+				},
+				uncommon: {
+					items: [items['12-gauge_AP_slug'], items['5.56x45mm_FMJ_bullet']],
+					xp: 15
+				},
+				rare: {
+					items: [items.steel_armor, items.steel_helmet],
+					xp: 25
+				},
+				rarest: {
+					items: [items.m4a1],
+					xp: 50
+				},
+				rolls: 3
+			},
+			requiresKey: [items.hideout_key],
+			keyUsedToFightNPC: false,
+			scavengeCooldown: 60 * 30
 		}
 	]
 }

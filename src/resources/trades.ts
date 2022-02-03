@@ -77,7 +77,7 @@ export const merchantTrades: MerchantTrade[] = [
 			item: items['9mm_HP_bullet'],
 			amount: 1
 		},
-		price: 2975,
+		price: 3000,
 		locationLevel: 3
 	},
 	{
@@ -142,5 +142,41 @@ export const merchantTrades: MerchantTrade[] = [
 		},
 		price: items.escape_from_fristoe,
 		locationLevel: 3
+	},
+	{
+		type: 'collectible',
+		offer: {
+			item: items.swat_armor,
+			amount: 1
+		},
+		price: items.gold_watch,
+		locationLevel: 4
+	},
+	{
+		type: 'collectible',
+		offer: {
+			item: items.swat_helmet,
+			amount: 1
+		},
+		price: items.gold_watch,
+		locationLevel: 4
+	},
+	{
+		type: 'money',
+		offer: {
+			item: items.suitcase,
+			amount: 1
+		},
+		price: 50000,
+		locationLevel: 4
+	},
+	{
+		type: 'money',
+		offer: {
+			item: items.FN_P90,
+			amount: 1
+		},
+		price: 25000,
+		locationLevel: 4
 	}
 ]

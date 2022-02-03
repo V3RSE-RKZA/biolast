@@ -66,6 +66,17 @@ export const collectible = questObject({
 		slotsUsed: 2,
 		itemLevel: 7
 	},
+	gold_watch: {
+		type: 'Collectible',
+		name: 'gold_watch',
+		aliases: ['watch'],
+		description: 'Must have cost a fortune before the apocalypse started.',
+		icon: '<:gold_watch:938503665306697739>',
+		sellPrice: 2525,
+		slotsUsed: 1,
+		itemLevel: 11,
+		artist: '168958344361541633'
+	},
 	dog_tags: {
 		type: 'Collectible',
 		name: 'dog_tags',

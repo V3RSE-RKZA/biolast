@@ -32,7 +32,7 @@ interface BaseItem {
 	artist?: string
 }
 
-type ArmorLevel = 1 | 2 | 3 | 4 | 5
+type ArmorLevel = 1 | 2 | 3 | 4 | 5 | 6
 
 export interface RangedWeapon extends BaseItem {
 	type: 'Ranged Weapon'

@@ -51,5 +51,23 @@ export const keys = keysObject({
 		slotsUsed: 2,
 		itemLevel: 10,
 		artist: '719365897458024558'
+	},
+	cell_key: {
+		type: 'Key',
+		name: 'cell_key',
+		durability: 1,
+		aliases: ['cellkey'],
+		icon: '<:cell_key:938879124058046485>',
+		slotsUsed: 1,
+		itemLevel: 14
+	},
+	hideout_key: {
+		type: 'Key',
+		name: 'hideout_key',
+		durability: 1,
+		aliases: ['hideout'],
+		icon: '<:hideout_key:938894742022934600>',
+		slotsUsed: 1,
+		itemLevel: 13
 	}
 })

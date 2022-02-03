@@ -12,8 +12,8 @@ export const ranged = rangedObject({
 		sellPrice: 876,
 		durability: 6,
 		slotsUsed: 4,
-		accuracy: 91,
-		itemLevel: 7,
+		accuracy: 42,
+		itemLevel: 8,
 		speed: 14,
 		artist: '699166377705078794'
 	},
@@ -26,8 +26,8 @@ export const ranged = rangedObject({
 		sellPrice: 1588,
 		durability: 5,
 		slotsUsed: 3,
-		accuracy: 60,
-		itemLevel: 10,
+		accuracy: 70,
+		itemLevel: 11,
 		speed: 34,
 		artist: '699166377705078794'
 	},
@@ -52,10 +52,10 @@ export const ranged = rangedObject({
 		icon: '<:U_rifle:869647344344387624>',
 		aliases: ['awp'],
 		sellPrice: 22032,
-		durability: 10,
+		durability: 12,
 		slotsUsed: 5,
 		accuracy: 98,
-		itemLevel: 23,
+		itemLevel: 20,
 		speed: 2
 	},
 	'm4a1': {
@@ -64,7 +64,7 @@ export const ranged = rangedObject({
 		description: 'Automatic M4 carbine. Light and deadly accurate.',
 		icon: '<:U_rifle:869647344344387624>',
 		aliases: ['m4'],
-		sellPrice: 3182,
+		sellPrice: 6182,
 		durability: 5,
 		slotsUsed: 4,
 		accuracy: 90,
@@ -80,7 +80,7 @@ export const ranged = rangedObject({
 		sellPrice: 951,
 		durability: 5,
 		slotsUsed: 2,
-		accuracy: 85,
+		accuracy: 45,
 		itemLevel: 8,
 		speed: 26
 	},
@@ -93,7 +93,7 @@ export const ranged = rangedObject({
 		sellPrice: 1782,
 		durability: 8,
 		slotsUsed: 3,
-		accuracy: 78,
+		accuracy: 85,
 		itemLevel: 13,
 		speed: 45
 	},
@@ -105,7 +105,7 @@ export const ranged = rangedObject({
 		sellPrice: 251,
 		durability: 5,
 		slotsUsed: 2,
-		accuracy: 75,
+		accuracy: 45,
 		itemLevel: 5,
 		speed: 20,
 		artist: '600383557038374913'
@@ -120,7 +120,7 @@ export const ranged = rangedObject({
 		durability: 9,
 		slotsUsed: 3,
 		accuracy: 85,
-		itemLevel: 9,
+		itemLevel: 11,
 		speed: 28
 	},
 	'P320': {
@@ -129,11 +129,11 @@ export const ranged = rangedObject({
 		icon: '<:U_weapon:601366669272678411>',
 		description: 'Semi-automatic pistol made by SIG Sauer.',
 		aliases: ['sig_p320', 'sig_p250', 'p250'],
-		sellPrice: 265,
-		durability: 8,
+		sellPrice: 465,
+		durability: 5,
 		slotsUsed: 2,
-		accuracy: 70,
-		itemLevel: 6,
+		accuracy: 80,
+		itemLevel: 7,
 		speed: 18
 	},
 	'luger': {
@@ -198,10 +198,10 @@ export const ranged = rangedObject({
 		aliases: ['lee', 'enfield'],
 		description: 'An ex-military sniper used in WWII.',
 		sellPrice: 7056,
-		durability: 5,
+		durability: 8,
 		slotsUsed: 4,
-		accuracy: 94,
-		itemLevel: 15,
+		accuracy: 90,
+		itemLevel: 12,
 		speed: 3
 	},
 	'bobwhite_g2': {
@@ -223,10 +223,10 @@ export const ranged = rangedObject({
 		icon: '<:U_rifle:869647344344387624>',
 		aliases: ['mossberg'],
 		description: 'Pump action shotgun made by O.F. Mossberg & Sons. Fires 12-guage shells.',
-		sellPrice: 5212,
+		sellPrice: 4212,
 		durability: 5,
 		slotsUsed: 4,
-		accuracy: 72,
+		accuracy: 30,
 		itemLevel: 13,
 		speed: 10
 	},
@@ -237,9 +237,9 @@ export const ranged = rangedObject({
 		aliases: ['benelli'],
 		description: 'Semi-automatic shotgun produced by Benelli Armi SpA.',
 		sellPrice: 10021,
-		durability: 6,
+		durability: 8,
 		slotsUsed: 4,
-		accuracy: 70,
+		accuracy: 87,
 		itemLevel: 16,
 		speed: 13
 	}

@@ -35,5 +35,16 @@ export const backpacks = backpackObject({
 		slotsUsed: 2,
 		itemLevel: 8,
 		artist: '719365897458024558'
+	},
+	suitcase: {
+		type: 'Backpack',
+		name: 'suitcase',
+		icon: '<:suitcase:938466039266685018>',
+		aliases: ['suit', 'case'],
+		sellPrice: 4945,
+		slots: 28,
+		slotsUsed: 2,
+		itemLevel: 13,
+		artist: '168958344361541633'
 	}
 })

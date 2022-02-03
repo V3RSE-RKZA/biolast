@@ -318,7 +318,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 				)
 
 				const playersWithChoices = players.map(p => ({ ...p, selection: playerChoices.get(p.member.id) }))
-				const npcChoice = getMobChoice(location.boss, npcStimulants, npcHealth)
+				const npcChoice = getMobChoice(location.boss, npcStimulants, npcHealth, turnNumber)
 				const orderedChoices: OrderedChoice[] = [
 					{ type: ('npc' as const), speed: npcChoice.speed, random: Math.random() },
 					...playersWithChoices.map(c => ({ ...c, type: ('player' as const), speed: c.selection?.speed || 0, random: Math.random() }))]

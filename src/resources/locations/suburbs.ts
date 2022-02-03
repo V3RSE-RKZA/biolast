@@ -13,7 +13,7 @@ export const suburbs: Location = {
 		drops: {
 			common: [items.bandage],
 			uncommon: [items.ifak_medkit],
-			rare: [items.sledgehammer, items.bone_armor],
+			rare: [items.sledgehammer, items.bone_armor, items.bone_helmet],
 			rolls: 1
 		},
 		weapon: items.luger,
@@ -24,7 +24,7 @@ export const suburbs: Location = {
 			'Do not be afraid of death. Welcome it.',
 			'The dead shall not be disturbed.',
 			'The world you and I once knew is long gone.',
-			'You dare slaughter my brothers and sisters with no remorse?'
+			'You dare slaughter them with no remorse?'
 		],
 		armor: items.cloth_armor,
 		helmet: items.cloth_helmet,
@@ -195,7 +195,7 @@ export const suburbs: Location = {
 				respawnTime: 60 * 4
 			},
 			requiresKey: [items.shed_key],
-			keyUsedToFightNPC: true,
+			keyUsedToFightNPC: false,
 			scavengeCooldown: 60 * 2
 		},
 		{

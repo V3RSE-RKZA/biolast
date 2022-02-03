@@ -14,7 +14,7 @@ import { logger } from '../utils/logger'
 import { NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
 import { disableAllComponents } from '../utils/messageUtils'
 
-const ITEMS_PER_PAGE = 10
+const ITEMS_PER_PAGE = 12
 
 class StashCommand extends CustomSlashCommand<'stash'> {
 	constructor (creator: SlashCreator, app: App) {

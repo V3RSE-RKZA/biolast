@@ -274,7 +274,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 			for (let i = 0; i < areaChoice.loot.rolls; i++) {
 				const randomLoot = this.getRandomItem(areaChoice)
 
-				if (randomLoot) {
+				if (randomLoot.item) {
 					const itemRow = await createItem(transaction.query, randomLoot.item.name, { durability: randomLoot.item.durability })
 
 					xpEarned += randomLoot.xp
@@ -308,7 +308,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 				await this.sendMessage(ctx, {
 					content: `You ${hasRequiredKey ?
 						`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
-						''}scavenge **${areaChoice.display}** and find:\n\n**nothing**!\n${icons.xp_star}***+${xpEarned}** xp!*`,
+						''}scavenge **${areaChoice.display}** and find:\n\n**nothing of value!**\n${icons.xp_star}***+${xpEarned}** xp!*`,
 					components: [],
 					embeds: []
 				}, botMessage)
@@ -408,7 +408,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 				], turnNumber)
 
 				const playerChoice = playerChoices.get(ctx.user.id)
-				const npcChoice = getMobChoice(npc, npcStimulants, npcHealth)
+				const npcChoice = getMobChoice(npc, npcStimulants, npcHealth, turnNumber)
 				const orderedChoices = [{ type: 'player', speed: playerChoice?.speed || 0 }, { type: 'npc', speed: npcChoice.speed }]
 					.map(c => ({ ...c, random: Math.random() }))
 					.sort((a, b) => {
@@ -1054,14 +1054,13 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 				const mobKilledCD = await getCooldown(query, ctx.user.id, `npcdead-${location.display}-${area.display}`)
 
 				if (!mobKilledCD) {
-					areaEmbed.addField(`Guarded by ${getMobDisplayReference(area.npc, { lowerCase: true })}!`,
-						getMobDisplay(area.npc, area.npc.health).join('\n'),
-						true)
-					requirements.push(`${icons.cancel} Defeat ${getMobDisplayReference(area.npc, { specific: true, lowerCase: true })}.`)
-
 					if (area.requiresKey && hasRequiredKey && area.keyUsedToFightNPC) {
 						const iconID = hasRequiredKey.item.icon.match(/:([0-9]*)>/)
 
+						areaEmbed.addField(`Guarded by ${getMobDisplayReference(area.npc, { lowerCase: true })}!`,
+							getMobDisplay(area.npc, area.npc.health).join('\n'),
+							true)
+						requirements.push(`${icons.cancel} Defeat ${getMobDisplayReference(area.npc, { specific: true, lowerCase: true })}.`)
 						scavengeButton = {
 							type: ComponentType.BUTTON,
 							label: `Use key to fight ${area.npc.display}`,
@@ -1075,10 +1074,18 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 						requirements.push(`${icons.checkmark} ~~Have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))} in your inventory.~~`)
 					}
 					else if (area.requiresKey && area.keyUsedToFightNPC) {
-						scavengeButton = RED_BUTTON(`Use key to fight ${area.npc.display}`, 'scavenge', true)
+						areaEmbed.addField(`Guarded by ${area.npc.display.replace(/\w/g, '?')}`,
+							getMobDisplay(area.npc, area.npc.health).join('\n'),
+							true)
+						requirements.push(`${icons.cancel} Defeat ${area.npc.display.replace(/\w/g, '?')}.`)
+						scavengeButton = RED_BUTTON(`Use key to fight ${area.npc.display.replace(/\w/g, '?')}`, 'scavenge', true)
 						requirements.push(`${icons.cancel} Have a ${combineArrayWithOr(area.requiresKey.map(key => getItemDisplay(key)))} in your inventory.`)
 					}
 					else {
+						areaEmbed.addField(`Guarded by ${getMobDisplayReference(area.npc, { lowerCase: true })}!`,
+							getMobDisplay(area.npc, area.npc.health).join('\n'),
+							true)
+						requirements.push(`${icons.cancel} Defeat ${getMobDisplayReference(area.npc, { specific: true, lowerCase: true })}.`)
 						scavengeButton = RED_BUTTON(`Fight ${area.npc.display}`, 'scavenge', false, '🗡️')
 					}
 				}
@@ -1093,13 +1100,15 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 
 
 			if (areaCD) {
-				areaEmbed.setDescription(`${icons.timer} Recently scavenged, you can scavenge this area again in **${areaCD}**.`)
 				requirements.push(`${icons.cancel} Wait **${areaCD}** for loot to replenish in this area.`)
 				scavengeButton = { ...scavengeButton, disabled: true, label: `${scavengeButton.label} - Available in ${areaCD}` }
 			}
 			else if (!areaCD && !area.requiresKey && !area.npc) {
-				areaEmbed.setDescription('No enemies spotted in this area. Looks safe!')
 				requirements.push('None!')
+			}
+
+			if (area.quote) {
+				areaEmbed.setDescription(`**${ctx.member?.displayName || ctx.user.username}**: ${area.quote}`)
 			}
 
 			areaEmbed.addField('Requirements to Scavenge', requirements.join('\n'), true)
@@ -1251,7 +1260,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 	 * @param area The area to get scavenge loot for
 	 * @returns An item
 	 */
-	getRandomItem (area: Area): { item: Item, xp: number, rarityDisplay: string } {
+	getRandomItem (area: Area): { item: Item | undefined, xp: number, rarityDisplay: string } {
 		const rand = Math.random()
 		let randomItem
 		let xpEarned

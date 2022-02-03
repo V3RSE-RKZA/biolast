@@ -9,22 +9,22 @@ export const helmets = helmetObject({
 		icon: '<:U_helmet:874671013181415434>',
 		aliases: ['poly_helm', 'polyeth_helm', 'polyethylene_helm', 'level_5_helm'],
 		description: 'Polyethylene (UHMWPE) armor is designed to have better stopping power and weigh less than steel armor.',
-		sellPrice: 8261,
+		sellPrice: 11261,
 		durability: 5,
-		level: 5,
+		level: 6,
 		slotsUsed: 2,
-		itemLevel: 12
+		itemLevel: 18
 	},
 	steel_helmet: {
 		type: 'Helmet',
 		name: 'steel_helmet',
 		icon: '<:U_helmet:874671013181415434>',
 		aliases: [],
-		sellPrice: 2120,
-		durability: 5,
-		level: 4,
+		sellPrice: 4120,
+		durability: 7,
+		level: 5,
 		slotsUsed: 2,
-		itemLevel: 12
+		itemLevel: 16
 	},
 	aramid_helmet: {
 		type: 'Helmet',
@@ -69,7 +69,7 @@ export const helmets = helmetObject({
 		durability: 9,
 		level: 2,
 		slotsUsed: 2,
-		itemLevel: 3
+		itemLevel: 4
 	},
 	sauce_pan: {
 		type: 'Helmet',
@@ -99,11 +99,11 @@ export const helmets = helmetObject({
 		type: 'Helmet',
 		name: 'swat_helmet',
 		icon: '<:U_helmet:874671013181415434>',
-		aliases: ['swat'],
-		sellPrice: 170,
-		durability: 1,
-		level: 3,
+		aliases: ['swathelm'],
+		sellPrice: 2200,
+		durability: 4,
+		level: 4,
 		slotsUsed: 1,
-		itemLevel: 8
+		itemLevel: 13
 	}
 })

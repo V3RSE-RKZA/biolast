@@ -59,7 +59,7 @@ export const medical = medicalObject({
 		aliases: ['chest_seal', 'hyfin', 'hyfin_seal', 'seal'],
 		description: 'Compact chest seal designed to seal penetrative wounds to the chest.',
 		sellPrice: 1202,
-		healsFor: 62,
+		healsFor: 53,
 		slotsUsed: 1,
 		itemLevel: 9,
 		durability: 4,

@@ -10,12 +10,12 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['lapua', 'lapua_magnum', '.338', 'lapua_fmj'],
 		description: 'Full metal jacket .338 Lapua Magnum ammunition for sniper rifles.',
-		damage: 140,
-		penetration: 5.4,
+		damage: 90,
+		penetration: 3.9,
 		ammoFor: [ranged.awm],
 		sellPrice: 5035,
 		slotsUsed: 1,
-		itemLevel: 20
+		itemLevel: 15
 	},
 	'.338_lapua_AP': {
 		type: 'Ammunition',
@@ -23,12 +23,12 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['.338_ap', 'lapua_ap', 'ap_lapua'],
 		description: 'Armor-piercing .338 Lapua Magnum ammunition for sniper rifles.',
-		damage: 133,
-		penetration: 7.2,
+		damage: 80,
+		penetration: 5.2,
 		ammoFor: [ranged.awm],
 		sellPrice: 10283,
 		slotsUsed: 1,
-		itemLevel: 20
+		itemLevel: 18
 	},
 	'5.56x45mm_FMJ_bullet': {
 		type: 'Ammunition',
@@ -37,11 +37,11 @@ export const ammunition = ammoObject({
 		aliases: ['556mm', '5.56x45_fmj', '556', '556_rifle', '556x45', '556_fmj', '556_bullet'],
 		description: 'Full metal jacket 5.56x45mm NATO ammunition for rifles.',
 		damage: 40,
-		penetration: 3.7,
+		penetration: 4.3,
 		ammoFor: [ranged.m4a1],
-		sellPrice: 467,
+		sellPrice: 867,
 		slotsUsed: 1,
-		itemLevel: 9
+		itemLevel: 13
 	},
 	'5.56x45mm_HP_bullet': {
 		type: 'Ammunition',
@@ -49,10 +49,10 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['5.56x45_hp', '556_hp', '556x45_hp'],
 		description: 'Hollow point 5.56x45mm NATO ammunition for rifles.',
-		damage: 50,
-		penetration: 3.4,
+		damage: 45,
+		penetration: 3.7,
 		ammoFor: [ranged.m4a1],
-		sellPrice: 523,
+		sellPrice: 602,
 		slotsUsed: 1,
 		itemLevel: 9
 	},
@@ -65,9 +65,9 @@ export const ammunition = ammoObject({
 		damage: 45,
 		penetration: 3.8,
 		ammoFor: [ranged['ak-47']],
-		sellPrice: 502,
+		sellPrice: 623,
 		slotsUsed: 1,
-		itemLevel: 9
+		itemLevel: 11
 	},
 	'7.62x39mm_HP_bullet': {
 		type: 'Ammunition',
@@ -75,7 +75,7 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['7.62x39_hp', '762_hp', '762x39_hp'],
 		description: 'Hollow point 7.62x39mm ammunition.',
-		damage: 56,
+		damage: 47,
 		penetration: 3.1,
 		ammoFor: [ranged['ak-47']],
 		sellPrice: 510,
@@ -117,7 +117,7 @@ export const ammunition = ammoObject({
 		damage: 48,
 		penetration: 3.35,
 		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
-		sellPrice: 2032,
+		sellPrice: 1532,
 		slotsUsed: 1,
 		itemLevel: 14
 	},
@@ -128,7 +128,7 @@ export const ammunition = ammoObject({
 		aliases: ['5.7', '5.7mm', '5.7x28', '5.7x28mm', 'ss195', 'ss195lf', 'five-seven_bullet'],
 		description: 'Lead free 5.7x28mm cartridge.',
 		damage: 34,
-		penetration: 2.3,
+		penetration: 2.9,
 		ammoFor: [ranged['FN_Five-seveN'], ranged.FN_P90],
 		sellPrice: 672,
 		slotsUsed: 1,
@@ -140,8 +140,8 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['ss190', 'ss190_ap'],
 		description: 'Armor-piercing 5.7x28mm cartridge.',
-		damage: 43,
-		penetration: 3.2,
+		damage: 40,
+		penetration: 3.8,
 		ammoFor: [ranged['FN_Five-seveN'], ranged.FN_P90],
 		sellPrice: 1624,
 		slotsUsed: 1,
@@ -179,12 +179,12 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['9x19_rip', '9mm_rip', 'rip_bullet'],
 		description: 'Radically invasive projectile ammunition for 9mm weapons. These bullets split into multiple pieces on impact, causing damage to spread further than a hollow point bullet.',
-		damage: 52,
+		damage: 62,
 		penetration: 1.8,
 		ammoFor: [ranged['glock-17'], ranged.P320, ranged.mp5],
 		sellPrice: 1221,
 		slotsUsed: 1,
-		itemLevel: 12,
+		itemLevel: 13,
 		spreadsDamageToLimbs: 4
 	},
 	'9mm_AP_bullet': {
@@ -198,7 +198,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.P320, ranged.mp5, ranged['glock-17']],
 		sellPrice: 1531,
 		slotsUsed: 1,
-		itemLevel: 12
+		itemLevel: 14
 	},
 	'.22LR_bullet': {
 		type: 'Ammunition',
@@ -265,7 +265,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged['lee-enfield']],
 		sellPrice: 2502,
 		slotsUsed: 1,
-		itemLevel: 15
+		itemLevel: 12
 	},
 	'20-gauge_buckshot': {
 		type: 'Ammunition',
@@ -317,8 +317,8 @@ export const ammunition = ammoObject({
 		icon: '<:12_gauge_slug:931813743384461363>',
 		aliases: ['12g_slug'],
 		description: 'A 12-gauge slug shell that fires a single, large projectile.',
-		damage: 78,
-		penetration: 3.12,
+		damage: 56,
+		penetration: 3.3,
 		ammoFor: [ranged.mossberg_500, ranged.benelli_M4],
 		sellPrice: 2654,
 		slotsUsed: 1,
@@ -331,8 +331,8 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['12g_ap_slug', '12g_ap', 'ap_slug', 'ap_shell', '12_ap_slug', '12_guage_ap'],
 		description: 'A 12-gauge armor-piercing slug shell.',
-		damage: 75,
-		penetration: 4.05,
+		damage: 70,
+		penetration: 4.1,
 		ammoFor: [ranged.mossberg_500, ranged.benelli_M4],
 		sellPrice: 5575,
 		slotsUsed: 1,

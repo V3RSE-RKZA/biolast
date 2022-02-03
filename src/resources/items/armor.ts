@@ -9,22 +9,22 @@ export const armor = armorObject({
 		icon: '<:U_shield:601366669474136074>',
 		aliases: ['poly_armor', 'polyeth', 'polyethylene', 'level_5_armor'],
 		description: 'Polyethylene (UHMWPE) armor is designed to have better stopping power and weigh less than steel armor.',
-		sellPrice: 8061,
+		sellPrice: 11061,
 		durability: 7,
-		level: 5,
+		level: 6,
 		slotsUsed: 2,
-		itemLevel: 12
+		itemLevel: 18
 	},
 	steel_armor: {
 		type: 'Body Armor',
 		name: 'steel_armor',
 		icon: '<:U_shield:601366669474136074>',
 		aliases: ['steel'],
-		sellPrice: 2272,
-		durability: 7,
-		level: 4,
-		slotsUsed: 3,
-		itemLevel: 12
+		sellPrice: 3972,
+		durability: 10,
+		level: 5,
+		slotsUsed: 4,
+		itemLevel: 16
 	},
 	aramid_armor: {
 		type: 'Body Armor',
@@ -70,18 +70,18 @@ export const armor = armorObject({
 		durability: 9,
 		level: 2,
 		slotsUsed: 2,
-		itemLevel: 3
+		itemLevel: 4
 	},
-	tactical_armor: {
+	swat_armor: {
 		type: 'Body Armor',
-		name: 'tactical_armor',
+		name: 'swat_armor',
 		icon: '<:U_shield:601366669474136074>',
 		description: 'Body armor that looks like it can stop a couple of bullets',
-		aliases: ['tactical'],
+		aliases: ['swat'],
 		sellPrice: 2100,
 		durability: 4,
 		level: 4,
-		slotsUsed: 2,
+		slotsUsed: 3,
 		itemLevel: 13
 	}
 })
