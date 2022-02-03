@@ -1025,7 +1025,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 
 					for (let i = 0; i < companionItemsFound; i++) {
 						const item = possibleItems[Math.floor(Math.random() * possibleItems.length)]
-						const randomDurability = item.durability ? getRandomInt(Math.max(1, item.durability / 4), item.durability) : undefined
+						const randomDurability = item.durability ? getRandomInt(Math.max(1, item.durability / 2), item.durability) : undefined
 
 						// pseudo item row so that I dont need to create the items until user picks them
 						itemsFound.push({
