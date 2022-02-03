@@ -239,7 +239,7 @@ class TradeCommand extends CustomSlashCommand<'trade'> {
 								content: '',
 								components: [{
 									type: ComponentType.ACTION_ROW,
-									components: disableAllComponents(TRADE_BUTTONS('money'))
+									components: disableAllComponents(TRADE_BUTTONS('item'))
 								}]
 							})
 							botMessage = await tradeChoice.sendFollowUp({
@@ -806,14 +806,14 @@ class TradeCommand extends CustomSlashCommand<'trade'> {
 	getMoneyLimit (player1Row: UserRow, player2Row: UserRow): number {
 		const lowestLvl = Math.min(player1Row.level, player2Row.level)
 
-		return Math.min(lowestLvl * 100, 10000)
+		return Math.floor(lowestLvl ** 1.5) * 100
 	}
 
 	getItemLimit (player1Row: UserRow, player2Row: UserRow): number {
 		const lowestLvl = Math.min(player1Row.level, player2Row.level)
 
 		// the max 10 item limit is to prevent hitting discord character limit
-		return Math.min(lowestLvl * 1, 10)
+		return Math.min(Math.max(Math.floor(lowestLvl / 2), 1), 10)
 	}
 }
 
