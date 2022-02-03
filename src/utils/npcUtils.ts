@@ -76,10 +76,11 @@ export function getMobDisplayReference (npc: NPC, options: Partial<{ specific: b
 	return lowerCase ? `a ${npc.display}` : `A ${npc.display}`
 }
 
-export function getMobChoice (npc: NPC, npcStimulants: Stimulant[], currentHealth: number): MobChoice {
+export function getMobChoice (npc: NPC, npcStimulants: Stimulant[], currentHealth: number, turnNumber: number): MobChoice {
 	const random = Math.random()
 
-	if (npc.usesHeals && random <= 0.25 && currentHealth < npc.health) {
+	if (npc.usesHeals && random <= 0.25 && (currentHealth / npc.health) < 0.3) {
+		// npc uses heal only 25% of the time when they have less than 30% hp
 		const healingItem = npc.usesHeals[Math.floor(Math.random() * npc.usesHeals.length)]
 
 		return {
@@ -88,7 +89,7 @@ export function getMobChoice (npc: NPC, npcStimulants: Stimulant[], currentHealt
 			item: healingItem
 		}
 	}
-	else if (npc.usesStimulants && random <= 0.4) {
+	else if (npc.usesStimulants && turnNumber === 1) {
 		const stimItem = npc.usesStimulants[Math.floor(Math.random() * npc.usesStimulants.length)]
 
 		if (!npcStimulants.includes(stimItem)) {
