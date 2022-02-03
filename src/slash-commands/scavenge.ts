@@ -140,7 +140,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		if (!areaChoice && ctx.options.area) {
 			const errorEmbed = new Embed()
 				.setDescription(`${location.icon} **${location.display}** has the following areas available:` +
-					`\n\n${location.areas.map(a => `**${a.display}**`).join(', ')}`)
+					`\n\n${location.areas.map(a => a.display).join('\n')}`)
 				.addField('\u200b', `${icons.information} You could also do \`/scavenge\` alone to select an area using an interactive menu.`)
 
 			await this.sendMessage(ctx, {

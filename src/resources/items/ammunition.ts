@@ -8,7 +8,7 @@ export const ammunition = ammoObject({
 		type: 'Ammunition',
 		name: '.338_lapua_FMJ',
 		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['lapua', 'lapua_magnum', '.338', 'lapua_fmj'],
+		aliases: ['lapua', 'lapua_magnum', '.338', 'lapua_fmj', '.338_fmj'],
 		description: 'Full metal jacket .338 Lapua Magnum ammunition for sniper rifles.',
 		damage: 90,
 		penetration: 3.9,

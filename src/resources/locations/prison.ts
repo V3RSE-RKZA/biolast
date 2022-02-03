@@ -89,7 +89,7 @@ export const prison: Location = {
 			quote: 'The room is mostly empty except for the heavily geared raider on the other side.',
 			loot: {
 				common: {
-					items: [items['7.62x39mm_HP_bullet']],
+					items: [items['7.62x39mm_HP_bullet'], items['20-gauge_slug']],
 					xp: 10
 				},
 				uncommon: {
@@ -100,7 +100,7 @@ export const prison: Location = {
 					items: [items['5.45x39mm_7N24_bullet'], items.swat_armor],
 					xp: 25
 				},
-				rolls: 1
+				rolls: 2
 			},
 			npc: {
 				type: 'raider',
@@ -109,7 +109,7 @@ export const prison: Location = {
 				damage: 40,
 				drops: {
 					common: [items.police_baton, items.compression_bandage],
-					uncommon: [items.splint, items.adderall],
+					uncommon: [items.splint, items.adrenaline],
 					rare: [items.suitcase, items.cell_key],
 					rolls: 1
 				},
@@ -175,7 +175,7 @@ export const prison: Location = {
 			npc: {
 				type: 'raider',
 				display: 'Guardian',
-				health: 120,
+				health: 150,
 				damage: 40,
 				drops: {
 					common: [items.molotov_cocktail, items.compression_bandage],
@@ -190,7 +190,7 @@ export const prison: Location = {
 				],
 				usesHeals: [items.splint],
 				weapon: items.mossberg_500,
-				ammo: items['12-gauge_slug'],
+				ammo: items['12-gauge_buckshot'],
 				helmet: items.swat_helmet,
 				armor: items.swat_armor,
 				xp: 200,
@@ -204,7 +204,7 @@ export const prison: Location = {
 			quote: 'There\'s a walker laying inside the cell.',
 			loot: {
 				common: {
-					items: [items.compression_bandage, items['aks-74u']],
+					items: [items['12-gauge_slug'], items['aks-74u']],
 					xp: 10
 				},
 				uncommon: {
