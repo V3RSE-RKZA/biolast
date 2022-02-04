@@ -52,7 +52,7 @@ export function isFleeChoice (choice: PlayerChoice): choice is FleeChoice & { sp
 	return choice.choice === 'try to flee'
 }
 
-const maxStimulantsPerDuel = 4
+const maxStimulantsPerDuel = 1
 
 /**
  * Gets a random body part:
