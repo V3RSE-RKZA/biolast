@@ -65,7 +65,7 @@ export const ranged = rangedObject({
 		icon: '<:U_rifle:869647344344387624>',
 		aliases: ['m4'],
 		sellPrice: 6182,
-		durability: 5,
+		durability: 8,
 		slotsUsed: 4,
 		accuracy: 90,
 		itemLevel: 13,

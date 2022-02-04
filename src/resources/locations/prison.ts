@@ -8,10 +8,10 @@ export const prison: Location = {
 	boss: {
 		type: 'raider',
 		display: 'Warden James',
-		health: 350,
+		health: 750,
 		damage: 50,
 		drops: {
-			common: [items.hyfin_chest_seal, items['12-gauge_AP_slug'], items['5.56x45mm_FMJ_bullet']],
+			common: [items.trauma_kit, items['12-gauge_AP_slug'], items['5.56x45mm_FMJ_bullet']],
 			uncommon: [items.steel_armor, items.steel_helmet],
 			rare: [items.benelli_M4],
 			rolls: 3
@@ -241,7 +241,7 @@ export const prison: Location = {
 			},
 			requiresKey: [items.cell_key],
 			keyUsedToFightNPC: true,
-			scavengeCooldown: 60 * 4
+			scavengeCooldown: 60 * 5
 		},
 		{
 			display: 'Cell 2',

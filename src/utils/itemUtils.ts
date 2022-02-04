@@ -138,9 +138,7 @@ export function backpackHasSpace (backpackRows: BackpackItemRow[], slotsNeeded: 
 	const userBackpackData = getItems(backpackRows)
 	const equips = getEquips(backpackRows)
 
-	return slotsNeeded === 0 ?
-		userBackpackData.slotsUsed + slotsNeeded < getBackpackLimit(equips.backpack?.item, slotsBonus) :
-		userBackpackData.slotsUsed + slotsNeeded <= getBackpackLimit(equips.backpack?.item, slotsBonus)
+	return userBackpackData.slotsUsed + slotsNeeded <= getBackpackLimit(equips.backpack?.item, slotsBonus)
 }
 
 /**
