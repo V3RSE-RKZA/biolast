@@ -11,7 +11,7 @@ import { allQuests } from '../resources/quests'
 import { addItemToBackpack, createItem, addAttachmentToWeapon, deleteItem, getAttachments, getUserBackpack } from '../utils/db/items'
 import { createCooldown } from '../utils/db/cooldowns'
 import { getAttackDamage } from '../utils/duelUtils'
-import { getFetchTime, getProtectionChance } from '../utils/companionUtils'
+import { getCompanionXp, getFetchTime, getProtectionChance } from '../utils/companionUtils'
 
 export const command: TextCommand = {
 	name: 'eval',
@@ -37,7 +37,8 @@ export const command: TextCommand = {
 			getAttackDamage,
 			getFetchTime,
 			getProtectionChance,
-			items
+			items,
+			getCompanionXp
 		}
 		let commandInput = message.content.slice(prefix.length).trimStart().slice(this.name.length).trimStart()
 

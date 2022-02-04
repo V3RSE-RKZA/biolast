@@ -359,7 +359,7 @@ class ItemCommand extends CustomSlashCommand<'item'> {
 					const placesFound = Object.keys(obtainedFrom).reduce((prev, curr) => prev + obtainedFrom[curr].length, 0)
 					if (!placesFound) {
 						await buttonCtx.send({
-							content: `${getItemDisplay(itemFixed)} cannot be found from scavenging!`,
+							content: `${getItemDisplay(itemFixed)} cannot be found from scavenging! However, a companion could fetch it if they have enough perception...`,
 							ephemeral: true
 						})
 						return

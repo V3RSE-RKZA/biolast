@@ -11,10 +11,10 @@ export const prison: Location = {
 		health: 750,
 		damage: 50,
 		drops: {
-			common: [items.trauma_kit, items['12-gauge_AP_slug'], items['5.56x45mm_FMJ_bullet']],
-			uncommon: [items.steel_armor, items.steel_helmet],
+			common: [items.trauma_kit, items['12-gauge_AP_slug'], items['5.56x45mm_FMJ_bullet'], items.steel_armor, items.steel_helmet],
+			uncommon: [items.morphine, items.adrenaline],
 			rare: [items.benelli_M4],
-			rolls: 3
+			rolls: 5
 		},
 		weapon: items.m4a1,
 		ammo: items['5.56x45mm_HP_bullet'],
