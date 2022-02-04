@@ -847,9 +847,9 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 								const killEmbed = new Embed()
 									.setAuthor(`${player.member.user.username}#${player.member.user.discriminator}'s Loot Received`, player.member.avatarURL)
 									.setColor(9043800)
-									.setDescription(`${icons.xp_star}***+${location.boss.xp}** xp!*` +
-										`\n${(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
-											.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : `${getRarityDisplay('Common')} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}`)
+									.setDescription(`${(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
+										.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : `${getRarityDisplay('Common')} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}` +
+										`\n${icons.xp_star}***+${location.boss.xp}** xp!*`)
 
 								lootEmbeds.push({ ...killEmbed.embed })
 
