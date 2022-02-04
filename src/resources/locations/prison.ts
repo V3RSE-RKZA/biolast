@@ -74,7 +74,7 @@ export const prison: Location = {
 					common: [items.pizza_slice],
 					uncommon: [items['20-gauge_buckshot'], items['9mm_AP_bullet']],
 					rare: [items.bobwhite_g2],
-					rolls: 1
+					rolls: 3
 				},
 				xp: 100,
 				chanceToBite: 25,
