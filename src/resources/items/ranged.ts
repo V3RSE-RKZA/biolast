@@ -55,7 +55,7 @@ export const ranged = rangedObject({
 		durability: 12,
 		slotsUsed: 5,
 		accuracy: 98,
-		itemLevel: 20,
+		itemLevel: 18,
 		speed: 2
 	},
 	'm4a1': {
