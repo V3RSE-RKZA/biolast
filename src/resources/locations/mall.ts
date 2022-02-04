@@ -13,7 +13,7 @@ export const mall: Location = {
 		drops: {
 			common: [items['9mm_AP_bullet'], items.paracetamol, items.aramid_armor, items.aramid_helmet, items['20-gauge_buckshot']],
 			uncommon: [items['9mm_RIP_bullet'], items.duffle_bag, items.bobwhite_g2, items['12-gauge_buckshot']],
-			rare: [items.steel_helmet],
+			rare: [items.swat_helmet, items.swat_armor],
 			rolls: 6
 		},
 		quotes: [
