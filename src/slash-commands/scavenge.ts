@@ -204,7 +204,9 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		const preUserQuest = await getUserQuest(transaction.query, ctx.user.id, true)
 		const backpackData = getItems(backpackRows)
 		const userEquips = getEquips(backpackRows)
-		const keysRequired = !areaChoice.keyUsedToFightNPC || (areaChoice.npc && !mobKilledCD) ? areaChoice.requiresKey : undefined
+		const keysRequired = (!areaChoice.keyUsedToFightNPC && (areaChoice.npc && mobKilledCD)) || (areaChoice.keyUsedToFightNPC && (areaChoice.npc && !mobKilledCD)) ?
+			areaChoice.requiresKey :
+			undefined
 		const hasRequiredKey = sortItemsByDurability(backpackData.items, true).reverse().find(i => keysRequired?.some(key => i.item.name === key.name))
 		const backpackLimit = getBackpackLimit(userEquips.backpack?.item)
 
