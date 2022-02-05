@@ -84,6 +84,7 @@ export const suburbs: Location = {
 		},
 		{
 			display: 'Red House',
+			quote: 'My neighbors house. It looks like someone is still inside.',
 			loot: {
 				common: {
 					items: [items.makeshift_pistol, items.makeshift_pistol_bullet],
@@ -119,43 +120,8 @@ export const suburbs: Location = {
 			scavengeCooldown: 60
 		},
 		{
-			display: 'Apartments',
-			loot: {
-				common: {
-					items: [items.shed_key, items.wooden_bat, items.bandage],
-					xp: 5
-				},
-				uncommon: {
-					items: [items.metal_bat, items.knife],
-					xp: 15
-				},
-				rare: {
-					items: [items.luger, items['.22LR_bullet']],
-					xp: 20
-				},
-				rolls: 2
-			},
-			npc: {
-				type: 'walker',
-				display: 'Crawler',
-				health: 20,
-				damage: 15,
-				drops: {
-					common: [items.makeshift_pistol, items.makeshift_pistol_bullet, items.cloth_armor],
-					uncommon: [items['anti-biotics'], items.makeshift_rifle],
-					rare: [items.makeshift_shell, items.small_pouch, items.walker_goop],
-					rolls: 2
-				},
-				xp: 20,
-				chanceToBite: 0,
-				attackPenetration: 0.1,
-				boss: false,
-				respawnTime: 60 * 4
-			},
-			scavengeCooldown: 60
-		},
-		{
 			display: 'Backyard Shed',
+			quote: 'the shed behind my neighbors house. I can see a figure moving through the darkness inside.',
 			loot: {
 				common: {
 					items: [items.cloth_armor, items.cloth_helmet],
@@ -197,6 +163,42 @@ export const suburbs: Location = {
 			requiresKey: [items.shed_key],
 			keyUsedToFightNPC: false,
 			scavengeCooldown: 60 * 2
+		},
+		{
+			display: 'Apartments',
+			loot: {
+				common: {
+					items: [items.shed_key, items.wooden_bat, items.bandage],
+					xp: 5
+				},
+				uncommon: {
+					items: [items.metal_bat, items.knife],
+					xp: 15
+				},
+				rare: {
+					items: [items.luger, items['.22LR_bullet']],
+					xp: 20
+				},
+				rolls: 2
+			},
+			npc: {
+				type: 'walker',
+				display: 'Crawler',
+				health: 20,
+				damage: 15,
+				drops: {
+					common: [items.makeshift_pistol, items.makeshift_pistol_bullet, items.cloth_armor],
+					uncommon: [items['anti-biotics'], items.makeshift_rifle],
+					rare: [items.makeshift_shell, items.small_pouch, items.walker_goop],
+					rolls: 2
+				},
+				xp: 20,
+				chanceToBite: 0,
+				attackPenetration: 0.1,
+				boss: false,
+				respawnTime: 60 * 4
+			},
+			scavengeCooldown: 60
 		},
 		{
 			display: 'Park',

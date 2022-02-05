@@ -317,7 +317,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						components: [GREEN_BUTTON('Hire', 'hire-confirm'), RED_BUTTON('Cancel', 'hire-cancel')]
 					}]
 					await buttonCtx.editParent({
-						content: `Hire **${companion.name}** for **${formatMoney(companion.price)}**?`,
+						content: `Hire ${companionToHire.icon} **${getCompanionDisplay(companionToHire)}** for **${formatMoney(companion.price)}**?`,
 						components
 					})
 				}
@@ -351,7 +351,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 
 						components = hireMenu
 						await buttonCtx.editParent({
-							content: `${icons.danger} You don't have enough copper to hire **${companionToHire.name}**. You need **${formatMoney(companionToHire.price)}** but you only have **${formatMoney(userData.money)}**.`,
+							content: `${icons.danger} You don't have enough copper to hire ${companionToHire.icon} **${getCompanionDisplay(companionToHire)}**. You need **${formatMoney(companionToHire.price)}** but you only have **${formatMoney(userData.money)}**.`,
 							components
 						})
 						return
@@ -383,7 +383,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						]
 					}]
 					await buttonCtx.editParent({
-						content: `${icons.checkmark} Hired **${companionToHire.name}** for **${formatMoney(companionToHire.price)}**!` +
+						content: `${icons.checkmark} Hired ${companionToHire.icon} **${getCompanionDisplay(companionToHire)}** for **${formatMoney(companionToHire.price)}**!` +
 							` You now have **${formatMoney(userData.money - companionToHire.price)}** copper.`,
 						components,
 						embeds: [companionEmbed.embed]
@@ -555,7 +555,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 					if (companionRow.level !== companionNewLevel) {
 						display += `\n\n**${getCompanionDisplay(preCompanion, companionRow, true)} leveled up!** (Lvl. **${companionRow.level}** → **${companionNewLevel}**) You can upgrade your companion's skills!`
 						await increaseLevel(transaction.query, ctx.user.id, companionNewLevel - companionRow.level)
-						companionRow.skillPoints += 1
+						companionRow.skillPoints += companionNewLevel - companionRow.level
 					}
 
 					companionRow.level = companionNewLevel
@@ -785,7 +785,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 								if (companionRow.level !== companionNewLevel) {
 									display += `\n\n**${getCompanionDisplay(preCompanion, companionRow, true)} leveled up!** (Lvl. **${companionRow.level}** → **${companionNewLevel}**) You can upgrade your companion's skills!`
 									await increaseLevel(transaction.query, ctx.user.id, companionNewLevel - companionRow.level)
-									companionRow.skillPoints += 1
+									companionRow.skillPoints += companionNewLevel - companionRow.level
 								}
 
 								companionRow.level = companionNewLevel
@@ -1042,7 +1042,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 					if (companionRow.level !== companionNewLevel) {
 						display += ` **${getCompanionDisplay(preCompanion, companionRow, true)} leveled up!** You can upgrade their skills.`
 						await increaseLevel(transaction.query, ctx.user.id, companionNewLevel - companionRow.level)
-						companionRow.skillPoints += 1
+						companionRow.skillPoints += companionNewLevel - companionRow.level
 					}
 
 					await addStress(transaction.query, ctx.user.id, stressToAdd)

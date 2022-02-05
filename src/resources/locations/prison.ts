@@ -49,7 +49,7 @@ export const prison: Location = {
 	areas: [
 		{
 			display: 'Entrance Gate',
-			quote: 'I see a few zombies bashing on the gate trying to get in. There\'s also a sign above the gate: "Guardians territory, stay out!"',
+			quote: 'I see a few zombies bashing on the gate trying to get in. there\'s also a sign above the gate: "Guardians territory, stay out!"',
 			loot: {
 				common: {
 					items: [items.police_baton],
@@ -86,7 +86,7 @@ export const prison: Location = {
 		},
 		{
 			display: 'Visiting Room',
-			quote: 'The room is mostly empty except for the heavily geared raider on the other side.',
+			quote: 'the room is mostly empty except for the heavily geared raider on the other side.',
 			loot: {
 				common: {
 					items: [items['7.62x39mm_HP_bullet'], items['20-gauge_slug']],
@@ -132,7 +132,7 @@ export const prison: Location = {
 		},
 		{
 			display: 'Cafeteria',
-			quote: 'The cafeteria looks pretty barren.',
+			quote: 'the cafeteria looks pretty barren.',
 			loot: {
 				common: {
 					items: [items.donut, items.pretzel, items.fork],
@@ -156,7 +156,7 @@ export const prison: Location = {
 		},
 		{
 			display: 'Hallways',
-			quote: 'This must lead to the prison cells, there\'s another guard down the hall.',
+			quote: 'this must lead to the prison cells, there\'s another guard down the hall.',
 			loot: {
 				common: {
 					items: [items['7.62x39mm_HP_bullet'], items.SS190_bullet, items.hyfin_chest_seal],
@@ -201,7 +201,7 @@ export const prison: Location = {
 		},
 		{
 			display: 'Cell 1',
-			quote: 'There\'s a walker laying inside the cell.',
+			quote: 'there\'s a walker laying inside the cell.',
 			loot: {
 				common: {
 					items: [items['12-gauge_slug'], items['aks-74u']],
@@ -245,7 +245,7 @@ export const prison: Location = {
 		},
 		{
 			display: 'Cell 2',
-			quote: 'An empty cell. There\'s a handwritten sign on the cell door: "subject 2 - status: deceased"',
+			quote: 'an empty cell. there\'s a handwritten sign on the cell door: "subject 2 - status: deceased"',
 			loot: {
 				common: {
 					items: [items.metal_shank, items['5.56x45mm_HP_bullet']],

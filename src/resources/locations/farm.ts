@@ -45,6 +45,7 @@ export const farm: Location = {
 	areas: [
 		{
 			display: 'Fields',
+			quote: 'seemingly endless fields of corn.',
 			loot: {
 				common: {
 					items: [items.scythe],
@@ -59,6 +60,45 @@ export const farm: Location = {
 					xp: 20
 				},
 				rolls: 1
+			},
+			scavengeCooldown: 60
+		},
+		{
+			display: 'Barn',
+			quote: 'a large barn. it looks to be occupied by someone.',
+			loot: {
+				common: {
+					items: [items.scythe, items.corn, items.splint],
+					xp: 5
+				},
+				uncommon: {
+					items: [items.pitchfork, items.farming_guide, items.fire_axe],
+					xp: 10
+				},
+				rare: {
+					items: [items['glock-17']],
+					xp: 20
+				},
+				rolls: 2
+			},
+			npc: {
+				type: 'raider',
+				display: 'Raider',
+				health: 25,
+				damage: 25,
+				drops: {
+					common: [items.bandage],
+					uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
+					rare: [items['9mm_FMJ_bullet']],
+					rolls: 1
+				},
+				weapon: items.luger,
+				ammo: items['.22LR_bullet'],
+				armor: items.cloth_armor,
+				helmet: items.cloth_helmet,
+				xp: 40,
+				boss: false,
+				respawnTime: 60 * 2
 			},
 			scavengeCooldown: 60
 		},
@@ -93,44 +133,6 @@ export const farm: Location = {
 				xp: 50,
 				chanceToBite: 15,
 				attackPenetration: 1.3,
-				boss: false,
-				respawnTime: 60 * 2
-			},
-			scavengeCooldown: 60
-		},
-		{
-			display: 'Barn',
-			loot: {
-				common: {
-					items: [items.scythe, items.corn, items.splint],
-					xp: 5
-				},
-				uncommon: {
-					items: [items.pitchfork, items.farming_guide, items.fire_axe],
-					xp: 10
-				},
-				rare: {
-					items: [items['glock-17']],
-					xp: 20
-				},
-				rolls: 2
-			},
-			npc: {
-				type: 'raider',
-				display: 'Raider',
-				health: 25,
-				damage: 25,
-				drops: {
-					common: [items.bandage],
-					uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
-					rare: [items['9mm_FMJ_bullet']],
-					rolls: 1
-				},
-				weapon: items.luger,
-				ammo: items['.22LR_bullet'],
-				armor: items.cloth_armor,
-				helmet: items.cloth_helmet,
-				xp: 40,
 				boss: false,
 				respawnTime: 60 * 2
 			},
@@ -175,6 +177,7 @@ export const farm: Location = {
 		},
 		{
 			display: 'Bedroom',
+			quote: 'the farmers bedroom. theres a bed, a dresser, and a tall safe.',
 			loot: {
 				common: {
 					items: [items.compression_bandage, items['9mm_HP_bullet']],
@@ -196,6 +199,7 @@ export const farm: Location = {
 		},
 		{
 			display: 'Drug Room',
+			quote: 'its a green house that\'s been repurposed as some kind of drug lab. there\'s beakers and tubes going everywhere.',
 			loot: {
 				common: {
 					items: [items.compression_bandage, items.bandage],

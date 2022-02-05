@@ -78,6 +78,7 @@ export const mall: Location = {
 		},
 		{
 			display: 'Food Court',
+			quote: 'chairs and tables flipped over everywhere. theres a few walkers wandering about.',
 			loot: {
 				common: {
 					items: [items.pizza_slice, items.pretzel, items.fork],
@@ -152,6 +153,7 @@ export const mall: Location = {
 		},
 		{
 			display: 'Plaza',
+			quote: 'the ceiling is made of glass, the sun is shining down on a fountain in the center.',
 			loot: {
 				common: {
 					items: [items.sledgehammer, items.wooden_helmet],
@@ -192,6 +194,7 @@ export const mall: Location = {
 		},
 		{
 			display: 'Dereks Hunting Shop',
+			quote: 'the place looks full of weapons and ammo. it\'s doors are locked shut.',
 			loot: {
 				common: {
 					items: [items['aks-74u'], items['FN_Five-seveN'], items.SS195LF_bullet],
@@ -213,6 +216,7 @@ export const mall: Location = {
 		},
 		{
 			display: 'Game N Go',
+			quote: 'a video game store, it looks occupied by some crazed raider.',
 			loot: {
 				common: {
 					items: [items.donut],
@@ -251,6 +255,7 @@ export const mall: Location = {
 		},
 		{
 			display: 'Staff Break Room',
+			quote: 'the break room for mall staff. there\'s an angry man inside!',
 			loot: {
 				common: {
 					items: [items.donut, items.pizza_slice],
@@ -293,6 +298,7 @@ export const mall: Location = {
 		},
 		{
 			display: 'Florreds Pharmacy',
+			quote: 'the pharmacy is blocked shut with a metal gate.',
 			loot: {
 				common: {
 					items: [items.ifak_medkit, items.compression_bandage],
@@ -314,7 +320,7 @@ export const mall: Location = {
 		},
 		{
 			display: 'Hideout',
-			quote: 'There\'s a sign on the door: "sarah\'s hideout, KEEP OUT"',
+			quote: 'there\'s a sign on the door: "sarah\'s hideout, KEEP OUT"',
 			loot: {
 				common: {
 					items: [items.SS190_bullet, items['9mm_AP_bullet']],

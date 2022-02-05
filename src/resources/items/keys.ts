@@ -39,7 +39,7 @@ export const keys = keysObject({
 		aliases: ['dereks_key'],
 		icon: '<:dereks_shop_key:933852925489479710>',
 		slotsUsed: 2,
-		itemLevel: 10,
+		itemLevel: 11,
 		artist: '719365897458024558'
 	},
 	florreds_pharmacy_key: {
