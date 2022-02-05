@@ -204,7 +204,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		const preUserQuest = await getUserQuest(transaction.query, ctx.user.id, true)
 		const backpackData = getItems(backpackRows)
 		const userEquips = getEquips(backpackRows)
-		const keysRequired = (!areaChoice.keyUsedToFightNPC && (areaChoice.npc && mobKilledCD)) || (areaChoice.keyUsedToFightNPC && (areaChoice.npc && !mobKilledCD)) ?
+		const keysRequired = (!areaChoice.keyUsedToFightNPC && (!areaChoice.npc || mobKilledCD)) || (areaChoice.keyUsedToFightNPC && (!areaChoice.npc || !mobKilledCD)) ?
 			areaChoice.requiresKey :
 			undefined
 		const hasRequiredKey = sortItemsByDurability(backpackData.items, true).reverse().find(i => keysRequired?.some(key => i.item.name === key.name))
@@ -961,8 +961,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 
 				try {
 					await ctx.sendFollowUp({
-						content: `${icons.danger} <@${ctx.user.id}>, An error occured, the boss fight had to be ended. Sorry about that...` +
-							'\n\nHEY IF YOU JOIN THE SUPPORT SERVER AND LET A DEV KNOW, WE MIGHT COMPENSATE YOU!'
+						content: `${icons.danger} <@${ctx.user.id}>, An error occured, the fight had to be ended. Sorry about that...`
 					})
 				}
 				catch (msgErr) {
