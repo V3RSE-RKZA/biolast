@@ -1,7 +1,7 @@
 # ⚠️ Currently in development
 
-[![Github Mega-Linter](https://github.com/blobfysh/project-z/workflows/Lint%20Code/badge.svg)](https://github.com/nvuillam/mega-linter)
-![Build](https://github.com/blobfysh/project-z/workflows/Build/badge.svg)
+[![Github Mega-Linter](https://github.com/blobfysh/biolast/workflows/Lint%20Code/badge.svg)](https://github.com/nvuillam/mega-linter)
+![Build](https://github.com/blobfysh/biolast/workflows/Build/badge.svg)
 
 This is a post-apocalyptic RPG bot where players scavenge regions for items and progress to new regions by defeating a boss. The bot features PvP, PvE, quests, a global shop, unique items, equippable items and some other things.
 
