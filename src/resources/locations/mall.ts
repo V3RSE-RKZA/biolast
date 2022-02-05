@@ -50,6 +50,13 @@ export const mall: Location = {
 		},
 		{
 			type: 'Region',
+			id: 'mall_retrieve_4',
+			questType: 'Retrieve Item',
+			progressGoal: 1,
+			item: items.antique_vase
+		},
+		{
+			type: 'Region',
 			id: 'mall_key_1',
 			questType: 'Scavenge With A Key',
 			progressGoal: 1,

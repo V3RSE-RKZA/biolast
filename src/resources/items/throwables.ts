@@ -48,7 +48,7 @@ export const throwables = throwablesObject({
 		durability: 1,
 		slotsUsed: 1,
 		accuracy: 35,
-		damage: 35,
+		damage: 34,
 		penetration: 2.5,
 		itemLevel: 12,
 		spreadsDamageToLimbs: 2,

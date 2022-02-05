@@ -9,7 +9,7 @@ export const farm: Location = {
 		type: 'raider',
 		display: 'Dave, The Redneck',
 		health: 185,
-		damage: 20,
+		damage: 31,
 		drops: {
 			common: [items.pitchfork, items.daves_drug_key, items.sledgehammer],
 			uncommon: [items.paracetamol, items.farming_guide, items.P320],
