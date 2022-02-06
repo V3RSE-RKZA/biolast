@@ -181,10 +181,10 @@ export function getAttackString (weapon: ItemWithRow<ItemRow | undefined, Weapon
 				limbsHitStrings.push(limbHit.limb === 'head' ? `${getBodyPartEmoji(limbHit.limb)} ***HEAD*** for **${limbHit.damage.total}** damage` : `${getBodyPartEmoji(limbHit.limb)} **${limbHit.limb}** for **${limbHit.damage.total}** damage`)
 			}
 
-			return `${attackerName} shot ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(weapon.item, weapon.row)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** total damage dealt.\n`
+			return `${attackerName} shot ${victimName} in the ${combineArrayWithAnd(limbsHitStrings)} with their ${getItemDisplay(weapon.item, weapon.row, { showDurability: false })} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** total damage dealt.\n`
 		}
 
-		return `${attackerName} shot ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with their ${getItemDisplay(weapon.item, weapon.row)} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** damage dealt.\n`
+		return `${attackerName} shot ${victimName} in the ${getBodyPartEmoji(limbsHit[0].limb)} **${limbsHit[0].limb === 'head' ? '*HEAD*' : limbsHit[0].limb}** with their ${getItemDisplay(weapon.item, weapon.row, { showDurability: false })} (ammo: ${getItemDisplay(ammo!)}). **${totalDamage}** damage dealt.\n`
 	}
 	else if (weapon.item.type === 'Throwable Weapon' && weapon.item.subtype === 'Fragmentation Grenade') {
 		if (limbsHit.length > 1) {

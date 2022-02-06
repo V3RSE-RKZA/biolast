@@ -116,13 +116,6 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 		const preMembersData: { member: ResolvedMember, data: UserRow }[] = [{ member: ctx.member, data: preUserData }]
 		const preBossCD = await getCooldown(query, ctx.user.id, `boss-${location.display}`)
 
-		if (preBossCD) {
-			await ctx.send({
-				content: `${icons.warning} You recently fought **${location.boss.display}**, you can attempt the boss fight again in **${preBossCD}**.`
-			})
-			return
-		}
-
 		for (const member of teammates) {
 			if (member.id === ctx.user.id) {
 				await ctx.send({
@@ -186,13 +179,20 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 		}
 
 		await ctx.send({
-			content: `${preMembersData.map(d => `<@${d.member.id}>`).join(' ')}, All players must ready up to start the fight.`,
+			content: preBossCD ?
+				`<@${ctx.user.id}>, You recently fought **${location.boss.display}**, you can attempt the boss fight again in **${preBossCD}**.` :
+				`${preMembersData.map(d => `<@${d.member.id}>`).join(' ')}, All players must ready up to start the fight.`,
 			embeds: [this.getAgreementEmbed(location, preMembersData.map(d => d.member), []).embed],
 			components: [{
 				type: ComponentType.ACTION_ROW,
-				components: [GREEN_BUTTON('Ready Up', 'accept')]
+				components: [GREEN_BUTTON('Ready Up', 'accept', !!preBossCD)]
 			}]
 		})
+
+		if (preBossCD) {
+			return
+		}
+
 		let botMessage = await ctx.fetch()
 
 		try {
@@ -634,7 +634,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 							totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 							if (missedPartChoice) {
-								messages[i].push(`<@${choiceInfo.member.id}> tries to shoot ${npcDisplayName} in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item, choice.weapon.row)} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
+								messages[i].push(`<@${choiceInfo.member.id}> tries to shoot ${npcDisplayName} in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item, choice.weapon.row, { showDurability: false })} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
 							}
 							else {
 								messages[i].push(getAttackString(choice.weapon as ItemWithRow<ItemRow, RangedWeapon>, `<@${choiceInfo.member.id}>`, npcDisplayName, limbsHit, totalDamage, choice.ammo.item))

@@ -410,7 +410,7 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 								totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 								if (missedPartChoice) {
-									messages[i].push(`<@${userChoice.member.id}> tries to shoot <@${otherPlayerMember.id}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item, choice.weapon.row)} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
+									messages[i].push(`<@${userChoice.member.id}> tries to shoot <@${otherPlayerMember.id}> in the ${getBodyPartEmoji(choice.limbTarget!)} **${choice.limbTarget}** with their ${getItemDisplay(choice.weapon.item, choice.weapon.row, { showDurability: false })} (ammo: ${getItemDisplay(choice.ammo.item)}) **BUT MISSES!**\n`)
 								}
 								else {
 									messages[i].push(getAttackString(choice.weapon as ItemWithRow<ItemRow, RangedWeapon>, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage, choice.ammo.item))

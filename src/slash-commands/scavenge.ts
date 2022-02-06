@@ -710,7 +710,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 							totalDamage = limbsHit.reduce((prev, curr) => prev + curr.damage.total, 0)
 
 							if (missedPartChoice) {
-								messages[i].push(`<@${ctx.user.id}> tries to shoot ${npcDisplayName} in the ${getBodyPartEmoji(playerChoice.limbTarget!)} **${playerChoice.limbTarget}** with their ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row)} (ammo: ${getItemDisplay(playerChoice.ammo.item)}) **BUT MISSES!**\n`)
+								messages[i].push(`<@${ctx.user.id}> tries to shoot ${npcDisplayName} in the ${getBodyPartEmoji(playerChoice.limbTarget!)} **${playerChoice.limbTarget}** with their ${getItemDisplay(playerChoice.weapon.item, playerChoice.weapon.row, { showDurability: false })} (ammo: ${getItemDisplay(playerChoice.ammo.item)}) **BUT MISSES!**\n`)
 							}
 							else {
 								messages[i].push(getAttackString(playerChoice.weapon as ItemWithRow<ItemRow, RangedWeapon>, `<@${ctx.user.id}>`, npcDisplayName, limbsHit, totalDamage, playerChoice.ammo.item))
