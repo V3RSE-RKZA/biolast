@@ -566,7 +566,12 @@ class ItemCommand extends CustomSlashCommand<'item'> {
 					description: 'Equippable items that increase inventory space.'
 				}
 			}
-			case 'Helmet':
+			case 'Helmet': {
+				return {
+					icon: items.aramid_helmet.icon,
+					description: 'Equippable items that reduce damage from attacks.'
+				}
+			}
 			case 'Body Armor': {
 				return {
 					icon: items.aramid_armor.icon,
