@@ -86,6 +86,7 @@ export const collectible = questObject({
 		sellPrice: 50,
 		slotsUsed: 0.1,
 		itemLevel: 1,
-		artist: '168958344361541633'
+		artist: '168958344361541633',
+		cannotBeFetched: true
 	}
 })

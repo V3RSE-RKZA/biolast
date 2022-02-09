@@ -30,6 +30,11 @@ interface BaseItem {
 	 * Discord ID of the user who drew the icon for this item
 	 */
 	artist?: string
+
+	/**
+	 * Whether or not this item cannot be fetched by companions (true = cannot be fetched, false = can be fetched)
+	 */
+	cannotBeFetched?: boolean
 }
 
 type ArmorLevel = 1 | 2 | 3 | 4 | 5 | 6

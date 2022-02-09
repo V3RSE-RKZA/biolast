@@ -1009,7 +1009,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 					const companionItemLevel = companionRow.perception + 1
 					const companionItemsFound = companionRow.strength + 1
 					const itemsFound: ItemWithRow<ItemRow>[] = []
-					let possibleItems = allItems.filter(i => i.name !== 'dog_tags' && i.itemLevel <= companionItemLevel + 1 && i.itemLevel > companionItemLevel - 4)
+					let possibleItems = allItems.filter(i => !i.cannotBeFetched && i.itemLevel <= companionItemLevel + 1 && i.itemLevel > companionItemLevel - 4)
 					let loopI = 1
 					let display = ''
 
@@ -1017,7 +1017,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 					while (possibleItems.length < 4 + companionItemsFound) {
 						loopI++
 						possibleItems = allItems.filter(i =>
-							i.name !== 'dog_tags' &&
+							!i.cannotBeFetched &&
 							i.itemLevel <= companionItemLevel + 1 &&
 							i.itemLevel > companionItemLevel - (4 * loopI)
 						)
