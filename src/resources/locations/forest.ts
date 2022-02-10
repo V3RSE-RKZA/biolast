@@ -1,10 +1,10 @@
 import { Location } from '../../types/Locations'
 import { items } from '../items'
 
-export const farm: Location = {
-	display: 'The Farm',
+export const forest: Location = {
+	display: 'The Forest',
 	icon: '🚜',
-	locationLevel: 2,
+	locationLevel: 3,
 	boss: {
 		type: 'raider',
 		display: 'Dave, The Redneck',
@@ -33,19 +33,11 @@ export const farm: Location = {
 		boss: true,
 		respawnTime: 60 * 60
 	},
-	quests: [
-		{
-			type: 'Region',
-			id: 'farm_goop_retrieve_2',
-			questType: 'Retrieve Item',
-			progressGoal: 2,
-			item: items.walker_goop
-		}
-	],
+	quests: [],
 	areas: [
 		{
-			display: 'Fields',
-			quote: 'seemingly endless fields of corn.',
+			display: 'Abandoned Cabin',
+			quote: '',
 			loot: {
 				common: {
 					items: [items.scythe],
@@ -64,8 +56,8 @@ export const farm: Location = {
 			scavengeCooldown: 60
 		},
 		{
-			display: 'Barn',
-			quote: 'a large barn. it looks to be occupied by someone.',
+			display: 'Treehouse',
+			quote: '',
 			loot: {
 				common: {
 					items: [items.scythe, items.corn, items.splint],
@@ -103,7 +95,7 @@ export const farm: Location = {
 			scavengeCooldown: 60
 		},
 		{
-			display: 'Cellar',
+			display: 'Clearing',
 			loot: {
 				common: {
 					items: [items.bandage, items.wooden_bat],
@@ -139,18 +131,18 @@ export const farm: Location = {
 			scavengeCooldown: 60
 		},
 		{
-			display: 'Warehouse',
+			display: 'Cave',
 			loot: {
 				common: {
 					items: [items.apple, items.compression_bandage],
 					xp: 5
 				},
 				uncommon: {
-					items: [items.wooden_armor, items.wooden_helmet],
+					items: [items.wooden_armor, items.cloth_backpack, items.wooden_helmet],
 					xp: 10
 				},
 				rare: {
-					items: [items.cloth_backpack],
+					items: [items.chainsaw],
 					xp: 20
 				},
 				rolls: 2
@@ -176,8 +168,8 @@ export const farm: Location = {
 			scavengeCooldown: 60
 		},
 		{
-			display: 'Bedroom',
-			quote: 'the farmers bedroom. theres a bed, a dresser, and a tall safe.',
+			display: 'Campsite',
+			quote: '',
 			loot: {
 				common: {
 					items: [items.compression_bandage, items['9mm_HP_bullet']],
@@ -194,28 +186,6 @@ export const farm: Location = {
 				rolls: 4
 			},
 			requiresKey: [items.gunsafe_code],
-			keyUsedToFightNPC: false,
-			scavengeCooldown: 60 * 10
-		},
-		{
-			display: 'Drug Room',
-			quote: 'its a green house that\'s been repurposed as some kind of drug lab. there\'s beakers and tubes going everywhere.',
-			loot: {
-				common: {
-					items: [items.compression_bandage, items.bandage],
-					xp: 8
-				},
-				uncommon: {
-					items: [items.adrenaline, items.morphine, items.adderall],
-					xp: 10
-				},
-				rare: {
-					items: [items.daves_concoction],
-					xp: 15
-				},
-				rolls: 2
-			},
-			requiresKey: [items.daves_drug_key],
 			keyUsedToFightNPC: false,
 			scavengeCooldown: 60 * 10
 		}

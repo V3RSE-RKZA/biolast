@@ -4,7 +4,7 @@ import { items } from '../items'
 export const prison: Location = {
 	display: 'The Prison',
 	icon: '🚓',
-	locationLevel: 4,
+	locationLevel: 5,
 	boss: {
 		type: 'raider',
 		display: 'Warden James',

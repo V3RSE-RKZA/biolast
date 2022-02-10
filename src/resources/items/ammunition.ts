@@ -95,6 +95,19 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 7
 	},
+	'.45_ACP_FMJ_bullet': {
+		type: 'Ammunition',
+		name: '.45_ACP_FMJ_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['.45', 'acp', 'acp_fmj', '.45_fmj', 'acp_bullet', '.45_bullet'],
+		description: 'Full metal jacket .45 ACP ammunition.',
+		damage: 31,
+		penetration: 1.8,
+		ammoFor: [ranged.m1911],
+		sellPrice: 342,
+		slotsUsed: 1,
+		itemLevel: 7
+	},
 	'5.45x39mm_HP_bullet': {
 		type: 'Ammunition',
 		name: '5.45x39mm_HP_bullet',

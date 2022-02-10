@@ -78,7 +78,7 @@ export const merchantTrades: MerchantTrade[] = [
 			amount: 1
 		},
 		price: 3000,
-		locationLevel: 3
+		locationLevel: 4
 	},
 	{
 		type: 'collectible',
@@ -123,7 +123,7 @@ export const merchantTrades: MerchantTrade[] = [
 			amount: 1
 		},
 		price: 8500,
-		locationLevel: 3
+		locationLevel: 4
 	},
 	{
 		type: 'collectible',
@@ -132,7 +132,7 @@ export const merchantTrades: MerchantTrade[] = [
 			amount: 1
 		},
 		price: items.tech_trash,
-		locationLevel: 3
+		locationLevel: 4
 	},
 	{
 		type: 'collectible',
@@ -141,7 +141,7 @@ export const merchantTrades: MerchantTrade[] = [
 			amount: 1
 		},
 		price: items.escape_from_fristoe,
-		locationLevel: 3
+		locationLevel: 4
 	},
 	{
 		type: 'collectible',
@@ -150,7 +150,7 @@ export const merchantTrades: MerchantTrade[] = [
 			amount: 1
 		},
 		price: items.gold_watch,
-		locationLevel: 4
+		locationLevel: 5
 	},
 	{
 		type: 'collectible',
@@ -159,7 +159,7 @@ export const merchantTrades: MerchantTrade[] = [
 			amount: 1
 		},
 		price: items.gold_watch,
-		locationLevel: 4
+		locationLevel: 5
 	},
 	{
 		type: 'money',
@@ -168,7 +168,7 @@ export const merchantTrades: MerchantTrade[] = [
 			amount: 1
 		},
 		price: 50000,
-		locationLevel: 4
+		locationLevel: 5
 	},
 	{
 		type: 'money',
@@ -177,6 +177,6 @@ export const merchantTrades: MerchantTrade[] = [
 			amount: 1
 		},
 		price: 25000,
-		locationLevel: 4
+		locationLevel: 5
 	}
 ]

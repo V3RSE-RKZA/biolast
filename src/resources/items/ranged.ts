@@ -31,6 +31,19 @@ export const ranged = rangedObject({
 		speed: 34,
 		artist: '699166377705078794'
 	},
+	'm1911': {
+		type: 'Ranged Weapon',
+		name: 'm1911',
+		description: 'The Colt 1911 was used by the US military from 1911 to 1985.',
+		icon: '<:U_weapon:601366669272678411>',
+		aliases: ['colt', '1911'],
+		sellPrice: 388,
+		durability: 5,
+		slotsUsed: 2,
+		accuracy: 49,
+		itemLevel: 8,
+		speed: 14
+	},
 	'ak-47': {
 		type: 'Ranged Weapon',
 		name: 'ak-47',

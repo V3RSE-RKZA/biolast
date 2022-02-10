@@ -4,7 +4,7 @@ import { items } from '../items'
 export const mall: Location = {
 	display: 'The Mall',
 	icon: '🏪',
-	locationLevel: 3,
+	locationLevel: 4,
 	boss: {
 		type: 'walker',
 		display: 'The Many',
@@ -105,7 +105,7 @@ export const mall: Location = {
 				type: 'walker',
 				display: 'Bloated Walker',
 				health: 50,
-				damage: 35,
+				damage: 40,
 				drops: {
 					common: [items.fire_axe],
 					uncommon: [items.apple],
@@ -141,7 +141,7 @@ export const mall: Location = {
 				type: 'raider',
 				display: 'Raider',
 				health: 60,
-				damage: 35,
+				damage: 40,
 				drops: {
 					common: [items['9mm_FMJ_bullet']],
 					uncommon: [items.ifak_medkit, items['anti-biotics']],
@@ -243,7 +243,7 @@ export const mall: Location = {
 				type: 'raider',
 				display: 'Psycho',
 				health: 40,
-				damage: 30,
+				damage: 40,
 				drops: {
 					common: [items.knife],
 					uncommon: [items.fire_axe, items.splint],
@@ -282,7 +282,7 @@ export const mall: Location = {
 				type: 'raider',
 				display: 'Derek',
 				health: 200,
-				damage: 40,
+				damage: 45,
 				drops: {
 					common: [items.dereks_shop_key],
 					uncommon: [items['9mm_AP_bullet'], items['5.45x39mm_HP_bullet'], items.F1_grenade],
