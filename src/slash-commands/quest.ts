@@ -536,10 +536,14 @@ class QuestCommand extends CustomSlashCommand<'quest'> {
 				return possibleItems[Math.floor(Math.random() * possibleItems.length)]
 			}
 			case 3: {
-				const possibleItems = [items.adderall, items.aramid_armor, items.aramid_helmet, items.P320, items['9mm_HP_bullet'], items['9mm_FMJ_bullet']]
+				const possibleItems = [items.adderall, items.aramid_armor, items.aramid_helmet, items['.45_ACP_FMJ_bullet']]
 				return possibleItems[Math.floor(Math.random() * possibleItems.length)]
 			}
 			case 4: {
+				const possibleItems = [items.adderall, items.aramid_armor, items.aramid_helmet, items.P320, items['9mm_HP_bullet'], items['9mm_FMJ_bullet']]
+				return possibleItems[Math.floor(Math.random() * possibleItems.length)]
+			}
+			case 5: {
 				const possibleItems = [items.swat_armor, items.swat_helmet, items.bobwhite_g2, items['20-gauge_buckshot'], items.hyfin_chest_seal]
 				return possibleItems[Math.floor(Math.random() * possibleItems.length)]
 			}
@@ -555,9 +559,12 @@ class QuestCommand extends CustomSlashCommand<'quest'> {
 				return getRandomInt(250, 500)
 			}
 			case 3: {
-				return getRandomInt(750, 1250)
+				return getRandomInt(500, 750)
 			}
 			case 4: {
+				return getRandomInt(750, 1250)
+			}
+			case 5: {
 				return getRandomInt(1200, 2000)
 			}
 		}
