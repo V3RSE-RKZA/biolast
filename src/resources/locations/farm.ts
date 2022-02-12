@@ -76,7 +76,7 @@ export const farm: Location = {
 					xp: 10
 				},
 				rare: {
-					items: [items['glock-17']],
+					items: [items.makeshift_shotgun],
 					xp: 20
 				},
 				rolls: 2
@@ -89,7 +89,7 @@ export const farm: Location = {
 				drops: {
 					common: [items.bandage],
 					uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
-					rare: [items['9mm_FMJ_bullet']],
+					rare: [items.makeshift_shell],
 					rolls: 1
 				},
 				weapon: items.luger,
@@ -114,7 +114,7 @@ export const farm: Location = {
 					xp: 15
 				},
 				rare: {
-					items: [items.sledgehammer, items['9mm_FMJ_bullet']],
+					items: [items.sledgehammer, items.makeshift_shell],
 					xp: 20
 				},
 				rolls: 2
@@ -163,7 +163,7 @@ export const farm: Location = {
 				drops: {
 					common: [items.bandage],
 					uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
-					rare: [items['9mm_FMJ_bullet']],
+					rare: [items.makeshift_shell],
 					rolls: 1
 				},
 				weapon: items.luger,

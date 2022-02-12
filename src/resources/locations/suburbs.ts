@@ -108,7 +108,7 @@ export const suburbs: Location = {
 				drops: {
 					common: [items.bandage],
 					uncommon: [items.makeshift_pistol_bullet, items.small_pouch],
-					rare: [items['9mm_FMJ_bullet'], items.walker_goop],
+					rare: [items.walker_goop],
 					rolls: 2
 				},
 				xp: 20,

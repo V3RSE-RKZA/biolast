@@ -33,16 +33,16 @@ export const merchantTrades: MerchantTrade[] = [
 			amount: 1
 		},
 		price: 2000,
-		locationLevel: 1
+		locationLevel: 3
 	},
 	{
 		type: 'money',
 		offer: {
-			item: items['9mm_FMJ_bullet'],
+			item: items['9mm_HP_bullet'],
 			amount: 2
 		},
 		price: 2000,
-		locationLevel: 1
+		locationLevel: 3
 	},
 	{
 		type: 'money',
@@ -74,7 +74,7 @@ export const merchantTrades: MerchantTrade[] = [
 	{
 		type: 'money',
 		offer: {
-			item: items['9mm_HP_bullet'],
+			item: items['9mm_FMJ_bullet'],
 			amount: 1
 		},
 		price: 3000,

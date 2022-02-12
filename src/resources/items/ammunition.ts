@@ -88,7 +88,7 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['545mm', '5.45x39_fmj', '545', '545_rifle', '545x39', '545_fmj', '545_bullet'],
 		description: 'Full metal jacket 5.45x39mm ammunition for Kalashnikov rifles.',
-		damage: 31,
+		damage: 40,
 		penetration: 1.8,
 		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
 		sellPrice: 342,
@@ -166,12 +166,12 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['9x19', '9mm', '9mm_fmj', 'bullet'],
 		description: 'Full metal jacket ammunition for 9mm weapons.',
-		damage: 20,
+		damage: 25,
 		penetration: 1.7,
 		ammoFor: [ranged['glock-17'], ranged.P320, ranged.mp5],
-		sellPrice: 158,
+		sellPrice: 302,
 		slotsUsed: 1,
-		itemLevel: 5
+		itemLevel: 7
 	},
 	'9mm_HP_bullet': {
 		type: 'Ammunition',
@@ -179,12 +179,12 @@ export const ammunition = ammoObject({
 		icon: '<:U_ammo:601366669318815745>',
 		aliases: ['9x19_hp', '9mm_hp'],
 		description: 'Hollow point ammunition for 9mm weapons. Hollow point bullets expand when they hit their target, causing more damage.',
-		damage: 40,
-		penetration: 1.2,
+		damage: 30,
+		penetration: 0.9,
 		ammoFor: [ranged['glock-17'], ranged.mp5, ranged.P320],
-		sellPrice: 302,
+		sellPrice: 158,
 		slotsUsed: 1,
-		itemLevel: 6
+		itemLevel: 5
 	},
 	'9mm_RIP_bullet': {
 		type: 'Ammunition',

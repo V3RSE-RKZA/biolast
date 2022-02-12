@@ -69,5 +69,14 @@ export const keys = keysObject({
 		icon: '<:hideout_key:938894742022934600>',
 		slotsUsed: 1,
 		itemLevel: 13
+	},
+	sacred_pendant: {
+		type: 'Key',
+		name: 'sacred_pendant',
+		durability: 1,
+		aliases: ['sacred', 'pendant'],
+		icon: '<:U_key:870786870852874260>',
+		slotsUsed: 1,
+		itemLevel: 10
 	}
 })

@@ -149,7 +149,7 @@ export const mall: Location = {
 					rolls: 1
 				},
 				weapon: items['glock-17'],
-				ammo: items['9mm_HP_bullet'],
+				ammo: items['9mm_FMJ_bullet'],
 				armor: items.wooden_armor,
 				helmet: items.wooden_helmet,
 				xp: 125,
