@@ -142,8 +142,6 @@ export const forest: Location = {
 				},
 				rolls: 4
 			},
-			requiresKey: [items.gunsafe_code],
-			keyUsedToFightNPC: false,
 			scavengeCooldown: 60 * 10
 		},
 		{
