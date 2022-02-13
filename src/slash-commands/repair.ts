@@ -308,7 +308,8 @@ class RepairCommand extends CustomSlashCommand<'repair'> {
 						await transaction.commit()
 
 						await confirmed.editParent({
-							content: `${icons.checkmark} Repair completed. Your ${getItemDisplay(foundItem.item, foundItem.row, { showEquipped: false, showDurability: false })} now has **${foundItem.item.durability}** uses left.`,
+							content: `${icons.checkmark} Repair completed. Your ${getItemDisplay(foundItem.item, foundItem.row, { showEquipped: false, showDurability: false })} now has **${foundItem.item.durability}** uses left.` +
+								`\n\n${icons.information} You now have **${formatMoney(userDataV.money - costToRepair)}**.`,
 							components: []
 						})
 					}
