@@ -300,7 +300,7 @@ class HealCommand extends CustomSlashCommand<'heal'> {
 						await transaction.commit()
 
 						await c.editParent({
-							content: `${icons.danger} You cannot heal while in a duel!`,
+							content: `${icons.danger} You cannot heal while in a fight!`,
 							embeds: [],
 							components: []
 						})

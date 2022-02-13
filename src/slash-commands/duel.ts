@@ -452,7 +452,7 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 								else {
 									messages[i].push(getAttackString(choice.weapon as ItemWithRow<ItemRow, ThrowableWeapon>, `<@${userChoice.member.id}>`, `<@${otherPlayerMember.id}>`, limbsHit, totalDamage))
 
-									if (choice.weapon.item.subtype === 'Incendiary Grenade') {
+									if (choice.weapon.item.subtype === 'Incendiary Grenade' && !victimAfflictions.includes(afflictions.Burning)) {
 										messages[i].push(`${icons.postive_effect_debuff} <@${otherPlayerMember.id}> is ${getAfflictionEmoji('Burning')} Burning! (${combineArrayWithAnd(getEffectsDisplay(afflictions.Burning.effects))})`)
 
 										if (userChoice.member.id === ctx.user.id) {
@@ -520,7 +520,7 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 											await lowerItemDurability(atkTransaction.query, victimEquips.armor.row.id, 1)
 										}
 									}
-									else if (result.limb === 'arm' && Math.random() <= 0.2) {
+									else if (result.limb === 'arm' && Math.random() <= 0.2 && !victimAfflictions.includes(afflictions['Broken Arm'])) {
 										messages[i].push(`${icons.postive_effect_debuff} **${otherPlayerMember.displayName}**'s ${getAfflictionEmoji('Broken Arm')} arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
 
 										if (userChoice.member.id === ctx.user.id) {
