@@ -52,8 +52,6 @@ class HealCommand extends CustomSlashCommand<'heal'> {
 		const availableMedical = [...preStashData.items, ...preBackpackData.items].filter(i => i.item.type === 'Medical') as ItemWithRow<ItemRow, Medical>[]
 		const pages = this.generateItemPages(availableMedical)
 
-		console.log(availableMedical)
-
 		if (!availableMedical.length || !pages[0].items.length) {
 			await ctx.send({
 				content: 'You have no medical items in your inventory or stash that you can use to heal.' +
@@ -220,7 +218,7 @@ class HealCommand extends CustomSlashCommand<'heal'> {
 										...timesCanUse.map(t => ({
 											label: t === 1 ? '1 time' : `${t} times`,
 											value: t.toString(),
-											description: `Will heal for ${t * selected.item.healsFor} HP.`
+											description: `Will heal for up to ${t * selected.item.healsFor} HP.`
 										})),
 										{
 											label: 'Use max times',
@@ -251,9 +249,11 @@ class HealCommand extends CustomSlashCommand<'heal'> {
 						}
 						catch (err) {
 							await c.editParent({
-								content: `${icons.danger} You did not select how many times to use your medical item.`,
+								content: `${icons.danger} You did not select how many times to use your ${getItemDisplay(selected.item, selected.row)}.`,
+								embeds: [],
 								components: disableAllComponents(components)
 							})
+							return
 						}
 					}
 
