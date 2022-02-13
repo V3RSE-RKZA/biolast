@@ -692,7 +692,7 @@ class TradeCommand extends CustomSlashCommand<'trade'> {
 		return logEmb
 	}
 
-	async awaitMoneyInput (channelID: string, userID: string, usersMoneyInTrade: number, tradeMoneyLimit: number): Promise<number> {
+	awaitMoneyInput (channelID: string, userID: string, usersMoneyInTrade: number, tradeMoneyLimit: number): Promise<number> {
 		return new Promise((resolve, reject) => {
 			const { collector, stopCollector } = this.app.msgCollector.createChannelCollector(channelID, m => m.author.id === userID, 30000)
 
@@ -744,7 +744,7 @@ class TradeCommand extends CustomSlashCommand<'trade'> {
 		})
 	}
 
-	async awaitItemInput (channelID: string, userID: string, usersItemsInTrade: ItemRow[]): Promise<ItemWithRow<ItemRow>> {
+	awaitItemInput (channelID: string, userID: string, usersItemsInTrade: ItemRow[]): Promise<ItemWithRow<ItemRow>> {
 		return new Promise((resolve, reject) => {
 			const { collector, stopCollector } = this.app.msgCollector.createChannelCollector(channelID, m => m.author.id === userID, 30000)
 
