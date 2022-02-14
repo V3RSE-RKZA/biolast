@@ -34,7 +34,7 @@
   "devDependencies": {
     "@types/jest": "^27.4.0",
     "@types/js-levenshtein": "^1.1.1",
-    "@types/mysql": "^2.15.20",
+    "@types/mysql": "^2.15.21",
     "@types/node-cron": "^3.0.1",
     "@types/node-fetch": "^3.0.3",
     "@types/pino": "^7.0.5",
