@@ -178,5 +178,14 @@ export const merchantTrades: MerchantTrade[] = [
 		},
 		price: 25000,
 		locationLevel: 5
+	},
+	{
+		type: 'money',
+		offer: {
+			item: items.SS195LF_bullet,
+			amount: 2
+		},
+		price: 10000,
+		locationLevel: 5
 	}
 ]

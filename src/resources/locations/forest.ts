@@ -30,6 +30,7 @@ export const forest: Location = {
 	areas: [
 		{
 			display: 'Clearing',
+			quote: 'its a large open field surrounded by trees on all sides.',
 			loot: {
 				common: {
 					items: [items.bandage, items.sledgehammer],

@@ -91,7 +91,7 @@ export const ammunition = ammoObject({
 		damage: 40,
 		penetration: 1.8,
 		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
-		sellPrice: 342,
+		sellPrice: 399,
 		slotsUsed: 1,
 		itemLevel: 7
 	},
