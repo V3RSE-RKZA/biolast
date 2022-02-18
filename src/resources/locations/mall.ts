@@ -124,11 +124,11 @@ export const mall: Location = {
 			display: 'Pathway Park',
 			loot: {
 				common: {
-					items: [items.ifak_medkit, items['9mm_FMJ_bullet']],
+					items: [items.ifak_medkit, items['9mm_HP_bullet']],
 					xp: 10
 				},
 				uncommon: {
-					items: [items.cloth_backpack],
+					items: [items['9mm_FMJ_bullet']],
 					xp: 15
 				},
 				rare: {
