@@ -75,11 +75,21 @@ export async function increaseLevel (query: Query, userID: string, amount: numbe
 /**
  * Decreases companions skill points (for when they get spent on upgrades)
  * @param query Query to use
- * @param userID User ID of owner to increase points of
+ * @param userID User ID of owner to decrease points of
  * @param amount Amount to decrease points by
  */
 export async function lowerSkillPoints (query: Query, userID: string, amount: number): Promise<void> {
 	await query('UPDATE companions SET skillPoints = skillPoints - ? WHERE ownerId = ?', [amount, userID])
+}
+
+/**
+ * Increases companions skill points
+ * @param query Query to use
+ * @param userID User ID of owner to increase points of
+ * @param amount Amount to increase points by
+ */
+export async function increaseSkillPoints (query: Query, userID: string, amount: number): Promise<void> {
+	await query('UPDATE companions SET skillPoints = skillPoints + ? WHERE ownerId = ?', [amount, userID])
 }
 
 /**
@@ -91,6 +101,15 @@ export async function lowerSkillPoints (query: Query, userID: string, amount: nu
  */
 export async function increaseSkill (query: Query, userID: string, skill: 'agility' | 'strength' | 'perception' | 'courage', amount: number): Promise<void> {
 	await query(`UPDATE companions SET ${skill} = ${skill} + ? WHERE ownerId = ?`, [amount, userID])
+}
+
+/**
+ * Resets a companions skills
+ * @param query Query to use
+ * @param userID User ID of owner to reset skills of
+ */
+export async function resetSkills (query: Query, userID: string): Promise<void> {
+	await query('UPDATE companions SET agility = 0, strength = 0, perception = 0, courage = 0 WHERE ownerId = ?', [userID])
 }
 
 /**

@@ -1,4 +1,4 @@
-import { SlashCreator, CommandContext, Message, ComponentType, User, ComponentActionRow, ButtonStyle, CommandOptionType } from 'slash-create'
+import { SlashCreator, CommandContext, Message, ComponentType, User, ComponentActionRow, ButtonStyle, CommandOptionType, ComponentSelectMenu } from 'slash-create'
 import App from '../app'
 import { icons } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -6,7 +6,7 @@ import Embed from '../structures/Embed'
 import { beginTransaction, query } from '../utils/db/mysql'
 import { getUserRow, removeMoney } from '../utils/db/players'
 import { formatMoney, formatNumber, formatRedBar, formatXP } from '../utils/stringUtils'
-import { addStress, addXp, createCompanion, deleteCompanion, getCompanionRow, increaseFetches, increaseLevel, increaseSkill, lowerHunger, lowerSkillPoints, lowerStress, setFetching } from '../utils/db/companions'
+import { addStress, addXp, createCompanion, deleteCompanion, getCompanionRow, increaseFetches, increaseLevel, increaseSkill, increaseSkillPoints, lowerHunger, lowerSkillPoints, lowerStress, resetSkills, setFetching } from '../utils/db/companions'
 import { Companion, companions } from '../resources/companions'
 import { getCompanionDisplay, getCompanionXp, getFetchTime, getProtectionChance } from '../utils/companionUtils'
 import { clearCooldown, createCooldown, formatTime, getCooldown } from '../utils/db/cooldowns'
@@ -553,7 +553,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 					}
 
 					if (companionRow.level !== companionNewLevel) {
-						display += `\n\n**${getCompanionDisplay(preCompanion, companionRow, true)} leveled up!** (Lvl. **${companionRow.level}** → **${companionNewLevel}**) You can upgrade your companion's skills!`
+						display += `\n\n**${getCompanionDisplay(preCompanion, companionRow, true)} leveled up!** (Lvl. **${companionRow.level}** → **${companionNewLevel}**)`
 						await increaseLevel(transaction.query, ctx.user.id, companionNewLevel - companionRow.level)
 						companionRow.skillPoints += companionNewLevel - companionRow.level
 					}
@@ -783,7 +783,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 								}
 
 								if (companionRow.level !== companionNewLevel) {
-									display += `\n\n**${getCompanionDisplay(preCompanion, companionRow, true)} leveled up!** (Lvl. **${companionRow.level}** → **${companionNewLevel}**) You can upgrade your companion's skills!`
+									display += `\n\n**${getCompanionDisplay(preCompanion, companionRow, true)} leveled up!** (Lvl. **${companionRow.level}** → **${companionNewLevel}**)`
 									await increaseLevel(transaction.query, ctx.user.id, companionNewLevel - companionRow.level)
 									companionRow.skillPoints += companionNewLevel - companionRow.level
 								}
@@ -1040,7 +1040,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 					}
 
 					if (companionRow.level !== companionNewLevel) {
-						display += ` **${getCompanionDisplay(preCompanion, companionRow, true)} leveled up!** You can upgrade their skills.`
+						display += ` **${getCompanionDisplay(preCompanion, companionRow, true)} leveled up!** (Lvl. **${companionRow.level}** → **${companionNewLevel}**)`
 						await increaseLevel(transaction.query, ctx.user.id, companionNewLevel - companionRow.level)
 						companionRow.skillPoints += companionNewLevel - companionRow.level
 					}
@@ -1191,19 +1191,24 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 							` ${upgradesAvailable > 0 ? 'What would you like to spend them on?' : 'Earn skill points by leveling up your companion.'}`
 					}
 
-					components = [{
-						type: ComponentType.ACTION_ROW,
-						components: [
-							BLUE_BUTTON('Agility', 'skill-agility', upgradesAvailable <= 0, '👟'),
-							BLUE_BUTTON('Strength', 'skill-strength', upgradesAvailable <= 0, '💪'),
-							BLUE_BUTTON('Perception', 'skill-perception', upgradesAvailable <= 0, '👁️'),
-							BLUE_BUTTON('Courage', 'skill-courage', upgradesAvailable <= 0, '🛡️'),
-							GRAY_BUTTON('Finish Upgrades', 'upgrade-cancel')
-						]
-					}]
+					components = [
+						{
+							type: ComponentType.ACTION_ROW,
+							components: [
+								this.getSkillUpgradeMenu(companionRow, upgradesAvailable)
+							]
+						},
+						{
+							type: ComponentType.ACTION_ROW,
+							components: [
+								GRAY_BUTTON('Exit Menu', 'upgrade-cancel'),
+								RED_BUTTON('Reset Upgrades', 'upgrade-reset')
+							]
+						}
+					]
 					await buttonCtx.editParent({
 						content: display,
-						embeds: [this.getUpgradesEmbed(preCompanion, companionRow).embed],
+						embeds: [this.getUpgradesEmbed(preCompanion, companionRow, upgradesAvailable).embed],
 						components
 					})
 				}
@@ -1247,8 +1252,8 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						components
 					})
 				}
-				else if (buttonCtx.customID && buttonCtx.customID.startsWith('skill')) {
-					const skillToUpgrade = buttonCtx.customID.split('-')[1]
+				else if (buttonCtx.customID === 'upgrade-skill') {
+					const skillToUpgrade = buttonCtx.values[0]
 
 					if (
 						skillToUpgrade !== 'agility' &&
@@ -1283,7 +1288,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 
 						await buttonCtx.editParent({
 							content: `${icons.danger} **${getCompanionDisplay(preCompanion, companionRow, true)}** has **0** skill points to spend! Earn skill points by leveling up your companion.`,
-							embeds: [this.getUpgradesEmbed(preCompanion, companionRow).embed]
+							embeds: [this.getUpgradesEmbed(preCompanion, companionRow, 0).embed]
 						})
 						return
 					}
@@ -1295,7 +1300,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						await buttonCtx.editParent({
 							content: `${icons.danger} **${getCompanionDisplay(preCompanion, companionRow, true)}**'s skills have been upgraded **${preCompanion.maxUpgrades}** times and cannot be upgraded further.` +
 								' Better companions can have more upgrades.',
-							embeds: [this.getUpgradesEmbed(preCompanion, companionRow).embed]
+							embeds: [this.getUpgradesEmbed(preCompanion, companionRow, 0).embed]
 						})
 						return
 					}
@@ -1309,28 +1314,155 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 					const upgradesAvailable = Math.min(preCompanion.maxUpgrades - (spentSkillPoints + 1), companionRow.skillPoints)
 
 					if (upgradesAvailable <= 0) {
-						components = [{
-							type: ComponentType.ACTION_ROW,
-							components: [
-								BLUE_BUTTON('Agility', 'skill-agility', true, '👟'),
-								BLUE_BUTTON('Strength', 'skill-strength', true, '💪'),
-								BLUE_BUTTON('Perception', 'skill-perception', true, '👁️'),
-								BLUE_BUTTON('Courage', 'skill-courage', true, '🛡️'),
-								GRAY_BUTTON('Finish Upgrades', 'upgrade-cancel')
-							]
-						}]
+						components = [
+							{
+								type: ComponentType.ACTION_ROW,
+								components: [
+									this.getSkillUpgradeMenu(companionRow, upgradesAvailable)
+								]
+							},
+							{
+								type: ComponentType.ACTION_ROW,
+								components: [
+									GRAY_BUTTON('Exit Menu', 'upgrade-cancel'),
+									RED_BUTTON('Reset Upgrades', 'upgrade-reset')
+								]
+							}
+						]
 						await buttonCtx.editParent({
 							content: `Increased **${skillToUpgrade}** by 1. Your companion has **0** skill upgrades available.`,
-							embeds: [this.getUpgradesEmbed(preCompanion, companionRow).embed],
+							embeds: [this.getUpgradesEmbed(preCompanion, companionRow, upgradesAvailable).embed],
 							components
 						})
 					}
 					else {
 						await buttonCtx.editParent({
 							content: `Increased **${skillToUpgrade}** by 1. Your companion still has **${upgradesAvailable}** skill upgrades available. What else would you like to spend them on?`,
-							embeds: [this.getUpgradesEmbed(preCompanion, companionRow).embed]
+							embeds: [this.getUpgradesEmbed(preCompanion, companionRow, upgradesAvailable).embed]
 						})
 					}
+				}
+				else if (buttonCtx.customID === 'upgrade-reset') {
+					const companionRow = await getCompanionRow(query, ctx.user.id)
+
+					if (!companionRow || !preCompanion || companionRow.type !== preCompanion.name) {
+						stopCollector()
+
+						await buttonCtx.editParent({
+							content: `${icons.cancel} You don't own this companion anymore.`,
+							components: disableAllComponents(components)
+						})
+						return
+					}
+
+					const spentSkillPoints = (companionRow.level - 1) - companionRow.skillPoints
+					const cost = spentSkillPoints * 3000
+
+					if (spentSkillPoints <= 0) {
+						await buttonCtx.send({
+							content: `${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}**'s skills have never been upgraded. There are no skill points to reset.`,
+							ephemeral: true
+						})
+						return
+					}
+
+					components = [{
+						type: ComponentType.ACTION_ROW,
+						components: [GREEN_BUTTON('Confirm', 'upgrade-reset-confirm'), RED_BUTTON('Cancel', 'upgrade')]
+					}]
+					await buttonCtx.editParent({
+						content: `Reset **${spentSkillPoints}x** skill points for **${formatMoney(cost)}**? (You will be able to spend the skill points after they are reset)`,
+						embeds: [],
+						components
+					})
+				}
+				else if (buttonCtx.customID === 'upgrade-reset-confirm') {
+					const transaction = await beginTransaction()
+					const userData = (await getUserRow(transaction.query, ctx.user.id, true))!
+					const companionRow = await getCompanionRow(transaction.query, ctx.user.id, true)
+
+					if (!companionRow || !preCompanion || companionRow.type !== preCompanion.name) {
+						await transaction.commit()
+						stopCollector()
+
+						await buttonCtx.editParent({
+							content: `${icons.cancel} You don't own this companion anymore.`,
+							components: disableAllComponents(components)
+						})
+						return
+					}
+
+					const spentSkillPoints = (companionRow.level - 1) - companionRow.skillPoints
+					const upgradesAvailable = Math.min(preCompanion.maxUpgrades - spentSkillPoints, companionRow.skillPoints)
+					const cost = spentSkillPoints * 3000
+
+					if (spentSkillPoints <= 0) {
+						await transaction.commit()
+						stopCollector()
+
+						await buttonCtx.editParent({
+							content: `${icons.cancel} ${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}** has no skill points to reset.`,
+							components: disableAllComponents(components)
+						})
+						return
+					}
+					else if (userData.money < cost) {
+						await transaction.commit()
+
+						components = [
+							{
+								type: ComponentType.ACTION_ROW,
+								components: [
+									this.getSkillUpgradeMenu(companionRow, upgradesAvailable)
+								]
+							},
+							{
+								type: ComponentType.ACTION_ROW,
+								components: [
+									GRAY_BUTTON('Exit Menu', 'upgrade-cancel'),
+									RED_BUTTON('Reset Upgrades', 'upgrade-reset')
+								]
+							}
+						]
+						await buttonCtx.editParent({
+							content: `${icons.danger} You don't have enough copper to reset ${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}**'s skill points. You need **${formatMoney(cost)}** but you only have **${formatMoney(userData.money)}**.`,
+							embeds: [this.getUpgradesEmbed(preCompanion, companionRow, upgradesAvailable).embed],
+							components
+						})
+						return
+					}
+
+					companionRow.agility = 0
+					companionRow.strength = 0
+					companionRow.perception = 0
+					companionRow.courage = 0
+					companionRow.skillPoints += spentSkillPoints
+					await removeMoney(transaction.query, ctx.user.id, cost)
+					await resetSkills(transaction.query, ctx.user.id)
+					await increaseSkillPoints(transaction.query, ctx.user.id, spentSkillPoints)
+					await transaction.commit()
+
+					components = [
+						{
+							type: ComponentType.ACTION_ROW,
+							components: [
+								this.getSkillUpgradeMenu(companionRow, upgradesAvailable + spentSkillPoints)
+							]
+						},
+						{
+							type: ComponentType.ACTION_ROW,
+							components: [
+								GRAY_BUTTON('Exit Menu', 'upgrade-cancel'),
+								RED_BUTTON('Reset Upgrades', 'upgrade-reset')
+							]
+						}
+					]
+					await buttonCtx.editParent({
+						content: `${icons.checkmark} Reset **${spentSkillPoints}x** skill points for **${formatMoney(cost)}**!` +
+							` You now have **${formatMoney(userData.money - cost)}** copper.`,
+						components,
+						embeds: [this.getUpgradesEmbed(preCompanion, companionRow, upgradesAvailable + spentSkillPoints).embed]
+					})
 				}
 			}
 			catch (err) {
@@ -1412,8 +1544,21 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 		return companionEmbed
 	}
 
-	getUpgradesEmbed (companion: Companion, companionRow: CompanionRow): Embed {
-		const embed = new Embed()
+	getUpgradesEmbed (companion: Companion, companionRow: CompanionRow, upgradesAvailable: number): Embed {
+		if (upgradesAvailable <= 0) {
+			return new Embed()
+				.addField(`👟 Agility (${companionRow.agility})`,
+					`Reduces time it takes to fetch items. ${getCompanionDisplay(companion, companionRow, true)} will complete a fetch mission in **${formatTime(getFetchTime(companionRow.agility) * 1000)}**.`)
+				.addField(`💪 Strength (${companionRow.strength})`,
+					`Increases amount of items companion fetches. ${getCompanionDisplay(companion, companionRow, true)} will fetch **${companionRow.strength + 1}** items.`)
+				.addField(`👁️ Perception (${companionRow.perception})`,
+					`Increases the quality of items your companion fetches. ${getCompanionDisplay(companion, companionRow, true)} will find items with an item level of **${companionRow.perception + 2}** maximum.`)
+				.addField(`🛡️ Courage (${companionRow.courage})`,
+					`Increases likeliness your companion will protect you from dying. ${getCompanionDisplay(companion, companionRow, true)} has a ${getProtectionChance(companionRow.courage).toFixed(2)}% chance of protecting you from dying in a duel.`)
+				.setFooter(`${getCompanionDisplay(companion, companionRow, true)} can be upgraded up to ${companion.maxUpgrades} times.`)
+		}
+
+		return new Embed()
 			.addField(`👟 Agility (${companionRow.agility} → ${companionRow.agility + 1})`,
 				`Decrease the time it takes to complete a fetch mission from **${formatTime(getFetchTime(companionRow.agility) * 1000)}** to **${formatTime(getFetchTime(companionRow.agility + 1) * 1000)}**.`)
 			.addField(`💪 Strength (${companionRow.strength} → ${companionRow.strength + 1})`,
@@ -1423,7 +1568,49 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 			.addField(`🛡️ Courage (${companionRow.courage} → ${companionRow.courage + 1})`,
 				`Your companion will have a higher chance (${getProtectionChance(companionRow.courage).toFixed(2)}% to ${getProtectionChance(companionRow.courage + 1).toFixed(2)}%) of protecting you from dying in a duel.`)
 			.setFooter(`${getCompanionDisplay(companion, companionRow, true)} can be upgraded up to ${companion.maxUpgrades} times.`)
-		return embed
+	}
+
+	getSkillUpgradeMenu (companionRow: CompanionRow, upgradesAvailable: number): ComponentSelectMenu {
+		return {
+			type: ComponentType.SELECT,
+			custom_id: 'upgrade-skill',
+			placeholder: 'Select a skill to upgrade:',
+			disabled: upgradesAvailable <= 0,
+			options: [
+				{
+					label: 'Agility',
+					value: 'agility',
+					description: `Decrease fetch time to ${formatTime(getFetchTime(companionRow.agility + 1) * 1000)}.`,
+					emoji: {
+						name: '👟'
+					}
+				},
+				{
+					label: 'Strength',
+					value: 'strength',
+					description: `Companion will fetch ${companionRow.strength + 2}x items.`,
+					emoji: {
+						name: '💪'
+					}
+				},
+				{
+					label: 'Perception',
+					value: 'perception',
+					description: `Companion will fetch items with item level ${companionRow.perception + 3} max.`,
+					emoji: {
+						name: '👁️'
+					}
+				},
+				{
+					label: 'Courage',
+					value: 'courage',
+					description: `${getProtectionChance(companionRow.courage + 1).toFixed(2)}% chance companion protects you from dying.`,
+					emoji: {
+						name: '🛡️'
+					}
+				}
+			]
+		}
 	}
 
 	/**
