@@ -3,7 +3,7 @@ import { items } from '../items'
 
 export const suburbs: Location = {
 	display: 'The Suburbs',
-	icon: '🏡',
+	icon: '<:suburbs:939647476674220112>',
 	locationLevel: 1,
 	boss: {
 		type: 'raider',

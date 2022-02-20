@@ -3,7 +3,7 @@ import { items } from '../items'
 
 export const farm: Location = {
 	display: 'The Farm',
-	icon: '🚜',
+	icon: '<:farm:944973999471992832>',
 	locationLevel: 2,
 	boss: {
 		type: 'raider',

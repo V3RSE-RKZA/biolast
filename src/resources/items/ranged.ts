@@ -62,14 +62,15 @@ export const ranged = rangedObject({
 		type: 'Ranged Weapon',
 		name: 'awm',
 		description: 'Bolt-action sniper rifle manufactured by Accuracy International. It is chambered for the .338 Lapua Magnum cartridge.',
-		icon: '<:U_rifle:869647344344387624>',
+		icon: '<:awm:944974499579846718>',
 		aliases: ['awp'],
 		sellPrice: 22032,
 		durability: 12,
 		slotsUsed: 5,
 		accuracy: 98,
 		itemLevel: 18,
-		speed: 2
+		speed: 2,
+		artist: '699166377705078794'
 	},
 	'm4a1': {
 		type: 'Ranged Weapon',

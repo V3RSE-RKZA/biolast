@@ -3,7 +3,7 @@ import { items } from '../items'
 
 export const forest: Location = {
 	display: 'The Forest',
-	icon: '🚜',
+	icon: '<:forest:944973999492984842>',
 	locationLevel: 3,
 	boss: {
 		type: 'raider',

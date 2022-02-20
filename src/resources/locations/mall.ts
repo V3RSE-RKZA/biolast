@@ -3,7 +3,7 @@ import { items } from '../items'
 
 export const mall: Location = {
 	display: 'The Mall',
-	icon: '🏪',
+	icon: '<:mall:944973999509766164>',
 	locationLevel: 4,
 	boss: {
 		type: 'walker',

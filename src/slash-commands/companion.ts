@@ -101,7 +101,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 			}
 
 			const preCompanionFetchCD = await getCooldown(query, member.id, 'companion-fetch')
-			const companionEmbed = this.getCompanionEmbed(member, preCompanion, preCompanionRow, preCompanionFetchCD)
+			const companionEmbed = this.getCompanionEmbed(member, preCompanion, preCompanionRow, preCompanionFetchCD, false)
 			const components: ComponentActionRow[] = [{
 				type: ComponentType.ACTION_ROW,
 				components: [
@@ -139,7 +139,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 							await transaction.commit()
 
 							await buttonCtx.send({
-								content: `${icons.timer} You recently played with a companion.` +
+								content: `${icons.timer} You recently played with someone else's companion.` +
 									` You will have to wait **${playCD}**.`,
 								ephemeral: true
 							})
@@ -169,8 +169,8 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						await transaction.commit()
 
 						await buttonCtx.editParent({
-							content: `${icons.checkmark} You play with ${getCompanionDisplay(preCompanion, companionRow, true)}! Their stress lowers from **${companionRow.stress + maxHeal}** to **${companionRow.stress}**.`,
-							embeds: [this.getCompanionEmbed(member, preCompanion, companionRow, companionFetchCD).embed]
+							content: `${icons.checkmark} You play with ${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}**! Their stress lowers from **${companionRow.stress + maxHeal}** to **${companionRow.stress}**.`,
+							embeds: [this.getCompanionEmbed(member, preCompanion, companionRow, companionFetchCD, false).embed]
 						})
 					}
 				}
@@ -459,7 +459,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 					}
 					else {
 						await buttonCtx.editParent({
-							content: `${icons.checkmark} You abandon **${getCompanionDisplay(preCompanion, companionRow, true)}** 😭`,
+							content: `${icons.checkmark} You abandoned **${getCompanionDisplay(preCompanion, companionRow, true)}** 😭`,
 							components
 						})
 					}
@@ -543,7 +543,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 
 					const maxHeal = Math.min(companionRow.stress, 10)
 					const companionNewLevel = this.getCompanionLevel(companionRow.xp + XP_PER_PLAY, companionRow.level)
-					let display = `${icons.checkmark} You play with ${getCompanionDisplay(preCompanion, companionRow, true)}! They gained ${icons.xp_star}***+${XP_PER_PLAY}*** xp.`
+					let display = `${icons.checkmark} You play with ${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}**! They gained ${icons.xp_star}***+${XP_PER_PLAY}*** xp.`
 
 					await createCooldown(transaction.query, ctx.user.id, 'self-companion-play', 2 * 60)
 					await addXp(transaction.query, ctx.user.id, XP_PER_PLAY)
@@ -987,7 +987,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						await transaction.commit()
 
 						await buttonCtx.send({
-							content: `${icons.cancel} You are in a duel! You must finish your duel before you can claim these items.`,
+							content: `${icons.cancel} You are in a fight! You must finish your fight before you can claim these items.`,
 							ephemeral: true
 						})
 						return
@@ -1187,7 +1187,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 							' Better companions can have more upgrades.'
 					}
 					else {
-						display = `**${getCompanionDisplay(preCompanion, companionRow, true)}** has **${upgradesAvailable}** skill upgrades available.` +
+						display = `${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}** has **${upgradesAvailable}** skill upgrades available.` +
 							` ${upgradesAvailable > 0 ? 'What would you like to spend them on?' : 'Earn skill points by leveling up your companion.'}`
 					}
 
@@ -1287,7 +1287,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						await transaction.commit()
 
 						await buttonCtx.editParent({
-							content: `${icons.danger} **${getCompanionDisplay(preCompanion, companionRow, true)}** has **0** skill points to spend! Earn skill points by leveling up your companion.`,
+							content: `${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}** has **0** skill points to spend! Earn skill points by leveling up your companion.`,
 							embeds: [this.getUpgradesEmbed(preCompanion, companionRow, 0).embed]
 						})
 						return
@@ -1298,7 +1298,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						await transaction.commit()
 
 						await buttonCtx.editParent({
-							content: `${icons.danger} **${getCompanionDisplay(preCompanion, companionRow, true)}**'s skills have been upgraded **${preCompanion.maxUpgrades}** times and cannot be upgraded further.` +
+							content: `${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}**'s skills have been upgraded **${preCompanion.maxUpgrades}** times and cannot be upgraded further.` +
 								' Better companions can have more upgrades.',
 							embeds: [this.getUpgradesEmbed(preCompanion, companionRow, 0).embed]
 						})
@@ -1510,27 +1510,28 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 		return newLevel
 	}
 
-	getCompanionEmbed (member: ResolvedMember | User, companion: Companion, companionRow: CompanionRow, fetchCD?: string): Embed {
+	getCompanionEmbed (member: ResolvedMember | User, companion: Companion, companionRow: CompanionRow, fetchCD?: string, owner = true): Embed {
 		const user = 'user' in member ? member.user : member
 		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
 		const companionXp = getCompanionXp(companionRow.xp, companionRow.level)
 		const spentSkillPoints = (companionRow.level - 1) - companionRow.skillPoints
 		const upgradesAvailable = Math.min(companion.maxUpgrades - spentSkillPoints, companionRow.skillPoints)
 		const companionEmbed = new Embed()
-			.setAuthor(`${userDisplay}'s Companion`, user.avatarURL)
-			.setDescription(`${companion.icon} ${getCompanionDisplay(companion, companionRow)}`)
-			.addField('__Experience__', `**Lvl. ${companionRow.level}** ${formatXP(companionXp.relativeLevelXp, companionXp.levelTotalXpNeeded)}\n${formatNumber(companionXp.relativeLevelXp)} / ${formatNumber(companionXp.levelTotalXpNeeded)} XP`, true)
-			.addField('__Stress__', `${formatRedBar(companionRow.stress, 100)}\n${companionRow.stress} / 100 (+2/hr)`, true)
-			.addField('__Hunger__', `${formatRedBar(companionRow.hunger, 100)}\n${companionRow.hunger} / 100 (+2/hr)`, true)
-			.addField(`${icons.xp_star} __Skills__`, `**Agility**: ${companionRow.agility}\n` +
-				`**Strength**: ${companionRow.strength}\n` +
-				`**Perception**: ${companionRow.perception}\n` +
-				`**Courage**: ${companionRow.courage}` +
+			.setAuthor(`${userDisplay}'s companion`, user.avatarURL)
+			.setThumbnail(companion.iconURL)
+			.setDescription(`**Lvl. ${companionRow.level}** ${companion.icon} ${getCompanionDisplay(companion, companionRow)}` +
+			`\n${formatXP(companionXp.relativeLevelXp, companionXp.levelTotalXpNeeded)} ${formatNumber(companionXp.relativeLevelXp)} / ${formatNumber(companionXp.levelTotalXpNeeded)} XP`)
+			.addField('__Skills__', `👟 **Agility**: ${companionRow.agility}\n` +
+				`💪 **Strength**: ${companionRow.strength}\n` +
+				`👁️ **Perception**: ${companionRow.perception}\n` +
+				`🛡️ **Courage**: ${companionRow.courage}` +
 				`${upgradesAvailable > 0 ? `\n\nYou have **${upgradesAvailable}** skill points available!` : ''}`,
 			true)
-			.addField('📈 __Statistics__', `**Fetch Missions Completed**: ${companionRow.fetches}` +
+			.addField('__Stress__', `${formatRedBar(companionRow.stress, 100)}\n${companionRow.stress} / 100 (+2/hr)`, true)
+			.addField('__Hunger__', `${formatRedBar(companionRow.hunger, 100)}\n${companionRow.hunger} / 100 (+2/hr)`, true)
+			.addField('__Statistics__', `**Fetch Missions Completed**: ${companionRow.fetches}` +
 				`\n**Companion Since**: ${formatTime(Date.now() - companionRow.createdAt.getTime())} ago` +
-				`\n**Upgrades**: ${spentSkillPoints} / ${companion.maxUpgrades} max`,
+				`\n**Skill Upgrades**: ${spentSkillPoints} / ${companion.maxUpgrades} max`,
 			true)
 			.addBlankField()
 			.addField('__Fetch Mission Status__', companionRow.fetching ?
@@ -1539,7 +1540,10 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 					`${icons.checkmark} ${getCompanionDisplay(companion, companionRow, true)} has found **${companionRow.strength + 1}** items!` :
 				`**${getCompanionDisplay(companion, companionRow, true)} is not fetching anything.**\n\n` +
 				`${icons.information} Fetch missions allow companions to retrieve random items for you. ${getCompanionDisplay(companion, companionRow, true)} will take **${formatTime(getFetchTime(companionRow.agility) * 1000)}** to complete a fetch mission.`)
-			.setFooter('If hunger levels reach 100, your companion will leave you!')
+
+		if (owner) {
+			companionEmbed.setFooter('If hunger levels reach 100, your companion will leave you!')
+		}
 
 		return companionEmbed
 	}
@@ -1554,7 +1558,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 				.addField(`👁️ Perception (${companionRow.perception})`,
 					`Increases the quality of items your companion fetches. ${getCompanionDisplay(companion, companionRow, true)} will find items with an item level of **${companionRow.perception + 2}** maximum.`)
 				.addField(`🛡️ Courage (${companionRow.courage})`,
-					`Increases likeliness your companion will protect you from dying. ${getCompanionDisplay(companion, companionRow, true)} has a ${getProtectionChance(companionRow.courage).toFixed(2)}% chance of protecting you from dying in a duel.`)
+					`Increases likeliness your companion will protect you from dying. ${getCompanionDisplay(companion, companionRow, true)} has a ${getProtectionChance(companionRow.courage).toFixed(2)}% chance of protecting you from dying in a fight.`)
 				.setFooter(`${getCompanionDisplay(companion, companionRow, true)} can be upgraded up to ${companion.maxUpgrades} times.`)
 		}
 
@@ -1566,7 +1570,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 			.addField(`👁️ Perception (${companionRow.perception} → ${companionRow.perception + 1})`,
 				`Your companion will be able to find items with an item level of **${companionRow.perception + 3}** maximum (fetch better items).`)
 			.addField(`🛡️ Courage (${companionRow.courage} → ${companionRow.courage + 1})`,
-				`Your companion will have a higher chance (${getProtectionChance(companionRow.courage).toFixed(2)}% to ${getProtectionChance(companionRow.courage + 1).toFixed(2)}%) of protecting you from dying in a duel.`)
+				`Your companion will have a higher chance (${getProtectionChance(companionRow.courage).toFixed(2)}% to ${getProtectionChance(companionRow.courage + 1).toFixed(2)}%) of protecting you from dying in a fight.`)
 			.setFooter(`${getCompanionDisplay(companion, companionRow, true)} can be upgraded up to ${companion.maxUpgrades} times.`)
 	}
 

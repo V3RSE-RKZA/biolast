@@ -77,10 +77,12 @@ export function formatHealth (curentHP: number, maxHP: number, options: Partial<
  * Format xp into an emote xp bar
  * @param curentXP Current health
  * @param xpNeeded XP needed to level up
+ * @param options Options for the display
+ * @param options.emojisLength How many emojis to expand the health bar to, defaults 5 emojis
  * @returns A xp bar
  */
-export function formatXP (curentXP: number, xpNeeded: number): string {
-	const emojisLength = 5
+export function formatXP (curentXP: number, xpNeeded: number, options: Partial<{ emojisLength: number }> = {}): string {
+	const { emojisLength = 5 } = options
 	const hpPerBar = xpNeeded / emojisLength
 	let xpStr = ''
 
@@ -129,13 +131,16 @@ export function formatXP (curentXP: number, xpNeeded: number): string {
  * Format progress into a red bar
  * @param current Current value
  * @param maxValue Max value
+ * @param options Options for the display
+ * @param options.emojisLength How many emojis to expand the health bar to, defaults 5 emojis
  * @returns A progress bar made of emojis
  */
-export function formatRedBar (current: number, maxValue: number): string {
-	const hpPerBar = maxValue / 5
+export function formatRedBar (current: number, maxValue: number, options: Partial<{ emojisLength: number }> = {}): string {
+	const { emojisLength = 5 } = options
+	const hpPerBar = maxValue / emojisLength
 	let hpStr = ''
 
-	for (let i = 0; i < 5; i++) {
+	for (let i = 0; i < emojisLength; i++) {
 		const barPerc = (current - (hpPerBar * i)) / hpPerBar
 
 		if (i === 0) {
@@ -149,7 +154,7 @@ export function formatRedBar (current: number, maxValue: number): string {
 				hpStr += icons.red_bar.start_empty
 			}
 		}
-		else if (i === 4) {
+		else if (i === emojisLength - 1) {
 			if (barPerc >= 0.9) {
 				hpStr += icons.red_bar.end_full
 			}
