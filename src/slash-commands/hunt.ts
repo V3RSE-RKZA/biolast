@@ -57,18 +57,52 @@ class HuntCommand extends CustomSlashCommand<'hunt'> {
 			return
 		}
 
-		const preHuntCD = await getCooldown(query, ctx.user.id, 'hunt')
+		else if (preUserData.health / preUserData.maxHealth <= 0.5) {
+			botMessage = await this.sendMessage(ctx, {
+				content: `${icons.warning} Hey <@${ctx.user.id}>, you only have ${formatHealth(preUserData.health, preUserData.maxHealth)} **${preUserData.health} / ${preUserData.maxHealth}** HP! It's recommended that you \`/heal\` before starting a fight.` +
+					'\n\n**Continue anyways?**',
+				components: CONFIRM_BUTTONS
+			}, botMessage) as Message
+
+			try {
+				const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id, 30000))[0]
+				await confirmed.acknowledge()
+
+				if (confirmed.customID !== 'confirmed') {
+					await confirmed.editParent({
+						content: `${icons.checkmark} Hunt canceled. Go heal yourself and come back when you're ready.`,
+						components: []
+					})
+					return
+				}
+			}
+			catch (err) {
+				await botMessage.edit({
+					content: `${icons.danger} Hunt timed out. Go heal yourself and come back when you're ready.`,
+					components: disableAllComponents(CONFIRM_BUTTONS)
+				})
+				return
+			}
+		}
+
+		const preTransaction = await beginTransaction()
+		const preHuntCD = await getCooldown(preTransaction.query, ctx.user.id, 'hunt', true)
 
 		if (preHuntCD) {
-			await ctx.send({
-				content: `${icons.timer} You recently hunted. You will have to wait **${preHuntCD}** before you can hunt again.`
-			})
+			await preTransaction.commit()
+
+			await this.sendMessage(ctx, {
+				content: `${icons.timer} You recently hunted. You will have to wait **${preHuntCD}** before you can hunt again.`,
+				components: []
+			}, botMessage)
 			return
 		}
 
-		const preBackpackRows = await getUserBackpack(query, ctx.user.id)
+		const preBackpackRows = await getUserBackpack(preTransaction.query, ctx.user.id, true)
 
 		if (!backpackHasSpace(preBackpackRows, 0)) {
+			await preTransaction.commit()
+
 			botMessage = await this.sendMessage(ctx, {
 				content: `${icons.warning} You are overweight, you will need to clear some space in your inventory before hunting.`,
 				components: [{
@@ -101,36 +135,9 @@ class HuntCommand extends CustomSlashCommand<'hunt'> {
 			return
 		}
 
-		else if (preUserData.health / preUserData.maxHealth <= 0.5) {
-			botMessage = await ctx.send({
-				content: `${icons.warning} Hey <@${ctx.user.id}>, you only have ${formatHealth(preUserData.health, preUserData.maxHealth)} **${preUserData.health} / ${preUserData.maxHealth}** HP! It's recommended that you \`/heal\` before starting a fight.` +
-					'\n\n**Continue anyways?**',
-				components: CONFIRM_BUTTONS
-			}) as Message
-
-			try {
-				const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id, 30000))[0]
-				await confirmed.acknowledge()
-
-				if (confirmed.customID !== 'confirmed') {
-					await confirmed.editParent({
-						content: `${icons.checkmark} Hunt canceled. Go heal yourself and come back when you're ready.`,
-						components: []
-					})
-					return
-				}
-			}
-			catch (err) {
-				await botMessage.edit({
-					content: `${icons.danger} Hunt timed out. Go heal yourself and come back when you're ready.`,
-					components: disableAllComponents(CONFIRM_BUTTONS)
-				})
-				return
-			}
-		}
-
 		// create cooldown before showing user mob they have to fight (so they have to fight or wait to reroll)
-		await createCooldown(query, ctx.user.id, 'hunt', 4 * 60)
+		await createCooldown(preTransaction.query, ctx.user.id, 'hunt', 4 * 60)
+		await preTransaction.commit()
 
 		const location = locations[preUserData.currentLocation]
 		const npc = location.huntMobs[Math.floor(Math.random() * location.huntMobs.length)]
@@ -138,7 +145,7 @@ class HuntCommand extends CustomSlashCommand<'hunt'> {
 			.setTitle(npc.display)
 			.setDescription(getMobDisplay(npc, npc.health).join('\n'))
 
-		botMessage = await ctx.send({
+		botMessage = await this.sendMessage(ctx, {
 			content: `**You stumble upon ${getMobDisplayReference(npc, { lowerCase: true })} while hunting, engage in a fight?** *You will still receive a cooldown if you decide not to fight.*`,
 			embeds: [mobEmbed.embed],
 			components: [
@@ -160,7 +167,7 @@ class HuntCommand extends CustomSlashCommand<'hunt'> {
 					]
 				}
 			]
-		}) as Message
+		}, botMessage) as Message
 
 		try {
 			const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id, 30000))[0]
@@ -190,19 +197,6 @@ class HuntCommand extends CustomSlashCommand<'hunt'> {
 
 			await this.sendMessage(ctx, {
 				content: `${icons.danger} You cannot hunt while in a duel.`,
-				components: [],
-				embeds: []
-			}, botMessage)
-			return
-		}
-
-		const huntCD = await getCooldown(transaction.query, ctx.user.id, 'hunt', true)
-
-		if (huntCD) {
-			await transaction.commit()
-
-			await this.sendMessage(ctx, {
-				content: `${icons.timer} You recently hunted. You will have to wait **${huntCD}** before you can hunt again.`,
 				components: [],
 				embeds: []
 			}, botMessage)
