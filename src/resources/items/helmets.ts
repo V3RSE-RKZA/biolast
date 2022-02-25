@@ -88,12 +88,23 @@ export const helmets = helmetObject({
 		name: 'psycho_mask',
 		icon: '<:psycho_mask:931813743397044254>',
 		aliases: ['psycho', 'mask'],
-		sellPrice: 170,
-		durability: 1,
+		sellPrice: 205,
+		durability: 2,
 		level: 3,
 		slotsUsed: 1,
 		itemLevel: 8,
 		artist: '719365897458024558'
+	},
+	cultist_mask: {
+		type: 'Helmet',
+		name: 'cultist_mask',
+		icon: '<:U_helmet:874671013181415434>',
+		aliases: ['cultist'],
+		sellPrice: 165,
+		durability: 1,
+		level: 3,
+		slotsUsed: 1,
+		itemLevel: 7
 	},
 	swat_helmet: {
 		type: 'Helmet',

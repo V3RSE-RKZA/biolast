@@ -14,7 +14,7 @@ export const farm: Location = {
 			damage: 31,
 			drops: {
 				common: [items.pitchfork, items.daves_drug_key, items.sledgehammer],
-				uncommon: [items.paracetamol, items.farming_guide],
+				uncommon: [items.farming_guide],
 				rare: [items.gunsafe_code],
 				rolls: 2
 			},
@@ -158,7 +158,7 @@ export const farm: Location = {
 			display: 'Warehouse',
 			loot: {
 				common: {
-					items: [items.apple, items.compression_bandage],
+					items: [items.apple, items.bandage],
 					xp: 5
 				},
 				uncommon: {

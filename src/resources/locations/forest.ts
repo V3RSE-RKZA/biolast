@@ -13,9 +13,9 @@ export const forest: Location = {
 			health: 300,
 			damage: 50,
 			drops: {
-				common: [items.pitchfork, items.daves_drug_key, items.sledgehammer],
-				uncommon: [items.paracetamol, items.farming_guide],
-				rare: [items.gunsafe_code],
+				common: [items.chainsaw],
+				uncommon: [items.paracetamol],
+				rare: [items.sacred_pendant],
 				rolls: 2
 			},
 			weapon: items.saiga_MK,
@@ -28,7 +28,15 @@ export const forest: Location = {
 			boss: true
 		}
 	},
-	quests: [],
+	quests: [
+		{
+			type: 'Region',
+			id: 'forest_key_1',
+			questType: 'Scavenge With A Key',
+			progressGoal: 1,
+			key: items.sacred_pendant
+		}
+	],
 	huntMobs: [
 		{
 			type: 'raider',
@@ -36,9 +44,9 @@ export const forest: Location = {
 			health: 70,
 			damage: 50,
 			drops: {
-				common: [items.bandage],
-				uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint],
-				rare: [items.cloth_backpack],
+				common: [items.ifak_medkit],
+				uncommon: [items['anti-biotics'], items.splint],
+				rare: [items.sacred_pendant],
 				rolls: 1
 			},
 			weapon: items['glock-17'],
@@ -51,11 +59,11 @@ export const forest: Location = {
 		{
 			type: 'raider',
 			display: 'Cultist',
-			health: 30,
-			damage: 15,
+			health: 60,
+			damage: 35,
 			drops: {
-				common: [items.bandage],
-				uncommon: [items.ifak_medkit, items['anti-biotics'], items.splint, items.cloth_backpack],
+				common: [items.ifak_medkit],
+				uncommon: [items['anti-biotics'], items.splint, items.cloth_backpack],
 				rare: [items['9mm_HP_bullet']],
 				rolls: 1
 			},
@@ -89,10 +97,9 @@ export const forest: Location = {
 		},
 		{
 			display: 'Treehouse',
-			quote: '',
 			loot: {
 				common: {
-					items: [items.splint],
+					items: [items.splint, items.ifak_medkit],
 					xp: 5
 				},
 				uncommon: {
@@ -110,7 +117,7 @@ export const forest: Location = {
 			display: 'Cave',
 			loot: {
 				common: {
-					items: [],
+					items: [items.bandage],
 					xp: 5
 				},
 				uncommon: {
@@ -126,40 +133,38 @@ export const forest: Location = {
 		},
 		{
 			display: 'Campsite',
-			quote: '',
 			loot: {
 				common: {
-					items: [],
+					items: [items.apple],
 					xp: 8
 				},
 				uncommon: {
-					items: [],
+					items: [items['9mm_HP_bullet'], items.cloth_backpack],
 					xp: 10
 				},
 				rare: {
-					items: [],
+					items: [items['.45_ACP_FMJ_bullet']],
 					xp: 15
 				},
-				rolls: 4
+				rolls: 2
 			}
 		},
 		{
 			display: 'Abandoned Cabin',
-			quote: '',
 			loot: {
 				common: {
-					items: [],
+					items: [items.cultist_mask, items['9mm_FMJ_bullet']],
 					xp: 5
 				},
 				uncommon: {
-					items: [],
+					items: [items.P320],
 					xp: 10
 				},
 				rare: {
-					items: [],
+					items: [items['20-gauge_buckshot']],
 					xp: 20
 				},
-				rolls: 1
+				rolls: 2
 			},
 			requiresKey: items.sacred_pendant
 		}

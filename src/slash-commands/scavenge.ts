@@ -298,7 +298,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 					type: ComponentType.BUTTON,
 					label: `${area.display} (requires key)`,
 					custom_id: area.display,
-					style: ButtonStyle.PRIMARY,
+					style: ButtonStyle.SECONDARY,
 					emoji: iconID ? {
 						id: iconID[1],
 						name: area.requiresKey.name
@@ -310,7 +310,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 					type: ComponentType.BUTTON,
 					label: area.display,
 					custom_id: area.display,
-					style: ButtonStyle.PRIMARY
+					style: ButtonStyle.SECONDARY
 				})
 			}
 		}
