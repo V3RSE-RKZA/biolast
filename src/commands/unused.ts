@@ -32,31 +32,30 @@ export const command: TextCommand = {
 					else if (area.loot.rarest?.items.find(i => i.name === itemFixed.name)) {
 						obtainable.push(itemFixed)
 					}
+				}
 
-					if (
-						area.npc &&
-						(
-							(area.npc.armor && area.npc.armor.name === itemFixed.name) ||
-							(area.npc.helmet && area.npc.helmet.name === itemFixed.name) ||
-							(area.npc.type === 'raider' && area.npc.weapon.name === itemFixed.name) ||
-							(area.npc.type === 'raider' && 'ammo' in area.npc && area.npc.ammo.name === itemFixed.name) ||
-							(area.npc.drops.common.find(i => i.name === itemFixed.name)) ||
-							(area.npc.drops.uncommon.find(i => i.name === itemFixed.name)) ||
-							(area.npc.drops.rare.find(i => i.name === itemFixed.name))
-						)
-					) {
-						obtainable.push(itemFixed)
-					}
+				const npcsWithItem = loc.huntMobs.filter(mob => (
+					(mob.armor && mob.armor.name === itemFixed.name) ||
+					(mob.helmet && mob.helmet.name === itemFixed.name) ||
+					(mob.type === 'raider' && mob.weapon.name === itemFixed.name) ||
+					(mob.type === 'raider' && 'ammo' in mob && mob.ammo.name === itemFixed.name) ||
+					(mob.drops.common.find(i => i.name === itemFixed.name)) ||
+					(mob.drops.uncommon.find(i => i.name === itemFixed.name)) ||
+					(mob.drops.rare.find(i => i.name === itemFixed.name))
+				))
+
+				if (npcsWithItem.length) {
+					obtainable.push(itemFixed)
 				}
 
 				if (
-					(loc.boss.armor && loc.boss.armor.name === itemFixed.name) ||
-					(loc.boss.helmet && loc.boss.helmet.name === itemFixed.name) ||
-					(loc.boss.type === 'raider' && loc.boss.weapon.name === itemFixed.name) ||
-					(loc.boss.type === 'raider' && 'ammo' in loc.boss && loc.boss.ammo.name === itemFixed.name) ||
-					(loc.boss.drops.common.find(i => i.name === itemFixed.name)) ||
-					(loc.boss.drops.uncommon.find(i => i.name === itemFixed.name)) ||
-					(loc.boss.drops.rare.find(i => i.name === itemFixed.name))
+					(loc.boss.npc.armor && loc.boss.npc.armor.name === itemFixed.name) ||
+					(loc.boss.npc.helmet && loc.boss.npc.helmet.name === itemFixed.name) ||
+					(loc.boss.npc.type === 'raider' && loc.boss.npc.weapon.name === itemFixed.name) ||
+					(loc.boss.npc.type === 'raider' && 'ammo' in loc.boss.npc && loc.boss.npc.ammo.name === itemFixed.name) ||
+					(loc.boss.npc.drops.common.find(i => i.name === itemFixed.name)) ||
+					(loc.boss.npc.drops.uncommon.find(i => i.name === itemFixed.name)) ||
+					(loc.boss.npc.drops.rare.find(i => i.name === itemFixed.name))
 				) {
 					obtainable.push(itemFixed)
 				}

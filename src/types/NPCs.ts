@@ -25,11 +25,6 @@ interface NPCBase {
 	}
 
 	/**
-	 * How long in seconds it takes for this NPC to respawn after it is killed
-	 */
-	respawnTime: number
-
-	/**
 	 * The stimulants this NPC uses, if any
 	 */
 	usesStimulants?: Stimulant[]

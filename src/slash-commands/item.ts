@@ -312,33 +312,32 @@ class ItemCommand extends CustomSlashCommand<'item'> {
 							else if (area.loot.rarest?.items.find(i => i.name === itemFixed.name)) {
 								obtainedFrom[loc.display].push(`Very rarely found from scavenging **${area.display}**.`)
 							}
+						}
 
-							if (
-								area.npc &&
-								(
-									(area.npc.armor && area.npc.armor.name === itemFixed.name) ||
-									(area.npc.helmet && area.npc.helmet.name === itemFixed.name) ||
-									(area.npc.type === 'raider' && area.npc.weapon.name === itemFixed.name) ||
-									(area.npc.type === 'raider' && 'ammo' in area.npc && area.npc.ammo.name === itemFixed.name) ||
-									(area.npc.drops.common.find(i => i.name === itemFixed.name)) ||
-									(area.npc.drops.uncommon.find(i => i.name === itemFixed.name)) ||
-									(area.npc.drops.rare.find(i => i.name === itemFixed.name))
-								)
-							) {
-								obtainedFrom[loc.display].push(`${area.npc.boss ? `**${area.npc.display}**` : `A **${area.npc.display}**`} was spotted at **${area.display}** with this item.`)
-							}
+						const npcsWithItem = loc.huntMobs.filter(mob => (
+							(mob.armor && mob.armor.name === itemFixed.name) ||
+							(mob.helmet && mob.helmet.name === itemFixed.name) ||
+							(mob.type === 'raider' && mob.weapon.name === itemFixed.name) ||
+							(mob.type === 'raider' && 'ammo' in mob && mob.ammo.name === itemFixed.name) ||
+							(mob.drops.common.find(i => i.name === itemFixed.name)) ||
+							(mob.drops.uncommon.find(i => i.name === itemFixed.name)) ||
+							(mob.drops.rare.find(i => i.name === itemFixed.name))
+						))
+
+						for (const mob of npcsWithItem) {
+							obtainedFrom[loc.display].push(`${mob.boss ? `**${mob.display}**` : `A **${mob.display}**`} was spotted with this item.`)
 						}
 
 						if (
-							(loc.boss.armor && loc.boss.armor.name === itemFixed.name) ||
-							(loc.boss.helmet && loc.boss.helmet.name === itemFixed.name) ||
-							(loc.boss.type === 'raider' && loc.boss.weapon.name === itemFixed.name) ||
-							(loc.boss.type === 'raider' && 'ammo' in loc.boss && loc.boss.ammo.name === itemFixed.name) ||
-							(loc.boss.drops.common.find(i => i.name === itemFixed.name)) ||
-							(loc.boss.drops.uncommon.find(i => i.name === itemFixed.name)) ||
-							(loc.boss.drops.rare.find(i => i.name === itemFixed.name))
+							(loc.boss.npc.armor && loc.boss.npc.armor.name === itemFixed.name) ||
+							(loc.boss.npc.helmet && loc.boss.npc.helmet.name === itemFixed.name) ||
+							(loc.boss.npc.type === 'raider' && loc.boss.npc.weapon.name === itemFixed.name) ||
+							(loc.boss.npc.type === 'raider' && 'ammo' in loc.boss.npc && loc.boss.npc.ammo.name === itemFixed.name) ||
+							(loc.boss.npc.drops.common.find(i => i.name === itemFixed.name)) ||
+							(loc.boss.npc.drops.uncommon.find(i => i.name === itemFixed.name)) ||
+							(loc.boss.npc.drops.rare.find(i => i.name === itemFixed.name))
 						) {
-							obtainedFrom[loc.display].push(`**${loc.boss.display}** was spotted with this item, good luck trying to get it.`)
+							obtainedFrom[loc.display].push(`**${loc.boss.npc.display}** was spotted with this item, good luck trying to get it.`)
 						}
 					}
 
@@ -539,7 +538,7 @@ class ItemCommand extends CustomSlashCommand<'item'> {
 
 				for (const location of allLocations) {
 					for (const area of location.areas) {
-						if (area.requiresKey?.includes(item)) {
+						if (area.requiresKey === item) {
 							usableAreas.push(`${area.display} (${location.display})`)
 						}
 					}

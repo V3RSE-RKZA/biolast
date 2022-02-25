@@ -6,29 +6,31 @@ export const prison: Location = {
 	icon: '<:prison:944973999526510642>',
 	locationLevel: 5,
 	boss: {
-		type: 'raider',
-		display: 'Warden James',
-		health: 750,
-		damage: 50,
-		drops: {
-			common: [items.trauma_kit, items['12-gauge_AP_slug'], items['5.56x45mm_FMJ_bullet'], items.steel_armor, items.steel_helmet],
-			uncommon: [items.morphine, items.adrenaline],
-			rare: [items.benelli_M4],
-			rolls: 5
-		},
-		weapon: items.m4a1,
-		ammo: items['5.56x45mm_HP_bullet'],
-		usesStimulants: [items.morphine],
-		usesHeals: [items.hyfin_chest_seal],
-		quotes: [
-			'We will restore order!',
-			'Soon I will have my own army of undead, there will be no stopping me!'
-		],
-		armor: items.steel_armor,
-		helmet: items.steel_helmet,
-		xp: 3000,
-		boss: true,
-		respawnTime: 60 * 60 * 2
+		cooldown: 60 * 60 * 2,
+		npc: {
+			type: 'raider',
+			display: 'Warden James',
+			health: 750,
+			damage: 50,
+			drops: {
+				common: [items.trauma_kit, items['12-gauge_AP_slug'], items['5.56x45mm_FMJ_bullet'], items.steel_armor, items.steel_helmet],
+				uncommon: [items.morphine, items.adrenaline],
+				rare: [items.benelli_M4],
+				rolls: 5
+			},
+			weapon: items.m4a1,
+			ammo: items['5.56x45mm_HP_bullet'],
+			usesStimulants: [items.morphine],
+			usesHeals: [items.hyfin_chest_seal],
+			quotes: [
+				'We will restore order!',
+				'Soon I will have my own army of undead, there will be no stopping me!'
+			],
+			armor: items.steel_armor,
+			helmet: items.steel_helmet,
+			xp: 3000,
+			boss: true
+		}
 	},
 	quests: [
 		{
@@ -44,6 +46,94 @@ export const prison: Location = {
 			questType: 'Retrieve Item',
 			progressGoal: 2,
 			item: items.metal_shank
+		}
+	],
+	huntMobs: [
+		{
+			type: 'walker',
+			display: 'Pack of Zombies',
+			health: 100,
+			damage: 45,
+			drops: {
+				common: [items.pizza_slice],
+				uncommon: [items['20-gauge_buckshot'], items['9mm_AP_bullet']],
+				rare: [items.bobwhite_g2],
+				rolls: 3
+			},
+			xp: 100,
+			chanceToBite: 25,
+			attackPenetration: 2.5,
+			boss: false
+		},
+		{
+			type: 'raider',
+			display: 'Guardian Recruit',
+			health: 100,
+			damage: 40,
+			drops: {
+				common: [items.police_baton, items.compression_bandage],
+				uncommon: [items.splint, items.adrenaline],
+				rare: [items.suitcase, items.cell_key],
+				rolls: 1
+			},
+			quotes: [
+				'Who are you?!',
+				'Leave now or die!',
+				'This is guardian territory!',
+				'I won\'t let you reach the subjects!'
+			],
+			usesHeals: [items.splint],
+			weapon: items['FN_Five-seveN'],
+			ammo: items.SS195LF_bullet,
+			helmet: items.swat_helmet,
+			armor: items.aramid_armor,
+			xp: 200,
+			boss: false
+		},
+		{
+			type: 'raider',
+			display: 'Guardian',
+			health: 150,
+			damage: 40,
+			drops: {
+				common: [items.molotov_cocktail, items.compression_bandage],
+				uncommon: [items.hyfin_chest_seal, items.trauma_kit],
+				rare: [items.cell_key],
+				rolls: 1
+			},
+			quotes: [
+				'Who are you?!',
+				'Leave now or die!',
+				'This is guardian territory!'
+			],
+			usesHeals: [items.splint],
+			weapon: items.mossberg_500,
+			ammo: items['12-gauge_buckshot'],
+			helmet: items.swat_helmet,
+			armor: items.swat_armor,
+			xp: 200,
+			boss: false
+		},
+		{
+			type: 'walker',
+			display: 'Mutated Scav',
+			health: 120,
+			damage: 35,
+			drops: {
+				common: [items['9mm_AP_bullet'], items['12-gauge_buckshot']],
+				uncommon: [items.mossberg_500],
+				rare: [items['12-gauge_slug']],
+				rolls: 1
+			},
+			helmet: items.swat_helmet,
+			xp: 100,
+			chanceToBite: 25,
+			attackPenetration: 3.2,
+			boss: false,
+			quotes: [
+				'help... me...',
+				'*aAAAuUGH*'
+			]
 		}
 	],
 	areas: [
@@ -64,25 +154,7 @@ export const prison: Location = {
 					xp: 25
 				},
 				rolls: 1
-			},
-			npc: {
-				type: 'walker',
-				display: 'Pack of Zombies',
-				health: 100,
-				damage: 45,
-				drops: {
-					common: [items.pizza_slice],
-					uncommon: [items['20-gauge_buckshot'], items['9mm_AP_bullet']],
-					rare: [items.bobwhite_g2],
-					rolls: 3
-				},
-				xp: 100,
-				chanceToBite: 25,
-				attackPenetration: 2.5,
-				boss: false,
-				respawnTime: 60 * 6
-			},
-			scavengeCooldown: 90
+			}
 		},
 		{
 			display: 'Visiting Room',
@@ -101,34 +173,7 @@ export const prison: Location = {
 					xp: 25
 				},
 				rolls: 2
-			},
-			npc: {
-				type: 'raider',
-				display: 'Guardian Recruit',
-				health: 100,
-				damage: 40,
-				drops: {
-					common: [items.police_baton, items.compression_bandage],
-					uncommon: [items.splint, items.adrenaline],
-					rare: [items.suitcase, items.cell_key],
-					rolls: 1
-				},
-				quotes: [
-					'Who are you?!',
-					'Leave now or die!',
-					'This is guardian territory!',
-					'I won\'t let you reach the subjects!'
-				],
-				usesHeals: [items.splint],
-				weapon: items['FN_Five-seveN'],
-				ammo: items.SS195LF_bullet,
-				helmet: items.swat_helmet,
-				armor: items.aramid_armor,
-				xp: 200,
-				boss: false,
-				respawnTime: 60 * 4
-			},
-			scavengeCooldown: 90
+			}
 		},
 		{
 			display: 'Cafeteria',
@@ -151,8 +196,7 @@ export const prison: Location = {
 					xp: 50
 				},
 				rolls: 1
-			},
-			scavengeCooldown: 60
+			}
 		},
 		{
 			display: 'Hallways',
@@ -171,33 +215,7 @@ export const prison: Location = {
 					xp: 25
 				},
 				rolls: 1
-			},
-			npc: {
-				type: 'raider',
-				display: 'Guardian',
-				health: 150,
-				damage: 40,
-				drops: {
-					common: [items.molotov_cocktail, items.compression_bandage],
-					uncommon: [items.hyfin_chest_seal, items.trauma_kit],
-					rare: [items.cell_key],
-					rolls: 1
-				},
-				quotes: [
-					'Who are you?!',
-					'Leave now or die!',
-					'This is guardian territory!'
-				],
-				usesHeals: [items.splint],
-				weapon: items.mossberg_500,
-				ammo: items['12-gauge_buckshot'],
-				helmet: items.swat_helmet,
-				armor: items.swat_armor,
-				xp: 200,
-				boss: false,
-				respawnTime: 60 * 10
-			},
-			scavengeCooldown: 2 * 60
+			}
 		},
 		{
 			display: 'Cell 1',
@@ -217,31 +235,7 @@ export const prison: Location = {
 				},
 				rolls: 2
 			},
-			npc: {
-				type: 'walker',
-				display: 'Mutated Scav',
-				health: 120,
-				damage: 35,
-				drops: {
-					common: [items['9mm_AP_bullet'], items['12-gauge_buckshot']],
-					uncommon: [items.mossberg_500],
-					rare: [items['12-gauge_slug']],
-					rolls: 1
-				},
-				helmet: items.swat_helmet,
-				xp: 100,
-				chanceToBite: 25,
-				attackPenetration: 3.2,
-				boss: false,
-				respawnTime: 60 * 10,
-				quotes: [
-					'help... me...',
-					'*aAAAuUGH*'
-				]
-			},
-			requiresKey: [items.cell_key],
-			keyUsedToFightNPC: true,
-			scavengeCooldown: 60 * 5
+			requiresKey: items.cell_key
 		},
 		{
 			display: 'Cell 2',
@@ -261,9 +255,7 @@ export const prison: Location = {
 				},
 				rolls: 2
 			},
-			requiresKey: [items.cell_key],
-			keyUsedToFightNPC: false,
-			scavengeCooldown: 60 * 2
+			requiresKey: items.cell_key
 		}
 	]
 }

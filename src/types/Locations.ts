@@ -64,31 +64,9 @@ interface AreaBase {
 	loot: Loot
 
 	/**
-	 * Cooldown in seconds user won't be able to scavenge this area after a successful scavenge
-	 */
-	scavengeCooldown: number
-
-	/**
-	 * NPC that can spawns in this channel
-	 */
-	npc?: NPC
-
-	/**
 	 * Key/item's user must have in order to scavenge this area. If you specify multiple items, the user must have at least 1 of them to scavenge.
 	 */
-	requiresKey?: Item[]
-
-	/**
-	 * Whether or not the required key to scavenge this area is required to FIGHT the npc.
-	 *
-	 * If set to true, the user must have key to fight the npc. If they kill NPC they can scavenge the area without needing the key
-	 */
-	keyUsedToFightNPC?: boolean
-
-	/**
-	 * Image URL representing the area (shown in /scavenge command menu)
-	 */
-	image?: string
+	requiresKey?: Item
 
 	/**
 	 * Quote when user is viewing the area (description of the area from the players perspective)
@@ -96,8 +74,7 @@ interface AreaBase {
 	quote?: string
 }
 interface KeyArea extends AreaBase {
-	requiresKey: Item[]
-	keyUsedToFightNPC: boolean
+	requiresKey: Item
 }
 
 interface FreeLootArea extends AreaBase {
@@ -124,7 +101,26 @@ export interface Location {
 	/**
 	 * The boss user must beat in order to advance their locationLevel (if they haven't beaten the boss already)
 	 */
-	boss: NPC
+	boss: {
+		/**
+		 * Cooldown in seconds player will have to wait before they can fight this boss again
+		 */
+		cooldown: number
+		npc: NPC
+	}
+
+	/**
+	 * Like the boss except not as strong
+	 */
+	miniboss?: {
+		/**
+		 * Cooldown in seconds player will have to wait before they can fight this boss again
+		 */
+		cooldown: number
+		npc: NPC
+	}
+
+	huntMobs: NPC[]
 
 	areas: Area[]
 

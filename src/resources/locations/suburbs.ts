@@ -6,32 +6,86 @@ export const suburbs: Location = {
 	icon: '<:suburbs:939647476674220112>',
 	locationLevel: 1,
 	boss: {
-		type: 'raider',
-		display: 'Cain, The Gravekeeper',
-		health: 105,
-		damage: 15,
-		drops: {
-			common: [items.bandage],
-			uncommon: [items.ifak_medkit],
-			rare: [items.sledgehammer, items.bone_armor, items.bone_helmet],
-			rolls: 1
-		},
-		weapon: items.luger,
-		ammo: items['.22LR_bullet'],
-		quotes: [
-			'I will lay you all to rest.',
-			'I have a plot specifically made for you.',
-			'Do not be afraid of death. Welcome it.',
-			'The dead shall not be disturbed.',
-			'The world you and I once knew is long gone.',
-			'You dare slaughter them with no remorse?'
-		],
-		armor: items.cloth_armor,
-		helmet: items.cloth_helmet,
-		xp: 100,
-		boss: true,
-		respawnTime: 60 * 60
+		cooldown: 60 * 60,
+		npc: {
+			type: 'raider',
+			display: 'Cain, The Gravekeeper',
+			health: 105,
+			damage: 15,
+			drops: {
+				common: [items.bandage],
+				uncommon: [items.ifak_medkit],
+				rare: [items.sledgehammer, items.bone_armor, items.bone_helmet],
+				rolls: 1
+			},
+			weapon: items.luger,
+			ammo: items['.22LR_bullet'],
+			quotes: [
+				'I will lay you all to rest.',
+				'I have a plot specifically made for you.',
+				'Do not be afraid of death. Welcome it.',
+				'The dead shall not be disturbed.',
+				'The world you and I once knew is long gone.',
+				'You dare slaughter them with no remorse?'
+			],
+			armor: items.cloth_armor,
+			helmet: items.cloth_helmet,
+			xp: 100,
+			boss: true
+		}
 	},
+	huntMobs: [
+		{
+			type: 'walker',
+			display: 'Walker',
+			health: 22,
+			damage: 15,
+			drops: {
+				common: [items.bandage],
+				uncommon: [items.makeshift_pistol_bullet, items.small_pouch],
+				rare: [items.walker_goop],
+				rolls: 2
+			},
+			xp: 20,
+			chanceToBite: 0,
+			attackPenetration: 0.3,
+			boss: false
+		},
+		{
+			type: 'walker',
+			display: 'Walker',
+			health: 30,
+			damage: 10,
+			drops: {
+				common: [items.bandage, items['.22LR_bullet']],
+				uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.luger],
+				rare: [items.walker_goop],
+				rolls: 1
+			},
+			armor: items.cloth_armor,
+			helmet: items.cloth_helmet,
+			xp: 40,
+			chanceToBite: 0,
+			attackPenetration: 0.1,
+			boss: false
+		},
+		{
+			type: 'walker',
+			display: 'Crawler',
+			health: 20,
+			damage: 15,
+			drops: {
+				common: [items.makeshift_pistol, items.makeshift_pistol_bullet, items.cloth_armor],
+				uncommon: [items['anti-biotics'], items.makeshift_rifle],
+				rare: [items.makeshift_shell, items.small_pouch, items.walker_goop],
+				rolls: 2
+			},
+			xp: 20,
+			chanceToBite: 0,
+			attackPenetration: 0.1,
+			boss: false
+		}
+	],
 	quests: [
 		{
 			type: 'Region',
@@ -79,12 +133,11 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 1
-			},
-			scavengeCooldown: 60
+			}
 		},
 		{
 			display: 'Red House',
-			quote: 'My neighbors house. It looks like someone is still inside.',
+			quote: 'my neighbors house. tt looks like someone is still inside.',
 			loot: {
 				common: {
 					items: [items.makeshift_pistol, items.makeshift_pistol_bullet],
@@ -99,25 +152,7 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 2
-			},
-			npc: {
-				type: 'walker',
-				display: 'Walker',
-				health: 22,
-				damage: 15,
-				drops: {
-					common: [items.bandage],
-					uncommon: [items.makeshift_pistol_bullet, items.small_pouch],
-					rare: [items.walker_goop],
-					rolls: 2
-				},
-				xp: 20,
-				chanceToBite: 0,
-				attackPenetration: 0.3,
-				boss: false,
-				respawnTime: 60 * 4
-			},
-			scavengeCooldown: 60
+			}
 		},
 		{
 			display: 'Backyard Shed',
@@ -141,28 +176,7 @@ export const suburbs: Location = {
 				},
 				rolls: 2
 			},
-			npc: {
-				type: 'walker',
-				display: 'Walker',
-				health: 30,
-				damage: 10,
-				drops: {
-					common: [items.bandage, items['.22LR_bullet']],
-					uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.luger],
-					rare: [items.walker_goop],
-					rolls: 1
-				},
-				armor: items.cloth_armor,
-				helmet: items.cloth_helmet,
-				xp: 40,
-				chanceToBite: 0,
-				attackPenetration: 0.1,
-				boss: false,
-				respawnTime: 60 * 4
-			},
-			requiresKey: [items.shed_key],
-			keyUsedToFightNPC: false,
-			scavengeCooldown: 60 * 2
+			requiresKey: items.shed_key
 		},
 		{
 			display: 'Apartments',
@@ -180,25 +194,7 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 2
-			},
-			npc: {
-				type: 'walker',
-				display: 'Crawler',
-				health: 20,
-				damage: 15,
-				drops: {
-					common: [items.makeshift_pistol, items.makeshift_pistol_bullet, items.cloth_armor],
-					uncommon: [items['anti-biotics'], items.makeshift_rifle],
-					rare: [items.makeshift_shell, items.small_pouch, items.walker_goop],
-					rolls: 2
-				},
-				xp: 20,
-				chanceToBite: 0,
-				attackPenetration: 0.1,
-				boss: false,
-				respawnTime: 60 * 4
-			},
-			scavengeCooldown: 60
+			}
 		},
 		{
 			display: 'Park',
@@ -216,8 +212,7 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 1
-			},
-			scavengeCooldown: 60
+			}
 		},
 		{
 			display: 'Cedar Lake',
@@ -235,27 +230,7 @@ export const suburbs: Location = {
 					xp: 20
 				},
 				rolls: 2
-			},
-			npc: {
-				type: 'walker',
-				display: 'Walker',
-				health: 30,
-				damage: 10,
-				drops: {
-					common: [items.bandage, items['.22LR_bullet']],
-					uncommon: [items.makeshift_pistol_bullet, items.small_pouch, items.luger],
-					rare: [items.walker_goop],
-					rolls: 1
-				},
-				armor: items.cloth_armor,
-				helmet: items.cloth_helmet,
-				xp: 40,
-				chanceToBite: 0,
-				attackPenetration: 0.1,
-				boss: false,
-				respawnTime: 60 * 4
-			},
-			scavengeCooldown: 60 * 2
+			}
 		}
 	]
 }
