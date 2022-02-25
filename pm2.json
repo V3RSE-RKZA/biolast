@@ -1,7 +1,7 @@
 {
 	"apps": [
 		{
-			"name": "escape_from_discord",
+			"name": "biolast",
 			"script": "./build/index.js",
 			"interpreter_args": "-r dotenv/config"
 		}

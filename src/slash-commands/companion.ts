@@ -1366,6 +1366,16 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						return
 					}
 
+					const companionFetchCD = await getCooldown(query, ctx.user.id, 'companion-fetch')
+
+					if (companionFetchCD) {
+						await buttonCtx.send({
+							content: `${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}** is currently fetching. You cannot reset skills while your companion is fetching items.`,
+							ephemeral: true
+						})
+						return
+					}
+
 					components = [{
 						type: ComponentType.ACTION_ROW,
 						components: [GREEN_BUTTON('Confirm', 'upgrade-reset-confirm'), RED_BUTTON('Cancel', 'upgrade')]
@@ -1426,6 +1436,34 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 						]
 						await buttonCtx.editParent({
 							content: `${icons.danger} You don't have enough copper to reset ${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}**'s skill points. You need **${formatMoney(cost)}** but you only have **${formatMoney(userData.money)}**.`,
+							embeds: [this.getUpgradesEmbed(preCompanion, companionRow, upgradesAvailable).embed],
+							components
+						})
+						return
+					}
+
+					const companionFetchCD = await getCooldown(transaction.query, ctx.user.id, 'companion-fetch', true)
+
+					if (companionFetchCD) {
+						await transaction.commit()
+
+						components = [
+							{
+								type: ComponentType.ACTION_ROW,
+								components: [
+									this.getSkillUpgradeMenu(companionRow, upgradesAvailable)
+								]
+							},
+							{
+								type: ComponentType.ACTION_ROW,
+								components: [
+									GRAY_BUTTON('Exit Menu', 'upgrade-cancel'),
+									RED_BUTTON('Reset Upgrades', 'upgrade-reset')
+								]
+							}
+						]
+						await buttonCtx.editParent({
+							content: `${icons.danger} cannot reset skills while ${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}** is fetching items.`,
 							embeds: [this.getUpgradesEmbed(preCompanion, companionRow, upgradesAvailable).embed],
 							components
 						})
