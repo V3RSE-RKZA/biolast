@@ -9,7 +9,7 @@ import { addItemToShop, getUserBackpack, getUserStash, removeItemFromBackpack, r
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addMoney, getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
+import { getBackpackLimit, getEquips, getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 import { disableAllComponents } from '../utils/messageUtils'
 import { logger } from '../utils/logger'
@@ -49,12 +49,15 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 		let pages: { page: Embed, items: ItemWithRow<ItemRow>[] }[]
 
 		if (ctx.options.stash) {
+			const userData = (await getUserRow(query, ctx.user.id))!
 			const userStash = await getUserStash(query, ctx.user.id)
-			pages = this.generatePages(userStash)
+			pages = this.generatePages(userStash, userData.stashSlots)
 		}
 		else {
 			const userBackpack = await getUserBackpack(query, ctx.user.id)
-			pages = this.generatePages(userBackpack)
+			const equips = getEquips(userBackpack)
+			const space = getBackpackLimit(equips.backpack?.item)
+			pages = this.generatePages(userBackpack, space)
 		}
 
 		let components: ComponentActionRow[] = []
@@ -343,7 +346,7 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 		return Math.floor(getItemPrice(item, itemRow) * this.app.currentShopSellMultiplier)
 	}
 
-	generatePages (rows: ItemRow[]): { page: Embed, items: ItemWithRow<ItemRow>[] }[] {
+	generatePages (rows: ItemRow[], invSpace: number): { page: Embed, items: ItemWithRow<ItemRow>[] }[] {
 		const itemData = getItems(rows)
 		const sortedItems = sortItemsByName(itemData.items, true)
 		const pages = []
@@ -355,6 +358,7 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 			const filteredItems = sortedItems.slice(indexFirst, indexLast)
 
 			const embed = new Embed()
+				.setTitle(`Space: ${itemData.slotsUsed.toFixed(1)} / ${invSpace.toFixed(1)}`)
 				.setDescription(filteredItems.map(itm => getItemDisplay(itm.item, itm.row)).join('\n') || 'No sellable items found.')
 
 			if (maxPage > 1) {
