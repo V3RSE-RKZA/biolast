@@ -98,7 +98,8 @@ class HealCommand extends CustomSlashCommand<'heal'> {
 		}
 
 		const botMessage = await ctx.send({
-			content: 'Select the item from your inventory or stash that you want to heal with.',
+			content: 'Select the item from your inventory or stash that you want to heal with.' +
+				` You have ${formatHealth(preUserData.health, preUserData.maxHealth)} **${preUserData.health} / ${preUserData.maxHealth}** HP.`,
 			embeds: [pages[page].page.embed],
 			components
 		}) as Message
@@ -230,7 +231,8 @@ class HealCommand extends CustomSlashCommand<'heal'> {
 							]
 						}]
 						await c.editParent({
-							content: `How many times do you want to use your ${getItemDisplay(selected.item, selected.row)}?`,
+							content: `How many times do you want to use your ${getItemDisplay(selected.item, selected.row)}?` +
+								` You have ${formatHealth(preUserData.health, preUserData.maxHealth)} **${preUserData.health} / ${preUserData.maxHealth}** HP.`,
 							embeds: [],
 							components
 						})
