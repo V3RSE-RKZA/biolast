@@ -43,30 +43,37 @@ class ComponentCollector {
 	}
 
 	private async verify (ctx: ComponentContext): Promise<void> {
-		const colObj = this.collectors.find(obj => obj.messageID === ctx.message.id)
+		try {
+			const colObj = this.collectors.find(obj => obj.messageID === ctx.message.id)
 
-		if (colObj) {
-			if (!colObj.filter(ctx)) {
-				await ctx.send({
-					ephemeral: true,
-					content: `${icons.danger} This button is meant for someone else.`
-				})
-				return
+			if (colObj) {
+				if (!colObj.filter(ctx)) {
+					await ctx.send({
+						ephemeral: true,
+						content: `${icons.danger} This button is meant for someone else.`
+					})
+					return
+				}
+
+				colObj.collected.push(ctx)
+				colObj.e.emit('collect', ctx)
+
+				if (colObj.limit && colObj.collected.length >= colObj.limit) {
+					this.stopCollector(colObj, colObj.collected)
+				}
 			}
+			else {
+				// in case bot restarts or button wasn't removed from the message
+				await ctx.acknowledge()
 
-			colObj.collected.push(ctx)
-			colObj.e.emit('collect', ctx)
-
-			if (colObj.limit && colObj.collected.length >= colObj.limit) {
-				this.stopCollector(colObj, colObj.collected)
+				await ctx.editOriginal({
+					content: `${icons.danger} This menu has expired.`,
+					components: disableAllComponents(ctx.message.components)
+				})
 			}
 		}
-		else {
-			// in case bot restarts or button wasn't removed from the message
-			await ctx.send({
-				ephemeral: true,
-				content: `${icons.danger} This button has expired. Please re-run the command.`
-			})
+		catch (err) {
+			logger.error(err)
 		}
 	}
 

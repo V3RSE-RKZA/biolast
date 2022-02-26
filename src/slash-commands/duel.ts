@@ -16,7 +16,7 @@ import { getUserQuest, increaseProgress } from '../utils/db/quests'
 import { backpackHasSpace, getEquips, getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByLevel, sortItemsByValue } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
-import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
+import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit } from '../utils/duelUtils'
 import { combineArrayWithAnd, formatHealth, formatMoney, getAfflictionEmoji, getBodyPartEmoji } from '../utils/stringUtils'
 import { disableAllComponents } from '../utils/messageUtils'
 
@@ -159,7 +159,6 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 			await setFighting(preTransaction.query, member.id, true)
 			await preTransaction.commit()
 
-			const playerChoices = new Map<string, PlayerChoice>()
 			let turnNumber = 1
 			let duelIsActive = true
 
@@ -188,7 +187,7 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 
 			while (duelIsActive) {
 				try {
-					await awaitPlayerChoices(this.app.componentCollector, botMessage, playerChoices, [
+					const playerChoices = await awaitPlayerChoices(this.app.componentCollector, botMessage, [
 						{ member: ctx.member, stims: player1Stimulants, afflictions: player1Afflictions },
 						{ member, stims: player2Stimulants, afflictions: player2Afflictions }
 					], turnNumber)
@@ -770,8 +769,6 @@ class DuelCommand extends CustomSlashCommand<'duel'> {
 						logger.warn(msgErr)
 					}
 				}
-
-				playerChoices.clear()
 
 				if (duelIsActive) {
 					if (turnNumber >= 20) {

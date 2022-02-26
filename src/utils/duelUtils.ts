@@ -230,17 +230,17 @@ export function getAttackString (weapon: ItemWithRow<ItemRow | undefined, Weapon
 export function awaitPlayerChoices (
 	componentCollector: ComponentCollector,
 	botMessage: Message,
-	playerChoices: Map<string, PlayerChoice>,
 	players: { member: ResolvedMember, stims: Stimulant[], afflictions: Affliction[] }[],
 	turnNumber: number
-): Promise<void> {
-	return new Promise<void>((resolve, reject) => {
+): Promise<Map<string, PlayerChoice>> {
+	return new Promise((resolve, reject) => {
 		const turnCollector = componentCollector.createCollector(botMessage.id, i => players.some(p => p.member.id === i.user.id), 40000)
 		const actionCollectors: CollectorObject[] = []
+		const choices = new Map<string, PlayerChoice>()
 
 		turnCollector.collector.on('collect', async actionCtx => {
 			try {
-				const playerChoice = playerChoices.get(actionCtx.user.id)
+				const playerChoice = choices.get(actionCtx.user.id)
 				const otherPlayerIDs = players.filter(p => p.member.id !== actionCtx.user.id).map(p => p.member.id)
 
 				if (playerChoice) {
@@ -291,14 +291,14 @@ export function awaitPlayerChoices (
 						}
 					]
 
-					const attackMessage = await actionCtx.sendFollowUp({
+					const attackMessage = await actionCtx.send({
 						ephemeral: true,
 						content: 'What weapon do you want to attack with?',
 						components: [{
 							type: ComponentType.ACTION_ROW,
 							components
 						}]
-					})
+					}) as Message
 					const attackCollector = componentCollector.createCollector(attackMessage.id, i => i.user.id === actionCtx.user.id, 60000)
 					let weapon: ItemWithRow<BackpackItemRow, Weapon> | { item: Weapon, row?: undefined }
 					let ammo: ItemWithRow<BackpackItemRow, Ammunition> | undefined
@@ -310,8 +310,16 @@ export function awaitPlayerChoices (
 						try {
 							await attackCtx.acknowledge()
 
-							if (playerChoices.get(attackCtx.user.id)) {
+							if (choices.get(attackCtx.user.id)) {
 								attackCollector.stopCollector('selected')
+
+								await attackCtx.editOriginal({
+									content: `${icons.timer} You have already chosen an action.`,
+									components: [{
+										type: ComponentType.ACTION_ROW,
+										components: disableAllComponents(components)
+									}]
+								})
 								return
 							}
 							else if (attackCtx.customID === 'weapon') {
@@ -336,7 +344,7 @@ export function awaitPlayerChoices (
 									}
 								}
 								else if (!weaponItemRow || !weaponItem) {
-									await attackMessage.edit({
+									await attackCtx.editOriginal({
 										content: `${icons.danger} Weapon not found in your inventory. Please select another weapon:`
 									})
 									return
@@ -350,7 +358,7 @@ export function awaitPlayerChoices (
 										)
 
 										if (!userPossibleAmmo.length) {
-											await attackMessage.edit({
+											await attackCtx.editOriginal({
 												content: `${icons.danger} You don't have any ammo for your ${getItemDisplay(weaponItemRow.item, weaponItemRow.row, { showEquipped: false, showDurability: false })}.` +
 													` You need one of the following ammunitions in your inventory:\n\n${allItems.filter(i => i.type === 'Ammunition' && i.ammoFor.includes(weaponItem)).map(i => getItemDisplay(i)).join(', ')}.` +
 													'\n\nPlease select another weapon:'
@@ -387,7 +395,7 @@ export function awaitPlayerChoices (
 												})
 											}]
 
-											await attackMessage.edit({
+											await attackCtx.editOriginal({
 												content: `${icons.warning} Which ammo do you want to use with your ${getItemDisplay(weaponItemRow.item)}?`,
 												components: [{
 													type: ComponentType.ACTION_ROW,
@@ -404,7 +412,7 @@ export function awaitPlayerChoices (
 								const ammoItemRow = preSelectPlayerInventory.items.find(i => i.row.id.toString() === attackCtx.values[0])
 
 								if (!ammoItemRow) {
-									await attackMessage.edit({
+									await attackCtx.editOriginal({
 										content: `${icons.danger} Ammo not found in your inventory. Please select a different ammunition:`
 									})
 								}
@@ -418,7 +426,7 @@ export function awaitPlayerChoices (
 								}
 
 								attackCollector.stopCollector()
-								await attackMessage.edit({
+								await attackCtx.editOriginal({
 									content: `${icons.checkmark} ${getItemDisplay(weapon!.item)} ${ammo ? `(ammo: ${getItemDisplay(ammo.item)})` : ''} selected as your weapon!`,
 									components: [{
 										type: ComponentType.ACTION_ROW,
@@ -436,7 +444,7 @@ export function awaitPlayerChoices (
 								if (Math.floor(weapon.item.accuracy + stimulantEffects.accuracyBonus) < accuracyToTargetLimbs) {
 									// weapon is not accurate enough to target limbs
 									attackCollector.stopCollector()
-									await attackMessage.edit({
+									await attackCtx.editOriginal({
 										content: `${icons.checkmark} ${getItemDisplay(weapon!.item)} ${ammo ? `(ammo: ${getItemDisplay(ammo.item)})` : ''} selected as your weapon!` +
 											` (You could not target a limb because you only have **${Math.floor(weapon.item.accuracy + stimulantEffects.accuracyBonus)}%** accuracy. **${accuracyToTargetLimbs}%** is needed to target limbs.)`,
 										components: [{
@@ -498,7 +506,7 @@ export function awaitPlayerChoices (
 									}
 								]
 
-								await attackMessage.edit({
+								await attackCtx.editOriginal({
 									content: `${getItemDisplay(weapon.item)} selected as your weapon! What limb do you want to target?`,
 									components: [{
 										type: ComponentType.ACTION_ROW,
@@ -514,30 +522,14 @@ export function awaitPlayerChoices (
 
 					attackCollector.collector.on('end', async msg => {
 						try {
-							if (msg === 'time') {
-								await attackMessage.edit({
-									content: `${icons.timer} Action selection for this turn has expired.`,
-									components: [{
-										type: ComponentType.ACTION_ROW,
-										components: disableAllComponents(components)
-									}]
-								})
-								return
-							}
-							else if (msg === 'selected') {
-								await attackMessage.edit({
-									content: `${icons.timer} You have already chosen an action.`,
-									components: [{
-										type: ComponentType.ACTION_ROW,
-										components: disableAllComponents(components)
-									}]
-								})
+							if (msg === 'time' || msg === 'selected') {
+								// unable to edit the ephemeral message here because there is no context to do so :(
 								return
 							}
 
 							actionCollectors.splice(actionCollectors.indexOf(attackCollector), 1)
 
-							playerChoices.set(actionCtx.user.id, {
+							choices.set(actionCtx.user.id, {
 								choice: 'attack',
 								weapon,
 								ammo,
@@ -547,7 +539,7 @@ export function awaitPlayerChoices (
 							})
 
 							// end turn if all players have finished actions
-							if (otherPlayerIDs.every(p => playerChoices.get(p))) {
+							if (otherPlayerIDs.every(p => choices.get(p))) {
 								turnCollector.stopCollector()
 							}
 						}
@@ -624,12 +616,20 @@ export function awaitPlayerChoices (
 
 							await healCtx.acknowledge()
 
-							if (playerChoices.get(healCtx.user.id)) {
+							if (choices.get(healCtx.user.id)) {
 								healCollector.stopCollector('selected')
+
+								await healCtx.editOriginal({
+									content: `${icons.timer} You have already chosen an action.`,
+									components: [{
+										type: ComponentType.ACTION_ROW,
+										components: disableAllComponents(components)
+									}]
+								})
 								return
 							}
 							else if (!healItemRow) {
-								await healMessage.edit({
+								await healCtx.editOriginal({
 									content: `${icons.danger} Item not found in your inventory. Please select another item:`
 								})
 								return
@@ -638,7 +638,7 @@ export function awaitPlayerChoices (
 							healItem = healItemRow as ItemWithRow<BackpackItemRow, Medical>
 							healCollector.stopCollector()
 
-							await healMessage.edit({
+							await healCtx.editOriginal({
 								content: `${icons.checkmark} ${getItemDisplay(healItemRow.item)} selected!`,
 								components: [{
 									type: ComponentType.ACTION_ROW,
@@ -653,37 +653,20 @@ export function awaitPlayerChoices (
 
 					healCollector.collector.on('end', async msg => {
 						try {
-							if (msg === 'time') {
-								await healMessage.edit({
-									content: `${icons.timer} Action selection for this turn has expired.`,
-									components: [{
-										type: ComponentType.ACTION_ROW,
-										components: disableAllComponents(components)
-									}]
-								})
-								return
-							}
-							else if (msg === 'selected') {
-								await healMessage.edit({
-									content: `${icons.timer} You have already chosen an action.`,
-									components: [{
-										type: ComponentType.ACTION_ROW,
-										components: disableAllComponents(components)
-									}]
-								})
-								return
-							}
-
 							actionCollectors.splice(actionCollectors.indexOf(healCollector), 1)
 
-							playerChoices.set(actionCtx.user.id, {
+							if (msg === 'time' || msg === 'selected') {
+								return
+							}
+
+							choices.set(actionCtx.user.id, {
 								choice: 'use a medical item',
 								itemRow: healItem,
 								speed: healItem.item.speed
 							})
 
 							// end turn if all players have finished actions
-							if (otherPlayerIDs.every(p => playerChoices.get(p))) {
+							if (otherPlayerIDs.every(p => choices.get(p))) {
 								turnCollector.stopCollector()
 							}
 						}
@@ -768,12 +751,20 @@ export function awaitPlayerChoices (
 
 							await stimCtx.acknowledge()
 
-							if (playerChoices.get(stimCtx.user.id)) {
+							if (choices.get(stimCtx.user.id)) {
 								stimCollector.stopCollector('selected')
+
+								await stimCtx.editOriginal({
+									content: `${icons.timer} You have already chosen an action.`,
+									components: [{
+										type: ComponentType.ACTION_ROW,
+										components: disableAllComponents(components)
+									}]
+								})
 								return
 							}
 							else if (!stimItemRow) {
-								await stimMessage.edit({
+								await stimCtx.editOriginal({
 									content: `${icons.danger} Item not found in your inventory. Please select another item:`
 								})
 								return
@@ -782,7 +773,7 @@ export function awaitPlayerChoices (
 							stimItem = stimItemRow as ItemWithRow<BackpackItemRow, Stimulant>
 							stimCollector.stopCollector()
 
-							await stimMessage.edit({
+							await stimCtx.editOriginal({
 								content: `${icons.checkmark} ${getItemDisplay(stimItemRow.item)} selected!`,
 								components: [{
 									type: ComponentType.ACTION_ROW,
@@ -797,37 +788,20 @@ export function awaitPlayerChoices (
 
 					stimCollector.collector.on('end', async msg => {
 						try {
-							if (msg === 'time') {
-								await stimMessage.edit({
-									content: `${icons.timer} Action selection for this turn has expired.`,
-									components: [{
-										type: ComponentType.ACTION_ROW,
-										components: disableAllComponents(components)
-									}]
-								})
-								return
-							}
-							else if (msg === 'selected') {
-								await stimMessage.edit({
-									content: `${icons.timer} You have already chosen an action.`,
-									components: [{
-										type: ComponentType.ACTION_ROW,
-										components: disableAllComponents(components)
-									}]
-								})
-								return
-							}
-
 							actionCollectors.splice(actionCollectors.indexOf(stimCollector), 1)
 
-							playerChoices.set(actionCtx.user.id, {
+							if (msg === 'time' || msg === 'selected') {
+								return
+							}
+
+							choices.set(actionCtx.user.id, {
 								choice: 'use a stimulant',
 								itemRow: stimItem,
 								speed: stimItem.item.speed
 							})
 
 							// end turn if all players have finished actions
-							if (otherPlayerIDs.every(p => playerChoices.get(p))) {
+							if (otherPlayerIDs.every(p => choices.get(p))) {
 								turnCollector.stopCollector()
 							}
 						}
@@ -839,13 +813,13 @@ export function awaitPlayerChoices (
 				else if (actionCtx.customID === 'flee') {
 					await actionCtx.acknowledge()
 
-					playerChoices.set(actionCtx.user.id, {
+					choices.set(actionCtx.user.id, {
 						choice: 'try to flee',
 						speed: 1000
 					})
 
 					// end turn if all players have finished actions
-					if (otherPlayerIDs.every(p => playerChoices.get(p))) {
+					if (otherPlayerIDs.every(p => choices.get(p))) {
 						turnCollector.stopCollector()
 					}
 
@@ -880,7 +854,7 @@ export function awaitPlayerChoices (
 				logger.warn(err)
 			}
 
-			resolve()
+			resolve(choices)
 		})
 	})
 }

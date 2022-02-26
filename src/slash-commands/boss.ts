@@ -280,7 +280,6 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 
 		await preTransaction.commit()
 
-		const playerChoices = new Map<string, PlayerChoice>()
 		const npcStimulants: Stimulant[] = []
 		const npcAfflictions: Affliction[] = []
 		let npcHealth = location.boss.npc.health
@@ -309,10 +308,9 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 
 		while (duelIsActive) {
 			try {
-				await awaitPlayerChoices(
+				const playerChoices = await awaitPlayerChoices(
 					this.app.componentCollector,
 					botMessage,
-					playerChoices,
 					players.map(p => ({ member: p.member, stims: p.stimulants, afflictions: p.afflictions })),
 					turnNumber
 				)
@@ -926,8 +924,6 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 					logger.warn(msgErr)
 				}
 			}
-
-			playerChoices.clear()
 
 			if (duelIsActive) {
 				if (turnNumber >= 20) {

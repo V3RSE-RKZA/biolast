@@ -18,7 +18,7 @@ import { BackpackItemRow, ItemRow, ItemWithRow, UserRow } from '../types/mysql'
 import { Affliction, AfflictionName, afflictions } from '../resources/afflictions'
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
-import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit, PlayerChoice } from '../utils/duelUtils'
+import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit } from '../utils/duelUtils'
 import { CONFIRM_BUTTONS, GRAY_BUTTON, GREEN_BUTTON, RED_BUTTON } from '../utils/constants'
 import { attackPlayer, getMobChoice, getMobDisplay, getMobDrop, getMobDisplayReference } from '../utils/npcUtils'
 import { clearCooldown, createCooldown, getCooldown } from '../utils/db/cooldowns'
@@ -232,7 +232,6 @@ class HuntCommand extends CustomSlashCommand<'hunt'> {
 		await setFighting(transaction.query, ctx.user.id, true)
 		await transaction.commit()
 
-		const playerChoices = new Map<string, PlayerChoice>()
 		const playerStimulants: Stimulant[] = []
 		const playerAfflictions: Affliction[] = []
 		const npcStimulants: Stimulant[] = []
@@ -267,7 +266,7 @@ class HuntCommand extends CustomSlashCommand<'hunt'> {
 
 		while (duelIsActive) {
 			try {
-				await awaitPlayerChoices(this.app.componentCollector, botMessage, playerChoices, [
+				const playerChoices = await awaitPlayerChoices(this.app.componentCollector, botMessage, [
 					{ member: ctx.member, stims: playerStimulants, afflictions: playerAfflictions }
 				], turnNumber)
 
@@ -830,8 +829,6 @@ class HuntCommand extends CustomSlashCommand<'hunt'> {
 					logger.warn(msgErr)
 				}
 			}
-
-			playerChoices.clear()
 
 			if (duelIsActive) {
 				if (turnNumber >= 20) {
