@@ -311,8 +311,7 @@ class InventoryCommand extends CustomSlashCommand<'inventory'> {
 	}
 
 	generatePages (member: ResolvedMember | User, rows: BackpackItemRow[], userData: UserRow, isSelf: boolean): { page: Embed, items: ItemWithRow<BackpackItemRow>[] }[] {
-		const user = 'user' in member ? member.user : member
-		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
+		const userDisplay = 'user' in member ? member.displayName : `${member.username}#${member.username}`
 		const itemData = getItems(rows)
 		const playerXp = getPlayerXp(userData.xp, userData.level)
 		const equips = getEquips(rows)
@@ -328,7 +327,7 @@ class InventoryCommand extends CustomSlashCommand<'inventory'> {
 			const backpackLimit = getBackpackLimit(equips.backpack?.item)
 
 			const embed = new Embed()
-				.setAuthor(`${userDisplay}'s Inventory`, user.avatarURL)
+				.setAuthor(`${userDisplay}'s Inventory`, member.avatarURL)
 				.setDescription(`**Number of Items**: ${itemData.items.length}` +
 					`\n**Inventory Value**: ${formatMoney(invValue)}` +
 					`${isSelf && itemData.slotsUsed > backpackLimit ? `\n\n${icons.warning} You are currently overweight, you should sell items to clear space.` : ''}`)

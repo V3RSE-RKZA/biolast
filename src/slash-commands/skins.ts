@@ -270,8 +270,7 @@ class SkinsCommand extends CustomSlashCommand<'skins'> {
 	}
 
 	generatePages (member: ResolvedMember | User, rows: SkinRow[], isSelf: boolean): Embed[] {
-		const user = 'user' in member ? member.user : member
-		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
+		const userDisplay = 'user' in member ? member.displayName : `${member.username}#${member.discriminator}`
 		const skinsOwned = getSkins(rows)
 		const skinData = getSkinAmounts(rows)
 		const sortedSkinNames = Object.keys(skinData).sort((a, b) => a.localeCompare(b))
@@ -291,7 +290,7 @@ class SkinsCommand extends CustomSlashCommand<'skins'> {
 			}).filter(Boolean)
 
 			const embed = new Embed()
-				.setAuthor(`${userDisplay}'s Skin Inventory`, user.avatarURL)
+				.setAuthor(`${userDisplay}'s Skin Inventory`, member.avatarURL)
 				.setDescription(`**Number of Skins Owned**: ${skinsOwned.length}` +
 				`\n\n${skinsDisplay.join('\n') || `${isSelf ? 'You don\'t own any skins.' : `${userDisplay} does not own any skins.`}`}`)
 

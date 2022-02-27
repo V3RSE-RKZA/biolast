@@ -75,8 +75,7 @@ class ProfileCommand extends CustomSlashCommand<'profile'> {
 	}
 
 	getProfileEmbed (member: ResolvedMember | User, userData: UserRow, backpackRows: BackpackItemRow[], stashRows: ItemRow[], companionRow?: CompanionRow): Embed {
-		const user = 'user' in member ? member.user : member
-		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
+		const userDisplay = 'user' in member ? member.displayName : `${member.username}#${member.discriminator}`
 		const playerXp = getPlayerXp(userData.xp, userData.level)
 		const totalKills = userData.kills + userData.npcKills + userData.bossKills
 		const kdRatio = totalKills / (userData.deaths || 1)
@@ -90,8 +89,8 @@ class ProfileCommand extends CustomSlashCommand<'profile'> {
 		const companion = companions.find(c => c.name === companionRow?.type)
 
 		const embed = new Embed()
-			.setAuthor(`${userDisplay}'s Profile`, user.avatarURL)
-			.setThumbnail(user.avatarURL)
+			.setAuthor(`${userDisplay}'s Profile`, member.avatarURL)
+			.setThumbnail(member.avatarURL)
 			.addField('__Health__', `**${userData.health} / ${userData.maxHealth}**\n${formatHealth(userData.health, userData.maxHealth)}`, true)
 			.addField('__Experience__', `**Lvl. ${userData.level}** ${formatXP(playerXp.relativeLevelXp, playerXp.levelTotalXpNeeded)}\n${formatNumber(playerXp.relativeLevelXp)} / ${formatNumber(playerXp.levelTotalXpNeeded)} XP`, true)
 			.addField('__Balance__', `**${formatMoney(userData.money)}** copper`, true)

@@ -1549,13 +1549,12 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 	}
 
 	getCompanionEmbed (member: ResolvedMember | User, companion: Companion, companionRow: CompanionRow, fetchCD?: string, owner = true): Embed {
-		const user = 'user' in member ? member.user : member
-		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
+		const userDisplay = 'user' in member ? member.displayName : `${member.username}#${member.discriminator}`
 		const companionXp = getCompanionXp(companionRow.xp, companionRow.level)
 		const spentSkillPoints = (companionRow.level - 1) - companionRow.skillPoints
 		const upgradesAvailable = Math.min(companion.maxUpgrades - spentSkillPoints, companionRow.skillPoints)
 		const companionEmbed = new Embed()
-			.setAuthor(`${userDisplay}'s companion`, user.avatarURL)
+			.setAuthor(`${userDisplay}'s companion`, member.avatarURL)
 			.setThumbnail(companion.iconURL)
 			.setDescription(`**Lvl. ${companionRow.level}** ${companion.icon} ${getCompanionDisplay(companion, companionRow)}` +
 			`\n${formatXP(companionXp.relativeLevelXp, companionXp.levelTotalXpNeeded)} ${formatNumber(companionXp.relativeLevelXp)} / ${formatNumber(companionXp.levelTotalXpNeeded)} XP`)

@@ -306,8 +306,7 @@ class StashCommand extends CustomSlashCommand<'stash'> {
 	}
 
 	generatePages (member: ResolvedMember | User, rows: ItemRow[], userData: UserRow, isSelf: boolean): { page: Embed, items: ItemWithRow<ItemRow>[] }[] {
-		const user = 'user' in member ? member.user : member
-		const userDisplay = 'user' in member ? member.displayName : `${user.username}#${user.discriminator}`
+		const userDisplay = 'user' in member ? member.displayName : `${member.username}#${member.discriminator}`
 		const itemData = getItems(rows)
 		const sortedItems = sortItemsByName(itemData.items, true)
 		const pages = []
@@ -320,7 +319,7 @@ class StashCommand extends CustomSlashCommand<'stash'> {
 			const filteredItems = sortedItems.slice(indexFirst, indexLast)
 
 			const embed = new Embed()
-				.setAuthor(`${userDisplay}'s Stash`, user.avatarURL)
+				.setAuthor(`${userDisplay}'s Stash`, member.avatarURL)
 				.setDescription(`\n**Number of Items**: ${itemData.items.length}` +
 					`\n**Stash Value**: ${formatMoney(stashValue)}`)
 				.addField('__Balance__', `**${formatMoney(userData.money)}** copper`)
