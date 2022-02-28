@@ -59,6 +59,21 @@ export const command: TextCommand = {
 				) {
 					obtainable.push(itemFixed)
 				}
+
+				if (
+					loc.miniboss &&
+					(
+						(loc.miniboss.npc.armor && loc.miniboss.npc.armor.name === itemFixed.name) ||
+						(loc.miniboss.npc.helmet && loc.miniboss.npc.helmet.name === itemFixed.name) ||
+						(loc.miniboss.npc.type === 'raider' && loc.miniboss.npc.weapon.name === itemFixed.name) ||
+						(loc.miniboss.npc.type === 'raider' && 'ammo' in loc.miniboss.npc && loc.miniboss.npc.ammo.name === itemFixed.name) ||
+						(loc.miniboss.npc.drops.common.find(i => i.name === itemFixed.name)) ||
+						(loc.miniboss.npc.drops.uncommon.find(i => i.name === itemFixed.name)) ||
+						(loc.miniboss.npc.drops.rare.find(i => i.name === itemFixed.name))
+					)
+				) {
+					obtainable.push(itemFixed)
+				}
 			}
 
 			for (const trade of merchantTrades) {

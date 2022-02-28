@@ -329,6 +329,21 @@ class ItemCommand extends CustomSlashCommand<'item'> {
 						}
 
 						if (
+							loc.miniboss &&
+							(
+								(loc.miniboss.npc.armor && loc.miniboss.npc.armor.name === itemFixed.name) ||
+								(loc.miniboss.npc.helmet && loc.miniboss.npc.helmet.name === itemFixed.name) ||
+								(loc.miniboss.npc.type === 'raider' && loc.miniboss.npc.weapon.name === itemFixed.name) ||
+								(loc.miniboss.npc.type === 'raider' && 'ammo' in loc.miniboss.npc && loc.miniboss.npc.ammo.name === itemFixed.name) ||
+								(loc.miniboss.npc.drops.common.find(i => i.name === itemFixed.name)) ||
+								(loc.miniboss.npc.drops.uncommon.find(i => i.name === itemFixed.name)) ||
+								(loc.miniboss.npc.drops.rare.find(i => i.name === itemFixed.name))
+							)
+						) {
+							obtainedFrom[loc.display].push(`**${loc.miniboss.npc.display}** (miniboss) was spotted with this item.`)
+						}
+
+						if (
 							(loc.boss.npc.armor && loc.boss.npc.armor.name === itemFixed.name) ||
 							(loc.boss.npc.helmet && loc.boss.npc.helmet.name === itemFixed.name) ||
 							(loc.boss.npc.type === 'raider' && loc.boss.npc.weapon.name === itemFixed.name) ||
@@ -337,7 +352,7 @@ class ItemCommand extends CustomSlashCommand<'item'> {
 							(loc.boss.npc.drops.uncommon.find(i => i.name === itemFixed.name)) ||
 							(loc.boss.npc.drops.rare.find(i => i.name === itemFixed.name))
 						) {
-							obtainedFrom[loc.display].push(`**${loc.boss.npc.display}** was spotted with this item, good luck trying to get it.`)
+							obtainedFrom[loc.display].push(`**${loc.boss.npc.display}** (boss) was spotted with this item, good luck trying to get it.`)
 						}
 					}
 
