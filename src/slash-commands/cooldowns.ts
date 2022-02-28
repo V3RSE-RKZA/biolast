@@ -77,7 +77,7 @@ class CooldownCommand extends CustomSlashCommand<'cooldowns'> {
 			.addField('Hunt (`/hunt`)', huntCD || `${icons.checkmark} Ready!`, true)
 			.addField('Scavenge (`/scavenge`)', scavengeCD || `${icons.checkmark} Ready!`, true)
 			.addField('Travel (`/travel`)', travelCD || `${icons.checkmark} Ready!`, true)
-			.addField('Trade (`/hunt`)', tradeCD || `${icons.checkmark} Ready!`, true)
+			.addField('Trade (`/trade`)', tradeCD || `${icons.checkmark} Ready!`, true)
 			.addField('Quest (`/quest`)', questCD || `${icons.checkmark} Ready!`, true)
 
 		if (currentLocation) {
