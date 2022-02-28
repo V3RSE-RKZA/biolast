@@ -1,4 +1,4 @@
-import { SlashCreator, CommandContext, ComponentType, Message, CommandOptionType } from 'slash-create'
+import { SlashCreator, CommandContext, ComponentType, Message } from 'slash-create'
 import App from '../app'
 import { icons, webhooks } from '../config'
 import { NPC } from '../types/NPCs'
@@ -47,37 +47,21 @@ interface OrderedMobChoice extends BaseOrderedChoice {
 }
 type OrderedChoice = OrderedPlayerChoice | OrderedMobChoice
 
-class BossCommand extends CustomSlashCommand<'boss'> {
+class BossCommand extends CustomSlashCommand<'miniboss'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
-			name: 'boss',
-			description: 'Fight the boss of your current region! You can team up with up to 2 friends to help you.',
-			longDescription: 'Fight the boss of the region you are currently at! It\'s recommended that you invite some friends to help' +
-				' you, as bosses are significantly stronger than the mobs you encounter while scavenging.' +
-				'\n\n**Defeating a boss will unlock a new region for you to travel to, which will contain better loot and stronger enemies.**',
-			options: [
-				{
-					type: CommandOptionType.USER,
-					name: 'user',
-					description: 'Invite a friend to help fight the boss.',
-					required: false
-				},
-				{
-					type: CommandOptionType.USER,
-					name: 'user-2',
-					description: 'Invite another friend to help fight the boss.',
-					required: false
-				}
-			],
+			name: 'miniboss',
+			description: 'Fight the miniboss of your current region!',
+			longDescription: 'Fight the miniboss of the region you are currently at.' +
+				' Minibosses may drop key items used to fight the main boss of the region.' +
+				' The difference is you cannot invite your friends to help you fight the miniboss.',
+			options: [],
 			category: 'scavenging',
 			guildModsOnly: false,
 			worksInDMs: false,
 			worksDuringDuel: false,
 			noDefer: true,
-			guildIDs: [],
-			starterTip: 'This is the boss of your region, be sure to invite some friends to help you fight or' +
-				' your chances of survival are slim. If you defeat the boss, you will unlock a new region that you can `/travel` to.' +
-				' Be careful though, the later regions will get progressively more difficult as you unlock them.'
+			guildIDs: []
 		})
 
 		this.filePath = __filename
@@ -114,7 +98,14 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 		const location = locations[preUserData.currentLocation]
 		const nextLocation = allLocations.filter(l => l.locationLevel === location.locationLevel + 1)
 		const preMembersData: { member: ResolvedMember, data: UserRow }[] = [{ member: ctx.member, data: preUserData }]
-		const preBossCD = await getCooldown(query, ctx.user.id, `boss-${location.display}`)
+		const preBossCD = await getCooldown(query, ctx.user.id, `miniboss-${location.display}`)
+
+		if (!location.miniboss) {
+			await ctx.send({
+				content: `${icons.danger} There is no miniboss in ${location.icon} **${location.display}**.`
+			})
+			return
+		}
 
 		for (const member of teammates) {
 			if (member.id === ctx.user.id) {
@@ -157,11 +148,11 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 				return
 			}
 
-			const memberBossCD = await getCooldown(query, member.id, `boss-${location.display}`)
+			const memberBossCD = await getCooldown(query, member.id, `miniboss-${location.display}`)
 
 			if (memberBossCD) {
 				await ctx.send({
-					content: `${icons.warning} **${member.displayName}** recently fought **${location.boss.npc.display}**, they can attempt the boss fight again in **${memberBossCD}**.`
+					content: `${icons.warning} **${member.displayName}** recently fought **${location.miniboss.npc.display}**, they can attempt the boss fight again in **${memberBossCD}**.`
 				})
 				return
 			}
@@ -180,8 +171,8 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 
 		await ctx.send({
 			content: preBossCD ?
-				`<@${ctx.user.id}>, You recently fought **${location.boss.npc.display}**, you can attempt the boss fight again in **${preBossCD}**.` :
-				`${preMembersData.map(d => `<@${d.member.id}>`).join(' ')}, All players must ready up to start the fight.`,
+				`<@${ctx.user.id}>, You recently fought **${location.miniboss.npc.display}**, you can attempt the boss fight again in **${preBossCD}**.` :
+				`${preMembersData.map(d => `<@${d.member.id}>`).join(' ')}, You must ready up to start the fight.`,
 			embeds: [this.getAgreementEmbed(location, preMembersData.map(d => d.member), []).embed],
 			components: [{
 				type: ComponentType.ACTION_ROW,
@@ -200,7 +191,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 		}
 		catch (err) {
 			await botMessage.edit({
-				content: `${icons.danger} Not all players readied up! The fight has been canceled.`,
+				content: `${icons.danger} You did not ready up! The fight has been canceled.`,
 				components: []
 			})
 			return
@@ -240,13 +231,13 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 				return
 			}
 
-			const memberBossCD = await getCooldown(preTransaction.query, player.member.id, `boss-${location.display}`)
+			const memberBossCD = await getCooldown(preTransaction.query, player.member.id, `miniboss-${location.display}`)
 
 			if (memberBossCD) {
 				await preTransaction.commit()
 
 				await botMessage.edit({
-					content: `${icons.warning} **${player.member.displayName}** recently fought **${location.boss.npc.display}**, they can attempt the boss fight again in **${memberBossCD}**.`,
+					content: `${icons.warning} **${player.member.displayName}** recently fought **${location.miniboss.npc.display}**, they can attempt the boss fight again in **${memberBossCD}**.`,
 					components: []
 				})
 				return
@@ -274,7 +265,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 			}
 
 			await setFighting(preTransaction.query, player.member.id, true)
-			await createCooldown(preTransaction.query, player.member.id, `boss-${location.display}`, location.boss.cooldown)
+			await createCooldown(preTransaction.query, player.member.id, `miniboss-${location.display}`, location.miniboss.cooldown)
 			players.push({ member: player.member, data: memberData, stimulants: [], afflictions: [], inventory: memberBackpack })
 		}
 
@@ -282,7 +273,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 
 		const npcStimulants: Stimulant[] = []
 		const npcAfflictions: Affliction[] = []
-		let npcHealth = location.boss.npc.health
+		let npcHealth = location.miniboss.npc.health
 		let turnNumber = 1
 		let duelIsActive = true
 
@@ -293,7 +284,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 			embeds: [
 				this.getMobDuelEmbed(
 					players,
-					location.boss.npc,
+					location.miniboss.npc,
 					npcHealth,
 					turnNumber,
 					npcStimulants,
@@ -316,7 +307,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 				)
 
 				const playersWithChoices = players.map(p => ({ ...p, selection: playerChoices.get(p.member.id) }))
-				const npcChoice = getMobChoice(location.boss.npc, npcStimulants, npcHealth, turnNumber)
+				const npcChoice = getMobChoice(location.miniboss.npc, npcStimulants, npcHealth, turnNumber)
 				const orderedChoices: OrderedChoice[] = [
 					{ type: ('npc' as const), speed: npcChoice.speed, random: Math.random() },
 					...playersWithChoices.map(c => ({ ...c, type: ('player' as const), speed: c.selection?.speed || 0, random: Math.random() }))]
@@ -331,7 +322,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 						return b.random - a.random
 					})
 				const messages: string[][] = [[], ...players.map(p => [])]
-				const npcDisplayName = `**${location.boss.npc.display}**`
+				const npcDisplayName = `**${location.miniboss.npc.display}**`
 				const lootEmbeds: EmbedOptions[] = []
 				let msgContent
 
@@ -352,7 +343,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 								playerToAttack.member,
 								playerRow,
 								playerBackpackRows,
-								location.boss.npc,
+								location.miniboss.npc,
 								playerToAttack.stimulants,
 								playerToAttack.afflictions,
 								npcStimulants,
@@ -404,7 +395,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 							}
 						}
 						else if (npcChoice.choice === 'use a medical item') {
-							const maxHeal = Math.min(location.boss.npc.health - npcHealth, npcChoice.item.healsFor)
+							const maxHeal = Math.min(location.miniboss.npc.health - npcHealth, npcChoice.item.healsFor)
 							const curedAfflictions = []
 
 							if (npcChoice.item.curesBitten || npcChoice.item.curesBrokenArm || npcChoice.item.curesBurning) {
@@ -429,7 +420,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 							npcHealth += maxHeal
 
 							messages[i].push(`${npcDisplayName} uses a ${getItemDisplay(npcChoice.item)} to heal for **${maxHeal}** health.` +
-								`\n${npcDisplayName} now has ${formatHealth(npcHealth, location.boss.npc.health)} **${npcHealth} / ${location.boss.npc.health}** health.` +
+								`\n${npcDisplayName} now has ${formatHealth(npcHealth, location.miniboss.npc.health)} **${npcHealth} / ${location.miniboss.npc.health}** health.` +
 								`${curedAfflictions.length ? `\n${npcDisplayName} cured the following afflictions: ${combineArrayWithAnd(curedAfflictions.map(a => a.name))}` : ''}`)
 						}
 						else if (npcChoice.choice === 'use a stimulant') {
@@ -604,7 +595,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 
 							if (choice.ammo.item.spreadsDamageToLimbs) {
 								limbsHit.push({
-									damage: getAttackDamage((choice.ammo.item.damage * stimulantDamageMulti) / choice.ammo.item.spreadsDamageToLimbs, choice.ammo.item.penetration, bodyPartHit.result, location.boss.npc.armor, location.boss.npc.helmet),
+									damage: getAttackDamage((choice.ammo.item.damage * stimulantDamageMulti) / choice.ammo.item.spreadsDamageToLimbs, choice.ammo.item.penetration, bodyPartHit.result, location.miniboss.npc.armor, location.miniboss.npc.helmet),
 									limb: bodyPartHit.result
 								})
 
@@ -617,14 +608,14 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 									}
 
 									limbsHit.push({
-										damage: getAttackDamage((choice.ammo.item.damage * stimulantDamageMulti) / choice.ammo.item.spreadsDamageToLimbs, choice.ammo.item.penetration, limb.result, location.boss.npc.armor, location.boss.npc.helmet),
+										damage: getAttackDamage((choice.ammo.item.damage * stimulantDamageMulti) / choice.ammo.item.spreadsDamageToLimbs, choice.ammo.item.penetration, limb.result, location.miniboss.npc.armor, location.miniboss.npc.helmet),
 										limb: limb.result
 									})
 								}
 							}
 							else {
 								limbsHit.push({
-									damage: getAttackDamage((choice.ammo.item.damage * stimulantDamageMulti), choice.ammo.item.penetration, bodyPartHit.result, location.boss.npc.armor, location.boss.npc.helmet),
+									damage: getAttackDamage((choice.ammo.item.damage * stimulantDamageMulti), choice.ammo.item.penetration, bodyPartHit.result, location.miniboss.npc.armor, location.miniboss.npc.helmet),
 									limb: bodyPartHit.result
 								})
 							}
@@ -641,7 +632,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 						else if (choice.weapon.item.type === 'Throwable Weapon') {
 							if (choice.weapon.item.spreadsDamageToLimbs) {
 								limbsHit.push({
-									damage: getAttackDamage((choice.weapon.item.damage * stimulantDamageMulti) / choice.weapon.item.spreadsDamageToLimbs, choice.weapon.item.penetration, bodyPartHit.result, location.boss.npc.armor, location.boss.npc.helmet),
+									damage: getAttackDamage((choice.weapon.item.damage * stimulantDamageMulti) / choice.weapon.item.spreadsDamageToLimbs, choice.weapon.item.penetration, bodyPartHit.result, location.miniboss.npc.armor, location.miniboss.npc.helmet),
 									limb: bodyPartHit.result
 								})
 
@@ -654,14 +645,14 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 									}
 
 									limbsHit.push({
-										damage: getAttackDamage((choice.weapon.item.damage * stimulantDamageMulti) / choice.weapon.item.spreadsDamageToLimbs, choice.weapon.item.penetration, limb.result, location.boss.npc.armor, location.boss.npc.helmet),
+										damage: getAttackDamage((choice.weapon.item.damage * stimulantDamageMulti) / choice.weapon.item.spreadsDamageToLimbs, choice.weapon.item.penetration, limb.result, location.miniboss.npc.armor, location.miniboss.npc.helmet),
 										limb: limb.result
 									})
 								}
 							}
 							else {
 								limbsHit.push({
-									damage: getAttackDamage((choice.weapon.item.damage * stimulantDamageMulti), choice.weapon.item.penetration, bodyPartHit.result, location.boss.npc.armor, location.boss.npc.helmet),
+									damage: getAttackDamage((choice.weapon.item.damage * stimulantDamageMulti), choice.weapon.item.penetration, bodyPartHit.result, location.miniboss.npc.armor, location.miniboss.npc.helmet),
 									limb: bodyPartHit.result
 								})
 							}
@@ -684,7 +675,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 						else {
 							// melee weapon
 							limbsHit.push({
-								damage: getAttackDamage((choice.weapon.item.damage * stimulantDamageMulti), choice.weapon.item.penetration, bodyPartHit.result, location.boss.npc.armor, location.boss.npc.helmet),
+								damage: getAttackDamage((choice.weapon.item.damage * stimulantDamageMulti), choice.weapon.item.penetration, bodyPartHit.result, location.miniboss.npc.armor, location.miniboss.npc.helmet),
 								limb: bodyPartHit.result
 							})
 							totalDamage = limbsHit[0].damage.total
@@ -711,11 +702,11 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 
 						if (!missedPartChoice) {
 							for (const result of limbsHit) {
-								if (result.limb === 'head' && location.boss.npc.helmet) {
-									messages[i].push(`${npcDisplayName}'s helmet (${getItemDisplay(location.boss.npc.helmet)}) reduced the damage by **${result.damage.reduced}**.`)
+								if (result.limb === 'head' && location.miniboss.npc.helmet) {
+									messages[i].push(`${npcDisplayName}'s helmet (${getItemDisplay(location.miniboss.npc.helmet)}) reduced the damage by **${result.damage.reduced}**.`)
 								}
-								else if (result.limb === 'chest' && location.boss.npc.armor) {
-									messages[i].push(`${npcDisplayName}'s armor (${getItemDisplay(location.boss.npc.armor)}) reduced the damage by **${result.damage.reduced}**.`)
+								else if (result.limb === 'chest' && location.miniboss.npc.armor) {
+									messages[i].push(`${npcDisplayName}'s armor (${getItemDisplay(location.miniboss.npc.armor)}) reduced the damage by **${result.damage.reduced}**.`)
 								}
 								else if (result.limb === 'arm' && Math.random() <= 0.2 && !npcAfflictions.includes(afflictions['Broken Arm'])) {
 									messages[i].push(`${icons.postive_effect_debuff} ${npcDisplayName}'s ${getAfflictionEmoji('Broken Arm')} arm was broken! (${combineArrayWithAnd(getEffectsDisplay(afflictions['Broken Arm'].effects))})`)
@@ -740,7 +731,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 								msgContent = `${players.map(p => `<@${p.member.id}>`).join(' ')}, You have unlocked a new region! You can now travel to ${combineArrayWithAnd(nextLocation.map(l => `**${l.display}**`))}.`
 							}
 							else {
-								msgContent = `${players.map(p => `<@${p.member.id}>`).join(' ')}, You have defeated **${location.boss.npc.display}**!`
+								msgContent = `${players.map(p => `<@${p.member.id}>`).join(' ')}, You have defeated **${location.miniboss.npc.display}**!`
 							}
 
 							for (const player of players) {
@@ -748,39 +739,39 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 								const userQuest = await getUserQuest(atkTransaction.query, player.member.id, true)
 								const droppedItems = []
 
-								if (location.boss.npc.armor && armorReceiver === player.member.id) {
-									const armorDura = getRandomInt(Math.max(1, location.boss.npc.armor.durability / 2), location.boss.npc.armor.durability)
-									const armorRow = await createItem(atkTransaction.query, location.boss.npc.armor.name, { durability: armorDura })
+								if (location.miniboss.npc.armor && armorReceiver === player.member.id) {
+									const armorDura = getRandomInt(Math.max(1, location.miniboss.npc.armor.durability / 2), location.miniboss.npc.armor.durability)
+									const armorRow = await createItem(atkTransaction.query, location.miniboss.npc.armor.name, { durability: armorDura })
 									await addItemToBackpack(atkTransaction.query, player.member.id, armorRow.id)
 
 									droppedItems.push({
-										item: location.boss.npc.armor,
+										item: location.miniboss.npc.armor,
 										row: armorRow
 									})
 								}
 
-								if (location.boss.npc.helmet && helmetReceiver === player.member.id) {
-									const helmDura = getRandomInt(Math.max(1, location.boss.npc.helmet.durability / 2), location.boss.npc.helmet.durability)
-									const helmRow = await createItem(atkTransaction.query, location.boss.npc.helmet.name, { durability: helmDura })
+								if (location.miniboss.npc.helmet && helmetReceiver === player.member.id) {
+									const helmDura = getRandomInt(Math.max(1, location.miniboss.npc.helmet.durability / 2), location.miniboss.npc.helmet.durability)
+									const helmRow = await createItem(atkTransaction.query, location.miniboss.npc.helmet.name, { durability: helmDura })
 									await addItemToBackpack(atkTransaction.query, player.member.id, helmRow.id)
 
 									droppedItems.push({
-										item: location.boss.npc.helmet,
+										item: location.miniboss.npc.helmet,
 										row: helmRow
 									})
 								}
 
-								if (location.boss.npc.type === 'raider') {
-									if ('ammo' in location.boss.npc) {
+								if (location.miniboss.npc.type === 'raider') {
+									if ('ammo' in location.miniboss.npc) {
 										// drop random amount of bullets
 										const ammoToDrop = getRandomInt(1, 2)
 
 										for (let a = 0; a < ammoToDrop; a++) {
-											const ammoRow = await createItem(atkTransaction.query, location.boss.npc.ammo.name, { durability: location.boss.npc.ammo.durability })
+											const ammoRow = await createItem(atkTransaction.query, location.miniboss.npc.ammo.name, { durability: location.miniboss.npc.ammo.durability })
 											await addItemToBackpack(atkTransaction.query, player.member.id, ammoRow.id)
 
 											droppedItems.push({
-												item: location.boss.npc.ammo,
+												item: location.miniboss.npc.ammo,
 												row: ammoRow
 											})
 										}
@@ -788,20 +779,20 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 
 									if (weaponReceiver === player.member.id) {
 										// weapon durability is random
-										const weapDurability = location.boss.npc.weapon.durability ? getRandomInt(Math.max(1, location.boss.npc.weapon.durability / 2), location.boss.npc.weapon.durability) : undefined
-										const weapRow = await createItem(atkTransaction.query, location.boss.npc.weapon.name, { durability: weapDurability })
+										const weapDurability = location.miniboss.npc.weapon.durability ? getRandomInt(Math.max(1, location.miniboss.npc.weapon.durability / 2), location.miniboss.npc.weapon.durability) : undefined
+										const weapRow = await createItem(atkTransaction.query, location.miniboss.npc.weapon.name, { durability: weapDurability })
 										await addItemToBackpack(atkTransaction.query, player.member.id, weapRow.id)
 
 										droppedItems.push({
-											item: location.boss.npc.weapon,
+											item: location.miniboss.npc.weapon,
 											row: weapRow
 										})
 									}
 								}
 
 								// roll random loot drops
-								for (let l = 0; l < location.boss.npc.drops.rolls; l++) {
-									const lootDrop = getMobDrop(location.boss.npc)
+								for (let l = 0; l < location.miniboss.npc.drops.rolls; l++) {
+									const lootDrop = getMobDrop(location.miniboss.npc)
 
 									if (lootDrop) {
 										let itemDurability
@@ -824,7 +815,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 
 								await setFighting(atkTransaction.query, player.member.id, false)
 								await increaseKills(atkTransaction.query, player.member.id, 'boss', 1)
-								await addXp(atkTransaction.query, player.member.id, location.boss.npc.xp)
+								await addXp(atkTransaction.query, player.member.id, location.miniboss.npc.xp)
 
 								if (userData.locationLevel <= location.locationLevel) {
 									await setLocationLevel(atkTransaction.query, player.member.id, userData.locationLevel + 1)
@@ -847,7 +838,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 									.setColor(9043800)
 									.setDescription(`${(sortItemsByLevel(droppedItems, true) as (ItemWithRow<ItemRow> & { rarityDisplay?: string })[])
 										.map(itm => 'rarityDisplay' in itm ? `${itm.rarityDisplay} ${getItemDisplay(itm.item, itm.row)}` : `${getRarityDisplay('Common')} ${getItemDisplay(itm.item, itm.row)}`).join('\n')}` +
-										`\n${icons.xp_star}***+${location.boss.npc.xp}** xp!*`)
+										`\n${icons.xp_star}***+${location.miniboss.npc.xp}** xp!*`)
 
 								lootEmbeds.push({ ...killEmbed.embed })
 
@@ -858,7 +849,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 							}
 						}
 						else if (!missedPartChoice) {
-							messages[i].push(`${npcDisplayName} is left with ${formatHealth(npcHealth, location.boss.npc.health)} **${npcHealth}** health.`)
+							messages[i].push(`${npcDisplayName} is left with ${formatHealth(npcHealth, location.miniboss.npc.health)} **${npcHealth}** health.`)
 						}
 
 						// commit changes
@@ -891,7 +882,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 				const actionsEmbed = new Embed()
 					.setTitle(`Boss Fight${players.length ?
 						` - ${combineArrayWithAnd(playersDisplay)}` :
-						''} vs ${location.boss.npc.display}`)
+						''} vs ${location.miniboss.npc.display}`)
 					.setFooter(`Turn #${turnNumber} · actions are ordered by speed (higher speed action goes first)`)
 
 				const filteredMessages = messages.filter(m => m.length)
@@ -952,7 +943,7 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 						embeds: [
 							this.getMobDuelEmbed(
 								players,
-								location.boss.npc,
+								location.miniboss.npc,
 								npcHealth,
 								turnNumber,
 								npcStimulants,
@@ -1014,18 +1005,19 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 	}
 
 	getAgreementEmbed (location: Location, users: ResolvedMember[], agreedUsers: string[]): Embed {
+		if (!location.miniboss) {
+			throw new Error(`there is no miniboss for location ${location.display}`)
+		}
+
 		const embed = new Embed()
-			.setTitle(`Boss Fight - ${location.display} Boss Fight`)
-			.setDescription(`${users.length === 1 ? `${icons.warning} It is highly recommended to invite at least **1** other player to help you fight this boss!\n` : ''}` +
-				`${icons.warning} If you die, you will lose everything in your inventory.` +
-				`\n${icons.information} All participants who **survive** the fight will progress and receive some loot + xp.` +
-				' The weapon, helmet, and armor will be split randomly between survivors.')
-			.addField(location.boss.npc.display, getMobDisplay(location.boss.npc, location.boss.npc.health).join('\n'), true)
-			.addField(`Participants (${users.length})`, users.map(u => agreedUsers.includes(u.id) ?
+			.setTitle(`Miniboss - ${location.display}`)
+			.setDescription(`${icons.warning} If you die, you will lose everything in your inventory.`)
+			.addField(location.miniboss.npc.display, getMobDisplay(location.miniboss.npc, location.miniboss.npc.health).join('\n'), true)
+			.addField('\u200b', users.map(u => agreedUsers.includes(u.id) ?
 				`${icons.checkmark} ${u.displayName} - Ready!` :
 				`${icons.cancel} ${u.displayName} - Not ready`
 			).join('\n'), true)
-			.setFooter('All players must ready up within 30 seconds to start the fight')
+			.setFooter('You must ready up to start the fight')
 
 		return embed
 	}
