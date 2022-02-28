@@ -126,6 +126,24 @@ export const mall: Location = {
 			boss: false
 		},
 		{
+			type: 'raider',
+			display: 'Raider',
+			health: 100,
+			damage: 30,
+			drops: {
+				common: [items['9mm_FMJ_bullet']],
+				uncommon: [items.ifak_medkit, items['anti-biotics']],
+				rare: [items['9mm_RIP_bullet'], items['5.45x39mm_HP_bullet'], items.duffle_bag],
+				rolls: 1
+			},
+			weapon: items.saiga_MK,
+			ammo: items['5.45x39mm_FMJ_bullet'],
+			armor: items.wooden_armor,
+			helmet: items.aramid_helmet,
+			xp: 150,
+			boss: false
+		},
+		{
 			type: 'walker',
 			display: 'Crawler',
 			health: 40,
@@ -206,7 +224,7 @@ export const mall: Location = {
 					xp: 10
 				},
 				uncommon: {
-					items: [items['9mm_FMJ_bullet']],
+					items: [items['9mm_FMJ_bullet'], items['5.45x39mm_FMJ_bullet']],
 					xp: 15
 				},
 				rare: {

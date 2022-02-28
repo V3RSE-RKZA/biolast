@@ -82,19 +82,6 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 9
 	},
-	'5.45x39mm_FMJ_bullet': {
-		type: 'Ammunition',
-		name: '5.45x39mm_FMJ_bullet',
-		icon: '<:U_ammo:601366669318815745>',
-		aliases: ['545mm', '5.45x39_fmj', '545', '545_rifle', '545x39', '545_fmj', '545_bullet'],
-		description: 'Full metal jacket 5.45x39mm ammunition for Kalashnikov rifles.',
-		damage: 40,
-		penetration: 1.8,
-		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
-		sellPrice: 399,
-		slotsUsed: 1,
-		itemLevel: 7
-	},
 	'.45_ACP_HP_bullet': {
 		type: 'Ammunition',
 		name: '.45_ACP_HP_bullet',
@@ -118,6 +105,19 @@ export const ammunition = ammoObject({
 		penetration: 1.8,
 		ammoFor: [ranged.m1911],
 		sellPrice: 342,
+		slotsUsed: 1,
+		itemLevel: 7
+	},
+	'5.45x39mm_FMJ_bullet': {
+		type: 'Ammunition',
+		name: '5.45x39mm_FMJ_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['545mm', '5.45x39_fmj', '545', '545_rifle', '545x39', '545_fmj', '545_bullet'],
+		description: 'Full metal jacket 5.45x39mm ammunition for Kalashnikov rifles.',
+		damage: 40,
+		penetration: 1.8,
+		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
+		sellPrice: 399,
 		slotsUsed: 1,
 		itemLevel: 7
 	},
