@@ -396,7 +396,7 @@ class App {
 					await setUserStarterTip(query, ctx.user.id, userTips.tips | CommandsWithStarterTip[cmdWithTip.customOptions.name])
 					afterCommandMessage = {
 						content: `<@${ctx.user.id}>, ${cmdWithTip.customOptions.starterTip}`,
-						ephemeral: false
+						ephemeral: true
 					}
 				}
 			}
