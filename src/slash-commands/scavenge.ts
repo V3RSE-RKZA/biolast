@@ -243,7 +243,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 			await ctx.editOriginal({
 				content: `You ${hasRequiredKey ?
 					`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
-					''}scavenge **${areaChoice.display}** and find:\n\n**nothing of value!**\n${icons.xp_star}***+${xpEarned}** xp!*`,
+					''}scavenge **${areaChoice.display}** (${location.display}) and find:\n\n**nothing of value!**\n${icons.xp_star}***+${xpEarned}** xp!*`,
 				components: [],
 				embeds: []
 			})
@@ -255,7 +255,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 		botMessage = await ctx.editOriginal({
 			content: `You ${hasRequiredKey ?
 				`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
-				''}scavenge **${areaChoice.display}** and find:\n\n${combinedLoot.map(itm => `${icons.loading} ${itm.rarity} *examining...*`).join('\n')}` +
+				''}scavenge **${areaChoice.display}** (${location.display}) and find:\n\n${combinedLoot.map(itm => `${icons.loading} ${itm.rarity} *examining...*`).join('\n')}` +
 				`\n${icons.xp_star}***+???** xp!*`,
 			components: [],
 			embeds: []
@@ -268,7 +268,7 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 					const hiddenItems = combinedLoot.slice(i + 1)
 					const lootedMessage = `You ${hasRequiredKey ?
 						`use your ${getItemDisplay(hasRequiredKey.item, { ...hasRequiredKey.row, durability: hasRequiredKey.row.durability ? hasRequiredKey.row.durability - 1 : undefined })} to ` :
-						''}scavenge **${areaChoice!.display}** and find:\n\n${unhiddenItems.map(itm => itm.row ? `${itm.rarity} ${getItemDisplay(itm.item, itm.row)}` : `You saw a ${itm.rarity} ${getItemDisplay(itm.item)}, but you didn't have enough space to take it.`).join('\n')}` +
+						''}scavenge **${areaChoice!.display}** (${location.display}) and find:\n\n${unhiddenItems.map(itm => itm.row ? `${itm.rarity} ${getItemDisplay(itm.item, itm.row)}` : `You saw a ${itm.rarity} ${getItemDisplay(itm.item)}, but you didn't have enough space to take it.`).join('\n')}` +
 						`${hiddenItems.length ? `\n${hiddenItems.map(itm => `${icons.loading} ${itm.rarity} *examining...*`).join('\n')}` : ''}` +
 						`\n${unhiddenItems.length === combinedLoot.length ? `${icons.xp_star}***+${xpEarned}** xp!*` : `${icons.xp_star}***+???** xp!*`}`
 
@@ -287,8 +287,29 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 	}
 
 	async getAreaChoice (ctx: CommandContext, location: Location): Promise<Area> {
-		const chosenAreas = location.areas.sort(() => 0.5 - Math.random()).slice(0, 3)
+		const randomAreas = location.areas.sort(() => 0.5 - Math.random()).slice(0, 3)
+		const chosenAreas = []
 		const buttons: ComponentButton[] = []
+		let keyAreas = 0
+
+		// make sure there is only ever 1 key scavenge area out of the 3 possible choices
+		for (let i = 0; i < randomAreas.length; i++) {
+			if (chosenAreas.length >= 3) {
+				break
+			}
+
+			if (randomAreas[i].requiresKey) {
+				if (keyAreas === 0) {
+					keyAreas++
+					chosenAreas.push(randomAreas[i])
+				}
+				else {
+					continue
+				}
+			}
+
+			chosenAreas.push(randomAreas[i])
+		}
 
 		for (const area of chosenAreas) {
 			if (area.requiresKey) {

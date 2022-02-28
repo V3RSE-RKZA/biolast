@@ -22,9 +22,31 @@ export const forest: Location = {
 			ammo: items['5.45x39mm_FMJ_bullet'],
 			usesHeals: [items.compression_bandage],
 			quotes: [],
-			armor: items.wooden_armor,
+			armor: items.aramid_armor,
 			helmet: items.wooden_helmet,
 			xp: 750,
+			boss: true
+		}
+	},
+	miniboss: {
+		cooldown: 30 * 60,
+		npc: {
+			type: 'raider',
+			display: 'Cultist Hunter',
+			health: 150,
+			damage: 35,
+			drops: {
+				common: [items.sacred_pendant, items.cloth_backpack],
+				uncommon: [items.compression_bandage],
+				rare: [items.P320],
+				rolls: 2
+			},
+			weapon: items['glock-17'],
+			ammo: items['9mm_FMJ_bullet'],
+			usesHeals: [items.ifak_medkit],
+			armor: items.wooden_armor,
+			helmet: items.cultist_mask,
+			xp: 300,
 			boss: true
 		}
 	},
@@ -72,6 +94,24 @@ export const forest: Location = {
 			armor: items.wooden_armor,
 			helmet: items.wooden_helmet,
 			xp: 50,
+			boss: false
+		},
+		{
+			type: 'raider',
+			display: 'Cultist',
+			health: 75,
+			damage: 40,
+			drops: {
+				common: [items.ifak_medkit],
+				uncommon: [items['anti-biotics'], items.splint],
+				rare: [items.sacred_pendant],
+				rolls: 1
+			},
+			weapon: items.m1911,
+			ammo: items['.45_ACP_HP_bullet'],
+			armor: items.wooden_armor,
+			helmet: items.wooden_helmet,
+			xp: 40,
 			boss: false
 		}
 	],
@@ -139,7 +179,7 @@ export const forest: Location = {
 					xp: 8
 				},
 				uncommon: {
-					items: [items['9mm_HP_bullet'], items.cloth_backpack],
+					items: [items['9mm_HP_bullet'], items['.45_ACP_HP_bullet'], items.cloth_backpack],
 					xp: 10
 				},
 				rare: {

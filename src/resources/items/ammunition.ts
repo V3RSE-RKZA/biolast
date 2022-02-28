@@ -95,6 +95,19 @@ export const ammunition = ammoObject({
 		slotsUsed: 1,
 		itemLevel: 7
 	},
+	'.45_ACP_HP_bullet': {
+		type: 'Ammunition',
+		name: '.45_ACP_HP_bullet',
+		icon: '<:U_ammo:601366669318815745>',
+		aliases: ['acp_hp', '.45_hp', 'acp__hp_bullet', '.45_hp_bullet'],
+		description: 'Hollow point .45 ACP ammunition.',
+		damage: 36,
+		penetration: 1,
+		ammoFor: [ranged.m1911],
+		sellPrice: 262,
+		slotsUsed: 1,
+		itemLevel: 7
+	},
 	'.45_ACP_FMJ_bullet': {
 		type: 'Ammunition',
 		name: '.45_ACP_FMJ_bullet',
