@@ -61,7 +61,8 @@ class BossCommand extends CustomSlashCommand<'miniboss'> {
 			worksInDMs: false,
 			worksDuringDuel: false,
 			noDefer: true,
-			guildIDs: []
+			guildIDs: [],
+			minimumLocationLevel: 3
 		})
 
 		this.filePath = __filename
