@@ -136,7 +136,7 @@ class HuntCommand extends CustomSlashCommand<'hunt'> {
 		}
 
 		// create cooldown before showing user mob they have to fight (so they have to fight or wait to reroll)
-		await createCooldown(preTransaction.query, ctx.user.id, 'hunt', 2 * 60)
+		await createCooldown(preTransaction.query, ctx.user.id, 'hunt', 30)
 		await preTransaction.commit()
 
 		const location = locations[preUserData.currentLocation]
