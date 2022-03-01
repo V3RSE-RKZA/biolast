@@ -287,28 +287,29 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 	}
 
 	async getAreaChoice (ctx: CommandContext, location: Location): Promise<Area> {
-		const randomAreas = location.areas.sort(() => 0.5 - Math.random()).slice(0, 3)
+		const randomAreas = location.areas.sort(() => 0.5 - Math.random())
 		const chosenAreas = []
 		const buttons: ComponentButton[] = []
 		let keyAreas = 0
 
 		// make sure there is only ever 1 key scavenge area out of the 3 possible choices
-		for (let i = 0; i < randomAreas.length; i++) {
+		for (const area of randomAreas) {
 			if (chosenAreas.length >= 3) {
 				break
 			}
 
-			if (randomAreas[i].requiresKey) {
+			if (area.requiresKey) {
 				if (keyAreas === 0) {
 					keyAreas++
-					chosenAreas.push(randomAreas[i])
+					chosenAreas.push(area)
 				}
 				else {
 					continue
 				}
 			}
-
-			chosenAreas.push(randomAreas[i])
+			else {
+				chosenAreas.push(area)
+			}
 		}
 
 		for (const area of chosenAreas) {
