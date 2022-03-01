@@ -9,7 +9,7 @@ import { addItemToShop, getUserBackpack, getUserStash, removeItemFromBackpack, r
 import { beginTransaction, query } from '../utils/db/mysql'
 import { addMoney, getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
-import { getBackpackLimit, getEquips, getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
+import { getBackpackLimit, getEquips, getItemDisplay, getItemNameDisplay, getItemPrice, getItems, instanceOfBackpackRow, sortItemsByName } from '../utils/itemUtils'
 import getRandomInt from '../utils/randomInt'
 import { disableAllComponents } from '../utils/messageUtils'
 import { logger } from '../utils/logger'
@@ -79,7 +79,9 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 							return {
 								label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 								value: i.row.id.toString(),
-								description: `Worth ${formatMoney(this.getItemShopPrice(i.item, i.row), false)}.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
+								description: `Worth ${formatMoney(this.getItemShopPrice(i.item, i.row), false)}.` +
+									`${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}` +
+									`${instanceOfBackpackRow(i.row) && i.row.equipped ? ' equipped.' : ''}`,
 								emoji: iconID ? {
 									id: iconID[1],
 									name: i.item.name
@@ -134,7 +136,9 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 										return {
 											label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 											value: i.row.id.toString(),
-											description: `Worth ${formatMoney(this.getItemShopPrice(i.item, i.row), false)}.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
+											description: `Worth ${formatMoney(this.getItemShopPrice(i.item, i.row), false)}.` +
+												`${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}` +
+												`${instanceOfBackpackRow(i.row) && i.row.equipped ? ' equipped.' : ''}`,
 											emoji: iconID ? {
 												id: iconID[1],
 												name: i.item.name
@@ -176,7 +180,9 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 										return {
 											label: `[${i.row.id}] ${getItemNameDisplay(i.item, i.row)}`,
 											value: i.row.id.toString(),
-											description: `Worth ${formatMoney(this.getItemShopPrice(i.item, i.row), false)}.${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}`,
+											description: `Worth ${formatMoney(this.getItemShopPrice(i.item, i.row), false)}.` +
+												`${i.row.durability ? ` ${i.row.durability} uses left. ` : ''}` +
+												`${instanceOfBackpackRow(i.row) && i.row.equipped ? ' equipped.' : ''}`,
 											emoji: iconID ? {
 												id: iconID[1],
 												name: i.item.name
@@ -346,7 +352,7 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 		return Math.floor(getItemPrice(item, itemRow) * this.app.currentShopSellMultiplier)
 	}
 
-	generatePages (rows: ItemRow[], invSpace: number): { page: Embed, items: ItemWithRow<ItemRow>[] }[] {
+	generatePages<T extends ItemRow> (rows: T[], invSpace: number): { page: Embed, items: ItemWithRow<T>[] }[] {
 		const itemData = getItems(rows)
 		const sortedItems = sortItemsByName(itemData.items, true)
 		const pages = []
@@ -368,7 +374,7 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 			pages.push({ page: embed, items: filteredItems })
 		}
 
-		return pages
+		return pages as { page: Embed, items: ItemWithRow<T>[] }[]
 	}
 }
 

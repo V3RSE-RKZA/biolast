@@ -4,7 +4,7 @@ import { baseBackpackLimit } from '../config'
 import { Ammunition, Armor, Backpack, Helmet, Item } from '../types/Items'
 import { skins } from '../resources/skins'
 
-function instanceOfBackpackRow (itemRow: ItemRow | BackpackItemRow): itemRow is BackpackItemRow {
+export function instanceOfBackpackRow (itemRow: ItemRow | BackpackItemRow): itemRow is BackpackItemRow {
 	return 'equipped' in itemRow
 }
 
