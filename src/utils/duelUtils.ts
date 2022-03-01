@@ -336,7 +336,7 @@ export function awaitPlayerChoices (
 											slotsUsed: 0,
 											itemLevel: 1,
 											damage: 10,
-											accuracy: 80,
+											accuracy: 10,
 											durability: 1,
 											penetration: 0,
 											speed: 0
