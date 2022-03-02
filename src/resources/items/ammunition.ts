@@ -271,7 +271,7 @@ export const ammunition = ammoObject({
 		icon: '<:makeshift_shell:931808617047396423>',
 		aliases: ['shell'],
 		description: 'A handmade shotgun shell filled with cheap gunpowder and pellets.',
-		damage: 24,
+		damage: 30,
 		penetration: 1.5,
 		ammoFor: [ranged.makeshift_shotgun],
 		sellPrice: 34,
