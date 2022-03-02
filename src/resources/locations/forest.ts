@@ -33,7 +33,7 @@ export const forest: Location = {
 		npc: {
 			type: 'raider',
 			display: 'Cultist Hunter',
-			health: 150,
+			health: 100,
 			damage: 35,
 			drops: {
 				common: [items.sacred_pendant, items.cloth_backpack],
@@ -63,8 +63,8 @@ export const forest: Location = {
 		{
 			type: 'raider',
 			display: 'Cultist',
-			health: 70,
-			damage: 50,
+			health: 60,
+			damage: 45,
 			drops: {
 				common: [items.ifak_medkit],
 				uncommon: [items['anti-biotics'], items.splint],
@@ -73,8 +73,8 @@ export const forest: Location = {
 			},
 			weapon: items['glock-17'],
 			ammo: items['9mm_HP_bullet'],
-			armor: items.cloth_armor,
-			helmet: items.wooden_helmet,
+			armor: items.wooden_armor,
+			helmet: items.cloth_helmet,
 			xp: 40,
 			boss: false
 		},
@@ -82,7 +82,7 @@ export const forest: Location = {
 			type: 'raider',
 			display: 'Cultist',
 			health: 60,
-			damage: 35,
+			damage: 30,
 			drops: {
 				common: [items.ifak_medkit],
 				uncommon: [items['anti-biotics'], items.splint, items.cloth_backpack],
@@ -99,7 +99,7 @@ export const forest: Location = {
 		{
 			type: 'raider',
 			display: 'Cultist',
-			health: 75,
+			health: 60,
 			damage: 40,
 			drops: {
 				common: [items.ifak_medkit],
