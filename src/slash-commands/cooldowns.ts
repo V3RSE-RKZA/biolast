@@ -71,6 +71,7 @@ class CooldownCommand extends CustomSlashCommand<'cooldowns'> {
 		const travelCD = await getCooldown(query, userData.userId, 'travel')
 		const tradeCD = await getCooldown(query, userData.userId, 'trade')
 		const questCD = await getCooldown(query, userData.userId, 'quest')
+		const wordleCD = await getCooldown(query, userData.userId, 'wordle')
 
 		const embed = new Embed()
 			.setAuthor(`${userDisplay}'s Cooldowns`, member.avatarURL)
@@ -79,6 +80,7 @@ class CooldownCommand extends CustomSlashCommand<'cooldowns'> {
 			.addField('Travel (`/travel`)', travelCD || `${icons.checkmark} Ready!`, true)
 			.addField('Trade (`/trade`)', tradeCD || `${icons.checkmark} Ready!`, true)
 			.addField('Quest (`/quest`)', questCD || `${icons.checkmark} Ready!`, true)
+			.addField('Wordle (`/wordle`)', wordleCD || `${icons.checkmark} Ready!`, true)
 
 		if (currentLocation) {
 			embed.addField(`${currentLocation.display} Boss (\`/boss\`)`, bossCD || `${icons.checkmark} Ready!`, true)
