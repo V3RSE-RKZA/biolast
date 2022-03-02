@@ -20,13 +20,19 @@ const fullWordList = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 're
 const gameWordList = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'resources', 'wordle', 'wordlist.txt'), { encoding: 'utf-8' }).split(/\r?\n/).filter(Boolean)
 const MAX_GUESSES = 5
 const MAX_BET = 10000
+const wordleTutorial = new Embed()
+	.setTitle('How to Play')
+	.setDescription('Each guess must be a valid five-letter word. Click the "Input Guess" button to submit a guess.' +
+		`\n\n${icons.wordle.green.w}${(['e', 'a', 'r', 'y'] as const).map(letter => icons.wordle.gray[letter]).join('')} - The letter **W** is in the word and in the correct spot.` +
+		`\n${icons.wordle.yellow.p}${(['i', 'l', 'l', 's'] as const).map(letter => icons.wordle.gray[letter]).join('')} - The letter **P** is in the word but in the wrong spot.` +
+		`\n${(['v', 'a', 'g', 'u', 'e'] as const).map(letter => icons.wordle.gray[letter]).join('')} - None of these letters appear in the word.`)
 
-class GambleCommand extends CustomSlashCommand<'gamble'> {
+class WordleCommand extends CustomSlashCommand<'wordle'> {
 	constructor (creator: SlashCreator, app: App) {
 		super(creator, app, {
-			name: 'gamble',
+			name: 'wordle',
 			description: 'Play a game of wordle against the merchant.',
-			longDescription: 'Bet some coins in a game against the merchant.',
+			longDescription: 'Bet some coins in a game of wordle against the merchant.',
 			category: 'equipment',
 			options: [{
 				type: CommandOptionType.INTEGER,
@@ -69,7 +75,7 @@ class GambleCommand extends CustomSlashCommand<'gamble'> {
 		const preGambleCD = await getCooldown(query, ctx.user.id, 'wordle')
 		if (preGambleCD) {
 			await ctx.send({
-				content: `${icons.timer} You will have to wait **${preGambleCD}** before you can gamble again.`,
+				content: `${icons.timer} You will have to wait **${preGambleCD}** before you can play wordle again.`,
 				components: []
 			})
 			return
@@ -77,6 +83,7 @@ class GambleCommand extends CustomSlashCommand<'gamble'> {
 
 		let botMessage = await ctx.send({
 			content: `Gamble **${formatMoney(bet)}** on a game of wordle? You will have **${MAX_GUESSES}** tries to guess the word correctly.`,
+			embeds: [wordleTutorial.embed],
 			components: CONFIRM_BUTTONS
 		}) as Message
 
@@ -87,7 +94,7 @@ class GambleCommand extends CustomSlashCommand<'gamble'> {
 
 			if (confirmed.customID !== 'confirmed') {
 				await confirmed.editParent({
-					content: `${icons.checkmark} Gamble canceled.`,
+					content: `${icons.checkmark} Wordle canceled.`,
 					components: []
 				})
 				return
@@ -115,7 +122,7 @@ class GambleCommand extends CustomSlashCommand<'gamble'> {
 		const gambleCD = await getCooldown(preTransaction.query, ctx.user.id, 'wordle', true)
 		if (gambleCD) {
 			await ctx.editOriginal({
-				content: `${icons.timer} You will have to wait **${gambleCD}** before you can gamble again.`,
+				content: `${icons.timer} You will have to wait **${gambleCD}** before you can play wordle again.`,
 				components: []
 			})
 			return
@@ -350,4 +357,4 @@ class GambleCommand extends CustomSlashCommand<'gamble'> {
 	}
 }
 
-export default GambleCommand
+export default WordleCommand
