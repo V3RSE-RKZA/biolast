@@ -65,7 +65,8 @@ class LeaderboardCommand extends CustomSlashCommand<'leaderboards'> {
 
 			if (!erisGuild) {
 				await ctx.send({
-					content: `${icons.danger} There was an error trying to fetch the server leaderboards.`
+					content: `${icons.danger} There was an error trying to fetch the server leaderboards.` +
+						' You should try reinviting the bot to fix this, if that doesn\'t work let us know in the official discord: https://discord.gg/6JqT3STJ5w'
 				})
 				return
 			}
