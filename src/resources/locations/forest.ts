@@ -81,7 +81,7 @@ export const forest: Location = {
 		{
 			type: 'raider',
 			display: 'Cultist',
-			health: 60,
+			health: 45,
 			damage: 30,
 			drops: {
 				common: [items.ifak_medkit],
