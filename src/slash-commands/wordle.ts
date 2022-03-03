@@ -308,6 +308,7 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 			else {
 				const wordLetters = word.split('')
 				const guessLetters = guesses[i].split('')
+				const yellowLetters = []
 				const rowDisplay: string[] = guessLetters.map(l => icons.wordle.gray[l as Letter])
 
 				for (let i2 = 0; i2 < guesses[i].length; i2++) {
@@ -331,8 +332,12 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 						throw new Error(`${letter} is not a valid letter`)
 					}
 
-					if (wordLetters.includes(letter) && guessLetters[i2] !== '') {
+					const occurances = wordLetters.filter(l => l === letter)
+					const existingOccurances = yellowLetters.filter(l => l === letter)
+
+					if (occurances.length > 0 && existingOccurances.length < occurances.length && guessLetters[i2] !== '') {
 						rowDisplay[i2] = icons.wordle.yellow[letter]
+						yellowLetters.push(letter)
 					}
 				}
 
