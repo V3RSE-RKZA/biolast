@@ -303,7 +303,7 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 
 		for (let i = 0; i < 5; i++) {
 			if (!guesses[i]) {
-				display.push('◻️'.repeat(5))
+				display.push(icons.wordle.empty.repeat(5))
 			}
 			else {
 				const wordLetters = word.split('')

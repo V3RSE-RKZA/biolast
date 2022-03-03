@@ -77,6 +77,7 @@ export const icons = {
 		upgrade_skills_icon: '935658011379257375'
 	},
 	wordle: {
+		empty: '<:medium_gray_square:948759355057143809>',
 		gray: {
 			a: '<:gray_a:948031331135279174>',
 			b: '<:gray_b:948031331277885480>',
