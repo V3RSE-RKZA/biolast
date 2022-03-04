@@ -320,7 +320,6 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 					if (letter === word[i2]) {
 						rowDisplay[i2] = icons.wordle.green[letter]
 						guessLetters[i2] = ''
-						wordLetters[i2] = ''
 					}
 				}
 
