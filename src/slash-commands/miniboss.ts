@@ -25,7 +25,6 @@ import { attackPlayer, getMobChoice, getMobDisplay, getMobDrop } from '../utils/
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { EmbedOptions } from 'eris'
 import SellCommand from './sell'
-import { disableAllComponents } from '../utils/messageUtils'
 
 interface Player {
 	member: ResolvedMember
@@ -106,7 +105,10 @@ class BossCommand extends CustomSlashCommand<'miniboss'> {
 			catch (err) {
 				// continue
 				await botMessage.edit({
-					components: disableAllComponents(botMessage.components)
+					components: [{
+						type: ComponentType.ACTION_ROW,
+						components: [GRAY_BUTTON('Sell Items', 'sell', true)]
+					}]
 				})
 			}
 			return
