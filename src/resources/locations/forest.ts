@@ -57,6 +57,13 @@ export const forest: Location = {
 			questType: 'Scavenge With A Key',
 			progressGoal: 1,
 			key: items.sacred_pendant
+		},
+		{
+			type: 'Region',
+			id: 'forest_retrieve_1',
+			questType: 'Retrieve Item',
+			progressGoal: 1,
+			item: items.walker_sludge
 		}
 	],
 	huntMobs: [
@@ -112,6 +119,22 @@ export const forest: Location = {
 			armor: items.wooden_armor,
 			helmet: items.wooden_helmet,
 			xp: 40,
+			boss: false
+		},
+		{
+			type: 'walker',
+			display: 'Walker',
+			health: 90,
+			damage: 25,
+			drops: {
+				common: [items['9mm_FMJ_bullet']],
+				uncommon: [items['.45_ACP_FMJ_bullet']],
+				rare: [items.walker_sludge],
+				rolls: 2
+			},
+			xp: 50,
+			chanceToBite: 15,
+			attackPenetration: 1.3,
 			boss: false
 		}
 	],
