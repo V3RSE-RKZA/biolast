@@ -41,7 +41,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.m4a1],
 		sellPrice: 867,
 		slotsUsed: 1,
-		itemLevel: 13
+		itemLevel: 15
 	},
 	'5.56x45mm_HP_bullet': {
 		type: 'Ammunition',
@@ -54,7 +54,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.m4a1],
 		sellPrice: 602,
 		slotsUsed: 1,
-		itemLevel: 9
+		itemLevel: 12
 	},
 	'7.62x39mm_FMJ_bullet': {
 		type: 'Ammunition',
@@ -67,7 +67,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged['ak-47']],
 		sellPrice: 623,
 		slotsUsed: 1,
-		itemLevel: 11
+		itemLevel: 13
 	},
 	'7.62x39mm_HP_bullet': {
 		type: 'Ammunition',
@@ -80,7 +80,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged['ak-47']],
 		sellPrice: 510,
 		slotsUsed: 1,
-		itemLevel: 9
+		itemLevel: 11
 	},
 	'.45_ACP_HP_bullet': {
 		type: 'Ammunition',
@@ -106,7 +106,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged.m1911],
 		sellPrice: 342,
 		slotsUsed: 1,
-		itemLevel: 7
+		itemLevel: 8
 	},
 	'5.45x39mm_FMJ_bullet': {
 		type: 'Ammunition',
@@ -119,7 +119,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
 		sellPrice: 399,
 		slotsUsed: 1,
-		itemLevel: 7
+		itemLevel: 9
 	},
 	'5.45x39mm_HP_bullet': {
 		type: 'Ammunition',
@@ -132,7 +132,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged['aks-74u'], ranged.saiga_MK],
 		sellPrice: 452,
 		slotsUsed: 1,
-		itemLevel: 9
+		itemLevel: 10
 	},
 	'5.45x39mm_7N24_bullet': {
 		type: 'Ammunition',
@@ -158,7 +158,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged['FN_Five-seveN'], ranged.FN_P90],
 		sellPrice: 672,
 		slotsUsed: 1,
-		itemLevel: 7
+		itemLevel: 11
 	},
 	'SS190_bullet': {
 		type: 'Ammunition',
@@ -171,7 +171,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged['FN_Five-seveN'], ranged.FN_P90],
 		sellPrice: 1624,
 		slotsUsed: 1,
-		itemLevel: 12
+		itemLevel: 13
 	},
 	'9mm_FMJ_bullet': {
 		type: 'Ammunition',
@@ -184,7 +184,7 @@ export const ammunition = ammoObject({
 		ammoFor: [ranged['glock-17'], ranged.P320, ranged.mp5],
 		sellPrice: 302,
 		slotsUsed: 1,
-		itemLevel: 7
+		itemLevel: 8
 	},
 	'9mm_HP_bullet': {
 		type: 'Ammunition',
