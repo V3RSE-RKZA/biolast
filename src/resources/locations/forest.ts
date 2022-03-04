@@ -10,8 +10,8 @@ export const forest: Location = {
 		npc: {
 			type: 'raider',
 			display: 'Zoro, The Mutated Scav',
-			health: 300,
-			damage: 50,
+			health: 200,
+			damage: 35,
 			drops: {
 				common: [items.chainsaw],
 				uncommon: [items.paracetamol],
@@ -128,7 +128,7 @@ export const forest: Location = {
 			damage: 25,
 			drops: {
 				common: [items['9mm_FMJ_bullet']],
-				uncommon: [items['.45_ACP_FMJ_bullet']],
+				uncommon: [items['.45_ACP_FMJ_bullet'], items.adderall],
 				rare: [items.walker_sludge],
 				rolls: 2
 			},
