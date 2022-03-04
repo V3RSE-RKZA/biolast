@@ -772,7 +772,7 @@ class CompanionCommand extends CustomSlashCommand<'companion'> {
 
 								const maxHeal = Math.min(companionRow.hunger, foundItem.item.reducesHunger)
 								const companionNewLevel = this.getCompanionLevel(companionRow.xp + foundItem.item.xpGiven, companionRow.level)
-								let display = `${icons.checkmark} You fed **${getCompanionDisplay(preCompanion, companionRow, true)}** your ${getItemDisplay(foundItem.item)}. They gained ${icons.xp_star}***+${foundItem.item.xpGiven}*** xp!`
+								let display = `${icons.checkmark} You fed ${preCompanion.icon} **${getCompanionDisplay(preCompanion, companionRow, true)}** your ${getItemDisplay(foundItem.item)}. They gained ${icons.xp_star}***+${foundItem.item.xpGiven}*** xp!`
 
 								if (!foundItem.row.durability || foundItem.row.durability - 1 <= 0) {
 									await deleteItem(transaction.query, foundItem.row.id)
