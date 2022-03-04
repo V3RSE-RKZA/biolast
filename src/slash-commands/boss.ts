@@ -24,6 +24,8 @@ import { GRAY_BUTTON, GREEN_BUTTON, RED_BUTTON } from '../utils/constants'
 import { attackPlayer, getMobChoice, getMobDisplay, getMobDrop } from '../utils/npcUtils'
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { EmbedOptions } from 'eris'
+import SellCommand from './sell'
+import { disableAllComponents } from '../utils/messageUtils'
 
 interface Player {
 	member: ResolvedMember
@@ -99,9 +101,29 @@ class BossCommand extends CustomSlashCommand<'boss'> {
 			return
 		}
 		else if (!backpackHasSpace(preUserBackpack, 0)) {
-			await ctx.send({
-				content: `${icons.warning} You are overweight, you will need to clear some space in your inventory to start a boss fight.`
-			})
+			const botMessage = await ctx.send({
+				content: `${icons.warning} You are overweight, you will need to clear some space in your inventory to start a boss fight.`,
+				components: [{
+					type: ComponentType.ACTION_ROW,
+					components: [GRAY_BUTTON('Sell Items', 'sell')]
+				}]
+			}) as Message
+
+			try {
+				const confirmed = (await this.app.componentCollector.awaitClicks(botMessage.id, i => i.user.id === ctx.user.id))[0]
+
+				if (confirmed.customID === 'sell') {
+					const sellCommand = new SellCommand(this.app.slashCreator, this.app)
+
+					await sellCommand.run(ctx)
+				}
+			}
+			catch (err) {
+				// continue
+				await botMessage.edit({
+					components: disableAllComponents(botMessage.components)
+				})
+			}
 			return
 		}
 		else if (this.app.channelsWithActiveDuel.has(ctx.channelID)) {

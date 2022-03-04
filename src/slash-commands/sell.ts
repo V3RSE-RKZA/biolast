@@ -1,4 +1,4 @@
-import { CommandOptionType, SlashCreator, CommandContext, Message, ComponentActionRow, ComponentType } from 'slash-create'
+import { CommandOptionType, SlashCreator, CommandContext, Message, ComponentActionRow, ComponentType, MessageOptions, ComponentContext } from 'slash-create'
 import App from '../app'
 import { icons, shopBuyMultiplier } from '../config'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
@@ -45,10 +45,10 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 		this.filePath = __filename
 	}
 
-	async run (ctx: CommandContext): Promise<void> {
+	async run (ctx: CommandContext, sellFromStash?: boolean, ranFromComponentOptions?: { messageID: string, componentCtx: ComponentContext }): Promise<void> {
 		let pages: { page: Embed, items: ItemWithRow<ItemRow>[] }[]
 
-		if (ctx.options.stash) {
+		if (ctx.options.stash || sellFromStash) {
 			const userData = (await getUserRow(query, ctx.user.id))!
 			const userStash = await getUserStash(query, ctx.user.id)
 			pages = this.generatePages(userStash, userData.stashSlots)
@@ -103,14 +103,21 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 			})
 		}
 
-		const botMessage = await ctx.send({
-			content: `Select the item(s) from your **${ctx.options.stash ? 'stash' : 'inventory'}** that you wish to sell.`,
+		const sendMessage = (options: MessageOptions): Promise<Message | boolean> => {
+			if (ranFromComponentOptions) {
+				return ranFromComponentOptions.componentCtx.editParent(options)
+			}
+
+			return ctx.editOriginal(options)
+		}
+		const botMessage = await sendMessage({
+			content: `Select the item(s) from your **${ctx.options.stash || sellFromStash ? 'stash' : 'inventory'}** that you wish to sell.`,
 			embeds: [pages[0].page.embed],
 			components
 		}) as Message
 
 		if (components.length) {
-			const { collector, stopCollector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 80000)
+			const { collector, stopCollector } = this.app.componentCollector.createCollector(ranFromComponentOptions ? ranFromComponentOptions.messageID : botMessage.id, c => c.user.id === ctx.user.id, 80000)
 
 			collector.on('collect', async c => {
 				try {
@@ -319,7 +326,7 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 							}
 						}
 						catch (err) {
-							await botMessage.edit({
+							await sendMessage({
 								content: `${icons.danger} Command timed out.`,
 								components: disableAllComponents(CONFIRM_BUTTONS)
 							})
@@ -334,7 +341,7 @@ class SellCommand extends CustomSlashCommand<'sell'> {
 			collector.on('end', async msg => {
 				try {
 					if (msg === 'time') {
-						await botMessage.edit({
+						await sendMessage({
 							content: `${icons.warning} Buttons timed out.`,
 							embeds: [pages[page].page.embed],
 							components: disableAllComponents(components)

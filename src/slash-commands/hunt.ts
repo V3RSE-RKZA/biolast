@@ -19,7 +19,7 @@ import { Affliction, AfflictionName, afflictions } from '../resources/affliction
 import { addStatusEffects, getEffectsDisplay } from '../utils/playerUtils'
 import { ResolvedMember } from 'slash-create/lib/structures/resolvedMember'
 import { awaitPlayerChoices, getAttackDamage, getAttackString, getBodyPartHit } from '../utils/duelUtils'
-import { CONFIRM_BUTTONS, GRAY_BUTTON, GREEN_BUTTON, RED_BUTTON } from '../utils/constants'
+import { CONFIRM_BUTTONS, GRAY_BUTTON, RED_BUTTON } from '../utils/constants'
 import { attackPlayer, getMobChoice, getMobDisplay, getMobDrop, getMobDisplayReference } from '../utils/npcUtils'
 import { clearCooldown, createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { disableAllComponents } from '../utils/messageUtils'
@@ -117,12 +117,6 @@ class HuntCommand extends CustomSlashCommand<'hunt'> {
 				if (confirmed.customID === 'sell') {
 					const sellCommand = new SellCommand(this.app.slashCreator, this.app)
 
-					await confirmed.editParent({
-						components: [{
-							type: ComponentType.ACTION_ROW,
-							components: [GREEN_BUTTON('Sell Items', 'sell', true)]
-						}]
-					})
 					await sellCommand.run(ctx)
 				}
 			}

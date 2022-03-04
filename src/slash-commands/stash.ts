@@ -11,8 +11,9 @@ import { getUserRow } from '../utils/db/players'
 import { formatMoney } from '../utils/stringUtils'
 import { backpackHasSpace, getBackpackLimit, getEquips, getItemDisplay, getItemNameDisplay, getItemPrice, getItems, sortItemsByName } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
-import { NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
+import { GRAY_BUTTON, NEXT_BUTTON, PREVIOUS_BUTTON } from '../utils/constants'
 import { disableAllComponents } from '../utils/messageUtils'
+import SellCommand from './sell'
 
 const ITEMS_PER_PAGE = 12
 
@@ -260,11 +261,31 @@ class StashCommand extends CustomSlashCommand<'stash'> {
 							const equips = getEquips(backpackRows)
 							const slotsAvailable = Math.max(0, getBackpackLimit(equips.backpack?.item) - userBackpackData.slotsUsed).toFixed(1)
 
-							await c.send({
+							const sellMessage = await c.send({
 								content: `${icons.danger} You don't have enough space in your inventory. You need **${spaceNeeded}** open slots in your inventory but you only have **${slotsAvailable}** slots available.` +
 									'\n\nSell items to clear up some space.',
-								ephemeral: true
-							})
+								ephemeral: true,
+								components: [{
+									type: ComponentType.ACTION_ROW,
+									components: [GRAY_BUTTON('Sell Items', 'sell')]
+								}]
+							}) as Message
+
+							try {
+								const confirmed = (await this.app.componentCollector.awaitClicks(sellMessage.id, i => i.user.id === ctx.user.id))[0]
+
+								if (confirmed.customID === 'sell') {
+									const sellCommand = new SellCommand(this.app.slashCreator, this.app)
+
+									await sellCommand.run(ctx, false, {
+										messageID: sellMessage.id,
+										componentCtx: confirmed
+									})
+								}
+							}
+							catch (err) {
+								// sell button timed out, continue
+							}
 							return
 						}
 

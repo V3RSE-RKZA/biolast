@@ -13,7 +13,7 @@ import { backpackHasSpace, getBackpackLimit, getEquips, getItemDisplay, getItems
 import { logger } from '../utils/logger'
 import { getRarityDisplay } from '../utils/stringUtils'
 import { ItemRow } from '../types/mysql'
-import { GRAY_BUTTON, GREEN_BUTTON } from '../utils/constants'
+import { GRAY_BUTTON } from '../utils/constants'
 import { createCooldown, getCooldown } from '../utils/db/cooldowns'
 import { allQuests } from '../resources/quests'
 import { disableAllComponents } from '../utils/messageUtils'
@@ -88,12 +88,6 @@ class ScavengeCommand extends CustomSlashCommand<'scavenge'> {
 				if (confirmed.customID === 'sell') {
 					const sellCommand = new SellCommand(this.app.slashCreator, this.app)
 
-					await confirmed.editParent({
-						components: [{
-							type: ComponentType.ACTION_ROW,
-							components: [GREEN_BUTTON('Sell Items', 'sell', true)]
-						}]
-					})
 					await sellCommand.run(ctx)
 				}
 			}
