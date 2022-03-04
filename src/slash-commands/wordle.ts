@@ -19,7 +19,6 @@ type Letter = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 
 const fullWordList = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'resources', 'wordle', 'englishwords.txt'), { encoding: 'utf-8' }).split(/\r?\n/).filter(Boolean)
 const gameWordList = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'resources', 'wordle', 'wordlist.txt'), { encoding: 'utf-8' }).split(/\r?\n/).filter(Boolean)
 const MAX_GUESSES = 5
-const MAX_BET = 10000
 const wordleTutorial = new Embed()
 	.setTitle('How to Play')
 	.setDescription('Each guess must be a valid five-letter word. Click the "Input Guess" button to submit a guess.' +
@@ -65,9 +64,9 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 			})
 			return
 		}
-		else if (bet >= MAX_BET) {
+		else if (bet > this.getBetLimit(preUserData.locationLevel)) {
 			await ctx.send({
-				content: `${icons.danger} You cannot bet more than ${formatMoney(MAX_BET)}.`
+				content: `${icons.danger} You cannot bet more than ${formatMoney(this.getBetLimit(preUserData.locationLevel))}.`
 			})
 			return
 		}
@@ -228,7 +227,7 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 					}
 				}
 				catch (err) {
-					logger.warn(err)
+					// modal timed out, continue
 				}
 			})
 
@@ -348,6 +347,10 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 		embed.setDescription(`Bet: ${formatMoney(bet)}\n\n${display.join('\n')}`)
 
 		return embed
+	}
+
+	getBetLimit (locationLevel: number): number {
+		return 250 * locationLevel
 	}
 
 	isLetter (letter: string): letter is Letter {
