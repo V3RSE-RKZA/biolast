@@ -306,6 +306,7 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 			}
 			else {
 				const wordLetters = word.split('')
+				const wordLettersModified = word.split('')
 				const guessLetters = guesses[i].split('')
 				const yellowLetters = []
 				const greenLetters = []
@@ -321,6 +322,7 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 					if (letter === word[i2]) {
 						rowDisplay[i2] = icons.wordle.green[letter]
 						greenLetters.push(letter)
+						wordLettersModified[i2] = ''
 					}
 				}
 
@@ -334,7 +336,7 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 					const occurances = wordLetters.filter(l => l === letter)
 					const existingOccurances = [...yellowLetters, ...greenLetters].filter(l => l === letter)
 
-					if (occurances.length > 0 && existingOccurances.length < occurances.length) {
+					if (occurances.length > 0 && existingOccurances.length < occurances.length && wordLettersModified[i2] !== '') {
 						rowDisplay[i2] = icons.wordle.yellow[letter]
 						yellowLetters.push(letter)
 					}
