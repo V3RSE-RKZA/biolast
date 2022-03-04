@@ -199,13 +199,21 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 	awaitTurn (ctx: CommandContext, botMessage: Message, guesses: string[]): Promise<ModalInteractionContext> {
 		return new Promise((resolve, reject) => {
 			const { collector, stopCollector } = this.app.componentCollector.createCollector(botMessage.id, c => c.user.id === ctx.user.id, 60000)
+			let expired = false
 
 			collector.on('collect', async guessCtx => {
 				try {
 					if (guessCtx.customID === 'guess') {
 						const inputCtx = await this.awaitGuess(guessCtx)
 
-						if (guesses.length >= MAX_GUESSES) {
+						if (expired) {
+							await inputCtx.send({
+								content: `${icons.danger} The wordle game has expired.`,
+								ephemeral: true
+							})
+							return
+						}
+						else if (guesses.length >= MAX_GUESSES) {
 							await inputCtx.send({
 								content: `You have already submitted **${MAX_GUESSES}** guesses!`,
 								ephemeral: true
@@ -233,6 +241,8 @@ class WordleCommand extends CustomSlashCommand<'wordle'> {
 
 			collector.on('end', async msg => {
 				try {
+					expired = true
+
 					if (msg === 'time') {
 						reject(msg)
 					}
