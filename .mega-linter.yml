@@ -1,3 +1,0 @@
-PRE_COMMANDS:
-  - command: yarn add --dev eslint-plugin-deprecation
-  cwd: "workspace"   # Will be run at the root of the workspace (usually your repository root)
