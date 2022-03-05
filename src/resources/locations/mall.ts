@@ -128,7 +128,7 @@ export const mall: Location = {
 		{
 			type: 'raider',
 			display: 'Raider',
-			health: 100,
+			health: 85,
 			damage: 30,
 			drops: {
 				common: [items['9mm_FMJ_bullet']],
@@ -139,7 +139,7 @@ export const mall: Location = {
 			weapon: items.saiga_MK,
 			ammo: items['5.45x39mm_FMJ_bullet'],
 			armor: items.wooden_armor,
-			helmet: items.aramid_helmet,
+			helmet: items.wooden_helmet,
 			xp: 150,
 			boss: false
 		},
