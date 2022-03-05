@@ -31,6 +31,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install Node v16
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
       - name: Check out Git repository
         uses: actions/checkout@v2
         with:
@@ -48,7 +52,7 @@ jobs:
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
           VALIDATE_TYPESCRIPT_ES: true
           PRE_COMMANDS:
-            - command: npm install -D eslint-plugin-deprecation
+            - command: yarn add --dev eslint-plugin-deprecation
               cwd: "workspace"   # Will be run at the root of the workspace (usually your repository root)
 
     # Upload Mega-Linter artifacts
