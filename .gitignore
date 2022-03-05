@@ -9,3 +9,6 @@ build
 
 # mega-linter reports
 report/
+
+# vscode data
+.vscode

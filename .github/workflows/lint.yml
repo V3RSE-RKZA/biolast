@@ -47,6 +47,9 @@ jobs:
           LINTER_RULES_PATH: /
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
           VALIDATE_TYPESCRIPT_ES: true
+          PRE_COMMANDS:
+            - command: yarn && yarn add --dev eslint-plugin-deprecation
+              cwd: "workspace"   # Will be run at the root of the workspace (usually your repository root)
 
     # Upload Mega-Linter artifacts
       - name: Archive production artifacts
