@@ -1,0 +1,3 @@
+PRE_COMMANDS:
+  - command: yarn add --dev eslint-plugin-deprecation
+    cwd: workspace
