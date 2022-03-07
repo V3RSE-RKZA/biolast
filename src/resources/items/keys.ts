@@ -75,8 +75,9 @@ export const keys = keysObject({
 		name: 'sacred_pendant',
 		durability: 1,
 		aliases: ['sacred', 'pendant'],
-		icon: '<:U_key:870786870852874260>',
+		icon: '<:sacred_pendant:950183471786102824>',
 		slotsUsed: 1,
-		itemLevel: 10
+		itemLevel: 10,
+		artist: '719365897458024558'
 	}
 })
