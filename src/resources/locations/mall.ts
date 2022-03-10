@@ -74,8 +74,8 @@ export const mall: Location = {
 			damage: 45,
 			drops: {
 				common: [items.dereks_shop_key],
-				uncommon: [items['9mm_AP_bullet'], items['5.45x39mm_HP_bullet'], items.F1_grenade],
-				rare: [items.adrenaline],
+				uncommon: [items['9mm_AP_bullet'], items['5.45x39mm_HP_bullet'], items.F1_grenade, items.adrenaline],
+				rare: [items.SS190_bullet],
 				rolls: 2
 			},
 			weapon: items.bobwhite_g2,
