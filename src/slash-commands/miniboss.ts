@@ -2,14 +2,14 @@ import { SlashCreator, CommandContext, ComponentType, Message } from 'slash-crea
 import App from '../app'
 import { icons, webhooks } from '../config'
 import { NPC } from '../types/NPCs'
-import { allLocations, isValidLocation, locations } from '../resources/locations'
+import { isValidLocation, locations } from '../resources/locations'
 import CustomSlashCommand from '../structures/CustomSlashCommand'
 import Embed from '../structures/Embed'
 import { MeleeWeapon, RangedWeapon, Stimulant, ThrowableWeapon } from '../types/Items'
 import { Location } from '../types/Locations'
 import { addItemToBackpack, createItem, deleteItem, getUserBackpack, lowerItemDurability } from '../utils/db/items'
 import { beginTransaction, query } from '../utils/db/mysql'
-import { addHealth, addXp, getUserRow, increaseKills, setFighting, setLocationLevel } from '../utils/db/players'
+import { addHealth, addXp, getUserRow, increaseKills, setFighting } from '../utils/db/players'
 import { getUserQuest, increaseProgress } from '../utils/db/quests'
 import { backpackHasSpace, getEquips, getItemDisplay, getItems, sortItemsByLevel } from '../utils/itemUtils'
 import { logger } from '../utils/logger'
@@ -121,7 +121,6 @@ class BossCommand extends CustomSlashCommand<'miniboss'> {
 		}
 
 		const location = locations[preUserData.currentLocation]
-		const nextLocation = allLocations.filter(l => l.locationLevel === location.locationLevel + 1)
 		const preMembersData: { member: ResolvedMember, data: UserRow }[] = [{ member: ctx.member, data: preUserData }]
 		const preBossCD = await getCooldown(query, ctx.user.id, `miniboss-${location.display}`)
 
@@ -752,14 +751,10 @@ class BossCommand extends CustomSlashCommand<'miniboss'> {
 
 							messages[i].push(`☠️ ${npcDisplayName} **DIED!**`)
 
-							if (players.every(p => p.data.locationLevel <= location.locationLevel)) {
-								msgContent = `${players.map(p => `<@${p.member.id}>`).join(' ')}, You have unlocked a new region! You can now travel to ${combineArrayWithAnd(nextLocation.map(l => `**${l.display}**`))}.`
-							}
-							else {
-								msgContent = `${players.map(p => `<@${p.member.id}>`).join(' ')}, You have defeated **${location.miniboss.npc.display}**!`
-							}
+							msgContent = `${players.map(p => `<@${p.member.id}>`).join(' ')}, You have defeated **${location.miniboss.npc.display}**!`
 
 							for (const player of players) {
+								// eslint-disable-next-line @typescript-eslint/no-unused-vars
 								const userData = (await getUserRow(atkTransaction.query, player.member.id, true))!
 								const userQuest = await getUserQuest(atkTransaction.query, player.member.id, true)
 								const droppedItems = []
@@ -841,10 +836,6 @@ class BossCommand extends CustomSlashCommand<'miniboss'> {
 								await setFighting(atkTransaction.query, player.member.id, false)
 								await increaseKills(atkTransaction.query, player.member.id, 'boss', 1)
 								await addXp(atkTransaction.query, player.member.id, location.miniboss.npc.xp)
-
-								if (userData.locationLevel <= location.locationLevel) {
-									await setLocationLevel(atkTransaction.query, player.member.id, userData.locationLevel + 1)
-								}
 
 								// check if user has any kill quests
 								if (userQuest && userQuest.progress < userQuest.progressGoal) {
