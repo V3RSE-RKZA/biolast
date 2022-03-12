@@ -10,12 +10,12 @@ export const forest: Location = {
 		npc: {
 			type: 'raider',
 			display: 'Zoro, The Mutated Scav',
-			health: 200,
+			health: 250,
 			damage: 35,
 			drops: {
-				common: [items.chainsaw],
-				uncommon: [items.paracetamol],
-				rare: [items.sacred_pendant],
+				common: [items.chainsaw,items.saiga_MK],
+				uncommon: [items.paracetamol,items['5.45x39mm_FMJ_bullet']],
+				rare: [items.sacred_pendant,items['5.45x39mm_7N24_bullet']],
 				rolls: 2
 			},
 			weapon: items.saiga_MK,
@@ -34,7 +34,7 @@ export const forest: Location = {
 			type: 'raider',
 			display: 'Cultist Hunter',
 			health: 100,
-			damage: 35,
+			damage: 30,
 			drops: {
 				common: [items.sacred_pendant, items.cloth_backpack],
 				uncommon: [items.compression_bandage],

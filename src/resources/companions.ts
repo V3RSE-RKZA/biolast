@@ -57,9 +57,9 @@ export const companions: Companion[] = [
 	},
 	{
 		name: 'John the Survivalist',
-		price: 200000,
+		price: 100000,
 		maxUpgrades: 20,
-		stressPerFetch: 25,
+		stressPerFetch: 20,
 		icon: '<:john:944974268683411476>',
 		iconURL: 'https://cdn.discordapp.com/attachments/886559272660533251/944976708291919912/john.png',
 		artist: '719365897458024558'
