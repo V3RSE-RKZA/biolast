@@ -102,7 +102,7 @@ export const ammunition = ammoObject({
 		aliases: ['.45', 'acp', 'acp_fmj', '.45_fmj', 'acp_bullet', '.45_bullet'],
 		description: 'Full metal jacket .45 ACP ammunition.',
 		damage: 31,
-		penetration: 1.8,
+		penetration: 1.9,
 		ammoFor: [ranged.m1911],
 		sellPrice: 342,
 		slotsUsed: 1,
